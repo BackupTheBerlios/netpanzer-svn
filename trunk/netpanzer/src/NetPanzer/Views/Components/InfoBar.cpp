@@ -33,7 +33,7 @@ static const char* titles =
 
 static const PIX format_color = 249; // #d9d9ff
 static const char* format =
-        "     %s         %3d/%-3d         %4d/%-4d         %3d/%-3d        %02d:%02d/%02d:%02d       %.2f";
+        "     %10s         %3d/%-3d         %4d/%-4d         %3d/%-3d        %02d:%02d/%02d:%02d       %.2f";
 
 static const PIX bars_color = 185; // #6f906d
 static const char* bars =

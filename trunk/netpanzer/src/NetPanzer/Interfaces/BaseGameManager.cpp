@@ -244,7 +244,7 @@ void BaseGameManager::simLoop()
     if ( SERVER )
         SERVER->cleanUpClientList();
     network::SocketManager::handleEvents();
-    
+
     if ( NetworkState::status == _network_state_server ) {
         ServerMessageRouter::routeMessages();
     } else {

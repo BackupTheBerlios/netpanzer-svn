@@ -540,10 +540,9 @@ void ParticleInterface::addHit(const UnitState &unitState)
                           8 * (frameRateAdjustment *
                                float(unitHitPointTable[unitState.unit_type]) * randomness));
 
-    if (gDrawExplosionParticleCount) {
-        char strBuf[256];
-        sprintf(strBuf, "%d", e.particleCount);
-        ConsoleInterface::postMessage(Color::white, false, 0, strBuf);
+    if (gDrawExplosionParticleCount)
+    {
+        ConsoleInterface::postMessage(Color::white, false, 0, "%d", e.particleCount);
     }
 
     float hitPointScale = 1.0f;
@@ -700,10 +699,9 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
 
     e.particleCount = int(5 * (frameRateAdjustment * float(unitAttackFactorTable[unitType]) * randomness));
 
-    if (gDrawExplosionParticleCount) {
-        char strBuf[256];
-        sprintf(strBuf, "%d", e.particleCount);
-        ConsoleInterface::postMessage(Color::white, false, 0, strBuf);
+    if (gDrawExplosionParticleCount)
+    {
+       ConsoleInterface::postMessage(Color::white, false, 0, "%d", e.particleCount);
     }
 
     float attackScale = 1.0f;
@@ -893,7 +891,10 @@ void ParticleInterface::addDirtKick(const iXY &worldPos)
 //--------------------------------------------------------------------------
 void ParticleInterface::addCloudParticle(int count /* = 1 */)
 {
-    assert(count >= 0);
+    if ( count < 0 )
+    {
+        count = 0;
+    }
 
     iXY shit;
     MapInterface::getMapPointSize(&shit);

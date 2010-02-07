@@ -286,6 +286,10 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
 
 } // end HostOptionsView::doDraw
 
+void HostOptionsView::doDeactivate()
+{
+    // nothing
+}
 
 // addMeterButtons
 //---------------------------------------------------------------------------

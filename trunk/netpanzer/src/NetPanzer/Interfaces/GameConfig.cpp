@@ -41,7 +41,7 @@ bool         GameConfig::video_doublebuffer = false;
 bool         GameConfig::video_shadows = true;
 bool         GameConfig::video_blendsmoke = true;
 #ifdef _WIN32
-bool         GameConfig::video_usedirectx = true;
+bool         GameConfig::video_usedirectx = false;
 #endif
 
 bool GameConfig::interface_show_health = true;

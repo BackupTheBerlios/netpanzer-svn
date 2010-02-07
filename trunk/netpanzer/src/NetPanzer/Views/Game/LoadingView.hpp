@@ -22,10 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "2D/Surface.hpp"
 #include "Util/Log.hpp"
+#include "Interfaces/GameManager.hpp"
 #include <list>
 #include <string>
-
-#include "Interfaces/GameManager.hpp"
 
 using namespace std;
 

@@ -119,7 +119,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
                     return;
                 }
-                
+
                 GameManager::resetGameLogic();
                 map_cycle_fsm_client_state = _map_cycle_client_load_map;
                 return;
@@ -390,8 +390,10 @@ void GameControlRulesDaemon::netMessageCycleMap(const NetMessage* message)
     GameControlCycleMap *cycle_map_mesg;
 
     cycle_map_mesg = (GameControlCycleMap *) message;
+
     snprintf(map_cycle_fsm_client_map_name, 256, "%s", cycle_map_mesg->map_name);
     map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
+
 }
 
 void GameControlRulesDaemon::netMessageCycleRespawnAck(const NetMessage* )

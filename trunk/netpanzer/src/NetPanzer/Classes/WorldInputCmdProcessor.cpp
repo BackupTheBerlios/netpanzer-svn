@@ -749,7 +749,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 void
 WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 {
-    static NTimer mtimer(150);
+    static NTimer mtimer(75);
     if (event.event == MouseEvent::EVENT_DOWN )
     {
         right_mouse_scroll=true;

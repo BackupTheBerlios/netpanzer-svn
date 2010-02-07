@@ -44,6 +44,8 @@ private:
     Choice choiceGameType;
     Choice choiceWindSpeed;
     Choice choiceCloudCoverage;
+protected:
+    virtual void doDeactivate();
 
 public:
     HostOptionsView();

@@ -122,7 +122,16 @@ void VisualsView::initButtons()
     checkBoxBlendSmoke->setStateChangedCallback(this);
     add(checkBoxBlendSmoke);
     y += yOffset;
-    
+
+#ifdef _WIN32
+    checkBoxUseDirectX = new CheckBox();
+    checkBoxUseDirectX->setLabel("Use DirectX");
+    checkBoxUseDirectX->setState(GameConfig::video_usedirectx);
+    checkBoxUseDirectX->setLocation(x, y);
+    checkBoxUseDirectX->setStateChangedCallback(this);
+    add(checkBoxUseDirectX);
+    y += yOffset;
+#endif
     
     //removeAllButtons();
     //removeComponents();
@@ -177,19 +186,21 @@ void VisualsView::loadTitleSurface()
 //---------------------------------------------------------------------------
 void VisualsView::stateChanged(Component* source)
 {
-    // Check Box Draw All Shadows
-    if (source == checkBoxDrawAllShadows) {
+    if ( source == checkBoxDrawAllShadows )
+    {
         GameConfig::video_shadows = checkBoxDrawAllShadows->getState();
     }
-    // Check Box Blend Smoke
-    else if (source == checkBoxBlendSmoke) {
+    else if ( source == checkBoxBlendSmoke )
+    {
         GameConfig::video_blendsmoke = checkBoxBlendSmoke->getState();
-    } else if (source == checkBoxFullscreen) {
+    }
+    else if ( source == checkBoxFullscreen )
+    {
         GameConfig::video_fullscreen = checkBoxFullscreen->getState();
         GameManager::setVideoMode();
     }
-    // Choice Resolution
-    else if (source == choiceResolution) {
+    else if ( source == choiceResolution )
+    {
         int sel_index = choiceResolution->getSelectedIndex()-1;
         if ( sel_index < 0 )
         {
@@ -219,13 +230,22 @@ void VisualsView::stateChanged(Component* source)
 
         GameManager::setVideoMode();
     }
-    // Choice Mini Map Unit Size
-    else if (source == choiceMiniMapUnitSize) {
-        if (choiceMiniMapUnitSize->getSelectedIndex() == 0) {
+    else if ( source == choiceMiniMapUnitSize )
+    {
+        if (choiceMiniMapUnitSize->getSelectedIndex() == 0)
+        {
             gameconfig->radar_unitsize = _mini_map_unit_size_small;
-        } else if (choiceMiniMapUnitSize->getSelectedIndex() == 1) {
+        }
+        else if (choiceMiniMapUnitSize->getSelectedIndex() == 1)
+        {
             gameconfig->radar_unitsize = _mini_map_unit_size_large;
         }
     }
+#ifdef _WIN32
+    else if ( source == checkBoxUseDirectX )
+    {
+        GameConfig::video_usedirectx = checkBoxUseDirectX->getState();
+    }
+#endif
 }
 

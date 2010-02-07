@@ -45,6 +45,9 @@ private:
     CheckBox * checkBoxDrawAllShadows;
     CheckBox * checkBoxBlendSmoke;
     CheckBox * checkBoxFullscreen;
+#ifdef _WIN32
+    CheckBox * checkBoxUseDirectX;
+#endif
     //CheckBox drawUnitReload;
 
     // Option choices.

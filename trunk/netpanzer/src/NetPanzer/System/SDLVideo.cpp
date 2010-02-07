@@ -72,8 +72,10 @@ SDLVideo::SDLVideo()
 
 SDLVideo::~SDLVideo()
 {
-    if(backBuffer)
+    if ( backBuffer && backBuffer != frontBuffer )
+    {
         SDL_FreeSurface(backBuffer);
+    }
     
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -115,7 +117,7 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
 
 void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 {
-    if(backBuffer)
+    if ( backBuffer && backBuffer != frontBuffer )
     {
         SDL_FreeSurface(backBuffer);
     }
@@ -125,17 +127,17 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 
     if ( flags&SDL_FULLSCREEN )
     {
-        bpp = best_bpp;
+        //bpp = best_bpp;
         getNearestFullScreenMode(flags, &new_width, &new_height);
         LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
                              new_width, new_height, width, height);
     }
-    else
-    {
-        bpp = 0;
-    }
+//    else
+//    {
+//        bpp = 0;
+//    }
 
-    flags |= SDL_ANYFORMAT;
+    flags |= SDL_HWPALETTE;
 
     frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
     if(!frontBuffer)
@@ -144,12 +146,13 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
                         new_width, new_height, flags, SDL_GetError());
     }
 
-    backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
-                                      8, 0, 0, 0, 0);
-    if(!backBuffer)
-    {
-        throw Exception("Couldn't create backBuffer");
-    }
+    backBuffer = frontBuffer;
+//    backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
+//                                      8, 0, 0, 0, 0);
+//    if(!backBuffer)
+//    {
+//        throw Exception("Couldn't create backBuffer");
+//    }
 
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
@@ -160,7 +163,7 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
                                      Uint32 flags)
 {
-    flags |= SDL_ANYFORMAT;
+    flags |= SDL_HWPALETTE; // SDL_ANYFORMAT
     int res = SDL_VideoModeOK(width, height, bpp, flags);
 
     LOGGER.warning("Mode %dx%dx%d %s is %s", width, height, bpp,
@@ -186,13 +189,22 @@ void SDLVideo::unlockDoubleBuffer()
 
 void SDLVideo::copyDoubleBufferandFlip()
 {
-    SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
+    if ( backBuffer && backBuffer != frontBuffer)
+    {
+        SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
+    }
+    
     SDL_UpdateRect(frontBuffer, 0, 0, 0, 0);
 }
 
 void SDLVideo::setPalette(SDL_Color *color)
 {
-    SDL_SetColors(backBuffer, color, 0, 256);
+    if ( backBuffer && backBuffer != frontBuffer)
+    {
+        SDL_SetColors(backBuffer, color, 0, 256);
+    }
+    
+    SDL_SetColors(frontBuffer, color, 0, 256);
 }
 
 SDL_Surface* SDLVideo::getSurface()
