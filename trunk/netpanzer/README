@@ -47,8 +47,20 @@ building it. Here's a list of them:
 * SDL_mixer 1.2.4 or later
   http://www.libsdl.org/projects/SDL_mixer/
 
+* subversion (needed to download the source code)
+  http://subversion.tigris.org/
+
 Thanks to all the authors of these helpful libraries that made our development
 easy and straightforward.
+
+To download the code use the subversion client to download from
+  svn://svn.berlios.de/netpanzer/tags/netpanzer/<wanted_version>
+
+An explample for version 0.8.3 would be:
+  svn export svn://svn.berlios.de/netpanzer/tags/netpanzer/0.8.3 netpanzer
+
+Note that I use "export" instead of "checkout" to avoid having all the ".svn"
+folders spread over the source. This is interesting for Linux distributions.
 
 2.2 Building without installing on non Windows
 
