@@ -71,10 +71,12 @@ void ConsoleInterface::initialize( long size )
 
     long line_loop;
 
-    for ( line_loop = 0; line_loop < console_size; line_loop++ ) {
+    for ( line_loop = 0; line_loop < console_size; line_loop++ )
+    {
         line_list[ line_loop ].color = Color::white;
         line_list[ line_loop ].string[0] = 0;
         line_list[ line_loop ].life_timer.changePeriod( 30 );
+        line_list[ line_loop ].visible = false;
     }
 
     stdout_pipe = false;
