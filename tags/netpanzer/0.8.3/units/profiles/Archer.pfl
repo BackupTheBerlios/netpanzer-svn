@@ -1,0 +1,22 @@
+HITPOINTS      120;
+DAMAGE_FACTOR    0;
+ATTACK_FACTOR  350;
+RELOAD_TIME     110;
+REACTION_TIME    8;
+RANGE_MAX     2400000;
+REGEN_TIME    90;
+DEFEND_RANGE   14400000;
+SPEED_RATE       16;
+SPEED_FACTOR      2;
+REPATH_TIME      10;
+FUEL_CAPACITY  2000;
+IMAGE "pics/menus/vehicleSelectionView/archer.bmp"
+BODYSPRITE "units/pics/pak/ArchHNSD.pak"
+BODYSHADOW "units/pics/pak/ArchHSSD.pak"
+TURRETSPRITE "units/pics/pak/ArchTNSD.pak"
+TURRETSHADOW "units/pics/pak/ArchTSSD.pak"
+SOUNDSELECTED "mu-selected"
+FIRESOUND "mu-fire"
+WEAPON "DOUBLEMISSILE"
+BOUNDBOX 40
+END;

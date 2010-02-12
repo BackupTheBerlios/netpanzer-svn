@@ -1,0 +1,22 @@
+HITPOINTS      175;
+DAMAGE_FACTOR    0;
+ATTACK_FACTOR   60;
+RELOAD_TIME     40;
+REACTION_TIME    8;
+RANGE_MAX    1000000;
+REGEN_TIME     50;
+DEFEND_RANGE  600000;
+SPEED_RATE       20;
+SPEED_FACTOR      4;
+REPATH_TIME      2;
+FUEL_CAPACITY  2000;
+IMAGE "pics/menus/vehicleSelectionView/wolf.bmp"
+BODYSPRITE "units/pics/pak/WolfHNSD.pak"
+BODYSHADOW "units/pics/pak/WolfHSSD.pak"
+TURRETSPRITE "units/pics/pak/WolfTNSD.pak"
+TURRETSHADOW "units/pics/pak/WolfTSSD.pak"
+SOUNDSELECTED "lt-selected"
+FIRESOUND "lt-fire"
+WEAPON "SHELL"
+BOUNDBOX 60
+END;

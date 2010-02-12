@@ -1,0 +1,22 @@
+HITPOINTS     300;
+DAMAGE_FACTOR   0;
+ATTACK_FACTOR  180;
+RELOAD_TIME    50;
+REACTION_TIME   8;
+RANGE_MAX     1000000;
+REGEN_TIME    55;
+DEFEND_RANGE  600000;
+SPEED_RATE       16;
+SPEED_FACTOR      2;
+REPATH_TIME      20;
+FUEL_CAPACITY  2000;
+IMAGE "pics/menus/vehicleSelectionView/drake.bmp"
+BODYSPRITE "units/pics/pak/DrakHNSD.pak"
+BODYSHADOW "units/pics/pak/DrakHSSD.pak"
+TURRETSPRITE "units/pics/pak/DrakTNSD.pak"
+TURRETSHADOW "units/pics/pak/DrakTSSD.pak"
+SOUNDSELECTED "ht-selected"
+FIRESOUND "ht-fire"
+WEAPON "SHELL"
+BOUNDBOX 60
+END;
