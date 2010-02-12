@@ -1,3 +1,27 @@
+*** 0.8.3 ***
+Fixed:
+
+- fix playing in 64 bit machines.
+- fix many small bugs.
+- fix production bug when loosing the base.
+- fix problem of not able to capture some bases.
+- fix bad colors on some systems.
+- fix alliance, new alliance method (click to request ally).
+- fix frag limit mode.
+- fixed some flags and added Spain and Bulgaria flags.
+
+Added:
+
+- added a Mac OS X universal binary of netPanzer.
+- added lua support, currently for configuration.
+- added screenshoot function (press F9).
+- added any resolution support (>= 640x480) and resizable window.
+- added sound configuration (volume, enable/disable).
+- added some new maps done by community.
+- new unit selection modes, double and tripple click.
+- player flags appears in chat messages.
+- player name appear over tanks (configurable, press "n").
+
 *** 0.8.1 ***
 
 * Change default masterserver to netpanzer.dyndns.org
