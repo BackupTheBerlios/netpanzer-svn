@@ -20,38 +20,156 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessage.hpp"
 
-#include "Classes/ObjectiveMessageTypes.hpp"
-
-enum { _net_message_id_occupation_status_update,
-       _net_message_id_objective_sync };
+enum
+{
+    _net_message_id_change_output_location,
+    _net_message_id_change_generating_unit,
+    _net_message_id_occupation_status_update,
+    _net_message_id_objective_sync
+};
 
 #ifdef MSVC
 #pragma pack(1)
 #endif
 
+class ObjectiveChangeOutputLocation : public NetMessage
+{
+private:
+    ObjectiveID objective_id;
+    Sint32 new_point_x;
+    Sint32 new_point_y;
+
+public:
+    ObjectiveChangeOutputLocation()
+    {
+        message_class = _net_message_class_objective;
+        message_id = _net_message_id_change_output_location;
+    }
+
+    void set(ObjectiveID id, iXY point)
+    {
+        objective_id = ObjectiveID_toPortable(id);
+        new_point_x = htol32(point.x);
+        new_point_y = htol32(point.y);
+    }
+
+    ObjectiveID getObjectiveId() const
+    {
+        return ObjectiveID_fromPortable(objective_id);
+    }
+
+    Sint32 getPointX() const
+    {
+        return ltoh32(new_point_x);
+    }
+
+    Sint32 getPointY() const
+    {
+        return ltoh32(new_point_y);
+    }
+
+}__attribute__((packed));
+
+class ObjectiveChangeGeneratingUnit : public NetMessage
+{
+private:
+    ObjectiveID objective_id;
+
+public:
+    Uint8 unit_type;
+    Uint8 unit_gen_on;
+
+    ObjectiveChangeGeneratingUnit()
+    {
+        message_class = _net_message_class_objective;
+        message_id = _net_message_id_change_generating_unit;
+    }
+
+    void set(ObjectiveID id, Uint8 unit_type, bool unit_generation_on)
+    {
+        objective_id = ObjectiveID_toPortable(id);
+        this->unit_type = unit_type;
+        unit_gen_on = unit_generation_on;
+    }
+
+    ObjectiveID getObjectiveId() const
+    {
+        return ObjectiveID_fromPortable(objective_id);
+    }
+
+} __attribute__((packed));
+
 class ObjectiveOccupationUpdate : public NetMessage
 {
-public:
-    UpdateOccupationsStatus status_update;
+private:
+    ObjectiveID objective_id;
+    Uint16 player_id;
 
+public:
     ObjectiveOccupationUpdate()
     {
         message_class = _net_message_class_objective;
         message_id = _net_message_id_occupation_status_update;
     }
-}
-__attribute__((packed));
+
+    void set(ObjectiveID id, Uint16 player_id)
+    {
+        objective_id = ObjectiveID_toPortable(id);
+        this->player_id = htol16(player_id);
+    }
+
+    ObjectiveID getObjectiveId() const
+    {
+        return ObjectiveID_fromPortable(objective_id);
+    }
+
+    Uint16 getPlayerId() const
+    {
+        return ltoh16(player_id);
+    }
+}__attribute__((packed));
+
+class ObjectiveSyncData
+{
+public:
+    Uint16 player_id;
+
+    void set(Uint16 player_id)
+    {
+        this->player_id = htol16(player_id);
+    }
+
+    Uint16 getPlayerId() const
+    {
+        return ltoh16(player_id);
+    }
+
+}__attribute__((packed));
 
 class ObjectiveSyncMesg : public NetMessage
 {
+private:
+    ObjectiveID objective_id;
+
 public:
-    SyncObjective sync_data;
+    ObjectiveSyncData sync_data;
 
     ObjectiveSyncMesg()
     {
         message_class = _net_message_class_objective;
         message_id = _net_message_id_objective_sync;
     }
+
+    void set(ObjectiveID id)
+    {
+        this->objective_id = ObjectiveID_toPortable(id);
+    }
+    
+    ObjectiveID getObjectiveId() const
+    {
+        return ObjectiveID_fromPortable(objective_id);
+    }
+
 } __attribute__((packed));
 
 #ifdef MSVC

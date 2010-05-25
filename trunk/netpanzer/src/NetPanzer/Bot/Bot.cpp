@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Util/Log.hpp"
 
@@ -103,15 +104,15 @@ Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
                  outpostID, selectedProduce);
 
     // Send the server the selected unit and whether factory power is on.
-    TerminalOutpostUnitGenRequest term_mesg;
+    ObjectiveChangeGeneratingUnit msg;
 
-    term_mesg.unit_gen_request.set(outpostID, selectedProduce, true);
+    msg.set(outpostID, selectedProduce, true);
 
-    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostUnitGenRequest));
+    CLIENT->sendMessage(&msg, sizeof(msg));
 
     // XXX is this needed?
-    if (NetworkState::status == _network_state_client) {
-        ObjectiveInterface::sendMessage(&(term_mesg.unit_gen_request));
-    }
+//    if (NetworkState::status == _network_state_client) {
+//        ObjectiveInterface::sendMessage(&(term_mesg.unit_gen_request));
+//    }
  }
 

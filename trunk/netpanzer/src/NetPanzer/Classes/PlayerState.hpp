@@ -56,8 +56,7 @@ private:
     Sint16 total;
     Sint16 objectives_held;
     Uint32 colorIndex;
-}
-__attribute__((packed));
+}__attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

@@ -20,70 +20,54 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "ArrayUtil/BoundBox.hpp"
-#include "Classes/SpriteSorter.hpp"
-#include "Classes/PlayerState.hpp"
-#include "Classes/ObjectiveMessageTypes.hpp"
+#include "Util/Timer.hpp"
 
-enum { _objective_status_null };
+class PlayerState;
+class ObjectiveSyncData;
 
-enum { _occupation_status_unoccupied,
-       _occupation_status_occupied
-     };
-
-
-class ObjectiveState
+class Objective
 {
 public:
-    ObjectiveID   ID;
+    ObjectiveID   id;
     iRect         selection_box;
     unsigned char outpost_type;
     char          name[64];
     iXY           location;
     BoundBox      capture_area;
     BoundBox      area;
-    unsigned char objective_status;
-    unsigned char occupation_status;
     PlayerState*  occupying_player;
 
-    inline bool isBounded( iXY &test )
-    {
-        return( capture_area.bounds( location, test ) );
-    }
-};
-
-
-class OutpostStatus
-{
-public:
-    unsigned short unit_generation_type;
-    bool           unit_generation_on_off;
-    float          unit_generation_time;
-    float          unit_generation_time_remaining;
+// from outpost
+    unsigned char outpost_state;
+    iXY outpost_map_loc;
+    iXY unit_generation_loc;
     iXY unit_collection_loc;
-};
+    iXY occupation_pad_offset;
 
-class Objective
-{
-protected:
-    void objectiveMesgUpdateOccupation(const ObjectiveMessage* message);
-    void objectiveMesgSync(const ObjectiveMessage* message);
+    unsigned short unit_generation_type;
+    bool unit_generation_on_flag;
 
-public:
-    ObjectiveState objective_state;
+    Timer occupation_status_timer;
+    Timer unit_generation_timer;
 
     Objective(ObjectiveID ID, iXY location, BoundBox area );
-    virtual ~Objective()
-    { }
+    ~Objective() { }
 
-    void getSyncData( SyncObjective &objective_sync_mesg );
+    void changeOwner( PlayerState * new_owner );
+    void changeUnitGeneration(bool is_on, int unit_type);
 
-    virtual void processMessage(const ObjectiveMessage* message);
+    void getSyncData( ObjectiveSyncData& sync_data );
+    void syncFromData( const ObjectiveSyncData& sync_data );
 
-    virtual void updateStatus()
-    { }
+    void updateStatus();
 
-    virtual void offloadGraphics(SpriteSorter& )
-    { }
+private:
+    void attemptOccupationChange(UnitID unit_id);
+
+    void checkOccupationStatus( void );
+
+    void generateUnits( void );
+
 };
 
 #endif // ** _OBJECTIVE_HPP

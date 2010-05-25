@@ -16,112 +16,242 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Objectives/Objective.hpp"
-#include "Outpost.hpp"
-#include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/ConsoleInterface.hpp"
-#include "Units/UnitProfileInterface.hpp"
+#include "Objective.hpp"
+
 #include "Util/Log.hpp"
 
-Objective::Objective(ObjectiveID ID, iXY location, BoundBox area)
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
+
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Classes/Network/ObjectiveNetMessage.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+
+
+Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
 {
-    objective_state.ID = ID;
-    objective_state.location = location;
-    objective_state.capture_area = area;
-    objective_state.objective_status = _objective_status_null;
-    objective_state.occupation_status = _occupation_status_unoccupied;
-    objective_state.occupying_player = 0;
+    this->id = id;
+    this->location = location;
+    capture_area = area;
+    occupying_player = 0;
+
+    MapInterface::pointXYtoMapXY( location, &outpost_map_loc );
+    selection_box.max = location + iXY( 64, 32 );
+    selection_box.min = location + iXY( -224, -128 );
+    this->area.min = iXY( -400, -144 );
+    this->area.max = iXY(  400,  240 );
+    outpost_type = 0;
+
+    unit_generation_type = 0;
+    occupation_status_timer.changePeriod( 3 );
+    unit_generation_timer.changePeriod( 1 );
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+    unit_generation_loc = iXY( 1, 3 );
+    occupation_pad_offset = iXY( 224, 48 );
+    unit_generation_on_flag = false;
+
 }
 
 void
-Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
+Objective::changeOwner( PlayerState * new_owner )
 {
-    const UpdateOccupationsStatus *occupation_update
-        = (const UpdateOccupationsStatus *) message;
-
-    if ( objective_state.occupation_status == _occupation_status_occupied )
+    if ( occupying_player )
     {
-        objective_state.occupying_player->decObjectivesHeld();
+        occupying_player->decObjectivesHeld();
+    }
+
+    occupying_player = new_owner;
+
+    if ( occupying_player )
+    {
+        occupying_player->incObjectivesHeld();
+
+        ConsoleInterface::postMessage(Color::cyan, false, 0,
+                                      "'%s' has been occupied by '%s'",
+                                      name, new_owner->getName().c_str() );
     }
     
-    objective_state.occupation_status = occupation_update->occupation_status;
-    objective_state.occupying_player
-        = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
+    unit_generation_on_flag = false;
+}
 
-    Outpost* outpost = dynamic_cast<Outpost*> (this);
-    if(outpost)
+void
+Objective::changeUnitGeneration(bool is_on, int unit_type)
+{
+    unit_generation_on_flag = is_on;
+    if ( is_on )
     {
-        outpost->unit_generation_on_flag = occupation_update->unit_gen_on;
-        outpost->unit_generation_type = occupation_update->unit_type;
-        UnitProfile* profile =
-            UnitProfileInterface::getUnitProfile(
-                    outpost->unit_generation_type );
-        outpost->unit_generation_timer.changePeriod((float)profile->regen_time);
-        outpost->unit_generation_timer.setTimeLeft(
-                float(occupation_update->getTimeLeft()) / 128.0);
+        UnitProfile *profile = UnitProfileInterface::getUnitProfile( unit_type );
+        if ( profile )
+        {
+            unit_generation_type = unit_type;
+            unit_generation_timer.changePeriod( (float) profile->regen_time );
+        }
+        else
+        {
+            unit_generation_on_flag = false;
+        }
+    }
+}
+
+void Objective::getSyncData(ObjectiveSyncData& sync_data)
+{
+    Uint16 player_id = 0xffff;
+    if ( occupying_player != 0 )
+    {
+        player_id = occupying_player->getID();
     }
 
-    if( objective_state.occupation_status != _occupation_status_unoccupied )
+    sync_data.set(player_id);
+}
+
+void
+Objective::syncFromData(const ObjectiveSyncData& sync_data)
+{
+    if ( sync_data.getPlayerId() >= PlayerInterface::getMaxPlayers() )
     {
-        objective_state.occupying_player->incObjectivesHeld();
-        
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                objective_state.name, objective_state.occupying_player->getName().c_str() );
+        occupying_player = 0;
+        if ( sync_data.getPlayerId() != 0xffff )
+        {
+            LOGGER.warning("Malformed ObjectvieMesgSync");
+        }
+    }
+    else
+    {
+        occupying_player = PlayerInterface::getPlayer(sync_data.getPlayerId());
     }
 }
 
 void
-Objective::objectiveMesgSync(const ObjectiveMessage* message)
+Objective::attemptOccupationChange(UnitID unit_id)
 {
-    const SyncObjective *sync_mesg = (const SyncObjective*) message;
+    ObjectiveOccupationUpdate msg;
+    int player_status;
 
-    if(sync_mesg->getOccupyingPlayerID() >= PlayerInterface::getMaxPlayers()) {
-        LOGGER.warning("Malformed ObjectvieMesgSync");
-        return;
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    PlayerState* player = unit->player;
+    player_status = player->getStatus();
+
+    if ( occupying_player == 0 )
+    {
+        if ( player_status == _player_state_active )
+        {
+            occupying_player = player;
+            occupying_player->incObjectivesHeld();
+
+            msg.set( id, occupying_player->getID());
+            SERVER->broadcastMessage(&msg, sizeof(msg));
+
+            ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
+                    name, player->getName().c_str() );
+        }
     }
+    else if (occupying_player != player)
+    {
+        if( player_status == _player_state_active  )
+        {
+            occupying_player->decObjectivesHeld();
+            occupying_player = player;
+            occupying_player->incObjectivesHeld();
+            msg.set(id, occupying_player->getID());
 
-    objective_state.objective_status = sync_mesg->objective_status;
-    objective_state.occupation_status = sync_mesg->occupation_status;
-    if(objective_state.occupation_status != _occupation_status_unoccupied) {
-        objective_state.occupying_player =
-            PlayerInterface::getPlayer(sync_mesg->getOccupyingPlayerID());
-    } else {
-        objective_state.occupying_player = 0;
+            SERVER->broadcastMessage(&msg, sizeof(msg));
+            ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
+                    name, player->getName().c_str() );
+        }
     }
 }
 
-void Objective::getSyncData(SyncObjective& objective_sync_mesg)
+void
+Objective::checkOccupationStatus()
 {
-    Uint16 player_id = 0;
-    if(objective_state.occupation_status != _occupation_status_unoccupied
-            && objective_state.occupying_player) {
-        player_id = objective_state.occupying_player->getID();
-    }
-    objective_sync_mesg.set(objective_state.ID,
-                            objective_state.objective_status,
-                            objective_state.occupation_status,
-                            player_id);
+    if( occupation_status_timer.count()  )	//
+    {
+        UnitBase *unit_ptr;
+        iRect bounding_area;
+        iXY occupation_pad_loc;
+
+        occupation_pad_loc = location + occupation_pad_offset;
+        bounding_area = capture_area.getAbsRect( occupation_pad_loc );
+
+
+        UnitInterface::queryClosestUnit( &unit_ptr,
+                                          bounding_area,
+                                          occupation_pad_loc
+                                        );
+
+        if ( unit_ptr != 0 )
+        {
+            iXY unit_loc;
+            unit_loc = unit_ptr->unit_state.location;
+            if ( capture_area.bounds( occupation_pad_loc, unit_loc ) ) {
+                attemptOccupationChange( unit_ptr->id );
+            }
+
+        } // ** if unit_ptr != 0
+
+    } // ** if occupation_status_timer.count()
+
 }
 
+void
+Objective::generateUnits()
+{   // XXX CHECK
+    if ( occupying_player && unit_generation_on_flag == true )
+    {
+        if( unit_generation_timer.count() == true )
+        {
+            UnitBase *unit;
+            iXY gen_loc;
+            gen_loc = outpost_map_loc + unit_generation_loc;
 
-void Objective::processMessage(const ObjectiveMessage* message)
+            unit = UnitInterface::createUnit(unit_generation_type,
+                    gen_loc, occupying_player->getID());
+
+            if ( unit != 0 )
+            {
+                UnitRemoteCreate create_mesg(unit->player->getID(),
+                        unit->id, gen_loc.x, gen_loc.y,
+                        unit_generation_type);
+                SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
+
+                UMesgAICommand ai_command;
+                PlacementMatrix placement_matrix;
+                iXY collection_loc, loc;
+
+                collection_loc = /*outpost_map_loc +*/ unit_collection_loc;
+
+                placement_matrix.reset( collection_loc );
+                placement_matrix.getNextEmptyLoc( &loc );
+
+                ai_command.setHeader( unit->id, _umesg_flag_unique );
+                ai_command.setMoveToLoc( loc );
+                UnitInterface::sendMessage( &ai_command );
+            }
+        } // ** if
+    } // ** if
+}
+
+void
+Objective::updateStatus()
 {
-    switch(message->message_type) {
-        case _objective_mesg_update_occupation:
-            objectiveMesgUpdateOccupation(message);
-            break;
-
-        case _objective_mesg_sync_objective:
-            objectiveMesgSync(message);
-            break;
-
-        case _objective_mesg_change_unit_generation:
-        case _objective_mesg_disown_player_objective:
-        case _objective_mesg_change_output_location:
-            break;
-
-        default:
-            LOGGER.warning("Unknown ObjectiveMessage received (type %d)",
-                    message->message_type);
+    if ( NetworkState::status == _network_state_server )
+    {
+        checkOccupationStatus();
+        generateUnits();
     }
+    else
+    {
+        if( unit_generation_timer.count() == true )
+        {
+            unit_generation_timer.reset();
+        }
+    }
+
+
 }

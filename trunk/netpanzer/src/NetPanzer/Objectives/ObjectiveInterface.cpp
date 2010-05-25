@@ -16,7 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Objectives/ObjectiveInterface.hpp"
+#include "ObjectiveInterface.hpp"
+#include "Objective.hpp"
 
 #include <stdio.h>
 #include <memory>
@@ -27,37 +28,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
+
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
-#include "Objectives/Outpost.hpp"
-#include "Interfaces/GameConfig.hpp"
 
+#include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetPacket.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+
 #include "Network/ClientSocket.hpp"
 
-std::vector<Objective*> ObjectiveInterface::objective_list;
-
-unsigned long ObjectiveInterface::objective_position_enum_list_size;
-ObjectiveID   ObjectiveInterface::objective_position_enum_index;
-Uint16        ObjectiveInterface::objective_position_enum_player_id;
-
-NetMessageEncoder ObjectiveInterface::message_encoder;
-
-SDL_mutex* ObjectiveInterface::mutex = 0;
+Objective** ObjectiveInterface::objective_list = 0;
+int ObjectiveInterface::num_objectives = 0;
 
 void
 ObjectiveInterface::cleanUpObjectiveList()
 {
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        delete *i;
+    if ( objective_list )
+    {
+        for ( int n=0; n < num_objectives; ++n )
+        {
+            delete objective_list[n];
+        }
+        delete[] objective_list;
+        objective_list = 0;
     }
 
-    objective_list.clear();
+    num_objectives = 0;
 }
 
 void
@@ -131,10 +133,16 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
         std::stringstream ss(objectivecount);
         ss >> objective_count;
 
+        if ( objective_count > 0 )
+        {
+            objective_list = new Objective*[objective_count];
+            num_objectives = 0;
+        }
+
         size_t loc_x, loc_y;
         size_t world_x, world_y;
         std::string name;
-        cleanUpObjectiveList();
+
         for (ObjectiveID objective_index = 0; objective_index < objective_count; objective_index++ )
         {
             Objective *objective_obj;
@@ -146,121 +154,146 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
-            objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
+            objective_obj = new Objective(objective_index, iXY(world_x, world_y),
                     BoundBox( -48, -32, 48, 32 )
                     );
             
-            strcpy(objective_obj->objective_state.name, name.c_str());
-            objective_list.push_back(objective_obj);
+            strcpy(objective_obj->name, name.c_str());
+            objective_list[objective_index] = objective_obj;
+            ++num_objectives;
         } // ** for
     }
     catch(std::exception& e)
     {
+        cleanUpObjectiveList();
         throw Exception("Error while reading outpost definition '%s': %s",
                 file_path, e.what());
     }
 }
 
-unsigned char
-ObjectiveInterface::quearyObjectiveLocationStatus(iXY &loc,
-        Uint16 player_id, Objective **objective_ptr )
-{
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        ObjectiveState *objective_state = & ((*i)->objective_state);
-
-        if ( objective_state->selection_box.contains( loc ) == true ) {
-            if ( objective_state->occupation_status == _occupation_status_occupied ) {
-                if (objective_state->occupying_player->getID() == player_id) {
-                    *objective_ptr = *i;
-                    return( _player_occupied_objective_found );
-                } // ** if
-                else {
-                    *objective_ptr = *i;
-                    return( _enemy_occupied_objective_found );
-                } // ** else
-            } // ** if
-            else {
-                *objective_ptr = *i;
-                return( _unoccupied_objective_found );
-            } // ** else
-        } // ** if
-    } // ** if
-
-    return( _no_objective_found );
-}
-
+/*
+ * Only used in server, when received a packet from a player.
+ */
 void
-ObjectiveInterface::processTerminalNetPacket(const NetPacket* packet)
+ObjectiveInterface::serverHandleNetPacket(const NetPacket* packet)
 {
-    const NetMessage* message = packet->getNetMessage();
-    const ObjectiveMessage* objectiveMessage = 0;
-    switch(message->message_id) {
-        case _net_message_id_term_unit_gen: {
-            const TerminalOutpostUnitGenRequest* request =
-                (const TerminalOutpostUnitGenRequest*) message;
-            objectiveMessage = &(request->unit_gen_request);
-            break;
-        }
-        case _net_message_id_term_output_loc: {
-            const TerminalOutpostOutputLocRequest* request =
-                (const TerminalOutpostOutputLocRequest*) message;
-            objectiveMessage = &(request->output_loc_request);
-            break;
-        }
-        default:
-            LOGGER.warning(
-                    "Unknown objective terminal message (id %u, player %u)",
-                    message->message_id, packet->fromPlayer);
-            return;
-    }                                       
-
-    const PlayerState* player 
-        = PlayerInterface::getPlayer(packet->fromPlayer);
-    if(!player) {
+    const PlayerState* player = PlayerInterface::getPlayer(packet->fromPlayer);
+    if ( !player )
+    {
         LOGGER.warning("Couldn't find player for packet %u.",
                 packet->fromPlayer);
         return;
     }
-    
-    sendMessage(objectiveMessage, player);
+
+    const NetMessage* message = packet->getNetMessage();
+
+    switch(message->message_id)
+    {
+        case _net_message_id_change_generating_unit:
+        {
+            const ObjectiveChangeGeneratingUnit* msg =
+                (const ObjectiveChangeGeneratingUnit*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                objective_list[obj_id]->changeUnitGeneration(msg->unit_gen_on, msg->unit_type);
+                if ( packet->fromClient )
+                {
+                    packet->fromClient->sendMessage(msg, msg->getSize());
+                }
+            }
+
+            break;
+        }
+
+        case _net_message_id_change_output_location:
+        {
+            const ObjectiveChangeOutputLocation* msg =
+                (const ObjectiveChangeOutputLocation*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                MapInterface::pointXYtoMapXY(iXY(msg->getPointX(), msg->getPointY()),
+                                             &(objective_list[obj_id]->unit_collection_loc) );
+                if ( packet->fromClient )
+                {
+                    packet->fromClient->sendMessage(msg, msg->getSize());
+                }
+            }
+
+            break;
+        }
+
+        default:
+            LOGGER.warning(
+                    "Unknown objective terminal message (id %u, player %u)",
+                    message->message_id, packet->fromPlayer);
+    }
 }
 
 void
-ObjectiveInterface::sendMessage(const ObjectiveMessage* message,
-        const PlayerState* player)
-{
-    if(message->getObjectiveID() >= objective_list.size()) {
-        LOGGER.warning("Received malformed objective message: id out of range");
-        return;
-    }
-    Objective* objective = objective_list[message->getObjectiveID()];
-    if(player && objective->objective_state.occupying_player != player) {
-        LOGGER.warning(
-                "Terminal message from player %u for objective %u not allowed.",
-                player->getID(), message->getObjectiveID());
-        return;
-    }
-    objective_list[message->getObjectiveID()]->processMessage(message);
-}
-
-void
-ObjectiveInterface::processNetMessages(const NetMessage* message)
+ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
 {
     switch(message->message_id) {
         case _net_message_id_occupation_status_update:
         {
-            const ObjectiveOccupationUpdate *occupation_update
-                = (const ObjectiveOccupationUpdate*) message;
-            sendMessage( &(occupation_update->status_update) );
+            const ObjectiveOccupationUpdate* msg =
+                (const ObjectiveOccupationUpdate*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                Uint16 player_id = msg->getPlayerId();
+                if ( player_id < PlayerInterface::getMaxPlayers() )
+                {
+                    objective_list[obj_id]->changeOwner(PlayerInterface::getPlayer(player_id));
+                }
+            }
+
             break;
         }
 
         case _net_message_id_objective_sync:
         {
-            const ObjectiveSyncMesg* sync_mesg 
-                = (const ObjectiveSyncMesg*) message;
-            sendMessage( &(sync_mesg->sync_data) );
+            const ObjectiveSyncMesg* msg =
+                (const ObjectiveSyncMesg*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                objective_list[obj_id]->syncFromData(msg->sync_data);
+            }
+            break;
+        }
+
+        case _net_message_id_change_generating_unit:
+        {
+            const ObjectiveChangeGeneratingUnit* msg =
+                (const ObjectiveChangeGeneratingUnit*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                objective_list[obj_id]->changeUnitGeneration(msg->unit_gen_on, msg->unit_type);
+            }
+
+            break;
+        }
+
+        case _net_message_id_change_output_location:
+        {
+            const ObjectiveChangeOutputLocation* msg =
+                (const ObjectiveChangeOutputLocation*) message;
+
+            ObjectiveID obj_id = msg->getObjectiveId();
+            if ( obj_id < num_objectives )
+            {
+                MapInterface::pointXYtoMapXY(iXY(msg->getPointX(), msg->getPointY()),
+                                             &(objective_list[obj_id]->unit_collection_loc) );
+            }
+
             break;
         }
         
@@ -274,140 +307,40 @@ ObjectiveInterface::processNetMessages(const NetMessage* message)
 void
 ObjectiveInterface::updateObjectiveStatus()
 {
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        (*i)->updateStatus();
+    for ( int i = 0; i < num_objectives; ++i )
+    {
+        objective_list[i]->updateStatus();
     }
-}
-
-void
-ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
-{
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        (*i)->offloadGraphics(sorter);
-    }
-}
-
-
-bool
-ObjectiveInterface::testRuleObjectiveOccupationRatio(
-        Uint16 player_index, float precentage)
-{
-    size_t occupation_ratio = (size_t)
-        ( ((float) objective_list.size()) * precentage  + 0.999);
-
-    if (occupation_ratio == 0)
-        occupation_ratio = 1;
-
-    std::vector<Objective*>::iterator i;
-    size_t occupied = 0;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        ObjectiveState *objective_state = & ((*i)->objective_state);
-        if(objective_state->occupation_status == _occupation_status_occupied) {
-            Uint16 occuping_player_index 
-                = objective_state->occupying_player->getID();
-
-            if ( occuping_player_index == player_index ) {
-                occupied++;
-            } else if (PlayerInterface::isAllied(
-                        occuping_player_index, player_index) &&
-                        PlayerInterface::isAllied(player_index,
-                            occuping_player_index)) {
-                    occupied++;
-            }
-        }
-    }
-
-    if(occupied >= occupation_ratio)
-        return true;
-
-    return false;
 }
 
 void
 ObjectiveInterface::disownPlayerObjectives(Uint16 player_id)
 {
-    DisownPlayerObjective disown_player_objective;
-
-    for(Uint16 i = 0; i < objective_list.size(); i++) {
-        disown_player_objective.set(i, player_id);
-        sendMessage(&disown_player_objective);
-    }
-}
-
-ObjectiveState*
-ObjectiveInterface::getObjectiveState( ObjectiveID objective_id )
-{
-    return & (objective_list.at(objective_id)->objective_state);
-}
-
-OutpostStatus
-ObjectiveInterface::getOutpostStatus( ObjectiveID objective_id )
-{
-    OutpostStatus outpost_status;
-    
-    Outpost *outpost_ptr 
-        = dynamic_cast<Outpost*> (objective_list.at(objective_id));
-    assert(outpost_ptr != 0);
-
-    outpost_ptr->getOutpostStatus( outpost_status );
-
-    return outpost_status;
-}
-
-void
-ObjectiveInterface::startObjectivePositionEnumeration()
-{
-    objective_position_enum_index	= 0;
-    objective_position_enum_list_size = objective_list.size();
-    objective_position_enum_player_id = PlayerInterface::getLocalPlayerIndex();
-}
-
-bool
-ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
-        unsigned char *objective_disposition, ObjectiveID *objective_id)
-{
-    ObjectiveState *objective_state;
-
-    if( objective_position_enum_index <  objective_position_enum_list_size )
+    for(Uint16 i = 0; i < num_objectives; ++i)
     {
-        objective_state = &(objective_list[ objective_position_enum_index ]->objective_state);
-
-        (*objective_rect) = objective_state->area.getAbsRect( objective_state->location );
-        if( objective_id != 0 )
+        if ( objective_list[i]->occupying_player
+             && objective_list[i]->occupying_player->getID() == player_id )
         {
-            (*objective_id) = objective_position_enum_index;
-        }
+            objective_list[i]->changeOwner(0);
 
-        if ( objective_state->occupation_status == _occupation_status_occupied )
-        {
-            if ( objective_position_enum_player_id != objective_state->occupying_player->getID() )
-            {
-                if (PlayerInterface::isAllied(objective_state->occupying_player->getID() , objective_position_enum_player_id)  )
-                {
-                    (*objective_disposition) = _objective_disposition_allie;
-                }
-                else
-                {
-                    (*objective_disposition) = _objective_disposition_enemy;
-                }
-            }
-            else
-            {
-                (*objective_disposition) = _objective_disposition_player;
-            }
+            ObjectiveOccupationUpdate update_mesg;
+            update_mesg.set( i, 0xffff);
+            SERVER->broadcastMessage(&update_mesg, sizeof(update_mesg));
         }
-        else
-        {
-            (*objective_disposition) = _objective_disposition_unoccupied;
-        }
-
-        objective_position_enum_index++;
-        return true;
     }
+}
 
-    return false;
+Objective*
+ObjectiveInterface::getObjectiveAtWorldXY(const iXY& loc)
+{
+    for ( Uint16 i = 0; i < num_objectives; ++i )
+    {
+        if ( objective_list[i]->selection_box.contains( loc ) )
+        {
+            return objective_list[i];
+        }
+    }
+    return 0;
 }
 
 void
@@ -417,8 +350,7 @@ ObjectiveInterface::syncObjectives( ClientSocket * client )
     unsigned int buffer_pos = 0;
     ObjectiveSyncMesg msg;
     msg.setSize(sizeof(ObjectiveSyncMesg));
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); ++i)
+    for(int i = 0; i < num_objectives; ++i )
     {
         if ( buffer_pos+sizeof(ObjectiveSyncMesg) > sizeof(buffer) )
         {
@@ -426,7 +358,7 @@ ObjectiveInterface::syncObjectives( ClientSocket * client )
             buffer_pos=0;
         }
         
-        (*i)->getSyncData( msg.sync_data );
+        objective_list[i]->getSyncData( msg.sync_data );
         memcpy(buffer+buffer_pos, &msg, sizeof(ObjectiveSyncMesg));
         buffer_pos += sizeof(ObjectiveSyncMesg);
     }

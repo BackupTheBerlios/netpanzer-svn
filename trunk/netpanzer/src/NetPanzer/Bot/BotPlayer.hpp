@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Bot.hpp"
 #include "Util/Timer.hpp"
 
-class ObjectiveState;
+class Objective;
 
 #include <vector>
 typedef std::vector<int> playerList_t;
@@ -44,8 +44,6 @@ class BotPlayer : public Bot {
         int getRandomEnemyPlayer();
         UnitBase *getRandomEnemy();
 
-        outpostList_t getOutposts(int disposition);
-        ObjectiveState *getRandomOutpost(int disposition);
         void unitOccupyOupost(UnitBase *unit);
         void outpostProduce();
 };

@@ -81,7 +81,7 @@ ClientMessageRouter::routeMessage(const NetMessage* message)
             break;
 
         case _net_message_class_objective:
-            ObjectiveInterface::processNetMessages(message);
+            ObjectiveInterface::clientHandleNetMessage(message);
             break;
 
         case _net_message_class_game_control:

@@ -52,10 +52,6 @@ void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
             UnitInterface::processNetPacket(packet);
             break;
 
-        case _net_message_id_term_unit_gen:
-        case _net_message_id_term_output_loc:
-            ObjectiveInterface::processTerminalNetPacket( packet );
-            break;
         default:
             LOGGER.warning("unnown Terminal Message (id %d, player %u)",
                     message->message_id, packet->fromPlayer);
@@ -68,6 +64,10 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
     switch (message->message_class) {
         case _net_message_class_terminal:
             processTerminalPacket(packet);
+            break;
+
+        case _net_message_class_objective:
+            ObjectiveInterface::serverHandleNetPacket(packet);
             break;
 
         case _net_message_class_system:

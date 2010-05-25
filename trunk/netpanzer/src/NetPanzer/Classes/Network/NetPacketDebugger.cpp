@@ -247,16 +247,6 @@ void NetPacketDebugger::logTerminalMessage(std::ostream& log,
             logAICommand(log, cmd);
             break;
         }
-        case _net_message_id_term_unit_gen:
-        {
-            log << "UnitGen: ";
-            break;
-        }
-        case _net_message_id_term_output_loc:
-        {
-            log << "OutpLoc: ";
-            break;
-        }
         default:
         {
             log << "?";

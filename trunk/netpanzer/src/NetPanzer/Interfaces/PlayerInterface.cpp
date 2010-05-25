@@ -20,9 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Units/UnitInterface.hpp"
-#include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Units/UnitInterface.hpp"
+
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Objectives/Objective.hpp"
 
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -374,12 +376,55 @@ bool PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** playe
     return( false );
 }
 
+static bool testRuleObjectiveOccupationRatio( Uint16 player_index,
+                                              float precentage )
+{
+    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
+
+    size_t occupation_ratio = (size_t) ( ((float) num_objectives) * precentage  + 0.999);
+
+    if (occupation_ratio == 0)
+    {
+        occupation_ratio = 1;
+    }
+
+    size_t occupied = 0;
+    for ( int i = 0; i < num_objectives; ++i )
+    {
+        Objective *objective_state = ObjectiveInterface::getObjective(i);
+
+        if ( objective_state->occupying_player != 0 )
+        {
+            Uint16 occuping_player_index = objective_state->occupying_player->getID();
+
+            if ( occuping_player_index == player_index )
+            {
+                occupied++;
+            }
+            else if ( PlayerInterface::isAllied(occuping_player_index, player_index)
+                      && PlayerInterface::isAllied(player_index, occuping_player_index) )
+            {
+                occupied++;
+            }
+        }
+    }
+
+    if ( occupied >= occupation_ratio )
+    {
+        return true;
+    }
+
+    return false;
+}
+
 bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** player_state )
 {
     unsigned long player_index;
 
-    for ( player_index = 0; player_index < max_players; player_index++ ) {
-        if ( ObjectiveInterface::testRuleObjectiveOccupationRatio( player_index, precentage ) == true ) {
+    for ( player_index = 0; player_index < max_players; player_index++ )
+    {
+        if ( testRuleObjectiveOccupationRatio(player_index, precentage) )
+        {
             *player_state = &player_lists[ player_index ];
             return true;
         } // ** if

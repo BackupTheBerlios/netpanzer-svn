@@ -18,36 +18,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVEINTERFACE_HPP
 #define _OBJECTIVEINTERFACE_HPP
 
-#include "SDL.h"
+#include "Core/CoreTypes.hpp"
 
-#include "Objectives/Objective.hpp"
-#include "ArrayUtil/ArrayTemplate.hpp"
-
-#include "Classes/Network/NetPacket.hpp"
-#include "Classes/Network/NetMessageEncoder.hpp"
-
-enum { _no_objective_found,
-       _player_occupied_objective_found,
-       _enemy_occupied_objective_found,
-       _unoccupied_objective_found
-     };
-
-enum { _objective_disposition_unoccupied,
-       _objective_disposition_player,
-       _objective_disposition_allie,
-       _objective_disposition_enemy
-     };
-
+class Objective;
 class NetPacket;
+class NetMessage;
+class iXY;
+class ClientSocket;
 
 class ObjectiveInterface
 {
 protected:
-    static std::vector<Objective*> objective_list;
+
+    static Objective** objective_list;
+    static int num_objectives;
 
     static void cleanUpObjectiveList();
-
-    static SDL_mutex* mutex;
 
 public:
     static void cleanUp();
@@ -56,50 +42,30 @@ public:
 
     static void loadObjectiveList( const char *file_path );
 
-    static unsigned char quearyObjectiveLocationStatus(iXY &loc,
-            Uint16 player_id, Objective **objective_ptr);
-
-    static void processTerminalNetPacket(const NetPacket* packet);
-    static void sendMessage(const ObjectiveMessage* message,
-            const PlayerState* player = 0);
-
-    static void processNetMessages(const NetMessage* message);
+    static void serverHandleNetPacket(const NetPacket* packet);
+    static void clientHandleNetMessage(const NetMessage* message);
 
     static void updateObjectiveStatus();
 
-    static void offloadGraphics( SpriteSorter &sorter );
-
-    static bool testRuleObjectiveOccupationRatio(Uint16 player_index,
-            float precentage );
-
     static void disownPlayerObjectives(Uint16 player_id);
 
-    static ObjectiveState * getObjectiveState( ObjectiveID objective_id );
-
-    static OutpostStatus getOutpostStatus( ObjectiveID objective_id );
+    static Objective* getObjective( ObjectiveID objective_id )
+    {
+        return objective_list[objective_id];
+    }
+    
+    static Objective* getObjectiveAtWorldXY( const iXY& loc );
 
     static size_t getObjectiveCount()
     {
-        return objective_list.size();
+        return num_objectives;
     }
 
     static int getObjectiveLimit();
 
-protected:
-    static NetMessageEncoder message_encoder;
-
-public:
     static void syncObjectives( ClientSocket * client );
 
     // Objective positions, almost exclusivly for mini map
-protected:
-    static ObjectiveID   objective_position_enum_index;
-    static unsigned long objective_position_enum_list_size;
-    static Uint16        objective_position_enum_player_id;
-
-public:
-    static void startObjectivePositionEnumeration();
-    static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, ObjectiveID *objective_id);
 };
 
 

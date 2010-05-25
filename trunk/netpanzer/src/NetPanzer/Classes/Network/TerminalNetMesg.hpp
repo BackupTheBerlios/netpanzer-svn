@@ -20,12 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
-#include "Classes/ObjectiveMessageTypes.hpp"
 
-enum { _net_message_id_term_unit_cmd,
-       _net_message_id_term_unit_gen,
-       _net_message_id_term_output_loc
-     };
+enum { _net_message_id_term_unit_cmd };
 
 #ifdef MSVC
 #pragma pack(1)
@@ -41,33 +37,8 @@ public:
         message_class = _net_message_class_terminal;
         message_id = _net_message_id_term_unit_cmd;
     }
-}
-__attribute__((packed));
-
-class TerminalOutpostUnitGenRequest : public NetMessage
-{
-public:
-    ChangeUnitGeneration unit_gen_request;
-
-    TerminalOutpostUnitGenRequest()
-    {
-        message_class = _net_message_class_terminal;
-        message_id = _net_message_id_term_unit_gen;
-    }
-} __attribute__((packed));
-
-class TerminalOutpostOutputLocRequest : public NetMessage
-{
-public:
-    ChangeOutputLocation output_loc_request;
-
-    TerminalOutpostOutputLocRequest()
-    {
-        message_class = _net_message_class_terminal;
-        message_id = _net_message_id_term_output_loc;
-    }
-}
-__attribute__((packed));
+    
+}__attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

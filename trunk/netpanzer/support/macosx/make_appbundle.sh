@@ -41,7 +41,7 @@ cp netpanzer "${CONTENTSDIR}/MacOS/"
 echo "."
 
 echo "Copying needed frameworks..."
-cp -R /Library/Frameworks/SDL{,_image}.framework "${CONTENTSDIR}/Frameworks"
+cp -R /Library/Frameworks/SDL{,_mixer}.framework "${CONTENTSDIR}/Frameworks"
 
 echo "Creating info files..."
 

@@ -24,10 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Units/UnitInterface.hpp"
-#include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
+
+#include "Units/UnitInterface.hpp"
+
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Objectives/Objective.hpp"
+#include "Classes/Network/ObjectiveNetMessage.hpp"
 
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
@@ -609,15 +613,13 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
     }
     else if (event.event == MouseEvent::EVENT_DOWN)
     {
-        Objective *objective = 0;
-        click_status = ObjectiveInterface::quearyObjectiveLocationStatus(
-            world_pos, PlayerInterface::getLocalPlayerIndex(), &objective);
+        Objective *objective = ObjectiveInterface::getObjectiveAtWorldXY(world_pos);
 	
-        if ( click_status == _player_occupied_objective_found )
+        if ( objective && objective->occupying_player == PlayerInterface::getLocalPlayer() )
         {
             selection_box_active = false;
-            outpost_goal_selection = objective->objective_state.ID;
-            output_pos_press = objective->objective_state.location; 
+            outpost_goal_selection = objective->id;
+            output_pos_press = objective->location;
         }
         else
         {
@@ -641,33 +643,28 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         
         if (outpost_goal_selection != OBJECTIVE_NONE )
         {
-            Objective *objective = 0;
-            int cs = ObjectiveInterface::quearyObjectiveLocationStatus(
-                    world_pos, PlayerInterface::getLocalPlayerIndex(),
-                    &objective);
-            
-            if ( (cs == _player_occupied_objective_found) 
-                    && outpost_goal_selection == objective->objective_state.ID
-               )
+            Objective *objective = ObjectiveInterface::getObjectiveAtWorldXY(world_pos);
+
+            if ( objective
+                 && objective->occupying_player == PlayerInterface::getLocalPlayer()
+                 && outpost_goal_selection == objective->id )
             {
                 // we've let go of the mouse on the building so we're
                 //  not changing the spawn point
-                selected_objective_id = objective->objective_state.ID;
+                selected_objective_id = objective->id;
                 activateVehicleSelectionView( selected_objective_id );
             }
             else
             {
-                TerminalOutpostOutputLocRequest term_mesg;
+                ObjectiveChangeOutputLocation msg;
                 
-                term_mesg.output_loc_request.set( outpost_goal_selection,
-                        world_pos);
-                
-                CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
+                msg.set( outpost_goal_selection, world_pos);
+                CLIENT->sendMessage(&msg, sizeof(msg));
 
-                if ( NetworkState::status == _network_state_client )
-                {    
-                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
-                }
+//                if ( NetworkState::status == _network_state_client )
+//                {
+//                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
+//                }
             }
             outpost_goal_selection = OBJECTIVE_NONE;
             return;
@@ -1069,9 +1066,9 @@ WorldInputCmdProcessor::isObjectiveSelected()
 const char*
 WorldInputCmdProcessor::getSelectedObjectiveName()
 {
-    ObjectiveState *objective_state;
+    Objective *objective_state;
                                                                                 
-    objective_state = ObjectiveInterface::getObjectiveState(selected_objective_id);
+    objective_state = ObjectiveInterface::getObjective(selected_objective_id);
                                                                                 
     return objective_state->name;
 }
@@ -1079,9 +1076,9 @@ WorldInputCmdProcessor::getSelectedObjectiveName()
 iXY
 WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
 {
-    ObjectiveState *objective_state;
+    Objective *objective_state;
                                                                                 
-    objective_state = ObjectiveInterface::getObjectiveState(selected_objective_id);
+    objective_state = ObjectiveInterface::getObjective(selected_objective_id);
                                                                                 
     return objective_state->location;
 }

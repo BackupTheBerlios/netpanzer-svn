@@ -122,7 +122,6 @@ void GameView::doDraw(Surface &va, Surface &clientArea)
 
     UnitInterface::offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
-    ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
     SPRITE_SORTER.blitLists(&clientArea);

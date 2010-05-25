@@ -158,48 +158,45 @@ BotPlayer::getRandomEnemy()
     return enemyUnit;
 }
 //-----------------------------------------------------------------
-/**
- *  Dispositions:
- *  _objective_disposition_unoccupied,
- *  _objective_disposition_player,
- *  _objective_disposition_allie,
- *  _objective_disposition_enemy
- *
- * @return list of outposts with this disposition
- */
-outpostList_t
-BotPlayer::getOutposts(int disposition)
-{
-    outpostList_t outposts;
-    iRect objRect;
-    unsigned char objectiveDisposition;
-    ObjectiveID   objectiveID;
 
-    ObjectiveInterface::startObjectivePositionEnumeration();
-    while (ObjectiveInterface::objectivePositionEnumeration(&objRect,
-            &objectiveDisposition, &objectiveID))
+static Objective* getRandomFreeOutpost()
+{
+    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
+    outpostList_t outposts;
+    for ( int i = 0; i < num_objectives; ++i )
     {
-        if (disposition == objectiveDisposition) {
-            outposts.push_back(objectiveID);
+        if ( ! ObjectiveInterface::getObjective(i)->occupying_player )
+        {
+            outposts.push_back(i);
         }
     }
-    return outposts;
-}
-//-----------------------------------------------------------------
-/**
- * @return objective with this disposition or 0
- */
-ObjectiveState *
-BotPlayer::getRandomOutpost(int disposition)
-{
-    ObjectiveState *result = 0;
-    outpostList_t outposts = getOutposts(disposition);
-    if (outposts.size() > 0) {
-        ObjectiveID outpostID = outposts[rand() % outposts.size()];
-        result = ObjectiveInterface::getObjectiveState(outpostID);
+
+    if ( ! outposts.empty() )
+    {
+        return ObjectiveInterface::getObjective(outposts[rand()%outposts.size()]);
     }
-    return result;
+    return 0;
 }
+
+static Objective* getRandomEnemyOrFreeOutpost()
+{
+    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
+    outpostList_t outposts;
+    for ( int i = 0; i < num_objectives; ++i )
+    {
+        if ( ObjectiveInterface::getObjective(i)->occupying_player == PlayerInterface::getLocalPlayer() )
+        {
+            outposts.push_back(i);
+        }
+    }
+
+    if ( ! outposts.empty() )
+    {
+        return ObjectiveInterface::getObjective(outposts[rand()%outposts.size()]);
+    }
+    return 0;
+}
+
 //-----------------------------------------------------------------
 /**
  * Occupy free or enemy oupost.
@@ -207,12 +204,14 @@ BotPlayer::getRandomOutpost(int disposition)
 void
 BotPlayer::unitOccupyOupost(UnitBase *unit)
 {
-    ObjectiveState *outpost =
-        getRandomOutpost(_objective_disposition_unoccupied);
-    if (!outpost) {
-        outpost = getRandomOutpost(_objective_disposition_enemy);
+    Objective *outpost = getRandomFreeOutpost();
+    if (!outpost)
+    {
+        outpost = getRandomEnemyOrFreeOutpost();
     }
-    if (outpost) {
+
+    if (outpost)
+    {
         // XXX hack, const occupation_pad_offset
         static const iXY occupation_pad_offset(224, 48);
 
@@ -230,14 +229,16 @@ BotPlayer::unitOccupyOupost(UnitBase *unit)
 void
 BotPlayer::outpostProduce()
 {
-    outpostList_t outposts = getOutposts(_objective_disposition_player);
-    for (outpostList_t::iterator i = outposts.begin();
-            i != outposts.end(); i++)
+    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
+    Objective* obj;
+    for ( int i = 0; i < num_objectives; ++i )
     {
-        OutpostStatus outpostStatus =
-            ObjectiveInterface::getOutpostStatus(*i);
-        if (outpostStatus.unit_generation_on_off == false) {
-            produceUnit(*i, rand() % UnitProfileInterface::getNumUnitTypes() );
+        obj = ObjectiveInterface::getObjective(i);
+        if ( obj->occupying_player
+             && obj->occupying_player == PlayerInterface::getLocalPlayer()
+             && obj->unit_generation_on_flag == false )
+        {
+            produceUnit( i, rand() % UnitProfileInterface::getNumUnitTypes() );
         }
     }
 }

@@ -18,25 +18,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Created on September 20, 2008, 10:49 AM
  */
 
-#include "Util/NTimer.hpp"
-
-
-#include "Util/Log.hpp"
 #include "MiniMap.hpp"
-
-
-// work in progres first has to change the input handling of game.
+#include "MouseEvent.hpp"
 
 #include "Core/CoreTypes.hpp"
-#include "Views/Components/MiniMap.hpp"
 #include "2D/Surface.hpp"
+
 #include "Interfaces/MapInterface.hpp"
-#include "MouseEvent.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "PowerUps/EnemyRadarPowerUp.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
+
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Objectives/Objective.hpp"
+
+#include "PowerUps/EnemyRadarPowerUp.hpp"
+
+#include "Util/NTimer.hpp"
+#include "Util/Log.hpp"
 
 MiniMap::MiniMap(int x, int y, int w, int h) : mousepos(0,0)
 {
@@ -151,34 +150,38 @@ void
 MiniMap::drawObjectives(Surface &dest)
 {
     iRect objective_rect, map_rect;
-    unsigned char objective_status;
     PIX color;
     ObjectiveID objective_id;
 
-    ObjectiveInterface::startObjectivePositionEnumeration();
+    Objective* obj;
+    ObjectiveID max_objective = ObjectiveInterface::getObjectiveCount();
 
-    while( ObjectiveInterface::objectivePositionEnumeration( &objective_rect, &objective_status, &objective_id ) )
+    for ( objective_id = 0; objective_id < max_objective; ++objective_id)
     {
-        ObjectiveState * obj_state = ObjectiveInterface::getObjectiveState(objective_id);
-
-	switch( objective_status )
+        // don't check for null must be always there
+        obj = ObjectiveInterface::getObjective(objective_id);
+        if ( obj->occupying_player )
         {
-            case _objective_disposition_unoccupied :
-                color = Color::white;
-                break;
-
-            case _objective_disposition_player :
+            if ( obj->occupying_player == PlayerInterface::getLocalPlayer() )
+            {
                 color = gameconfig->getPlayerOutpostRadarColor();
-                break;
-
-            case _objective_disposition_allie :
+            }
+            else if ( PlayerInterface::isAllied(obj->occupying_player->getID(),
+                                                PlayerInterface::getLocalPlayerIndex()) )
+            {
                 color = gameconfig->getAlliedOutpostRadarColor();
-                break;
-
-            case _objective_disposition_enemy :
-                color = obj_state->occupying_player->getColor();
-                break;
+            }
+            else
+            {
+                color = obj->occupying_player->getColor();
+            }
         }
+        else
+        {
+            color = Color::white;
+        }
+
+        objective_rect = obj->area.getAbsRect( obj->location );
 
         // magic 32 to convert from point to tile
         map_rect.min.x = int(float(objective_rect.min.x/32) / xratio)+position.x;
@@ -199,17 +202,16 @@ MiniMap::drawObjectives(Surface &dest)
 //        }
 
         //LOG(("%d", obj_state.outpost_type));
-        if(objective_status == _objective_disposition_player)
+        if ( obj->occupying_player == PlayerInterface::getLocalPlayer() )
         {
-            OutpostStatus status = ObjectiveInterface::getOutpostStatus(objective_id);
             //Only draw our unit collection location
             iXY objdest, src;
-            MapInterface::mapXYtoPointXY(status.unit_collection_loc, &objdest);
+            MapInterface::mapXYtoPointXY(obj->unit_collection_loc, &objdest);
             objdest.x = int(float(objdest.x/32) / xratio)+position.x;
             objdest.y = int(float(objdest.y/32) / yratio)+position.y;
             
-            src.x  = int(float(obj_state->location.x/32) / xratio)+position.x;
-            src.y  = int(float(obj_state->location.y/32) / yratio)+position.y;
+            src.x  = int(float(obj->location.x/32) / xratio)+position.x;
+            src.y  = int(float(obj->location.y/32) / yratio)+position.y;
             dest.drawLine(src.x, src.y, objdest.x, objdest.y, color);
         }
     }
