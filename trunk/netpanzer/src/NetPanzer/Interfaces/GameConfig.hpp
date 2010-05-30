@@ -123,6 +123,9 @@ public:
     static bool interface_show_flags;
     static bool interface_show_names;
 
+    static bool game_enable_bases;
+    static int  game_base_capture_mode; // 0=no capture, 1=normal, 2=...
+
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;

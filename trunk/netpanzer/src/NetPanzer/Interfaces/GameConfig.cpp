@@ -48,6 +48,9 @@ bool GameConfig::interface_show_health = true;
 bool GameConfig::interface_show_flags = true;
 bool GameConfig::interface_show_names = true;
 
+bool GameConfig::game_enable_bases = true;
+int  GameConfig::game_base_capture_mode = 1; // normal capture;
+
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
 // This generates the tables needed for script binding
@@ -97,15 +100,34 @@ static const ScriptVarBindRecord interface_setters[] =
     {0,0}
 };
 
+static const ScriptVarBindRecord game_getters[] =
+{
+    { "enable_bases",      GETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
+    { "base_capture_mode", GETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    {0,0}
+};
+
+static const ScriptVarBindRecord game_setters[] =
+{
+    { "enable_bases",      SETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
+    { "base_capture_mode", SETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    {0,0}
+};
+
 void GameConfig::registerScript(const char * table_name)
 {
 //    ScriptManager::registerLib( table_name, video_methods);
     ScriptManager::bindStaticVariables(table_name, "video",
                                        "ConfigVideoMetaTable",
                                        video_getters, video_setters);
+
     ScriptManager::bindStaticVariables(table_name, "interface",
                                        "ConfigInterfaceMetaTable",
                                        interface_getters, interface_setters);
+
+    ScriptManager::bindStaticVariables(table_name, "game",
+                                       "ConfigGameMetaTable",
+                                       game_getters, game_setters);
 
 }
 

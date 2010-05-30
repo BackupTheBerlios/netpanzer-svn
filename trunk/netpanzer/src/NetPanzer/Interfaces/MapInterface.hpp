@@ -164,6 +164,9 @@ public:
         return iXY(point.x / TILE_WIDTH, point.y / TILE_HEIGHT);
     }
 
+    static int pointXtoMapX(const int x) { return x/TILE_WIDTH; }
+    static int pointYtoMapY(const int y) { return y/TILE_HEIGHT; }
+
     static size_t mapXYtoOffset(size_t map_x, size_t map_y)
     {
         return mapXYtoOffset(iXY(map_x, map_y));

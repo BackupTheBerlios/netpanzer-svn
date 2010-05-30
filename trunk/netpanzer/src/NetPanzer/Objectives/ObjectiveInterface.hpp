@@ -45,6 +45,9 @@ public:
     static void serverHandleNetPacket(const NetPacket* packet);
     static void clientHandleNetMessage(const NetMessage* message);
 
+    static void sendChangeGeneratingUnit(ObjectiveID objective_id, Uint8 unit_type, bool active);
+    static void sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x, Uint32 map_y);
+
     static void updateObjectiveStatus();
 
     static void disownPlayerObjectives(Uint16 player_id);
@@ -65,7 +68,6 @@ public:
 
     static void syncObjectives( ClientSocket * client );
 
-    // Objective positions, almost exclusivly for mini map
 };
 
 

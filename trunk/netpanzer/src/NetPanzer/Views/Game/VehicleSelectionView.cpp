@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "VehicleSelectionView.hpp"
 
 #include "Classes/Network/TerminalNetMesg.hpp"
-#include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 
@@ -56,16 +55,9 @@ static void sendOutpostStatus()
         return;
     }
     
-    // Send the server the selected unit and whether factory power is on.
-    ObjectiveChangeGeneratingUnit msg;
-    
-    msg.set( CURRENT_SELECTED_OUTPOST_ID, (char) vsvSelectedUnit, vsvUnitGenOn );
-    
-    CLIENT->sendMessage(&msg, sizeof(msg));
-    
-//    if(NetworkState::status == _network_state_client) {
-//        ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
-//    }
+    ObjectiveInterface::sendChangeGeneratingUnit(CURRENT_SELECTED_OUTPOST_ID,
+                                                 (char)vsvSelectedUnit,
+                                                 vsvUnitGenOn);
 }
 
 static void bOK()

@@ -205,9 +205,9 @@ print 'Building version ' + NPVERSION + ' in ' + sys.platform
 # Configure Environments
 ################################################################
 
-env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
 
 # for this platform
 if thisplatform == 'darwin':

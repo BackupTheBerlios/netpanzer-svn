@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
-#include "Classes/Network/ObjectiveNetMessage.hpp"
 
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
@@ -656,15 +655,9 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
             }
             else
             {
-                ObjectiveChangeOutputLocation msg;
-                
-                msg.set( outpost_goal_selection, world_pos);
-                CLIENT->sendMessage(&msg, sizeof(msg));
-
-//                if ( NetworkState::status == _network_state_client )
-//                {
-//                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
-//                }
+                ObjectiveInterface::sendChangeOutputLocation(outpost_goal_selection,
+                                                             MapInterface::pointXtoMapX(world_pos.x),
+                                                             MapInterface::pointYtoMapY(world_pos.y));
             }
             outpost_goal_selection = OBJECTIVE_NONE;
             return;

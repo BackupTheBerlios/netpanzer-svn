@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_NET_MESSAGE_HPP
 #define _OBJECTIVE_NET_MESSAGE_HPP
 
+#include "Core/CoreTypes.hpp"
 #include "NetMessage.hpp"
 
 enum
@@ -36,8 +37,8 @@ class ObjectiveChangeOutputLocation : public NetMessage
 {
 private:
     ObjectiveID objective_id;
-    Sint32 new_point_x;
-    Sint32 new_point_y;
+    Uint32 map_x;
+    Uint32 map_y;
 
 public:
     ObjectiveChangeOutputLocation()
@@ -46,11 +47,11 @@ public:
         message_id = _net_message_id_change_output_location;
     }
 
-    void set(ObjectiveID id, iXY point)
+    void set(ObjectiveID id, Uint32 map_x, Uint32 map_y)
     {
         objective_id = ObjectiveID_toPortable(id);
-        new_point_x = htol32(point.x);
-        new_point_y = htol32(point.y);
+        this->map_x = htol32(map_x);
+        this->map_y = htol32(map_y);
     }
 
     ObjectiveID getObjectiveId() const
@@ -58,14 +59,14 @@ public:
         return ObjectiveID_fromPortable(objective_id);
     }
 
-    Sint32 getPointX() const
+    Uint32 getMapX() const
     {
-        return ltoh32(new_point_x);
+        return ltoh32(map_x);
     }
 
-    Sint32 getPointY() const
+    Uint32 getMapY() const
     {
-        return ltoh32(new_point_y);
+        return ltoh32(map_y);
     }
 
 }__attribute__((packed));
