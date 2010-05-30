@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -128,73 +129,55 @@ Objective::syncFromData(const ObjectiveSyncData& sync_data)
 }
 
 void
-Objective::attemptOccupationChange(UnitID unit_id)
+Objective::attemptOccupationChange(PlayerState* player)
 {
+    if ( player->getStatus() != _player_state_active )
+    {
+        return;
+    }
+
+    if ( occupying_player )
+    {
+        occupying_player->decObjectivesHeld();
+    }
+
+    occupying_player = player;
+    player->incObjectivesHeld();
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+
     ObjectiveOccupationUpdate msg;
-    int player_status;
+    msg.set(id, player->getID());
+    SERVER->broadcastMessage(&msg, sizeof(msg));
 
-    UnitBase* unit = UnitInterface::getUnit(unit_id);
-    PlayerState* player = unit->player;
-    player_status = player->getStatus();
+    ConsoleInterface::postMessage(Color::cyan, false, 0,
+                                  "'%s' has been occupied by '%s'",
+                                  name, player->getName().c_str() );
 
-    if ( occupying_player == 0 )
-    {
-        if ( player_status == _player_state_active )
-        {
-            occupying_player = player;
-            occupying_player->incObjectivesHeld();
-
-            msg.set( id, occupying_player->getID());
-            SERVER->broadcastMessage(&msg, sizeof(msg));
-
-            ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                    name, player->getName().c_str() );
-        }
-    }
-    else if (occupying_player != player)
-    {
-        if( player_status == _player_state_active  )
-        {
-            occupying_player->decObjectivesHeld();
-            occupying_player = player;
-            occupying_player->incObjectivesHeld();
-            msg.set(id, occupying_player->getID());
-
-            SERVER->broadcastMessage(&msg, sizeof(msg));
-            ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                    name, player->getName().c_str() );
-        }
-    }
 }
 
 void
 Objective::checkOccupationStatus()
 {
-    if( occupation_status_timer.count()  )	//
+    if ( occupation_status_timer.count() )
     {
-        UnitBase *unit_ptr;
         iRect bounding_area;
-        iXY occupation_pad_loc;
 
-        occupation_pad_loc = location + occupation_pad_offset;
-        bounding_area = capture_area.getAbsRect( occupation_pad_loc );
-
-
-        UnitInterface::queryClosestUnit( &unit_ptr,
-                                          bounding_area,
-                                          occupation_pad_loc
-                                        );
-
-        if ( unit_ptr != 0 )
+        if ( GameConfig::game_base_capture_mode == 1 )
         {
-            iXY unit_loc;
-            unit_loc = unit_ptr->unit_state.location;
-            if ( capture_area.bounds( occupation_pad_loc, unit_loc ) ) {
-                attemptOccupationChange( unit_ptr->id );
-            }
+            iXY occupation_pad_loc(location);
+            occupation_pad_loc += occupation_pad_offset;
+            bounding_area = capture_area.getAbsRect( occupation_pad_loc );
+        }
+        else if ( GameConfig::game_base_capture_mode == 2 )
+        {
+            bounding_area = area.getAbsRect(location);
+        }
 
-        } // ** if unit_ptr != 0
-
+        PlayerState *player = UnitInterface::querySinglePlayerInArea(bounding_area);
+        if ( player && player != occupying_player )
+        {
+            attemptOccupationChange(player);
+        }
     } // ** if occupation_status_timer.count()
 
 }
@@ -242,7 +225,10 @@ Objective::updateStatus()
 {
     if ( NetworkState::status == _network_state_server )
     {
-        checkOccupationStatus();
+        if ( GameConfig::game_base_capture_mode > 0 )
+        {
+            checkOccupationStatus();
+        }
         generateUnits();
     }
     else
@@ -252,6 +238,4 @@ Objective::updateStatus()
             unit_generation_timer.reset();
         }
     }
-
-
 }

@@ -459,6 +459,27 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
     }
 }
 
+PlayerState *
+UnitInterface::querySinglePlayerInArea(const iRect& rect)
+{
+    PlayerState* player = 0;
+    for ( Units::iterator i = units.begin(); i != units.end(); ++i )
+    {
+        UnitBase* unit = i->second;
+        if ( !rect.contains(unit->unit_state.location) )
+        {
+            continue;
+        }
+
+        if ( player && unit->player != player )
+        {
+            return 0;
+        }
+        player = unit->player;
+    }
+    return player;
+}
+
 /****************************************************************************/
 
 bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr,

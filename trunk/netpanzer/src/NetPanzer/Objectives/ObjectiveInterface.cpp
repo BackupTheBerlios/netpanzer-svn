@@ -485,7 +485,7 @@ ObjectiveInterface::syncObjectives( ClientSocket * client )
             client->sendMessage(buffer,buffer_pos);
             buffer_pos=0;
         }
-        
+        msg.set(i);
         objective_list[i]->getSyncData( msg.sync_data );
         memcpy(buffer+buffer_pos, &msg, sizeof(ObjectiveSyncMesg));
         buffer_pos += sizeof(ObjectiveSyncMesg);

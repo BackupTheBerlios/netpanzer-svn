@@ -126,6 +126,8 @@ public:
                             const iRect& rect, Uint16 player_id,
                             unsigned char search_flags);
 
+    static PlayerState* querySinglePlayerInArea(const iRect& rect);
+
     static bool queryClosestUnit( UnitBase **closest_unit_ptr,
                                    iXY &loc,
                                    Uint16 player_id,

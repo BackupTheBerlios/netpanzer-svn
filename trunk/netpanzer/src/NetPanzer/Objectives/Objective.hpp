@@ -62,7 +62,7 @@ public:
     void updateStatus();
 
 private:
-    void attemptOccupationChange(UnitID unit_id);
+    void attemptOccupationChange(PlayerState* player);
 
     void checkOccupationStatus( void );
 
