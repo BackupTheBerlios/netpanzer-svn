@@ -93,16 +93,16 @@ string
 InfoSocket::prepareStatusPacket()
 {
     stringstream s;
-    int playingPlayers = PlayerInterface::countPlayers();
-    int maxPlayers = PlayerInterface::getMaxPlayers();
+    PlayerID playingPlayers = PlayerInterface::countPlayers();
+    PlayerID maxPlayers = PlayerInterface::getMaxPlayers();
     
     s << statusHead
       << "\\mapname\\"    << gameconfig->map
       << "\\mapcycle\\"   << gameconfig->mapcycle
-      << "\\numplayers\\" << playingPlayers
-      << "\\maxplayers\\" << maxPlayers;
+      << "\\numplayers\\" << (int)playingPlayers
+      << "\\maxplayers\\" << (int)maxPlayers;
     
-    if ( !playingPlayers )
+    if ( playingPlayers == MIN_PLAYER_ID )
         s << "\\empty\\1";
     else if ( playingPlayers==maxPlayers )
         s << "\\full\\1";
@@ -115,7 +115,9 @@ InfoSocket::prepareStatusPacket()
       << "\\objectivelimit\\" << ObjectiveInterface::getObjectiveLimit();
 
     int n = 0;
-    for(int i = 0; i < maxPlayers; ++i) {
+    PlayerID i;
+    for ( i = 0; i < maxPlayers; ++i)
+    {
         PlayerState* playerState = PlayerInterface::getPlayer(i);
         if(playerState->getStatus() != _player_state_active)
             continue;

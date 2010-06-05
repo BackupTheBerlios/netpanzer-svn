@@ -31,7 +31,7 @@ NetMessageEncoder::NetMessageEncoder(bool sendAsClient)
     resetEncoder();
 }
 
-NetMessageEncoder::NetMessageEncoder(Uint16 player_index)
+NetMessageEncoder::NetMessageEncoder(PlayerID player_index)
 {
     usePlayerID = true;
     sendAsClient = false;

@@ -37,7 +37,7 @@ public:
         
     static void runStr(const char * runname, const char * str);
     static bool runUserCommand(const char * str);
-    static bool runServerCommand(const char * str, Uint16 runPlayer);
+    static bool runServerCommand(const char * str, PlayerID runPlayer);
     
     // NOTE: runFile has to run after FileSystem has been initialized.
     static void runFile(const char * runname, const char * filename);

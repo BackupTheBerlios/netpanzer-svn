@@ -300,8 +300,8 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
                 break;
             }
 
-            Uint16 player_id = msg->getPlayerId();
-            if ( player_id >= PlayerInterface::getMaxPlayers() && player_id != 0xffff )
+            PlayerID player_id = msg->getPlayerId();
+            if ( player_id >= PlayerInterface::getMaxPlayers() && player_id != INVALID_PLAYER_ID )
             {
                 LOGGER.warning("OICH_OOU CHEAT SERVER sent invalid player_id %u, max is %u",
                                player_id, PlayerInterface::getMaxPlayers());
@@ -310,7 +310,7 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
             
             PlayerState* player = 0;
 
-            if ( player_id != 0xffff )
+            if ( player_id != INVALID_PLAYER_ID )
             {
                 player = PlayerInterface::getPlayer(player_id);
                 if ( player && player->getStatus() != _player_state_active )
@@ -442,7 +442,7 @@ ObjectiveInterface::updateObjectiveStatus()
 }
 
 void
-ObjectiveInterface::disownPlayerObjectives(Uint16 player_id)
+ObjectiveInterface::disownPlayerObjectives(PlayerID player_id)
 {
     for(Uint16 i = 0; i < num_objectives; ++i)
     {
@@ -452,7 +452,7 @@ ObjectiveInterface::disownPlayerObjectives(Uint16 player_id)
             objective_list[i]->changeOwner(0);
 
             ObjectiveOccupationUpdate update_mesg;
-            update_mesg.set( i, 0xffff);
+            update_mesg.set( i, INVALID_PLAYER_ID);
             SERVER->broadcastMessage(&update_mesg, sizeof(update_mesg));
         }
     }

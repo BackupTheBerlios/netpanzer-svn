@@ -222,7 +222,7 @@ public:
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
 {
 private:
-    Uint16 player_id;
+    PlayerID player_id;
 
 public:
     ConnectMesgNetPanzerClientDisconnect()
@@ -231,13 +231,13 @@ public:
         message_id = _net_message_id_connect_netPanzer_client_disconnect;
     }
 
-    void setPlayerID(Uint16 id)
+    void setPlayerID(PlayerID id)
     {
-        player_id = htol16(id);
+        player_id = id;
     }
-    Uint16 getPlayerID() const
+    PlayerID getPlayerID() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
 } __attribute__((packed));
 

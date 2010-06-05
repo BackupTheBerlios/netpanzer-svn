@@ -185,7 +185,7 @@ NetworkServer::broadcastMessage(NetMessage *message, size_t size)
 }
 
 void
-NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
+NetworkServer::sendMessage(const PlayerID player_index, NetMessage* message,
         size_t size)
 {
     if( socket == 0 )
@@ -272,7 +272,7 @@ NetworkServer::sendRemaining()
 }
 
 std::string
-NetworkServer::getIP(Uint16 player_index)
+NetworkServer::getIP(const PlayerID player_index)
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
@@ -361,7 +361,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         NetworkInterface::receive_queue.front = frontsave;
     }
     
-    Uint16 player_index = s->getPlayerIndex();
+    PlayerID player_index = s->getPlayerIndex();
     
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
@@ -375,7 +375,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         ++i;
     }
     
-    if ( player_index != 0xffff )
+    if ( player_index != INVALID_PLAYER_ID )
     {
         PlayerState * player = PlayerInterface::getPlayer(player_index);
         if ( player && sendalert )
@@ -412,7 +412,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 }
 
 ClientSocket *
-NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
+NetworkServer::getClientSocketByPlayerIndex ( const PlayerID index )
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )

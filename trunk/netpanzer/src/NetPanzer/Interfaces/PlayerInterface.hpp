@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PLAYERINTERFACE_HPP
 
 #include <SDL_thread.h>
+#include "Core/CoreTypes.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Units/UnitInterface.hpp"
 
@@ -26,14 +27,14 @@ class PlayerInterface
 {
 protected:
     static PlayerState *player_lists;
-    static unsigned short max_players;
-    static unsigned short local_player_index;
+    static PlayerID max_players;
+    static PlayerID local_player_index;
 
     static SDL_mutex* mutex;
 
 public:
 
-    static void initialize(unsigned short maxPlayers);
+    static void initialize(const unsigned int _max_players);
 
     static void reset();
 
@@ -45,22 +46,22 @@ public:
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
-    static bool isAllied(unsigned short player, unsigned short with_player);
-    static bool isSingleAllied(unsigned short player, unsigned short with_player);
+    //static bool isAllied(unsigned short player, unsigned short with_player);
+    //static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
     static void unlockPlayerStats();
 
-    static unsigned short getMaxPlayers( )
+    static PlayerID getMaxPlayers( )
     {
         return max_players;
     }
 
-    static PlayerState* getPlayer(Uint16 player_index)
+    static PlayerState* getPlayer(PlayerID player_id)
     {
-        if ( player_index < max_players )
+        if ( player_id < max_players )
         {
-            return &player_lists[player_index];
+            return &player_lists[player_id];
         }
         return NULL;
     }
@@ -70,7 +71,7 @@ public:
         return &player_lists[ local_player_index ];
     }
 
-    static Uint16 getLocalPlayerIndex()
+    static PlayerID getLocalPlayerIndex()
     {
         return local_player_index;
     }
@@ -82,35 +83,35 @@ public:
     static PlayerState * allocateLoopBackPlayer();
 
     static PlayerState * allocateNewPlayer();
-    static int countPlayers();
+    static PlayerID countPlayers();
 
-    static void spawnPlayer( Uint16 player_index, const iXY &location );
+    static void spawnPlayer( PlayerID player_id, const iXY &location );
 
     static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
 
     static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
 
 protected:
-    static unsigned short respawn_rule_player_index;
+    static PlayerID respawn_rule_player_index;
 public:
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
 
 protected:
-    static Uint16 player_sync_index;
-    static Uint16 player_sync_connect_player_index;
+    static PlayerID player_sync_index;
+    static PlayerID player_sync_connect_player_index;
     static Timer player_sync_timer;
 
     static void netMessageConnectID(const NetMessage *message );
     static void netMessageSyncState(const NetMessage *message );
     static void netMessageScoreUpdate(const NetMessage *message );
-    static void netMessageAllianceRequest(const NetMessage *message );
-    static void netMessageAllianceUpdate(const NetMessage *message );
+    //static void netMessageAllianceRequest(const NetMessage *message );
+    //static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
-    static void startPlayerStateSync(Uint16 player_index);
+    static void startPlayerStateSync(PlayerID player_id);
     static bool syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete);
     static void processNetMessage(const NetMessage *message );
-    static void disconnectPlayerCleanup( Uint16 index );
+    static void disconnectPlayerCleanup( PlayerID player_id );
 };
 
 #endif // ** _PLAYERINTERFACE_HP

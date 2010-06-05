@@ -144,7 +144,9 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     char statBuf[256];
 
     states.clear();
-    for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
+    PlayerID i;
+    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
+    {
         PlayerState* state = PlayerInterface::getPlayer(i);
         if(state->getStatus() != _player_state_active)
             continue;
@@ -181,8 +183,12 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         flag->blt( dest, FLAG_START, flag_pos );
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
-            bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
-            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
+            // XXX ALLY
+//            bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
+//            bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
+            bool meWithHim = false;
+            bool himWithMe = false;
+            
             if ( meWithHim && himWithMe )
             {
                 allyImage.bltTrans(dest, ALLY_START, flag_pos );
@@ -218,31 +224,32 @@ void RankView::notifyMoveTo()
 void RankView::lMouseDown(const iXY& pos)
 {
     GameTemplateView::lMouseDown(pos);
-    if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
-    {
-        unsigned int ypos = pos.y - TABLE_START;
-        unsigned int linepos = ypos / ENTRY_HEIGHT;
-        if ( linepos < states.size() )
-        {
-            unsigned int destplayer = states[linepos]->getID();
-            unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
-            if ( destplayer != localplayer )
-            {
-                PlayerAllianceRequest allie_request;
-
-                if ( PlayerInterface::isSingleAllied(localplayer, destplayer) )
-                {
-                    allie_request.set( localplayer, destplayer, _player_break_alliance);
-                }
-                else
-                {
-                    allie_request.set( localplayer, destplayer, _player_make_alliance);
-                }
-
-                CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
-            }
-        }
-    }
+    // XXX ALLY
+//    if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
+//    {
+//        unsigned int ypos = pos.y - TABLE_START;
+//        unsigned int linepos = ypos / ENTRY_HEIGHT;
+//        if ( linepos < states.size() )
+//        {
+//            unsigned int destplayer = states[linepos]->getID();
+//            unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
+//            if ( destplayer != localplayer )
+//            {
+//                PlayerAllianceRequest allie_request;
+//
+//                if ( PlayerInterface::isSingleAllied(localplayer, destplayer) )
+//                {
+//                    allie_request.set( localplayer, destplayer, _player_break_alliance);
+//                }
+//                else
+//                {
+//                    allie_request.set( localplayer, destplayer, _player_make_alliance);
+//                }
+//
+//                CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+//            }
+//        }
+//    }
 }
 
 void RankView::mouseMove(const iXY & prevPos, const iXY &newPos)

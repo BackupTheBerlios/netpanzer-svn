@@ -25,13 +25,13 @@ class NetMessageEncoder
 private:
     bool sendAsClient;
     bool usePlayerID;
-    Uint16 player;
+    PlayerID player;
     MultiMessage encode_message;
     unsigned long encode_message_index;
 
 public:
     NetMessageEncoder(bool sendAsClient = false);
-    NetMessageEncoder(Uint16 player_index);
+    NetMessageEncoder(PlayerID player_index);
     ~NetMessageEncoder();
     
     void resetEncoder();

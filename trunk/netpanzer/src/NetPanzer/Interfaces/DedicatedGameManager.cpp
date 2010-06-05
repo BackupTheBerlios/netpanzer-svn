@@ -128,14 +128,16 @@ void DedicatedGameManager::inputLoop()
                     << std::setw(4) << "Lost" << " "
                     << std::setw(5) << "Score" << " "
                     << std::setw(21) << "IP\n";
-                for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
+                PlayerID i;
+                for ( i = 0; i<PlayerInterface::getMaxPlayers(); ++i)
+                {
                     PlayerState* playerstate =
                         PlayerInterface::getPlayer(i);
                     if(playerstate->getStatus() != _player_state_active)
                         continue;
                     //*Console::server
                     std::cout
-                        << std::setw(3) << playerstate->getID() << " "
+                        << std::setw(3) << i << " "
                         << std::setw(30) << playerstate->getName() << " "
                         << std::setw(4) << playerstate->getKills() << " "
                         << std::setw(4) << playerstate->getLosses() << " "
@@ -160,8 +162,8 @@ void DedicatedGameManager::inputLoop()
                 break;
             case ServerCommand::KICK:
                 std::stringstream idstream(command.argument);
-                Uint16 id = 0xffff;
-                idstream >> id;
+                PlayerID id = INVALID_PLAYER_ID;
+                idstream >> (int&)id; // XXX KREMOVE
                 if(id >= PlayerInterface::getMaxPlayers()) {
                     std::cout << "Unknown player." << std::endl;
                     break;

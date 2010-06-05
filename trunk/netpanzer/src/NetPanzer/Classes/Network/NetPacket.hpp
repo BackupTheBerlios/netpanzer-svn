@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 
 #include "Util/Endian.hpp"
+#include "Core/CoreTypes.hpp"
 #include "NetMessage.hpp"
 
 static const Uint16 _MAX_NET_PACKET_SIZE=512;
@@ -32,7 +33,7 @@ class ClientSocket;
 class NetPacket
 {
 public:
-    Uint16 fromPlayer;
+    PlayerID fromPlayer;
     ClientSocket *fromClient;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];

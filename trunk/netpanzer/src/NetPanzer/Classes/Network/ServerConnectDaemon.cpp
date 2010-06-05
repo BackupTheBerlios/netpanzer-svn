@@ -253,7 +253,7 @@ bool ServerConnectDaemon::connectStateWaitForConnectRequest(
         {
             connect_result.result_code = _connect_result_success;
             time_out_timer.reset();
-            connect_client->playerIndex = player->getID();
+            connect_client->player_id = player->getID();
         }
         connect_result.setSize(sizeof(ClientConnectResult));
         connect_client->sendMessage( &connect_result,

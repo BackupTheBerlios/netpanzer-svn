@@ -104,7 +104,7 @@ class ObjectiveOccupationUpdate : public NetMessage
 {
 private:
     ObjectiveID objective_id;
-    Uint16 player_id;
+    PlayerID player_id;
 
 public:
     ObjectiveOccupationUpdate()
@@ -113,10 +113,10 @@ public:
         message_id = _net_message_id_occupation_status_update;
     }
 
-    void set(ObjectiveID id, Uint16 player_id)
+    void set(ObjectiveID id, PlayerID player_id)
     {
         objective_id = ObjectiveID_toPortable(id);
-        this->player_id = htol16(player_id);
+        this->player_id = player_id;
     }
 
     ObjectiveID getObjectiveId() const
@@ -124,25 +124,25 @@ public:
         return ObjectiveID_fromPortable(objective_id);
     }
 
-    Uint16 getPlayerId() const
+    PlayerID getPlayerId() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
 }__attribute__((packed));
 
 class ObjectiveSyncData
 {
 public:
-    Uint16 player_id;
+    PlayerID player_id;
 
-    void set(Uint16 player_id)
+    void set(PlayerID player_id)
     {
-        this->player_id = htol16(player_id);
+        this->player_id = player_id;
     }
 
-    Uint16 getPlayerId() const
+    PlayerID getPlayerId() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
 
 }__attribute__((packed));

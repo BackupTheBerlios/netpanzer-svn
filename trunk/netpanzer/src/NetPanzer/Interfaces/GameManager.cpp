@@ -322,7 +322,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 }
 
 // ******************************************************************
-void GameManager::spawnPlayer( Uint16 player )
+void GameManager::spawnPlayer( PlayerID player )
 {
     sound->stopTankIdle();
 
@@ -349,12 +349,12 @@ void GameManager::spawnPlayer( Uint16 player )
 void GameManager::respawnAllPlayers()
 {
     PlayerState    *player_state;
-    unsigned short max_players;
-    unsigned short player_index;
+    PlayerID max_players;
+    PlayerID player_index;
 
     max_players = PlayerInterface::getMaxPlayers();
 
-    for( player_index = 0; player_index < max_players; player_index++ )
+    for( player_index = 0; player_index < max_players; ++player_index )
     {
         player_state = PlayerInterface::getPlayer( player_index );
         if ( player_state->getStatus() == _player_state_active )
@@ -482,7 +482,7 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
     SystemPingAcknowledge ping_ack;
 
     if ( player->getStatus() == _player_state_active
-         && ping_request->getClientPlayerIndex() != 0
+         && ping_request->getClientPlayerIndex() != MIN_PLAYER_ID
        )
     {
         SERVER->sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));

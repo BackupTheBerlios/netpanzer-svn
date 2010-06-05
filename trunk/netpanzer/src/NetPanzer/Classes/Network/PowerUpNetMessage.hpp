@@ -75,8 +75,7 @@ class PowerUpHitMesg : public NetMessage
 {
 private:
     PowerUpID  ID;
-    Uint16     dummy; // XXX only here for compatibility reasons
-    Uint16     player_id;
+    PlayerID     player_id;
     Sint32     unit_powerup_type;
 
 public:
@@ -86,19 +85,19 @@ public:
         message_id = _net_message_id_powerup_hit;
         setSize(sizeof(*this));
     }
-    void set(PowerUpID ID, Uint16 player_id, int type=0)
+    void set(PowerUpID ID, PlayerID player_id, int type=0)
     {
         this->ID = PowerUpID_toPortable(ID); // XXX protocol
-        this->player_id = htol16(player_id);
+        this->player_id = player_id;
         this->unit_powerup_type = htol32(type);
     }
     PowerUpID getID() const
     {
         return PowerUpID_fromPortable(ID); // XXX protocol
     }
-    Uint16 getPlayerID() const
+    PlayerID getPlayerID() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
     Sint32 getUnitPowerupType() const
     {

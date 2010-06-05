@@ -60,22 +60,21 @@ class UnitIniSyncMessage : public NetMessage
 public:
     Uint8 unit_type;
 private:
-    // XXX this should really be Uint16 player_id;
-    Uint8 player_id;
+    PlayerID player_id;
     Uint16 unit_id;
     Uint32 location_x;
     Uint32 location_y;
 public:
     NetworkUnitState unit_state;
 
-    UnitIniSyncMessage(Uint8 unit_type, Uint16 player_id, UnitID unit_id,
+    UnitIniSyncMessage(Uint8 unit_type, PlayerID player_id, UnitID unit_id,
         Uint32 location_x, Uint32 location_y)
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_ini_sync_mesg;
         this->unit_type = unit_type;
         //this->player_id = htol16(player_id);
-        this->player_id = (Uint8) player_id;
+        this->player_id = player_id;
         this->unit_id = htol16(unit_id);
         this->location_x = htol32(location_x);
         this->location_y = htol32(location_y);
@@ -98,7 +97,7 @@ public:
     {
         return ltoh16(unit_id);
     }
-    Uint16 getPlayerID() const
+    PlayerID getPlayerID() const
     {
         return player_id;
     }
@@ -132,19 +131,19 @@ public:
 class UnitRemoteCreate : public NetMessage
 {
 private:
-    Uint16 player_id;
+    PlayerID player_id;
     Uint16 new_unit_id;
     Uint32 location_x;
     Uint32 location_y;
 public:
     Uint8 unit_type;
 
-    UnitRemoteCreate(Uint16 player_id, UnitID id,
+    UnitRemoteCreate(PlayerID player_id, UnitID id,
             Uint32 x, Uint32 y, Uint8 type)
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_create_unit;
-        this->player_id = htol16(player_id);             
+        this->player_id = player_id;
         new_unit_id = htol16(id);
         location_x = htol32(x);
         location_y = htol32(y);
@@ -163,9 +162,9 @@ public:
     {
         return ltoh16(new_unit_id);
     }
-    Uint16 getPlayerID() const
+    PlayerID getPlayerID() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
 } __attribute__((packed));
 

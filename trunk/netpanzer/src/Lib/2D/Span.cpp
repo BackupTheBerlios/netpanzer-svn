@@ -45,7 +45,8 @@ void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int
 
     int stepDecPart = stepAndDecCount>>16;
     int stepCount=srcX1FracWithCount>>16;
-    for(int i=0;i<srcX1FracWithCount&0xffff;i++) {
+    for(int i=0; i < (srcX1FracWithCount&0xffff); i++)
+    {
         dRow[i] = table[(dRow[i]<<8)+*sRow];
         sRow+=stepWholePart;
         stepCount+=stepDecPart;
@@ -76,7 +77,8 @@ void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
     } // Remove for release candidate.
     int stepDecPart = stepAndDecCount>>16;
     int stepCount=srcX1FracWithCount>>16;
-    for(int i=0;i<srcX1FracWithCount&0xffff;i++) {
+    for(int i=0; i < (srcX1FracWithCount&0xffff); i++)
+    {
         dRow[i] = *sRow;
         sRow+=stepWholePart;
         stepCount+=stepDecPart;

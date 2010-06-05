@@ -74,7 +74,7 @@ public:
 
     void broadcastMessage(NetMessage *message, size_t size);
     
-    void sendMessage(Uint16 player_index, NetMessage* message,
+    void sendMessage(const PlayerID player_index, NetMessage* message,
             size_t size);
         
     void sendRemaining();
@@ -83,9 +83,9 @@ public:
 
     void dropClient(ClientSocket * client);
     
-    ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
+    ClientSocket * getClientSocketByPlayerIndex ( const PlayerID index );
 
-    std::string getIP(Uint16 player_index);
+    std::string getIP(const PlayerID player_index);
 
 protected:
     TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);

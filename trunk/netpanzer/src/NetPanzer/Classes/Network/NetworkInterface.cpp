@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkInterface.hpp"
 
 void EnqueueIncomingPacket( const void *data, Uint16 size,
-                            Uint16 fromPlayer, ClientSocket *fromClient)
+                            PlayerID fromPlayer, ClientSocket *fromClient)
 {
     static NetPacket TEMP_PACKET;
 

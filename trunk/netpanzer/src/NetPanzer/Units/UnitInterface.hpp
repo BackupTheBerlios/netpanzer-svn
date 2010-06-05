@@ -49,7 +49,7 @@ private:
     static PlayerUnitList* playerUnitLists;
         
     static UnitBucketArray unit_bucket_array;
-    static unsigned short max_players;
+    static PlayerID max_players;
     static size_t units_per_player;
     static PlacementMatrix unit_placement_matrix;
 
@@ -58,7 +58,7 @@ private:
 
     static UnitBase* newUnit(unsigned short unit_type,
                              const iXY &location,
-                             unsigned short player_index,
+                             PlayerID player_index,
                              UnitID id);
     static void addNewUnit(UnitBase *unit);
     static void removeUnit(Units::iterator i);
@@ -75,7 +75,7 @@ public:
         return units;
     }
 
-    static const PlayerUnitList& getPlayerUnits(Uint16 player_id)
+    static const PlayerUnitList& getPlayerUnits(PlayerID player_id)
     {
         assert(player_id < max_players);
         return playerUnitLists[player_id];
@@ -89,7 +89,7 @@ public:
     }
 #endif
 
-    static size_t getUnitCount(unsigned short player_index)
+    static size_t getUnitCount(PlayerID player_index)
     {
         assert( (player_index < max_players) );
         return playerUnitLists[player_index].size();
@@ -112,25 +112,25 @@ public:
 
     static UnitBase* createUnit( unsigned short unit_type,
                                   const iXY &location,
-                                  Uint16 player_id);
+                                  PlayerID player_id);
 
     static void spawnPlayerUnits( const iXY &location,
-                                  Uint16 player_id,
+                                  PlayerID player_id,
                                   const PlayerUnitConfig &unit_config );
 
     static void queryUnitsAt(std::vector<UnitID>& working_list,
-                             const iXY& point, Uint16 player_id,
+                             const iXY& point, PlayerID player_id,
                              unsigned char search_flags);
 
     static void queryUnitsAt(std::vector<UnitID>& working_list,
-                            const iRect& rect, Uint16 player_id,
+                            const iRect& rect, PlayerID player_id,
                             unsigned char search_flags);
 
     static PlayerState* querySinglePlayerInArea(const iRect& rect);
 
     static bool queryClosestUnit( UnitBase **closest_unit_ptr,
                                    iXY &loc,
-                                   Uint16 player_id,
+                                   PlayerID player_id,
                                    unsigned char search_flags );
 
     static bool queryClosestUnit( UnitBase **closest_unit_ptr,
@@ -139,7 +139,7 @@ public:
 
     static bool queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
                                       iXY &loc,
-                                      Uint16 player_index);
+                                      PlayerID player_index);
 
     static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
 
@@ -181,7 +181,7 @@ protected:
 
 public:
     static void processNetMessage(const NetMessage *net_message );
-    static void destroyPlayerUnits(Uint16 player_id);
+    static void destroyPlayerUnits(PlayerID player_id);
 };
 
 #endif // ** _UNITINTERFACE_HPP

@@ -140,7 +140,7 @@ ScriptManager::runUserCommand(const char* str)
 }
 
 bool
-ScriptManager::runServerCommand(const char* str, Uint16 runPlayer)
+ScriptManager::runServerCommand(const char* str, PlayerID runPlayer)
 {
     int luatop = lua_gettop(luavm);
 

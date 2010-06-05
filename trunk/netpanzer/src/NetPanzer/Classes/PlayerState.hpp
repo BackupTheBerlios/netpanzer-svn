@@ -37,7 +37,7 @@ enum { _player_state_free,
 class NetworkPlayerState
 {
 public:
-    Uint16 getPlayerIndex() const;
+    PlayerID getPlayerIndex() const;
 
 private:
     NetworkPlayerState() 
@@ -47,7 +47,7 @@ private:
     
     char name[64];
     FlagID flag;
-    Uint16 playerindex_id;
+    PlayerID id;
     Uint8 status;
     Sint16 kills;
     Sint16 kill_points;
@@ -67,7 +67,7 @@ class PlayerState
 private:
     std::string name;
     FlagID flag;
-    Uint16 player_index;
+    PlayerID id;
     unsigned char status;
     short kills;
     short kill_points;
@@ -88,9 +88,9 @@ public:
 
     void setName(const std::string& newname);
 
-    Uint16 getID() const
+    PlayerID getID() const
     {
-        return player_index;
+        return id;
     }
 
     void resetStats();
@@ -107,7 +107,7 @@ public:
     void decObjectivesHeld();
     short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
-    void setID( unsigned short index );
+    void setID( PlayerID id );
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
     void setFlag(FlagID newflag);

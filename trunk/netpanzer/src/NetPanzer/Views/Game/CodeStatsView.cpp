@@ -344,7 +344,7 @@ void CodeStatsView::drawUnitStats(Surface &clientArea)
 
     char strBuf[256];
     int total = 0;
-    int max_players;
+    PlayerID max_players;
 
 
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
@@ -355,8 +355,9 @@ void CodeStatsView::drawUnitStats(Surface &clientArea)
     str_loc.y += 12;
 
     max_players = PlayerInterface::getMaxPlayers();
-
-    for ( int i = 0; i < max_players; i++ ) {
+    PlayerID i;
+    for ( i = 0; i < max_players; ++i )
+    {
         unsigned long units;
         units = UnitInterface::getUnitCount( i );
         total += units;

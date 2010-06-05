@@ -257,7 +257,7 @@ typename Convert, typename Toggle>
 inline void option<Type,arg,multi,Convert,Toggle>::push(const value_type& v,
         int pos)
 {
-    if (!many_values() || _values.size() == 1 && !_got_one) {
+    if (!many_values() || (_values.size() == 1 && !_got_one) ) {
         _got_one = true;
         _values[0] = v;
         if (_positions.size() <= 0) _positions.push_back(pos);

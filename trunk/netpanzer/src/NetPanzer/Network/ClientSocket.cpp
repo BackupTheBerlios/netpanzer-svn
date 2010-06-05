@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using namespace std;
 
 ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
-    : observer(0), socket(0), sendpos(0), tempoffset(0), playerIndex(-1)
+    : observer(0), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {
     try {
         proxy.setProxy(gameconfig->proxyserver,
@@ -72,7 +72,7 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
     }
 }
 ClientSocket::ClientSocket(ClientSocketObserver *o)
-    : observer(o), socket(0), sendpos(0), tempoffset(0), playerIndex(-1)
+    : observer(o), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {
     initId();
 }
@@ -168,7 +168,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
+                EnqueueIncomingPacket(data+dataptr, packetsize, player_id, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -216,7 +216,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
+                EnqueueIncomingPacket(tempbuffer, packetsize, player_id, this);
                 tempoffset = 0;
             }
         }

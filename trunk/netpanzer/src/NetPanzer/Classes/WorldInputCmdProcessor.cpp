@@ -203,30 +203,34 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         {
             return _cursor_player_unit;
         }
-
-        if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
+        else if ( working_list.isSelected() )
         {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
-            {
-                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
-                {
-                    return _cursor_break_allie;
-                }
-
-                return _cursor_make_allie;
-            }
-            else if ( working_list.isSelected() )
-            {
-                return _cursor_enemy_unit;
-            }
+            return _cursor_enemy_unit;
         }
-        else
-        {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
-            {
-                return _cursor_break_allie;
-            }
-        }
+        // XXX ALLY
+//        if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
+//        {
+//            if ( KeyboardInterface::getKeyState(SDLK_a) )
+//            {
+//                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
+//                {
+//                    return _cursor_break_allie;
+//                }
+//
+//                return _cursor_make_allie;
+//            }
+//            else if ( working_list.isSelected() )
+//            {
+//                return _cursor_enemy_unit;
+//            }
+//        }
+//        else
+//        {
+//            if ( KeyboardInterface::getKeyState(SDLK_a) )
+//            {
+//                return _cursor_break_allie;
+//            }
+//        }
         return _cursor_regular;
     }
 

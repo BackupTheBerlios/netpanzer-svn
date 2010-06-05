@@ -45,8 +45,9 @@ BotPlayer::BotPlayer()
     void
 BotPlayer::processEvents()
 {
-    int playerIndex = isReady();
-    if (playerIndex != NONE_PLAYER) {
+    PlayerID playerIndex = isReady();
+    if ( playerIndex != INVALID_PLAYER_ID )
+    {
         UnitBase *unit = getRandomUnit(playerIndex);
         if (unit) {
             int unitTask = m_tasks.queryUnitTask(unit);
@@ -74,13 +75,14 @@ BotPlayer::processEvents()
  * Whether is time to make action.
  * @return playerIndex or NONE_PLAYER
  */
-   int 
+PlayerID
 BotPlayer::isReady()
 {
-    int playerIndex = NONE_PLAYER;
+    PlayerID playerIndex = INVALID_PLAYER_ID;
     if (m_timer.count()) {
         playerIndex = PlayerInterface::getLocalPlayerIndex();
-        if (playerIndex != NONE_PLAYER) {
+        if ( playerIndex != INVALID_PLAYER_ID )
+        {
             int unitCount = UnitInterface::getUnitCount(playerIndex);
             if (unitCount > 0) {
                 m_timer.changePeriod(5.0 / unitCount);
@@ -95,7 +97,7 @@ BotPlayer::isReady()
  * @return unit which belong to playerIndex
  */
 UnitBase *
-BotPlayer::getRandomUnit(int playerIndex)
+BotPlayer::getRandomUnit(PlayerID playerIndex)
 {
     const std::vector<UnitBase*>& units 
         = UnitInterface::getPlayerUnits(playerIndex);
@@ -115,14 +117,16 @@ playerList_t
 BotPlayer::getEnemyPlayers()
 {
     playerList_t players;
-    int localIndex = PlayerInterface::getLocalPlayerIndex();
-    int max_players = PlayerInterface::getMaxPlayers();
-
-    for (int player_index = 0; player_index < max_players; player_index++) {
+    PlayerID localIndex = PlayerInterface::getLocalPlayerIndex();
+    PlayerID max_players = PlayerInterface::getMaxPlayers();
+    PlayerID player_index;
+    for ( player_index = 0; player_index < max_players; ++player_index)
+    {
         if (PlayerInterface::getPlayer(player_index)->getStatus() ==
                 _player_state_active
                 && localIndex != player_index
-                && !PlayerInterface::isAllied(localIndex, player_index))
+//                && !PlayerInterface::isAllied(localIndex, player_index) // XXX ALLY
+            )
         {
             players.push_back(player_index);
         }
@@ -133,10 +137,10 @@ BotPlayer::getEnemyPlayers()
 /**
  * @return playerIndex or NONE_PLAYER
  */
-int
+PlayerID
 BotPlayer::getRandomEnemyPlayer()
 {
-    int result = NONE_PLAYER;
+    PlayerID result = INVALID_PLAYER_ID;
     playerList_t players = getEnemyPlayers();
     if (players.size() > 0) {
         result = players[rand() % players.size()];
@@ -151,8 +155,9 @@ UnitBase *
 BotPlayer::getRandomEnemy()
 {
     UnitBase *enemyUnit = 0;
-    int enemyPlayer = getRandomEnemyPlayer();
-    if (enemyPlayer != NONE_PLAYER) {
+    PlayerID enemyPlayer = getRandomEnemyPlayer();
+    if (enemyPlayer != INVALID_PLAYER_ID)
+    {
         enemyUnit = getRandomUnit(enemyPlayer);
     }
     return enemyUnit;

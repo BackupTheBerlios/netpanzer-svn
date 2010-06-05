@@ -52,7 +52,7 @@ UnitInterface::Units UnitInterface::units;
 UnitInterface::PlayerUnitList* UnitInterface::playerUnitLists = 0;
 UnitBucketArray UnitInterface::unit_bucket_array;
 
-unsigned short UnitInterface::max_players;
+PlayerID UnitInterface::max_players;
 PlacementMatrix UnitInterface::unit_placement_matrix;
 
 UnitID UnitInterface::lastUnitID;
@@ -284,7 +284,7 @@ UnitID UnitInterface::newUnitID()
 
 UnitBase * UnitInterface::newUnit( unsigned short unit_type,
                                    const iXY &location,
-                                   unsigned short player_index,
+                                   PlayerID player_index,
                                    UnitID id)
 {
     UnitBase* unit = 0;
@@ -371,7 +371,7 @@ UnitInterface::getUnit(UnitID id)
 // ******************************************************************
 UnitBase* UnitInterface::createUnit( unsigned short unit_type,
                                       const iXY &location,
-                                      Uint16 player_id)
+                                      PlayerID player_id)
 {
     if (playerUnitLists[player_id].size() >= units_per_player)
 	return 0;
@@ -385,7 +385,7 @@ UnitBase* UnitInterface::createUnit( unsigned short unit_type,
 // ******************************************************************
 
 void UnitInterface::spawnPlayerUnits(const iXY &location,
-                                     Uint16 player_id,
+                                     PlayerID player_id,
                                      const PlayerUnitConfig &unit_config)
 {
     iXY next_loc;
@@ -419,7 +419,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
 void
 UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
-        const iXY& point, Uint16 player_id, unsigned char search_flags)
+        const iXY& point, PlayerID player_id, unsigned char search_flags)
 {
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
@@ -441,7 +441,7 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
 
 void
 UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
-        const iRect& rect, Uint16 player_id, unsigned char search_flags)
+        const iRect& rect, PlayerID player_id, unsigned char search_flags)
 {
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
@@ -483,7 +483,7 @@ UnitInterface::querySinglePlayerInArea(const iRect& rect)
 /****************************************************************************/
 
 bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr,
-                                       iXY &loc, Uint16 player_id,
+                                       iXY &loc, PlayerID player_id,
                                        unsigned char search_flags )
 {
     long closest_magnitude = 0;
@@ -577,17 +577,18 @@ bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr, iRect &boundi
 // ******************************************************************
 
 bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
-        iXY &loc, Uint16 player_index)
+        iXY &loc, PlayerID player_index)
 {
     UnitBase *closest_unit = 0;
     long closest_magnitude = 0;
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
-        Uint16 unitPlayerID = unit->player->getID();
+        PlayerID unitPlayerID = unit->player->getID();
         
         if(unitPlayerID == player_index
-                || PlayerInterface::isAllied(player_index, unitPlayerID))
+//                || PlayerInterface::isAllied(player_index, unitPlayerID) // XXX ALLY
+                )
             continue;
 
         iXY delta;
@@ -621,7 +622,7 @@ bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
 
 unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 {
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+    PlayerID player_id = PlayerInterface::getLocalPlayerIndex();
 
     std::vector<UnitID> locUnits;
     queryUnitsAt(locUnits, loc, player_id, 0);
@@ -637,9 +638,10 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
     if(unit->player->getID() == player_id) {
         return _unit_player;
     }
-    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
-        return _unit_allied;
-    }
+    // XXX ALLY
+//    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
+//        return _unit_allied;
+//    }
 
     return _unit_enemy;
 }
@@ -790,7 +792,7 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
     const UnitRemoteCreate* create_mesg 
         = (const UnitRemoteCreate *) net_message;
 
-    Uint16 player_index = create_mesg->getPlayerID();
+    PlayerID player_index = create_mesg->getPlayerID();
 
     try {
         std::map<UnitID, UnitBase*>::iterator uit = units.find(create_mesg->getUnitID());
@@ -853,7 +855,7 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
 
 // ******************************************************************
 
-void UnitInterface::destroyPlayerUnits(Uint16 player_id)
+void UnitInterface::destroyPlayerUnits(PlayerID player_id)
 {
     UMesgSelfDestruct self_destruct;
     self_destruct.setHeader(0, _umesg_flag_unique);

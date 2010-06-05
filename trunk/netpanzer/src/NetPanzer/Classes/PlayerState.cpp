@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
-Uint16 NetworkPlayerState::getPlayerIndex() const
+PlayerID NetworkPlayerState::getPlayerIndex() const
 {
-    return ltoh16(playerindex_id);
+    return id;
 }
 
 //If you modify this array, also modify the constant above
@@ -115,7 +115,7 @@ PlayerState::PlayerState()
 }
 
 PlayerState::PlayerState(const PlayerState& other)
-    : name(other.name), flag(other.flag), player_index(other.player_index),
+    : name(other.name), flag(other.flag), id(other.id),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held),
@@ -136,7 +136,7 @@ void PlayerState::operator= (const PlayerState& other)
     objectives_held = other.objectives_held;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
-    player_index = other.player_index;
+    id = other.id;
 }
 
 void PlayerState::setName(const std::string& newname)
@@ -155,9 +155,10 @@ void PlayerState::setName(const std::string& newname)
     do
     {
         recheck = false;
-        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+        PlayerID p;
+        for ( p = 0; p<PlayerInterface::getMaxPlayers(); ++p )
         {
-            if ( p == player_index )
+            if ( p == id )
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
@@ -278,9 +279,9 @@ void PlayerState::setObjectivesHeld( short objectives )
     objectives_held = objectives;
 }
 
-void PlayerState::setID( unsigned short index )
+void PlayerState::setID( PlayerID id )
 {
-    player_index = index;
+    this->id = id;
 }
 
 void PlayerState::setStatus( unsigned char status )
@@ -301,9 +302,10 @@ void PlayerState::setFlag(FlagID newflag)
     do
     {
         recheck = false;
-        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+        PlayerID p;
+        for ( p=0; p<PlayerInterface::getMaxPlayers(); ++p )
         {
-            if ( p == player_index )
+            if ( p == id )
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
@@ -351,7 +353,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
-    state.playerindex_id = htol16(player_index);
+    state.id = id;
     state.status = status;
     state.kills = htol16(kills);
     state.kill_points = htol16(kill_points);
@@ -376,7 +378,7 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
         LOGGER.warning("Received flag is not registered: %u", flag);
     }
     
-    player_index = ltoh16(state->playerindex_id);
+    id = state->id;
     status = state->status;
     kills = ltoh16(state->kills);
     kill_points = ltoh16(state->kill_points);

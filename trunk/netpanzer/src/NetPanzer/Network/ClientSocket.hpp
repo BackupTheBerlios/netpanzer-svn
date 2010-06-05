@@ -53,9 +53,9 @@ public:
     int getId() { return id; };
     std::string getIPAddress();
     
-    int getPlayerIndex()
+    PlayerID getPlayerIndex()
     {
-        return playerIndex;
+        return player_id;
     }
     
 protected:
@@ -76,7 +76,7 @@ private:
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     Uint16 tempoffset;
     int id;
-    int playerIndex;
+    PlayerID player_id;
 };
 
 #endif

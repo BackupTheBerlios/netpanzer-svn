@@ -102,7 +102,7 @@ Objective::changeUnitGeneration(bool is_on, int unit_type)
 
 void Objective::getSyncData(ObjectiveSyncData& sync_data)
 {
-    Uint16 player_id = 0xffff;
+    PlayerID player_id = INVALID_PLAYER_ID;
     if ( occupying_player != 0 )
     {
         player_id = occupying_player->getID();
@@ -117,7 +117,7 @@ Objective::syncFromData(const ObjectiveSyncData& sync_data)
     if ( sync_data.getPlayerId() >= PlayerInterface::getMaxPlayers() )
     {
         occupying_player = 0;
-        if ( sync_data.getPlayerId() != 0xffff )
+        if ( sync_data.getPlayerId() != INVALID_PLAYER_ID )
         {
             LOGGER.warning("Malformed ObjectvieMesgSync");
         }

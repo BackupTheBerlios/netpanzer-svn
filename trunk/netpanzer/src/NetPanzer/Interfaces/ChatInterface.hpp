@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATINTERFACE_HPP
 #define _CHATINTERFACE_HPP
 
+#include "Core/CoreTypes.hpp"
+
 class NetMessage;
 
 class ChatInterface
@@ -28,7 +30,7 @@ public:
     static void say(const char * message);
     static void teamsay(const char * message);
     static void serversay(const char * message);
-    static void serversayTo(const int player, const char * message);
+    static void serversayTo(const PlayerID player, const char * message);
 };
 
 #endif // ** _CHATINTERFACE_HPP

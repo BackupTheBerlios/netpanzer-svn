@@ -26,22 +26,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Objective;
 
 #include <vector>
-typedef std::vector<int> playerList_t;
+typedef std::vector<PlayerID> playerList_t;
 typedef std::vector<ObjectiveID> outpostList_t;
 
 class BotPlayer : public Bot {
     private:
-        static const int NONE_PLAYER = 0xFFFF;
         Timer m_timer;
     public:
         BotPlayer();
         virtual void processEvents();
 
-        int isReady();
-        UnitBase *getRandomUnit(int playerIndex);
+        PlayerID isReady();
+        UnitBase *getRandomUnit(PlayerID playerIndex);
 
         playerList_t getEnemyPlayers();
-        int getRandomEnemyPlayer();
+        PlayerID getRandomEnemyPlayer();
         UnitBase *getRandomEnemy();
 
         void unitOccupyOupost(UnitBase *unit);

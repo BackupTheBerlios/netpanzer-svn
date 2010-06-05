@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDL.h"
 #include "Util/Endian.hpp"
 
+//#define __TEST_PLAYERID__
+
+
 typedef Sint32 PowerUpID;
 #define PowerUpID_toPortable(a) htol32(a)
 #define PowerUpID_fromPortable(a) ltoh32(a)
@@ -37,6 +40,43 @@ typedef Uint16 ObjectiveID;
 typedef Uint16 UnitID;
 
 typedef Uint8 FlagID;
+
+#ifndef __TEST_PLAYERID__
+    typedef Uint8 PlayerID;
+    #define MIN_PLAYER_ID (0)
+    #define MAX_PLAYER_ID (0xfe)
+    #define INVALID_PLAYER_ID (0xff)
+#else
+    class TestPlayerID
+    {
+    private:
+        friend class PlayerInterface; // for array indexing
+        friend class UnitInterface;   // for array indexing
+        friend class InfoSocket;      // for string conversion (using int)
+        friend class DedicatedGameManager; // for string conversion (using int)
+        friend class RankView;        // for height calculation (using int)
+        friend class ScriptManager;   // for passing to lua as int
+        int c;
+        operator unsigned int() { return c; }
+
+    public:
+        TestPlayerID() {}
+        ~TestPlayerID() {}
+        bool operator>=(const TestPlayerID& o) { return c>=o.c; }
+        bool operator<(const TestPlayerID& o) { return c<o.c; }
+        bool operator!=(const TestPlayerID& o) { return c!=o.c; }
+        bool operator==(const TestPlayerID& o) const { return c==o.c; }
+        void operator++() { c++; }
+        void operator=(const int v) { c = v; }
+
+    }__attribute__((packed));;
+
+    typedef TestPlayerID PlayerID;
+    #define MIN_PLAYER_ID (TestPlayerID())
+    #define MAX_PLAYER_ID (TestPlayerID())
+    #define INVALID_PLAYER_ID (TestPlayerID())
+
+#endif
 
 #endif	/* _CORETYPES_HPP */
 

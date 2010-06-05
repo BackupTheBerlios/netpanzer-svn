@@ -29,8 +29,9 @@ bool SelectionList::selectUnit(iXY point)
     deselect();
     unit_list.clear();
 
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
+    UnitInterface::queryUnitsAt(unit_list, point,
+                                PlayerInterface::getLocalPlayerIndex(),
+                                _search_player);
 
     select();
     if (unit_list.size() == 0)
@@ -44,8 +45,9 @@ bool SelectionList::addUnit(iXY point)
 {
     deselect();
 
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
+    UnitInterface::queryUnitsAt(unit_list, point,
+                                PlayerInterface::getLocalPlayerIndex(),
+                                _search_player);
 
     select();
     if (unit_list.size() == 0)
@@ -61,9 +63,9 @@ bool SelectionList::selectTarget(iXY point)
     deselect();
     unit_list.clear();
 
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id,
-            _search_exclude_player);
+    UnitInterface::queryUnitsAt(unit_list, point,
+                                PlayerInterface::getLocalPlayerIndex(),
+                                _search_exclude_player);
 
     if (unit_list.size() == 0)
         return false;
@@ -74,10 +76,10 @@ bool SelectionList::selectTarget(iXY point)
 
 bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-
     std::vector<UnitID> tempunits;
-    UnitInterface::queryUnitsAt(tempunits, bounds, player_id, _search_player);
+    UnitInterface::queryUnitsAt(tempunits, bounds,
+                                PlayerInterface::getLocalPlayerIndex(),
+                                _search_player);
     
     if ( ! tempunits.size() )
         return false;
@@ -104,7 +106,7 @@ bool SelectionList::selectBounded(iRect bounds, bool addunits)
 
 bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
 {
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+    PlayerID player_id = PlayerInterface::getLocalPlayerIndex();
 
     if(!addunits) {
         deselect();

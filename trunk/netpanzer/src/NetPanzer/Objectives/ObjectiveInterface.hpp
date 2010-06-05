@@ -50,7 +50,7 @@ public:
 
     static void updateObjectiveStatus();
 
-    static void disownPlayerObjectives(Uint16 player_id);
+    static void disownPlayerObjectives(PlayerID player_id);
 
     static Objective* getObjective( ObjectiveID objective_id )
     {
