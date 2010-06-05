@@ -92,6 +92,7 @@ Heartbeat::checkHeartbeat()
                 delete msiter->second;
                 msiter->first->destroy();
                 masterservers.erase(msiter);
+                break; // no more checking today, next time, iterator invalid
             }
         }
     } else if ( nextHeartbeat.isTimeOut(now) ) {

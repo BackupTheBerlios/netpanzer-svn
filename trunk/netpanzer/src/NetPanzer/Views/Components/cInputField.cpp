@@ -180,7 +180,7 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 void cInputField::setExcludedCharacters(const char *exChars)
 {
     if ( excludedCharacters ) {
-        delete excludedCharacters;
+        delete[] excludedCharacters;
         excludedCharacters = 0;
     }
     excludedCharacters = new char [strlen(exChars) + 1];

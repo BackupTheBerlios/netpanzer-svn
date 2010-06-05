@@ -366,6 +366,7 @@ ServerQueryThread::checkTimeOuts()
         if ( i->second->status == ServerInfo::TIMEOUT ) {
             LOGGER.warning("Server [%s] timeout, removing", i->first.c_str());
             querying_server.erase(i);
+            break; // no more today, needed for invalid iterator
         } else if ( now - i->second->querystartticks > QUERY_TIMEOUT ) {
             LOGGER.warning("Server [%s] timeout, retrying", i->first.c_str());
             sendQuery(i->second);
