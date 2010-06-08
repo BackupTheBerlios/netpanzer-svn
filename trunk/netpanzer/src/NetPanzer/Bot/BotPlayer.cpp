@@ -125,7 +125,7 @@ BotPlayer::getEnemyPlayers()
         if (PlayerInterface::getPlayer(player_index)->getStatus() ==
                 _player_state_active
                 && localIndex != player_index
-//                && !PlayerInterface::isAllied(localIndex, player_index) // XXX ALLY
+                && !PlayerInterface::isAllied(localIndex, player_index) // XXX ALLY
             )
         {
             players.push_back(player_index);

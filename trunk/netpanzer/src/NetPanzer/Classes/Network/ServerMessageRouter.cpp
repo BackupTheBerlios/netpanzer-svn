@@ -75,7 +75,7 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             break;
             
         case _net_message_class_chat:
-            ChatInterface::processChatMessages(message);
+            ChatInterface::processChatMessages(packet);
             break;
 
         case _net_message_class_connect:

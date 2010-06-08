@@ -108,24 +108,31 @@ PlayerState::getColor() const
 }
 
 PlayerState::PlayerState()
-    : flag(0), status(0), kills(0), kill_points(0), losses(0),
+    : team_id(NO_TEAM_ID), flag(0), status(0), kills(0), kill_points(0), losses(0),
       loss_points(0), total(0), objectives_held(0), stats_locked(false),
       colorIndex(0)
 {
+    team_name[0]=0;
 }
 
 PlayerState::PlayerState(const PlayerState& other)
-    : name(other.name), flag(other.flag), id(other.id),
+    :  id(other.id), name(other.name), team_id(other.team_id), flag(other.flag),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held),
       stats_locked(other.stats_locked), unit_config(other.unit_config)
 {
+    memcpy(team_name, other.team_name, MAX_TEAM_NAME_LEN+1);
 }
 
 void PlayerState::operator= (const PlayerState& other)
 {
+    id = other.id;
     name = other.name;
+
+    team_id = other.team_id;
+    memcpy(team_name, other.team_name, MAX_TEAM_NAME_LEN+1);
+    
     flag = other.flag;
     status = other.status;
     kills = other.kills;
@@ -136,7 +143,6 @@ void PlayerState::operator= (const PlayerState& other)
     objectives_held = other.objectives_held;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
-    id = other.id;
 }
 
 void PlayerState::setName(const std::string& newname)
@@ -183,6 +189,26 @@ void PlayerState::setName(const std::string& newname)
             }
         }
     } while (recheck);
+}
+
+void
+PlayerState::setTeamName(const char * team_name)
+{
+    int len = strlen(team_name);
+    if ( len > 0 )
+    {
+        if ( len > MAX_TEAM_NAME_LEN )
+        {
+            len = MAX_TEAM_NAME_LEN;
+        }
+
+        memcpy(this->team_name, team_name, len);
+        this->team_name[len] = 0;
+    }
+    else
+    {
+        this->team_name[0] = 0;
+    }
 }
 
 void PlayerState::resetStats()
@@ -354,6 +380,8 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
     state.id = id;
+    state.team_id = team_id;
+    memcpy(state.team_name, team_name, MAX_TEAM_NAME_LEN+1);
     state.status = status;
     state.kills = htol16(kills);
     state.kill_points = htol16(kill_points);
@@ -372,6 +400,10 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
+
+    memcpy(team_name, state->team_name, MAX_TEAM_NAME_LEN);
+    team_name[MAX_TEAM_NAME_LEN] = 0;
+
     flag = state->flag;
     if ( ! ResourceManager::isFlagActive(flag) ) 
     {
@@ -379,6 +411,7 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     }
     
     id = state->id;
+    team_id = state->team_id;
     status = state->status;
     kills = ltoh16(state->kills);
     kill_points = ltoh16(state->kill_points);

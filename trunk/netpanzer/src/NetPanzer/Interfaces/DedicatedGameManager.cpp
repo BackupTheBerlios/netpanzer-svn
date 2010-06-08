@@ -46,6 +46,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
 #endif
@@ -197,6 +199,9 @@ void DedicatedGameManager::pushCommand(const ServerCommand& command)
 bool DedicatedGameManager::launchNetPanzerGame()
 {
     *Console::server << "starting dedicated netPanzer server\n";
+
+    ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
+    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
     gameconfig->map = MapsManager::getNextMap("");
 

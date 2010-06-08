@@ -587,7 +587,7 @@ bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
         PlayerID unitPlayerID = unit->player->getID();
         
         if(unitPlayerID == player_index
-//                || PlayerInterface::isAllied(player_index, unitPlayerID) // XXX ALLY
+                || PlayerInterface::isAllied(player_index, unitPlayerID) // XXX ALLY
                 )
             continue;
 
@@ -639,9 +639,9 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
         return _unit_player;
     }
     // XXX ALLY
-//    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
-//        return _unit_allied;
-//    }
+    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
+        return _unit_allied;
+    }
 
     return _unit_enemy;
 }

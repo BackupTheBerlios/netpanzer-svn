@@ -3,7 +3,7 @@ ServerCommands =
     say_help = "Says something to all players as server.",
     say = function(param, player)
         if param then
-            ChatInterface:serversay(param);
+            netpanzer.serversay(param);
         end
     end,
 
@@ -14,23 +14,13 @@ ServerCommands =
         end
     end,
 
-    addbot_help = "Adds a new bot to the server.",
-    addbot = function(param, player)
-        GameManager:addBot();
-    end,
-
-    removebots_help = "Removes all bots from server",
-    removebots = function(param, player)
-        GameManager:removeAllBots();
-    end,
-
     map_help = "Change the map",
     map = function(param, player)
         local ok = GameManager:changeMap(param);
         if ok then
-            ChatInterface:serversayTo(player, 'Switching map to "' .. param .. '"');
+            netpanzer.serversayto(player, 'Switching map to "' .. param .. '"');
         else
-            ChatInterface:serversayTo(player, 'Map "' .. param .. '" doesn\'t exists');
+            netpanzer.serversayto(player, 'Map "' .. param .. '" doesn\'t exists');
         end
     end,
 
@@ -46,7 +36,7 @@ ServerCommands =
                 end
             end
         end
-        ChatInterface:serversayTo(player, out);
+        netpanzer.serversayto(player, out);
     end,
 
     _help = "Type /server help <wanted_command> or /server listcommands",
@@ -54,9 +44,9 @@ ServerCommands =
     help = function(param, player)
         local ht = ServerCommands[param .. "_help"];
         if ht then
-            ChatInterface:serversayTo( player, param .. ": " .. ht);
+            netpanzer.serversayto( player, param .. ": " .. ht);
         else
-            ChatInterface:serversayTo( player, "Help not found for " .. param .. ". Use /server listcommands");
+            netpanzer.serversayto( player, "Help not found for " .. param .. ". Use /server listcommands");
         end
     end,
 
@@ -80,7 +70,7 @@ ServerCommands =
                 end
             end
         end
-        ChatInterface:serversayTo(player, out);
+        netpanzer.serversayto(player, out);
     end,
 
     testrules = function(param)

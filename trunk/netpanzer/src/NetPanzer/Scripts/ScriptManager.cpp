@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 lua_State * ScriptManager::luavm = 0;
 
+int npmodule_load (lua_State *L);
+
 void
 ScriptManager::initialize()
 {
@@ -45,9 +47,8 @@ ScriptManager::initialize()
         Color::registerScript("Color");
 //        ParticleInterface::registerScript("particles");
         GameConfig::registerScript("config");
-
+        npmodule_load(luavm);
     }
-
 }
     
 void

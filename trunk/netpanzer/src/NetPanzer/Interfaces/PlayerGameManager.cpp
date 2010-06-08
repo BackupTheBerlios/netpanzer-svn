@@ -113,6 +113,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Bot/Bot.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
 {
@@ -279,6 +281,10 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
+    
+    ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
+    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
+
     try {
     	if (CLIENT) {
 		delete CLIENT;
@@ -419,6 +425,7 @@ void PlayerGameManager::joinMultiPlayerGame()
 
     CLIENT->joinServer(gameconfig->serverConnect);
     LoadingView::show();
+    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
     ClientConnectDaemon::startConnectionProcess();
     sound->playTankIdle();

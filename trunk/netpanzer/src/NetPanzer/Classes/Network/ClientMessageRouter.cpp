@@ -72,7 +72,7 @@ ClientMessageRouter::routeMessage(const NetMessage* message)
             break;
 
         case _net_message_class_chat:
-            ChatInterface::processChatMessages(message);
+            ChatInterface::clientHandleChatMessage(message);
             break;
 
         case _net_message_class_connect:

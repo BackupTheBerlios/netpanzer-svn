@@ -167,11 +167,11 @@ MiniMap::drawObjectives(Surface &dest)
                 color = gameconfig->getPlayerOutpostRadarColor();
             }
             // XXX ALLY
-//            else if ( PlayerInterface::isAllied(obj->occupying_player->getID(),
-//                                                PlayerInterface::getLocalPlayerIndex()) )
-//            {
-//                color = gameconfig->getAlliedOutpostRadarColor();
-//            }
+            else if ( PlayerInterface::isAllied(obj->occupying_player->getID(),
+                                                PlayerInterface::getLocalPlayerIndex()) )
+            {
+                color = gameconfig->getAlliedOutpostRadarColor();
+            }
             else
             {
                 color = obj->occupying_player->getColor();
@@ -263,10 +263,10 @@ MiniMap::drawUnits(Surface &dest)
             }
         }
         // XXX ALLY
-//        else if (PlayerInterface::isAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID()))
-//        {
-//            color = gameconfig->getAlliedRadarUnitColor();
-//        }
+        else if (PlayerInterface::isAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID()))
+        {
+            color = gameconfig->getAlliedRadarUnitColor();
+        }
         else if ( EnemyRadarPowerUp::isRadarActive() )
         {
             color = unit->player->getColor();

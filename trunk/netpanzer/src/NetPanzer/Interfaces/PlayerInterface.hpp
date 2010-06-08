@@ -46,7 +46,7 @@ public:
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
-    //static bool isAllied(unsigned short player, unsigned short with_player);
+    static bool isAllied(PlayerID player, PlayerID with_player);
     //static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();

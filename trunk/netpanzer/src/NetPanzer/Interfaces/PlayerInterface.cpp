@@ -66,16 +66,16 @@ SDL_mutex* PlayerInterface::mutex = 0;
 //    }
 //}
 
-//bool PlayerInterface::isAllied( unsigned short player, unsigned short with_player )
-//{
-//    if ( player < max_players && with_player < max_players
-//            && *(alliance_matrix + (with_player * max_players) + player)
-//            && *(alliance_matrix + (player * max_players) + with_player) )
-//    {
-//        return true;
-//    }
-//    return false;
-//}
+bool PlayerInterface::isAllied( PlayerID player, PlayerID with_player )
+{
+    if ( player < max_players && with_player < max_players
+        && player_lists[player].getTeamID() > 0
+        && player_lists[player].getTeamID() == player_lists[with_player].getTeamID() )
+    {
+        return true;
+    }
+    return false;
+}
 //
 //bool PlayerInterface::isSingleAllied( unsigned short player, unsigned short with_player )
 //{
@@ -342,6 +342,8 @@ PlayerState * PlayerInterface::allocateNewPlayer()
             player_lists[ player_id ].resetStats();
             player_lists[ player_id ].setColor( player_id );
             player_lists[ player_id ].setID(player_id);
+            player_lists[ player_id ].setTeamID(NO_TEAM_ID);
+            player_lists[ player_id ].setTeamName("");
             SDL_mutexV(mutex);
             return( &player_lists[ player_id ] );
         } // ** if
@@ -412,11 +414,10 @@ static bool testRuleObjectiveOccupationRatio( PlayerID player_id,
                 occupied++;
             }
             // XXX ALLY
-//            else if ( PlayerInterface::isAllied(occuping_player_index, player_index)
-//                      && PlayerInterface::isAllied(player_index, occuping_player_index) )
-//            {
-//                occupied++;
-//            }
+            else if ( PlayerInterface::isAllied(occuping_player_id, player_id) )
+            {
+                occupied++;
+            }
         }
     }
 

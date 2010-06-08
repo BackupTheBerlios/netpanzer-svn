@@ -3,21 +3,21 @@ UserCommands =
     say_help = "Says something to all players",
     say = function(param)
         if param then
-            ChatInterface:say(param);
+            netpanzer.say(param);
         end
     end,
 
     teamsay_help = "Says something to team players",
     teamsay = function(param)
         if param then
-            ChatInterface:teamsay(param);
+            netpanzer.teamsay(param);
         end
     end,
 
     server_help = "Sends the command to the server, no need to add '/' in command";
     server = function(param)
         if param then
-            ChatInterface:say('/' .. param);
+            netpanzer.say('/' .. param);
         end
     end,
 

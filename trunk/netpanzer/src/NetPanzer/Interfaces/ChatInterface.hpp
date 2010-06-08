@@ -20,12 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 
+class NetPacket;
 class NetMessage;
 
 class ChatInterface
 {
 public:
-    static void processChatMessages(const NetMessage* message);
+    static void processChatMessages(const NetPacket* packet);
+    static void clientHandleChatMessage(const NetMessage* message);
 
     static void say(const char * message);
     static void teamsay(const char * message);
