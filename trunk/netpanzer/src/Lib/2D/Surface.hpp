@@ -230,7 +230,22 @@ public:
     static unsigned int getFontHeight();
     static int getTextLength(const char* text);
     static int getTextLength(const std::string& text)
-    { return getTextLength(text.c_str()); } 
+    {
+        return getTextLength(text.c_str());
+    }
+
+    void frameToBuffer(Uint8* dest, size_t dest_len)
+    {
+        size_t frame_len = getPitch()*getHeight();
+        memcpy(dest, mem, std::min(frame_len, dest_len));
+    }
+
+    void bufferToFrame(const Uint8* src, const size_t src_len)
+    {
+        size_t frame_len = getPitch()*getHeight();
+        memcpy(mem, src, std::min(frame_len, src_len));
+    }
+
 }; // end Surface
 
 #endif // __Surface_HPP__

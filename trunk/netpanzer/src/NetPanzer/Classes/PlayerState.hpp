@@ -49,7 +49,6 @@ private:
     char name[64];
     TeamID team_id;
     char team_name[MAX_TEAM_NAME_LEN+1];
-    FlagID flag;
     Uint8 status;
     Sint16 kills;
     Sint16 kill_points;
@@ -73,7 +72,6 @@ private:
     TeamID  team_id;
     char team_name[MAX_TEAM_NAME_LEN+1];
 
-    FlagID flag;
     unsigned char status;
     short kills;
     short kill_points;
@@ -119,12 +117,10 @@ public:
     void setID( PlayerID id );
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
-    void setFlag(FlagID newflag);
     FlagID getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
-    void setColor( Uint32 index );
     Uint8 getColor() const;
 };
 

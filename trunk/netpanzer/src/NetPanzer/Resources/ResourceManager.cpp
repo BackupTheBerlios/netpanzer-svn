@@ -29,79 +29,97 @@ using namespace std;
 
 #define DEFAULT_FLAGS_PATH "pics/flags/"
 
-
-
-Surface noimage;
-
 class _RMan
 {
 public:
     _RMan()
     {
+        flagList = new Surface*[256];
         for (int n = 0; n < 256; n++)
         {
-            flagList[n]=&noimage;
+            flagList[n]=new Surface(20,14,1);
+            flagList[n]->fill(0);
+        }
+    }
+
+    ~_RMan()
+    {
+        if ( flagList )
+        {
+            for (int n = 0; n < 256; n++)
+            {
+                delete flagList[n];
+            }
+            delete[] flagList;
+            flagList = 0;
         }
     }
     
-    Surface * flagList[256];
+    Surface ** flagList;
 };
 
-_RMan RMan;
+_RMan *RMan = 0;
 
-Surface *
-ResourceManager::getEmptyImage()
+void
+ResourceManager::initialize()
 {
-    return &noimage;
+    if ( ! RMan )
+    {
+        RMan = new _RMan();
+    }
 }
-        
+
+void
+ResourceManager::finalize()
+{
+    if ( RMan )
+    {
+        delete RMan;
+        RMan = 0;
+    }
+}
+
 // actually loads all the flags.
 int
-ResourceManager::loadDefaultFlags()
+ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
 {
-    noimage.create(20,14,1);
-    noimage.fill(0);
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
-    
-    vector<string> filenames;
     string flagname;
     
     for(char** file = list; *file != 0; file++)
     {
-        flagname = DEFAULT_FLAGS_PATH;
-        flagname += *file;
-        if(flagname.find(".bmp") != string::npos)
+        flagname = *file;
+        if ( flagname.find(".bmp") != string::npos )
         {
-            filenames.push_back(flagname);
+            names.push_back(flagname);
         }
     }
 
     filesystem::freeList(list);
 
-    sort(filenames.begin(), filenames.end());
+    flags.create( FLAG_WIDTH, FLAG_HEIGHT, names.size());
 
-    // Now load in the sorted BMP names.
-    for (unsigned int i = 0; i < filenames.size(); i++)
+    sort(names.begin(), names.end());
+    string path(DEFAULT_FLAGS_PATH);
+
+    for (vector<string>::size_type i = 0; i < names.size(); i++)
     {
-        if ( RMan.flagList[i] != &noimage )
-            delete RMan.flagList[i];
-        
-        RMan.flagList[i] = new Surface();
-        // XXX check for null man
-        RMan.flagList[i]->loadBMP(filenames[i].c_str());
+        flags.setFrame(i);
+        flags.loadBMP((path+names[i]).c_str(), false);
     }
     
-    return filenames.size();
+    return names.size();
+}
+
+bool
+ResourceManager::loadFlag(Surface* dest, string name)
+{
+    dest->loadBMP((DEFAULT_FLAGS_PATH + name).c_str());
+    return true;
 }
 
 Surface *
 ResourceManager::getFlag(FlagID flag)
 {
-    return RMan.flagList[flag];
-}
-
-bool
-ResourceManager::isFlagActive(FlagID flag)
-{
-    return RMan.flagList[flag] != &noimage;
+    return RMan->flagList[flag];
 }

@@ -53,7 +53,7 @@ public:
                    int min=0, int max=0x7fffffff);
     ~ConfigInt();
 
-    operator const int () const
+    operator int () const
     { return value; }
 
     int getMax() const

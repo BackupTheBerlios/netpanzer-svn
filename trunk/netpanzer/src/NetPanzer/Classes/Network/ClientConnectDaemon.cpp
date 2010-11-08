@@ -236,26 +236,21 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
 {
     bool end_cycle = false;
 
-    do {
-        switch ( connection_state ) {
+    switch ( connection_state )
+    {
         case _connect_state_idle :
             return;
 
-        case _connect_state_wait_for_connect_start : {
-                if ( message != 0 ) {
-                    if ( message->message_id == _net_message_id_client_start_connect ) {
-                        LoadingView::append( "Connecting ..." );
-                        connection_state = _connect_state_send_connect_request;
-                    } else {
-                        end_cycle = true;
-                    }
-                } // ** if ( message != 0 )
-                else {
-                    end_cycle = true;
-                }
-
+        case _connect_state_wait_for_connect_start :
+            if ( message && message->message_id == _net_message_id_client_start_connect )
+            {
+                LoadingView::append( "Connecting ..." );
+                connection_state = _connect_state_send_connect_request;
             }
-            break;
+            else
+            {
+                break;
+            }
 
         case _connect_state_send_connect_request : {
                 ClientConnectRequest connect_request;
@@ -268,101 +263,85 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
             }
             break;
 
-        case _connect_state_wait_for_connect_result : {
-                if ( message != 0 ) {
-                    if ( message->message_id == _net_message_id_client_connect_result ) {
-                        ClientConnectResult *connect_result;
+        case _connect_state_wait_for_connect_result :
+            if ( message && message->message_id == _net_message_id_client_connect_result )
+            {
+                ClientConnectResult *connect_result;
 
-                        connect_result = (ClientConnectResult *) message;
+                connect_result = (ClientConnectResult *) message;
 
-                        if ( connect_result->result_code != _connect_result_success ) {
-                            connectFailureResult( connect_result->result_code );
+                if ( connect_result->result_code != _connect_result_success )
+                {
+                    connectFailureResult( connect_result->result_code );
 
-                            connection_state = _connect_state_connect_failure;
-                            failure_display_timer.reset();
-                        } else {
-                            ConnectClientSettings client_setting;
-
-                            client_setting.set( 
-                                    gameconfig->playername.c_str(),
-                                                gameconfig->getUnitColor(),
-                                                gameconfig->playerflag );
-
-                            CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
-
-                            connection_state = _connect_state_wait_for_server_game_setup;
-                        }
-
-                    } else {
-                        if ( time_out_timer.count() ) {
-                            if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
-                                ClientConnectRequest connect_request;
-                                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
-                                time_out_counter++;
-                            } else {
-                                LoadingView::append( "Connection To Server Failed" );
-                                connection_state = _connect_state_connect_failure;
-                                failure_display_timer.reset();
-                            }
-                        }
-
-                    }
-
-                } // ** if ( message != 0 )
-                else {
-                    if ( time_out_timer.count() ) {
-                        if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
-                            ClientConnectRequest connect_request;
-                            CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
-                            time_out_counter++;
-                        } else {
-                            LoadingView::append( "Connection To Server Failed" );
-                            connection_state = _connect_state_connect_failure;
-                        }
-                    }
-
+                    connection_state = _connect_state_connect_failure;
+                    failure_display_timer.reset();
                 }
+                else
+                {
+                    ConnectClientSettings client_setting;
 
-                end_cycle = true;
+                    client_setting.set(gameconfig->playername.c_str());
+
+                    CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
+
+                    connection_state = _connect_state_wait_for_server_game_setup;
+                }
+            }
+            else if ( time_out_timer.count() )
+            {
+                if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT )
+                {
+                    ClientConnectRequest connect_request;
+                    CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
+                    time_out_counter++;
+                }
+                else
+                {
+                    LoadingView::append( "Connection To Server Failed" );
+                    connection_state = _connect_state_connect_failure;
+                    failure_display_timer.reset();
+                }
             }
             break;
 
-        case _connect_state_wait_for_server_game_setup : {
-                if ( message != 0 ) {
-                    if ( message->message_id == _net_message_id_connect_server_game_setup ) {
-                        ConnectMesgClientGameSetupPing client_game_setup_ping;
+        case _connect_state_wait_for_server_game_setup :
+            if ( message && message->message_id == _net_message_id_connect_server_game_setup )
+            {
+                ConnectMesgClientGameSetupPing client_game_setup_ping;
 
-                        int result_code;
-                        char str_buf[128];
-                        ConnectMesgServerGameSettings *game_setup;
-                        game_setup = (ConnectMesgServerGameSettings *) message;
+                int result_code;
+                char str_buf[128];
+                ConnectMesgServerGameSettings *game_setup;
+                game_setup = (ConnectMesgServerGameSettings *) message;
 
-                        GameManager::startClientGameSetup( message, &result_code );
+                GameManager::startClientGameSetup( message, &result_code );
 
-                        if( result_code == _mapload_result_no_map_file ) {
-                            sprintf( str_buf, "MAP %s NOT FOUND!", game_setup->map_name );
-                            LoadingView::append( str_buf);
-                            connection_state = _connect_state_connect_failure;
-                            failure_display_timer.reset();
-                        } else
-                            if( result_code == _mapload_result_no_wad_file ) {
-                                LoadingView::append( "MAP TILE SET NOT FOUND!" );
-                                LoadingView::append( "please download the appropriate tileset" );
-                                LoadingView::append( "from www.pyrosoftgames.com" );
-                                connection_state = _connect_state_connect_failure;
-                                failure_display_timer.reset();
-                            } else {
-                                LoadingView::append( "Loading Game Data ..." );
-
-                                CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
-
-                                connection_state = _connect_state_setup_client_game;
-                            }
-                    }
+                if( result_code == _mapload_result_no_map_file )
+                {
+                    sprintf( str_buf, "MAP %s NOT FOUND!", game_setup->map_name );
+                    LoadingView::append( str_buf);
+                    connection_state = _connect_state_connect_failure;
+                    failure_display_timer.reset();
                 }
+                else if( result_code == _mapload_result_no_wad_file )
+                {
+                    LoadingView::append( "MAP TILE SET NOT FOUND!" );
+                    LoadingView::append( "please download the appropriate tileset" );
+                    LoadingView::append( "from www.pyrosoftgames.com" );
+                    connection_state = _connect_state_connect_failure;
+                    failure_display_timer.reset();
+                }
+                else
+                {
+                    LoadingView::append( "Loading Game Data ..." );
 
-                end_cycle = true;
+                    CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+
+                    connection_state = _connect_state_setup_client_game;
+                }
             }
+
             break;
 
         case _connect_state_setup_client_game : {
@@ -399,10 +378,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
             }
             break;
 
-        } // ** switch
-
-    } while( end_cycle == false );
-
+    } // ** switch
 
 }
 

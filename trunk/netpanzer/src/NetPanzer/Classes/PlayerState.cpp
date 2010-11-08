@@ -94,12 +94,6 @@ Uint8 *playerColorArray[] = {
 static const size_t playerColorCount 
     = sizeof(playerColorArray) / sizeof(Uint8*);
 
-void
-PlayerState::setColor(Uint32 index)
-{
-    colorIndex = index % playerColorCount;
-}
-
 Uint8
 PlayerState::getColor() const
 {
@@ -108,7 +102,7 @@ PlayerState::getColor() const
 }
 
 PlayerState::PlayerState()
-    : team_id(NO_TEAM_ID), flag(0), status(0), kills(0), kill_points(0), losses(0),
+    : team_id(NO_TEAM_ID), status(0), kills(0), kill_points(0), losses(0),
       loss_points(0), total(0), objectives_held(0), stats_locked(false),
       colorIndex(0)
 {
@@ -116,7 +110,7 @@ PlayerState::PlayerState()
 }
 
 PlayerState::PlayerState(const PlayerState& other)
-    :  id(other.id), name(other.name), team_id(other.team_id), flag(other.flag),
+    :  id(other.id), name(other.name), team_id(other.team_id),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held),
@@ -133,7 +127,6 @@ void PlayerState::operator= (const PlayerState& other)
     team_id = other.team_id;
     memcpy(team_name, other.team_name, MAX_TEAM_NAME_LEN+1);
     
-    flag = other.flag;
     status = other.status;
     kills = other.kills;
     kill_points = other.kill_points;
@@ -320,50 +313,9 @@ unsigned char PlayerState::getStatus() const
     return status;
 }
 
-void PlayerState::setFlag(FlagID newflag)
-{
-    flag = newflag;
-    
-    bool recheck;
-    do
-    {
-        recheck = false;
-        PlayerID p;
-        for ( p=0; p<PlayerInterface::getMaxPlayers(); ++p )
-        {
-            if ( p == id )
-                continue;
-                
-            PlayerState *ps=PlayerInterface::getPlayer(p);
-            
-            if (  (ps->status==_player_state_connecting 
-                  || ps->status==_player_state_active )
-                 && ps->flag == flag
-               )
-            {
-                // will autorotate because it is a byte
-                do
-                {
-                    flag++;
-                } while ( ! ResourceManager::isFlagActive(flag) );
-                                    
-                if ( flag != newflag ) // there are no free flags if it is ==
-                {
-                    recheck = true;
-                }
-                else
-                {
-                    LOGGER.warning("No more free flags");
-                }   
-                break;
-            }
-        }
-    } while (recheck);
-}
-
 FlagID PlayerState::getFlag() const
 {
-    return flag;
+    return id;
 }
 
 // this "getTotal" is used to calculate the frags.
@@ -378,7 +330,6 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
 
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
-    state.flag = flag;
     state.id = id;
     state.team_id = team_id;
     memcpy(state.team_name, team_name, MAX_TEAM_NAME_LEN+1);
@@ -403,12 +354,6 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 
     memcpy(team_name, state->team_name, MAX_TEAM_NAME_LEN);
     team_name[MAX_TEAM_NAME_LEN] = 0;
-
-    flag = state->flag;
-    if ( ! ResourceManager::isFlagActive(flag) ) 
-    {
-        LOGGER.warning("Received flag is not registered: %u", flag);
-    }
     
     id = state->id;
     team_id = state->team_id;
@@ -419,5 +364,4 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     loss_points = ltoh16(state->loss_points);
     total = ltoh16(state->total);
     objectives_held = ltoh16(state->objectives_held);
-    setColor(ltoh32(state->colorIndex));
 }

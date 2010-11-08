@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 
+#include "Core/CoreTypes.hpp"
+
 #include "2D/Surface.hpp"
 #include "2D/Color.hpp"
 #include "Util/NoCopy.hpp"
@@ -125,6 +127,8 @@ public:
 
     static bool game_enable_bases;
     static int  game_base_capture_mode; // 0=no capture, 1=normal, 2=...
+
+    static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join

@@ -197,7 +197,6 @@ void PlayerInterface::initialize(const unsigned int _max_players)
         player_lists[ player_id ].setID( player_id );
         player_lists[ player_id ].resetStats();
         player_lists[ player_id ].setStatus( _player_state_free );
-        player_lists[ player_id ].setFlag( 0 );
         player_lists[ player_id ].unit_config.initialize();
         sprintf( temp_str, "Player %u", player_id );
         player_lists[ player_id ].setName( temp_str );
@@ -332,6 +331,7 @@ PlayerID PlayerInterface::countPlayers()
 PlayerState * PlayerInterface::allocateNewPlayer()
 {
     PlayerID player_id;
+    PlayerState * res = 0;
 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
@@ -340,18 +340,14 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         {
             player_lists[ player_id ].setStatus( _player_state_allocated );
             player_lists[ player_id ].resetStats();
-            player_lists[ player_id ].setColor( player_id );
-            player_lists[ player_id ].setID(player_id);
             player_lists[ player_id ].setTeamID(NO_TEAM_ID);
             player_lists[ player_id ].setTeamName("");
-            SDL_mutexV(mutex);
-            return( &player_lists[ player_id ] );
-        } // ** if
-
-    } // ** for
+            res = &player_lists[ player_id ];
+        }
+    }
     SDL_mutexV(mutex);
 
-    return( 0 );
+    return( res );
 }
 
 void PlayerInterface::spawnPlayer( PlayerID player_id, const iXY &location )

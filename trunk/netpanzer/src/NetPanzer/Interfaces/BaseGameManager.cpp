@@ -132,17 +132,6 @@ void BaseGameManager::shutdownGameObjects()
 void BaseGameManager::loadGameData()
 {
     UnitProfileInterface::loadUnitProfiles();
-    
-    int numflags = ResourceManager::loadDefaultFlags();
-    if ( numflags <= 0 )
-    {
-        throw Exception("Couldn't find any flag in pics/flags/.");
-    }
-
-    if(gameconfig->playerflag.isDefaultValue())
-    {
-        gameconfig->playerflag=rand()%numflags;
-    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
@@ -182,6 +171,8 @@ void BaseGameManager::initialize(const std::string& configfile)
         if(!filesystem::exists("config"))
             filesystem::mkdir("config");
         initializeGameConfig(configfile);
+        ResourceManager::initialize();
+
         initializeSoundSubSystem();
         initializeVideoSubSystem();
         initializeGameObjects();
@@ -206,6 +197,7 @@ void BaseGameManager::shutdownSubSystems()
     shutdownSoundSubSystem();
     shutdownVideoSubSystem();
     shutdownInputDevices();
+    ResourceManager::finalize();
     shutdownGameConfig();
 }
 //-----------------------------------------------------------------

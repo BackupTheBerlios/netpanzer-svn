@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Resources/ResourceManager.hpp"
 
 char HostJoinTemplateView::gameTypeBuf[256];
 
@@ -80,7 +81,8 @@ static void bNext()
         return;
 
     // Set the player flag.
-    gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
+    // XXX FLAG
+    //gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
 
     // Close all menu views.
     Desktop::setVisibilityAllWindows(false);
@@ -94,6 +96,7 @@ static void bNext()
     MenuTemplateView::backgroundSurface.free();
 
     PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+    ResourceManager::getFlag(0)->bufferToFrame(GameConfig::player_flag_data, sizeof(GameConfig::player_flag_data));
     manager->launchMultiPlayerGame();
 }
 

@@ -51,6 +51,8 @@ bool GameConfig::interface_show_names = true;
 bool GameConfig::game_enable_bases = true;
 int  GameConfig::game_base_capture_mode = 1; // normal capture;
 
+Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
+
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
 // This generates the tables needed for script binding

@@ -283,12 +283,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
 
             client_setting = (ConnectClientSettings *) message;
             player->setName( client_setting->player_name );
-            player->unit_config.setUnitColor( client_setting->unit_color );
-            
-            Uint8 flag = (Uint8) client_setting->getPlayerFlag();
-            player->setFlag(flag);
-
-            player->setID( connect_client->getPlayerIndex() );
+            // XXX FLAG
             player->setStatus( _player_state_connecting );
 
             // ** send server game setting map, units, player, etc.

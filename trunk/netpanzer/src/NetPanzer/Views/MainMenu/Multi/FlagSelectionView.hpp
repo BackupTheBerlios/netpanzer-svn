@@ -26,22 +26,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    static FlagID playerFlagSelected;
-    static Surface playerFlag;
-    
-    enum { BORDER_SPACE = 4 };
+    Surface menu_flags;
+    Surface game_flags;
+    std::vector<std::string> flag_names;
+
+    iXY loc_player_flag;
+    const char * text_current;
+    iXY loc_text_current;
 
 public:
     FlagSelectionView();
     virtual ~FlagSelectionView()
     {}
     
-    static void setSelectedFlag(FlagID code);
-    
-    static FlagID getSelectedFlag()
-    {
-        return playerFlagSelected;
-    }
+    void setSelectedFlag(FlagID code);
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);

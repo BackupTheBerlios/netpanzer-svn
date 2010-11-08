@@ -116,18 +116,10 @@ ConnectClientSettings::ConnectClientSettings()
     memset(&player_name, 0, sizeof(player_name));
 }
 
-Sint16 ConnectClientSettings::getPlayerFlag() const
-{
-    return ltoh16(player_flag);
-}
-
-void ConnectClientSettings::set(const char *player_name, Uint8 unit_color,
-        Uint16 player_flag )
+void ConnectClientSettings::set(const char *player_name)
 {
     strncpy(ConnectClientSettings::player_name, player_name, 64);
     ConnectClientSettings::player_name[63] = '\0';
-    ConnectClientSettings::unit_color = unit_color;
-    ConnectClientSettings::player_flag = htol16(player_flag);
 }
 
 

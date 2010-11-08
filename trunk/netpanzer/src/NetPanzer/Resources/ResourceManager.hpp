@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	_RESOURCEMANAGER_HPP
 
 #include "Core/CoreTypes.hpp"
+#include <vector>
+#include <string>
 
 // forward declarations
 class Surface;
@@ -29,10 +31,12 @@ class Surface;
 class ResourceManager
 {
 public:
-    static Surface * getEmptyImage();
-    static int loadDefaultFlags();
+    static void initialize();
+    static void finalize();
+
+    static int loadAllFlags(Surface& flags, std::vector<std::string>& names);
+    static bool loadFlag(Surface* dest, std::string name);
     static Surface * getFlag(FlagID flag);
-    static bool isFlagActive(FlagID flag);
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

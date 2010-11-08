@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/CoreTypes.hpp"
 #include "Classes/SelectionBoxSprite.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -67,7 +67,7 @@ UnitSelectionBox::UnitSelectionBox( )
     allied_visiblity_state = false;
     allie_state = false;
     flag_visibility_state = false;
-    unit_flag = ResourceManager::getEmptyImage();
+    unit_flag = 0;
 }
 
 
@@ -139,20 +139,20 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         //surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
     }
 
-    if ( GameConfig::interface_show_flags == true )
+    if ( GameConfig::interface_show_flags == true  && unit_flag )
     {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
-        unit_flag->blt( *surface, min_abs.x, min_abs.y-unit_flag->getHeight()-1 );
+        unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT - 1 );
     }
 
     if ( GameConfig::interface_show_names == true )
     {
         if ( playerName.length() > 0 )
         {   // XXX dirty trick, I don't center the text, just "by hand"
-            surface->bltString(min_abs.x+unit_flag->getWidth() + 2,
-                           min_abs.y - unit_flag->getHeight() + 2 ,
-                           playerName.c_str(), Color::gray224);
+            surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
+                                min_abs.y - FLAG_HEIGHT + 2,
+                                playerName.c_str(), Color::gray224);
         }
     }
 
