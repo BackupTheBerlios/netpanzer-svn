@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetworkState.hpp"
 
-#include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
@@ -50,23 +49,10 @@ NetworkClient::~NetworkClient()
         delete clientsocket;
 }
 
-void NetworkClient::netMessageClientKeepAlive(const NetMessage* )
+void
+NetworkClient::onClientConnected(ClientSocket *s)
 {
-    // nothing
-}
-
-void NetworkClient::netMessageClientSetKeepAliveState(const NetMessage* )
-{
-    // nothing
-}
-
-void NetworkClient::netMessageClientPingAck(const NetMessage* )
-{
-    // nothing
-}
-
-void NetworkClient::netMessageClientConnectAck(const NetMessage* )
-{
+    (void)s;
     ClientConnectJoinRequest join_request;
 
     connection_status = _connection_status_connected;
@@ -74,40 +60,6 @@ void NetworkClient::netMessageClientConnectAck(const NetMessage* )
     join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
 
     sendMessage( &join_request, sizeof(ClientConnectJoinRequest));
-}
-
-
-void NetworkClient::processNetMessage(const NetMessage* message)
-{
-    switch(message->message_id)
-    {
-        case _net_message_id_client_keep_alive:
-            netMessageClientKeepAlive(message);
-            break;
-
-        case _net_message_id_client_set_keepalive_state: 
-            netMessageClientSetKeepAliveState(message);
-            break;
-
-        case _net_message_id_client_ping_ack:
-            netMessageClientPingAck(message);
-            break;
-
-        case _net_message_id_client_connect_ack:
-            netMessageClientConnectAck(message);
-            break;
-
-        default:
-            LOGGER.warning("Unknown messageid in clientnetmessage (id %d)",
-                    message->message_id);
-            break;
-    }
-}
-
-void
-NetworkClient::onClientConnected(ClientSocket *s)
-{
-    (void)s;
 }
 
 void
@@ -186,11 +138,6 @@ bool NetworkClient::getMessage(NetMessage *message)
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("R", message);
 #endif
-
-    if ( message->message_class == _net_message_class_client_server )
-    {
-        processNetMessage( message );
-    }
 
     NetworkState::incPacketsReceived(net_packet.getSize());
 

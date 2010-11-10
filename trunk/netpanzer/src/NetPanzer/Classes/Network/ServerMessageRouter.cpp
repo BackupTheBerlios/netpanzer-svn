@@ -86,9 +86,6 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             PlayerInterface::processNetMessage(message);
             break;
 
-        case _net_message_class_client_server:
-            break;
-
         default:
             LOGGER.warning("Packet contained unknown message class: %d",
                     message->message_class);

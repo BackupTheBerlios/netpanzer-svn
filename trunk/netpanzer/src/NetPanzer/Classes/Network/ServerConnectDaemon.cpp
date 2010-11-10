@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 
+#include "Resources/ResourceManager.hpp"
+
 #include "PlayerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 #include "SystemNetMessage.hpp"
@@ -129,18 +131,13 @@ void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
         = (const ClientConnectJoinRequest *) packet->getNetMessage();
     ClientConnectJoinRequestAck join_request_ack;
 
-    if(join_request_mesg->getProtocolVersion() == NETPANZER_PROTOCOL_VERSION)
-    {
-        join_request_ack.setResultCode(_join_request_result_success);
-    }
-    else
+    join_request_ack.setResultCode(_join_request_result_success);
+
+    if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
     {
         join_request_ack.setResultCode(_join_request_result_invalid_protocol);
     }
-
-    join_request_ack.setServerProtocolVersion(NETPANZER_PROTOCOL_VERSION);
-
-    if( join_request_ack.getResultCode() == _join_request_result_success )
+    else
     {
         if ( !inConnectQueue( packet->fromClient ) )
         {
@@ -154,6 +151,8 @@ void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
             }
         }
     }
+
+    join_request_ack.setServerProtocolVersion(NETPANZER_PROTOCOL_VERSION);
     join_request_ack.setSize(sizeof(ClientConnectJoinRequestAck));
     packet->fromClient->sendMessage(&join_request_ack,
                          sizeof(ClientConnectJoinRequestAck));
@@ -283,7 +282,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
 
             client_setting = (ConnectClientSettings *) message;
             player->setName( client_setting->player_name );
-            // XXX FLAG
+            ResourceManager::getFlag(connect_client->getPlayerIndex())->bufferToFrame(client_setting->player_flag, sizeof(ConnectClientSettings::player_flag));
             player->setStatus( _player_state_connecting );
 
             // ** send server game setting map, units, player, etc.
@@ -320,7 +319,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
     {
         if ( message->message_id == _net_message_id_connect_client_game_setup_ack )
         {
-            PlayerConnectID player_connect_mesg(player->getNetworkPlayerState());
+            PlayerConnectID player_connect_mesg(connect_client->getPlayerIndex());
             player_connect_mesg.setSize(sizeof(PlayerConnectID));
             connect_client->sendMessage( &player_connect_mesg,
                                          sizeof(PlayerConnectID));

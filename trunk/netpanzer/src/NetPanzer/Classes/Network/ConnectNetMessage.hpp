@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_join_game_request_ack,
        _net_message_id_client_start_connect,
+
+       _net_message_id_connect_server_full,
+       _net_message_id_connect_server_busy,
+
        _net_message_id_client_connect_request,
        _net_message_id_client_connect_result,
        _net_message_id_connect_client_settings,
@@ -61,14 +65,14 @@ enum { _join_request_result_success,
 class ClientConnectJoinRequestAck : public NetMessage
 {
 private:
-    Sint32  result_code;
+    Uint8  result_code;
     Uint32 server_protocol_version;
 
 public:
     ClientConnectJoinRequestAck();
 
-    Sint32 getResultCode() const;
-    void setResultCode(Sint32 result);
+    Uint8 getResultCode() const { return result_code; }
+    void setResultCode(Uint8 result) { result_code = result; }
     Uint32 getServerProtocolVersion() const;
     void setServerProtocolVersion(Uint32 protocol_version);
 } __attribute__((packed));
@@ -114,12 +118,12 @@ public:
 class ConnectProcessUpdate : public NetMessage
 {
 private:
-    Uint32 queue_position;
+    Uint8 queue_position;
 
 public:
     ConnectProcessUpdate();
-    Uint32 getQueuePosition() const;
-    void setQueuePosition(Uint32 position);
+    Uint8 getQueuePosition() const { return queue_position; }
+    void setQueuePosition(Uint8 position) { queue_position = position; }
 } __attribute__((packed));
 
 enum { _connect_state_message_load_game_data,
@@ -133,22 +137,22 @@ enum { _connect_state_message_load_game_data,
 class ConnectProcessStateMessage : public NetMessage
 {
 private:
-    Uint32 message_enum;
-    Sint32  percent_complete;
+    Uint8 message_enum;
+    Uint8 percent_complete;
 
 public:
     ConnectProcessStateMessage();
-    Uint32 getMessageEnum() const;
-    void setMessageEnum(Uint32 message);
-    Sint32 getPercentComplete() const;
-    void setPercentComplete(Sint32 percent);
+    Uint8 getMessageEnum() const { return message_enum; }
+    void setMessageEnum(Uint8 message) { message_enum = message; }
+    Uint8 getPercentComplete() const { return percent_complete; }
+    void setPercentComplete(Uint8 percent) { percent_complete = percent; }
 } __attribute__((packed));
 
 class ConnectClientSettings : public NetMessage
 {
 public:
     char player_name[64];
-
+    Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
     ConnectClientSettings();
     void set(const char *player_name);
 } __attribute__((packed));

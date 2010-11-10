@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 
 enum { _net_message_class_multi = 0,
-       _net_message_class_client_server,
        _net_message_class_system,
        _net_message_class_connect,
        _net_message_class_player,

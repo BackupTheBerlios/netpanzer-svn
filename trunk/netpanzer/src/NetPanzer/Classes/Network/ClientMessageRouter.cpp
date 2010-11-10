@@ -55,10 +55,6 @@ void
 ClientMessageRouter::routeMessage(const NetMessage* message)
 {
     switch (message->message_class) {
-        case _net_message_class_client_server:
-            // already handled in the NetworkClient class
-            break;
-        
         case _net_message_class_unit:
             UnitInterface::processNetMessage(message);
             break;

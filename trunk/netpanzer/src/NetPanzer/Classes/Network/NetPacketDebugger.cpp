@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacketDebugger.hpp"
 #include "Classes/OpcodeDebugger.hpp"
-#include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
 void NetPacketDebugger::logPacket(const char* domain, const NetPacket* packet)
@@ -53,11 +52,6 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
         case _net_message_class_multi:
         {
             logMultiMessage(*log, message);
-            break;
-        }
-        case _net_message_class_client_server:
-        {
-            logClientServerMessage(*log, message);
             break;
         }
         case _net_message_class_system:
@@ -141,43 +135,6 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
 
         logMessage("  M", submessage);
     }
-}
-
-void NetPacketDebugger::logClientServerMessage(std::ostream& log,
-        const NetMessage* message)
-{
-    log << "Client/Server ";
-    switch(message->message_id) {
-        case _net_message_id_transport_client_accept:
-            log << "(transport client accept)";
-            break;
-        case _net_message_id_client_connect_ack:
-            log << "(client connect ack)";
-            break;
-        case _net_message_id_client_server_id:
-            log << "(client server id)";
-            break;
-        case _net_message_id_client_keep_alive:
-            log << "(client keep alive)";
-            break;
-        case _net_message_id_client_set_keepalive_state:
-            log << "(client set keepalive state)";
-            break;
-        case _net_message_id_server_client_disconnect:
-            log << "(server client disconnect)";
-            break;
-        case _net_message_id_server_keep_alive:
-            log << "(server keep alive)";
-            break;
-        case _net_message_id_server_ping_request:
-            log << "(server ping request)";
-            break;
-        case _net_message_id_client_ping_ack:
-            log << "(client ping ack)";
-            break;
-        default:
-            log << "(invalid messageid)";            
-            break;                           }
 }
 
 void NetPacketDebugger::logConnectMessage(std::ostream& log,

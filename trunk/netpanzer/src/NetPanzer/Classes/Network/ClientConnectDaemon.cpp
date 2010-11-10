@@ -26,15 +26,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 
+#include "Resources/ResourceManager.hpp"
+
 #include "Util/Log.hpp"
 #include "ConnectNetMessage.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Game/LoadingView.hpp"
 
 enum { _connect_state_idle,
-       _connect_state_wait_for_connect_start,
-       _connect_state_send_connect_request,
-       _connect_state_wait_for_connect_result,
+       _connect_state_waiting_link,
+
+
+
+       _connect_state_waiting_connect_start,
+       _connect_state_waiting_connect_result,
        _connect_state_wait_for_server_game_setup,
        _connect_state_setup_client_game,
        _connect_state_connect_failure
@@ -71,13 +76,14 @@ void ClientConnectDaemon::startConnectionProcess( )
     failure_display_timer.changePeriod( 10 );
     time_out_timer.changePeriod( _CLIENT_CONNECT_TIME_OUT_TIME );
     time_out_counter = 0;
-    connection_state = _connect_state_wait_for_connect_start;
+    connection_state = _connect_state_waiting_connect_start;
 }
 
-void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
+unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
 {
     ClientConnectJoinRequestAck *join_request_ack_mesg;
     char buf[80];
+    unsigned char rval;
 
     join_request_ack_mesg = (ClientConnectJoinRequestAck *) message;
 
@@ -87,6 +93,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         sprintf( buf, "Protocol Version: %u",
                 join_request_ack_mesg->getServerProtocolVersion());
         LoadingView::append( buf );
+        rval = _connect_state_waiting_connect_start;
         break;
 
     case _join_request_result_invalid_protocol :
@@ -96,7 +103,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         sprintf( buf, "Server Protocol Version: %u",
                 join_request_ack_mesg->getServerProtocolVersion());
         LoadingView::append( buf );
-        connection_state = _connect_state_connect_failure;
+        rval = _connect_state_connect_failure;
         failure_display_timer.reset();
         break;
 
@@ -104,7 +111,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         LoadingView::append( "Link to Server FAILED!" );
         LoadingView::append( "Server is VERY busy" );
         LoadingView::append( "Please try in a few minutes" );
-        connection_state = _connect_state_connect_failure;
+        rval = _connect_state_connect_failure;
         failure_display_timer.reset();
         break;
 
@@ -113,6 +120,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         break;
     }
 
+    return rval;
 }
 
 void ClientConnectDaemon::netMessageConnectProcessUpdate(const NetMessage* message )
@@ -184,15 +192,6 @@ void ClientConnectDaemon::netMessageConnectServerDisconnect(const NetMessage* )
 void ClientConnectDaemon::processNetMessage(const NetMessage* message)
 {
     switch (message->message_id) {
-    case _net_message_id_connect_join_game_request_ack : {
-            netMessageLinkAck( message );
-        }
-        break;
-
-    case _net_message_id_client_connect_process_update : {
-            netMessageConnectProcessUpdate( message );
-        }
-        break;
 
     case _net_message_id_client_connect_process_state_mesg : {
             netMessageConnectProcessMessage( message );
@@ -234,37 +233,50 @@ void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
 
 void ClientConnectDaemon::connectFsm(const NetMessage* message )
 {
-    bool end_cycle = false;
+    unsigned char message_id = message ? message->message_id : 0xff;
 
     switch ( connection_state )
     {
         case _connect_state_idle :
             return;
 
-        case _connect_state_wait_for_connect_start :
-            if ( message && message->message_id == _net_message_id_client_start_connect )
+        case _connect_state_waiting_link:
+            if ( message_id == _net_message_id_connect_join_game_request_ack )
+            {
+                connection_state = netMessageLinkAck( message );
+            }
+            break;
+
+        case _connect_state_waiting_connect_start :
+            if ( message_id == _net_message_id_client_connect_process_update )
+            {
+                netMessageConnectProcessUpdate( message );
+                break;
+            }
+            else if ( message_id == _net_message_id_client_start_connect )
             {
                 LoadingView::append( "Connecting ..." );
-                connection_state = _connect_state_send_connect_request;
+
+                ClientConnectRequest connect_request;
+                CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
+
+                connection_state = _connect_state_waiting_connect_result;
+            }
+            else if ( message_id == _net_message_id_connect_server_full )
+            {
+                LoadingView::append( "Connect Failure: Server Full" );
+
+                failure_display_timer.reset();
+                connection_state = _connect_state_connect_failure;
+                break;
             }
             else
             {
                 break;
             }
 
-        case _connect_state_send_connect_request : {
-                ClientConnectRequest connect_request;
-
-                CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
-
-                connection_state = _connect_state_wait_for_connect_result;
-
-                end_cycle = true;
-            }
-            break;
-
-        case _connect_state_wait_for_connect_result :
-            if ( message && message->message_id == _net_message_id_client_connect_result )
+        case _connect_state_waiting_connect_result :
+            if (message_id == _net_message_id_client_connect_result )
             {
                 ClientConnectResult *connect_result;
 
@@ -282,6 +294,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     ConnectClientSettings client_setting;
 
                     client_setting.set(gameconfig->playername.c_str());
+                    memcpy(&client_setting.player_flag, GameConfig::player_flag_data, sizeof(client_setting.player_flag));
 
                     CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
 
@@ -363,8 +376,6 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     LoadingView::update( str_buf );
                     CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
                 }
-
-                end_cycle = true;
             }
             break;
 
@@ -374,7 +385,6 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     LoadingView::loadError();
                     connection_state = _connect_state_idle;
                 }
-                end_cycle = true;
             }
             break;
 

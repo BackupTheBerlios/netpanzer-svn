@@ -54,10 +54,6 @@ protected:
     void updateKeepAliveState();
     void resetClientList();
 
-    void netPacketClientKeepAlive(const NetPacket* packet);
-    void netPacketServerPingRequest(const NetPacket* packet);
-
-    void processNetPacket(const NetPacket* packet);
     
 public:
     NetworkServer();

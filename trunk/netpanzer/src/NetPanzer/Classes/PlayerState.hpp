@@ -47,8 +47,6 @@ private:
     
     PlayerID id;
     char name[64];
-    TeamID team_id;
-    char team_name[MAX_TEAM_NAME_LEN+1];
     Uint8 status;
     Sint16 kills;
     Sint16 kill_points;
@@ -68,10 +66,6 @@ class PlayerState
 private:
     PlayerID id;
     std::string name;
-
-    TeamID  team_id;
-    char team_name[MAX_TEAM_NAME_LEN+1];
-
     unsigned char status;
     short kills;
     short kill_points;
@@ -91,17 +85,11 @@ public:
     void operator= (const PlayerState& other);
 
     void setName(const std::string& newname);
+    const std::string& getName() const;
 
     PlayerID getID() const { return id; }
 
-    TeamID getTeamID() const               { return team_id; }
-    void   setTeamID(const TeamID team_id) { this->team_id = team_id; }
-
-    const char * getTeamName() const { return team_name; }
-    void setTeamName(const char * team_name);
-
     void resetStats();
-    const std::string& getName() const;
     void lockStats();
     void unlockStats();
     short getKills() const;

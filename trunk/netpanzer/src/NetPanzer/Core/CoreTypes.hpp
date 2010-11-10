@@ -43,13 +43,6 @@ typedef Uint8 FlagID;
 #define FLAG_WIDTH 20
 #define FLAG_HEIGHT 14
 
-typedef Uint8 TeamID;
-#define NO_TEAM_ID (0)
-#define MIN_TEAM_ID (1)
-#define MAX_TEAM_ID (0xfe)
-#define INVALID_TEAM_ID (0xff)
-#define MAX_TEAM_NAME_LEN (20)
-
 #ifndef __TEST_PLAYERID__
     typedef Uint8 PlayerID;
     #define MIN_PLAYER_ID (0)
@@ -85,6 +78,10 @@ typedef Uint8 TeamID;
     #define MAX_PLAYER_ID (TestPlayerID())
     #define INVALID_PLAYER_ID (TestPlayerID())
 
+#endif
+
+#ifndef __GNUC__
+    #define __attribute__(x) /*nothing*/
 #endif
 
 #endif	/* _CORETYPES_HPP */

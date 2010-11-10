@@ -930,18 +930,19 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
     if ( target_list.isSelected() == true ) {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        Uint8 type;
-        if ( make_break ) {
-            type = _player_make_alliance;
-        } else {
-            type = _player_break_alliance;
-        }
+        //Uint8 type;
+        //if ( make_break ) {
+        //    type = _player_make_alliance;
+        //} else {
+        //    type = _player_break_alliance;
+        //}
 
-        PlayerAllianceRequest allie_request;
-        allie_request.set(PlayerInterface::getLocalPlayerIndex(),
-                target_ptr->player->getID(), type);
+        // XXX ALLY
+        //PlayerAllianceRequest allie_request;
+        //allie_request.set(PlayerInterface::getLocalPlayerIndex(),
+        //        target_ptr->player->getID(), type);
 
-        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+        //CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }
 }
 

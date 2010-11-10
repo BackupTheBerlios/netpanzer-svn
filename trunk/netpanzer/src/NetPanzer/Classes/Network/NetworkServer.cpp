@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 
-#include "ClientServerNetMessage.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Classes/Network/NetworkState.hpp"
 
@@ -85,36 +84,6 @@ bool NetworkServer::addClientToSendList( ClientSocket * client )
     client_list.push_back(client_data);
 
     return true;
-}
-
-void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
-{
-    // nothing
-}
-
-void NetworkServer::netPacketServerPingRequest(const NetPacket* )
-{
-    // nothing
-}
-
-void NetworkServer::processNetPacket(const NetPacket* packet)
-{
-    const NetMessage* message = packet->getNetMessage();
-    switch(message->message_id)
-    {
-        case _net_message_id_server_keep_alive: 
-            netPacketClientKeepAlive(packet);
-            break;
-
-        case _net_message_id_server_ping_request:
-            netPacketServerPingRequest(packet);
-            break;
-
-        default:
-            LOGGER.warning("Unknown networkserverpacket: id:%d.",
-                    message->message_id);
-            break;
-    }
 }
 
 void
@@ -226,12 +195,6 @@ NetworkServer::getPacket(NetPacket* packet)
         receive_queue.dequeue(packet);
         NetworkState::incPacketsReceived(packet->getSize());
 
-        if (packet->getNetMessage()->message_class 
-                == _net_message_class_client_server)
-        {
-            processNetPacket(packet);
-        }
-
 #ifdef NETWORKDEBUG
         NetPacketDebugger::logPacket("R", packet);
 #endif
@@ -308,16 +271,7 @@ NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
 void
 NetworkServer::onClientConnected(ClientSocket *s)
 {
-    int id = s->getId();
-    LOGGER.debug("NetworkServer: client connected [%d]", id);
-    //clients[id] = s;
-    
-    // this class handle this packet and it only sends the answer
-    // send it here right now
-    ClientMesgConnectAck connect_ack_mesg;
-    connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
-    s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
-    s->sendRemaining();
+    LOGGER.debug("NetworkServer: client connected [%d]", s->getId());
 }
 
 void

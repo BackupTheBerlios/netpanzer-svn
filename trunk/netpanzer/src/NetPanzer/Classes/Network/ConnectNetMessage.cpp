@@ -44,16 +44,6 @@ ClientConnectJoinRequestAck::ClientConnectJoinRequestAck()
     message_id = _net_message_id_connect_join_game_request_ack;
 }
 
-Sint32 ClientConnectJoinRequestAck::getResultCode() const
-{
-    return ltoh32(result_code);
-}
-
-void ClientConnectJoinRequestAck::setResultCode(Sint32 result)
-{
-    result_code = htol32(result);
-}
-
 Uint32 ClientConnectJoinRequestAck::getServerProtocolVersion() const
 {
     return ltoh32(server_protocol_version);
@@ -71,43 +61,11 @@ ConnectProcessUpdate::ConnectProcessUpdate()
     message_id = _net_message_id_client_connect_process_update;
 }
 
-Uint32 ConnectProcessUpdate::getQueuePosition() const
-{
-    return ltoh32(queue_position);
-}
-
-void ConnectProcessUpdate::setQueuePosition(Uint32 position)
-{
-    queue_position = htol32(position);
-}
-
-
 ConnectProcessStateMessage::ConnectProcessStateMessage()
 {
     message_class = _net_message_class_connect;
     message_id = _net_message_id_client_connect_process_state_mesg;
 }
-
-Uint32 ConnectProcessStateMessage::getMessageEnum() const
-{
-    return ltoh32(message_enum);
-}
-
-void ConnectProcessStateMessage::setMessageEnum(Uint32 message)
-{
-    message_enum = htol32(message);
-}
-
-Sint32 ConnectProcessStateMessage::getPercentComplete() const
-{
-    return ltoh32(percent_complete);
-}
-
-void ConnectProcessStateMessage::setPercentComplete(Sint32 percent)
-{
-    percent_complete = htol32(percent);
-}
-
 
 ConnectClientSettings::ConnectClientSettings()
 {

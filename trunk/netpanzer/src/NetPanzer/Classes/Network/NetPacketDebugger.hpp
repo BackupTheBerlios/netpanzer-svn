@@ -36,7 +36,6 @@ private:
     static void logMultiMessage(std::ostream& str, const NetMessage* message);
     static void logUnitMessage(std::ostream& log, const NetMessage* message);
     static void logUnitOpcodeMessage(std::ostream& log, const NetMessage* message);
-    static void logClientServerMessage(std::ostream& log, const NetMessage* message);
     static void logConnectMessage(std::ostream& log, const NetMessage* message);
 };
 

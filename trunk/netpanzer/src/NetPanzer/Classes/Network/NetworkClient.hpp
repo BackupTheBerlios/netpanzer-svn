@@ -41,13 +41,6 @@ protected:
     NetPacket net_packet;
     unsigned short connection_status;
 
-    void netMessageClientKeepAlive(const NetMessage* message);
-    void netMessageClientSetKeepAliveState(const NetMessage* message);
-    void netMessageClientPingAck(const NetMessage* message);
-    void netMessageClientConnectAck(const NetMessage* message);
-
-    void processNetMessage(const NetMessage* message);
-
     void onClientConnected(ClientSocket *s);
     void onClientDisconected(ClientSocket *s, const char *msg);    
 

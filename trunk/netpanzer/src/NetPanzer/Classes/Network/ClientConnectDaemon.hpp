@@ -30,7 +30,7 @@ protected:
     static int   time_out_counter;
     static unsigned char connection_state;
 
-    static void netMessageLinkAck(const NetMessage* message);
+    static unsigned char netMessageLinkAck(const NetMessage* message);
     static void netMessageConnectProcessUpdate(const NetMessage* message);
     static void netMessageConnectProcessMessage(const NetMessage* message);
     static void netMessageConnectServerDisconnect(const NetMessage* message);
