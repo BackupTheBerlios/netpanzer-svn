@@ -105,7 +105,7 @@ void NetworkClient::partServer()
     clientsocket = 0;
 }
 
-void NetworkClient::sendMessage(NetMessage* message, size_t size)
+void NetworkClient::sendMessage(const NetMessage* message, size_t size)
 {
     if ( !clientsocket )
     {

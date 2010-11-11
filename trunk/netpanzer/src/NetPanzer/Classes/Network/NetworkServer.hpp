@@ -68,7 +68,7 @@ public:
     
     void closeSession();
 
-    void broadcastMessage(NetMessage *message, size_t size);
+    void broadcastMessage(const NetMessage *message, size_t size);
     
     void sendMessage(const PlayerID player_index, NetMessage* message,
             size_t size);

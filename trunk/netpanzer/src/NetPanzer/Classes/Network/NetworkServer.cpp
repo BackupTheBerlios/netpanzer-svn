@@ -130,7 +130,7 @@ NetworkServer::closeSession()
 }
 
 void
-NetworkServer::broadcastMessage(NetMessage *message, size_t size)
+NetworkServer::broadcastMessage(const NetMessage *message, size_t size)
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )

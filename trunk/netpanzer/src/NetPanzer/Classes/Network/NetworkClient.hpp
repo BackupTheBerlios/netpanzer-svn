@@ -50,7 +50,7 @@ public:
     bool joinServer(const std::string& server_name);
     void partServer();
 
-    void sendMessage(NetMessage* message, size_t size);
+    void sendMessage(const NetMessage* message, size_t size);
     void sendRemaining();
 
     bool getPacket(NetPacket *packet);

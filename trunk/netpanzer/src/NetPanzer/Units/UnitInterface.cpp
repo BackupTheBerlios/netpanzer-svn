@@ -398,21 +398,34 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
     unit_placement_matrix.reset( location );
 
-    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ ) {
+    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ )
+    {
 
         unit_spawn_count = unit_config.getSpawnUnitCount( unit_type_index );
-        for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ ) {
+        for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ )
+        {
             unit_placement_matrix.getNextEmptyLoc( &next_loc );
             unit = createUnit(unit_type_index, next_loc, player_id);
-
-            assert(unit != 0);
             UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
                     next_loc.x, next_loc.y, unit->unit_state.unit_type);
-            encoder.encodeMessage(&create_mesg, sizeof(create_mesg));
+
+            if ( !encoder.encodeMessage(&create_mesg, sizeof(create_mesg)) )
+            {
+                LOGGER.info("UnitInterface encoder full, sending and resetting");
+                SERVER->broadcastMessage(encoder.getEncodedMessage(),
+                                         encoder.getEncodedLen());
+                encoder.resetEncoder();
+                encoder.encodeMessage(&create_mesg, sizeof(create_mesg));
+            }
         } // ** for unit_spawn_index
     } // ** for unit_type_index
 
-    encoder.sendEncodedMessage();
+    if ( ! encoder.isEmpty() )
+    {
+        LOGGER.info("UnitInterface sending remaining");
+        SERVER->broadcastMessage(encoder.getEncodedMessage(),
+                                 encoder.getEncodedLen());
+    }
 }
 
 // ******************************************************************

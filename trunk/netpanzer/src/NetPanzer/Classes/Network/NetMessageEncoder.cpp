@@ -24,18 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "NetworkClient.hpp"
 
-NetMessageEncoder::NetMessageEncoder(bool sendAsClient)
+NetMessageEncoder::NetMessageEncoder()
 {
-    this->sendAsClient = sendAsClient;
-    usePlayerID = false;
-    resetEncoder();
-}
-
-NetMessageEncoder::NetMessageEncoder(PlayerID player_index)
-{
-    usePlayerID = true;
-    sendAsClient = false;
-    player = player_index;
     resetEncoder();
 }
 
@@ -51,13 +41,11 @@ void NetMessageEncoder::resetEncoder()
     offset = 0;
 }
 
-void NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
+bool NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
 {
-    if (offset >= _MULTI_PACKET_LIMIT )
+    if (offset+size > _MULTI_PACKET_LIMIT )
     {
-        sendEncodedMessage();
-
-        resetEncoder();
+        return false;
     }
 
     Uint16* mlen = (Uint16*)(encode_message.data + offset);
@@ -66,31 +54,5 @@ void NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
     memcpy(mlen+1, message, size);
 
     offset += size + 2;
+    return true;
 }
-
-void NetMessageEncoder::sendEncodedMessage()
-{
-    if ( offset )
-    {
-        size_t size = offset + sizeof(NetMessage);
-        if(usePlayerID)
-        {
-            SERVER->sendMessage(player, &encode_message, size);
-        }
-        else if(sendAsClient)
-        {
-            CLIENT->sendMessage(&encode_message, size);
-        }
-        else if(NetworkState::status == _network_state_server)
-        {
-            SERVER->broadcastMessage(&encode_message, size);
-        }
-        else
-        {
-            CLIENT->sendMessage(&encode_message, size);
-        }
-
-        resetEncoder();
-    }
-}
-

@@ -23,20 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetMessageEncoder
 {
 private:
-    bool sendAsClient;
-    bool usePlayerID;
-    PlayerID player;
     MultiMessage encode_message;
     size_t offset;
 
 public:
-    NetMessageEncoder(bool sendAsClient = false);
-    NetMessageEncoder(PlayerID player_index);
+    NetMessageEncoder();
     ~NetMessageEncoder();
     
     void resetEncoder();
-    void encodeMessage(NetMessage *message, size_t size);
-    void sendEncodedMessage();
+    bool encodeMessage(NetMessage *message, size_t size);
+    const NetMessage* getEncodedMessage() const { return &encode_message; }
+    size_t getEncodedLen() const { return offset + sizeof(NetMessage); }
+    bool isEmpty() const { return offset == 0; }
 };
 
 #endif

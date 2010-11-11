@@ -771,7 +771,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     size_t id_list_size;
     UnitBase *unit_ptr;
 
-    TerminalUnitCmdRequest comm_mesg;
+    TerminalUnitCmdRequest msg;
 
     id_list_size = working_list.unit_list.size();
 
@@ -781,24 +781,38 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     MapInterface::pointXYtoMapXY( world_pos, &map_pos );
     matrix.reset( map_pos );
 
-    NetMessageEncoder encoder(true);
+    NetMessageEncoder encoder;
 
-    for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
+    for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
+    {
         unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
-        if ( unit_ptr != 0 ) {
-            if ( unit_ptr->unit_state.select == true ) {
-                matrix.getNextEmptyLoc( &map_pos );
-                comm_mesg.comm_request.setHeader(unit_ptr->id,
-                        _umesg_flag_unique );
 
-                comm_mesg.comm_request.setMoveToLoc( map_pos );
-                encoder.encodeMessage(&comm_mesg,
-                        sizeof(TerminalUnitCmdRequest));
+        if ( unit_ptr != 0 )
+        {
+            if ( unit_ptr->unit_state.select == true )
+            {
+                matrix.getNextEmptyLoc( &map_pos );
+                msg.comm_request.setHeader( unit_ptr->id,
+                                            _umesg_flag_unique );
+
+                msg.comm_request.setMoveToLoc( map_pos );
+
+                if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                {
+                    CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                        encoder.getEncodedLen());
+                    encoder.resetEncoder();
+                    encoder.encodeMessage(&msg, sizeof(msg));
+                }
             }
         }
     }
 
-    encoder.sendEncodedMessage();
+    if ( ! encoder.isEmpty() )
+    {
+        CLIENT->sendMessage(encoder.getEncodedMessage(),
+                            encoder.getEncodedLen());
+    }
 
     //sfx
     sound->playUnitSound(working_list.getHeadUnitType() );
@@ -808,7 +822,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 void
 WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 {
-    TerminalUnitCmdRequest comm_mesg;
+    TerminalUnitCmdRequest msg;
 
     UnitBase *target_ptr;
 
@@ -826,23 +840,35 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
         if ( id_list_size == 0 )
             return;
 
-        NetMessageEncoder encoder(true);
+        NetMessageEncoder encoder;
 
-        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
+        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
+        {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
-            if ( unit_ptr != 0 ) {
-                if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+            if ( unit_ptr != 0 )
+            {
+                if ( unit_ptr->unit_state.select == true )
+                {
+                    msg.comm_request.setHeader(unit_ptr->id,
                             _umesg_flag_unique);
-                    comm_mesg.comm_request.setTargetUnit(target_ptr->id);
+                    msg.comm_request.setTargetUnit(target_ptr->id);
 
-                    encoder.encodeMessage(&comm_mesg,
-                            sizeof(TerminalUnitCmdRequest));
+                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                    {
+                        CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                            encoder.getEncodedLen());
+                        encoder.resetEncoder();
+                        encoder.encodeMessage(&msg, sizeof(msg));
+                    }
                 }
             }
         }
 
-        encoder.sendEncodedMessage();
+        if ( ! encoder.isEmpty() )
+        {
+            CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                encoder.getEncodedLen());
+        }
 
         //sfx
         sound->playSound("target");
@@ -853,7 +879,7 @@ void
 WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
         bool start_stop)
 {
-    TerminalUnitCmdRequest comm_mesg;
+    TerminalUnitCmdRequest msg;
     size_t id_list_index;
     size_t id_list_size;
     UnitBase *unit_ptr;
@@ -861,33 +887,48 @@ WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
 
-        NetMessageEncoder encoder(true);
+        NetMessageEncoder encoder;
 
-        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
+        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
+        {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
             if ( unit_ptr != 0 ) {
-                if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+                if ( unit_ptr->unit_state.select == true )
+                {
+                    msg.comm_request.setHeader(unit_ptr->id,
                             _umesg_flag_unique);
-                    if ( start_stop == true ) {
-                        comm_mesg.comm_request.setStartManualMove( orientation );
-                    } else {
-                        comm_mesg.comm_request.setStopManualMove();
+                    if ( start_stop == true )
+                    {
+                        msg.comm_request.setStartManualMove( orientation );
+                    }
+                    else
+                    {
+                        msg.comm_request.setStopManualMove();
                     }
 
-                    encoder.encodeMessage(&comm_mesg,
-                            sizeof(TerminalUnitCmdRequest) );
+                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                    {
+                        CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                            encoder.getEncodedLen());
+                        encoder.resetEncoder();
+                        encoder.encodeMessage(&msg, sizeof(msg));
+                    }
                 }
             }
         }
-        encoder.sendEncodedMessage();
+
+        if ( ! encoder.isEmpty() )
+        {
+            CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                encoder.getEncodedLen());
+        }
     }
 }
 
 void
 WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
-    TerminalUnitCmdRequest comm_mesg;
+    TerminalUnitCmdRequest msg;
 
     size_t id_list_index;
     size_t id_list_size;
@@ -896,24 +937,33 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
 
-        NetMessageEncoder encoder(true);
+        NetMessageEncoder encoder;
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
 
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+                    msg.comm_request.setHeader(unit_ptr->id,
                             _umesg_flag_unique);
-                    comm_mesg.comm_request.setManualFire(world_pos);
+                    msg.comm_request.setManualFire(world_pos);
 
-                    encoder.encodeMessage(&comm_mesg,
-                            sizeof(TerminalUnitCmdRequest));
+                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                    {
+                        CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                            encoder.getEncodedLen());
+                        encoder.resetEncoder();
+                        encoder.encodeMessage(&msg, sizeof(msg));
+                    }
                 }
             }
         }
 
-        encoder.sendEncodedMessage();
+        if ( ! encoder.isEmpty() )
+        {
+            CLIENT->sendMessage(encoder.getEncodedMessage(),
+                                encoder.getEncodedLen());
+        }
         
         // SFX
         sound->playSound("target");
