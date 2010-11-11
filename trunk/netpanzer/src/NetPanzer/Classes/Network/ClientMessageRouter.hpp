@@ -23,14 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ClientMessageRouter
 {
-protected:
-    static NetMessage *temp_message;
-    static NetMessageDecoder message_decoder;
-
 public:
     static void initialize();
     static void cleanUp();
-    static void routeMessage(const NetMessage* message);
+    static void routeMessage(const NetMessage* message, size_t size);
     static void routeMessages();
 };
 

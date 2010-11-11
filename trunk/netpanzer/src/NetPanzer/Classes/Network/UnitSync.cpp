@@ -66,8 +66,8 @@ bool UnitSync::sendNextUnit()
                                     unit_map_loc.x,
                                     unit_map_loc.y,
                                     unit->unit_state.unit_type);
-    create_message.setSize(sizeof(UnitRemoteCreate));
-    client->sendMessage( &create_message, sizeof(create_message));
+
+    client->sendMessage( &create_message, sizeof(UnitRemoteCreate));
     
     // XXX when send units to new players it also send sync command to all players
     // This will change in future

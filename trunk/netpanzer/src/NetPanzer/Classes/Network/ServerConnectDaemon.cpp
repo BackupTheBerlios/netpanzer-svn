@@ -106,7 +106,6 @@ void ServerConnectDaemon::updateQueuedClients()
 {
     unsigned long queue_position = 1;
     ConnectProcessUpdate process_update;
-    process_update.setSize(sizeof(ConnectProcessUpdate));
 
     ConnectQueueIterator i;
     for(i = connect_queue.begin(); i != connect_queue.end(); ++i)
@@ -153,7 +152,6 @@ void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
     }
 
     join_request_ack.setServerProtocolVersion(NETPANZER_PROTOCOL_VERSION);
-    join_request_ack.setSize(sizeof(ClientConnectJoinRequestAck));
     packet->fromClient->sendMessage(&join_request_ack,
                          sizeof(ClientConnectJoinRequestAck));
     packet->fromClient->sendRemaining();
@@ -218,7 +216,6 @@ bool ServerConnectDaemon::connectStateIdle()
         connection_state  = connect_state_wait_for_connect_request;
 
         ClientConnectStartConnect start_connect;
-        start_connect.setSize(sizeof(ClientConnectStartConnect));
         
         connect_client->sendMessage( &start_connect,
                                      sizeof(ClientConnectStartConnect));
@@ -254,7 +251,6 @@ bool ServerConnectDaemon::connectStateWaitForConnectRequest(
             time_out_timer.reset();
             connect_client->player_id = player->getID();
         }
-        connect_result.setSize(sizeof(ClientConnectResult));
         connect_client->sendMessage( &connect_result,
                                      sizeof(ClientConnectResult));
         connect_client->sendRemaining();
@@ -288,7 +284,6 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             // ** send server game setting map, units, player, etc.
             ConnectMesgServerGameSettings* server_game_setup
                 = GameManager::getServerGameSetup();
-            server_game_setup->setSize(sizeof(ConnectMesgServerGameSettings));
             connect_client->sendMessage( server_game_setup,
                                          sizeof(ConnectMesgServerGameSettings));
             connect_client->sendRemaining();
@@ -320,7 +315,6 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
         if ( message->message_id == _net_message_id_connect_client_game_setup_ack )
         {
             PlayerConnectID player_connect_mesg(connect_client->getPlayerIndex());
-            player_connect_mesg.setSize(sizeof(PlayerConnectID));
             connect_client->sendMessage( &player_connect_mesg,
                                          sizeof(PlayerConnectID));
             
@@ -329,7 +323,6 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
             ConnectProcessStateMessage state_mesg;
             state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
             state_mesg.setPercentComplete(0);
-            state_mesg.setSize(sizeof(ConnectProcessStateMessage));
             connect_client->sendMessage( &state_mesg,
                                          sizeof(ConnectProcessStateMessage));
             connect_client->sendRemaining();
@@ -364,7 +357,6 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     unsigned char buffer[_MAX_NET_PACKET_SIZE];
     unsigned int buffer_pos = 0;
     PlayerStateSync msg;
-    msg.setSize(sizeof(PlayerStateSync));
     while ( buffer_pos+sizeof(PlayerStateSync) < _MAX_NET_PACKET_SIZE
             && percent_complete != 100)
     {
@@ -382,7 +374,6 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     
     state_mesg.setMessageEnum(_connect_state_message_sync_player_info_percent);
     state_mesg.setPercentComplete(percent_complete);
-    state_mesg.setSize(sizeof(ConnectProcessStateMessage));
     connect_client->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage));
     connect_client->sendRemaining();
 
@@ -402,7 +393,6 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
 
         PlayerState *p = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
         PlayerStateSync player_state_update( p->getNetworkPlayerState() );
-        player_state_update.setSize(sizeof(PlayerStateSync));
         SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
         
         if(connection_state != connect_state_idle)
@@ -417,7 +407,6 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
 bool ServerConnectDaemon::connectStateUnitSync()
 {
     ConnectProcessStateMessage state_mesg;
-    state_mesg.setSize(sizeof(ConnectProcessStateMessage));
     
     int percent_complete = connect_unit_sync->getPercentComplete();
 
@@ -444,7 +433,6 @@ bool ServerConnectDaemon::connectStateUnitSync()
                                  sizeof(ConnectProcessStateMessage));
 
     UnitSyncIntegrityCheck unit_integrity_check_mesg;
-    unit_integrity_check_mesg.setSize(sizeof(UnitSyncIntegrityCheck));
     connect_client->sendMessage( &unit_integrity_check_mesg,
                                  sizeof(UnitSyncIntegrityCheck));
 

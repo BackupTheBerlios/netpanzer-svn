@@ -139,7 +139,6 @@ NetworkServer::broadcastMessage(NetMessage *message, size_t size)
         {
             try
             {
-                message->setSize(size);
                 (*i)->client_socket->sendMessage( message, size);
             }
             catch(std::exception& e)
@@ -168,7 +167,6 @@ NetworkServer::sendMessage(const PlayerID player_index, NetMessage* message,
         {
             try
             {
-                message->setSize(size);
                 (*i)->client_socket->sendMessage( message, size);
 
                 NetworkState::incPacketsSent(size);

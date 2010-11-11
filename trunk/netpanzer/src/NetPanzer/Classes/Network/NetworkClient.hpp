@@ -38,7 +38,6 @@ enum { _connection_status_no_connection,
 class NetworkClient : public NetworkInterface, ClientSocketObserver
 {
 protected:
-    NetPacket net_packet;
     unsigned short connection_status;
 
     void onClientConnected(ClientSocket *s);
@@ -54,7 +53,7 @@ public:
     void sendMessage(NetMessage* message, size_t size);
     void sendRemaining();
 
-    bool getMessage(NetMessage *message);
+    bool getPacket(NetPacket *packet);
 
 
     void checkIncoming();

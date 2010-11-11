@@ -25,6 +25,7 @@ class UnitOpcodeDecoder
 {
 private:
     UnitOpcodeMessage opcode_message;
+    size_t message_size;
     size_t opcode_index;
 
     void reset();
@@ -33,7 +34,7 @@ public:
     UnitOpcodeDecoder();
     ~UnitOpcodeDecoder();
     
-    void setMessage(const NetMessage* message);
+    void setMessage(const NetMessage* message, size_t size);
     bool decode(UnitOpcode** opcode);
 };
 

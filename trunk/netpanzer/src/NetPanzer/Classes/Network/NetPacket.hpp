@@ -35,6 +35,7 @@ class NetPacket
 public:
     PlayerID fromPlayer;
     ClientSocket *fromClient;
+    int size;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];
 
@@ -46,36 +47,19 @@ public:
     size_t getSize() const
     {
         return sizeof(ClientSocket *) 
-                + sizeof(fromPlayer)
-                + getNetMessage()->getSize();
+                + sizeof(PlayerID)
+                + sizeof(int)
+                + size;
     }
 }
 __attribute__((packed));
 
-struct NetMessageStruct
-{
-    Uint16 size;
-    Uint8  message_class;
-    Uint8  message_id;
-
-    Uint8  data[ _MAX_NET_PACKET_SIZE - 4 ];
-}
-__attribute__((packed));
-
-#define _MULTI_PACKET_LIMIT (_MAX_NET_PACKET_SIZE - 9)
+#define _MULTI_PACKET_LIMIT (_MAX_NET_PACKET_SIZE - sizeof(NetMessage))
 
 class MultiMessage : public NetMessage
 {
 public:
-    /* header part */
-    Uint8  message_count;
-    /* data */
     Uint8  data[ _MULTI_PACKET_LIMIT ];
-
-    static size_t getHeaderSize()
-    {
-        return sizeof(NetMessage) + sizeof(Uint8);
-    }
 } __attribute__((packed));
 
 #ifdef MSVC

@@ -38,25 +38,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetworkState.hpp"
 
-NetMessage * ClientMessageRouter::temp_message;
-NetMessageDecoder ClientMessageRouter::message_decoder;
-
 void ClientMessageRouter::initialize()
 {
-    temp_message = (NetMessage *) malloc( sizeof( NetMessageStruct ) );
+    // nothing
 }
 
 void ClientMessageRouter::cleanUp()
 {
-    free(temp_message);
+    // nothing
 }
 
 void
-ClientMessageRouter::routeMessage(const NetMessage* message)
+ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
 {
     switch (message->message_class) {
         case _net_message_class_unit:
-            UnitInterface::processNetMessage(message);
+            UnitInterface::processNetMessage(message, size);
             break;
 
         case _net_message_class_player:
@@ -68,7 +65,7 @@ ClientMessageRouter::routeMessage(const NetMessage* message)
             break;
 
         case _net_message_class_chat:
-            ChatInterface::clientHandleChatMessage(message);
+            ChatInterface::clientHandleChatMessage(message, size);
             break;
 
         case _net_message_class_connect:
@@ -104,16 +101,23 @@ ClientMessageRouter::routeMessages()
         //GameManager::requestNetworkPing();
     }
 
-    while(CLIENT->getMessage(temp_message) == true) {
-        if (temp_message->message_class == _net_message_class_multi) {
-            NetMessage *message;
-            message_decoder.setDecodeMessage( (MultiMessage *) temp_message );
+    NetPacket packet;
+    size_t size;
 
-            while(message_decoder.decodeMessage(&message)) {
-                routeMessage(message);
+    while ( CLIENT->getPacket(&packet) )
+    {
+        if (packet.getNetMessage()->message_class == _net_message_class_multi)
+        {
+            NetMessageDecoder message_decoder;
+            NetMessage *message;
+            message_decoder.setDecodeMessage( (MultiMessage *) packet.getNetMessage(), packet.size );
+
+            while( (size = message_decoder.decodeMessage(&message)) )
+            {
+                routeMessage(message, size);
             }
         } else {
-            routeMessage(temp_message);
+            routeMessage(packet.getNetMessage(), packet.size);
         }
     }
 

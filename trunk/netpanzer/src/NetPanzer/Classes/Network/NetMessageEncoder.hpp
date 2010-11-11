@@ -27,7 +27,7 @@ private:
     bool usePlayerID;
     PlayerID player;
     MultiMessage encode_message;
-    unsigned long encode_message_index;
+    size_t offset;
 
 public:
     NetMessageEncoder(bool sendAsClient = false);

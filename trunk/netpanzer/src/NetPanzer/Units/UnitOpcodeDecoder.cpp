@@ -37,24 +37,24 @@ UnitOpcodeDecoder::reset()
 }
 
 void
-UnitOpcodeDecoder::setMessage(const NetMessage* message)
+UnitOpcodeDecoder::setMessage(const NetMessage* message, size_t size)
 {
-    if(message->getSize() > sizeof(opcode_message)) {
+    if(size > sizeof(opcode_message)) {
         LOGGER.warning("Opcodemessage too big.");
         memset(&opcode_message, 0, sizeof(opcode_message));
         reset();
         return;
     }
 
-    memcpy(&opcode_message, message, message->getSize());
+    memcpy(&opcode_message, message, size);
+    message_size = size;
     reset();
 }
 
 bool
 UnitOpcodeDecoder::decode(UnitOpcode** opcode)
 {
-    if(opcode_index + opcode_message.getHeaderSize() >=
-            opcode_message.getSize())
+    if(opcode_index + opcode_message.getHeaderSize() >= message_size)
         return false;
     
     *opcode = (UnitOpcode*) (opcode_message.data + opcode_index);

@@ -165,7 +165,7 @@ protected:
     }
 
     static void unitSyncMessage(const NetMessage *net_message );
-    static void unitOpcodeMessage(const NetMessage *net_message );
+    static void unitOpcodeMessage(const NetMessage *net_message, size_t size);
     static void unitDestroyMessage(const NetMessage *net_message );
     static void unitCreateMessage(const NetMessage *net_message );
     static void unitSyncIntegrityCheckMessage(const NetMessage *net_message );
@@ -180,7 +180,7 @@ protected:
     static unsigned long  sync_units_total_units;
 
 public:
-    static void processNetMessage(const NetMessage *net_message );
+    static void processNetMessage(const NetMessage *net_message, size_t size);
     static void destroyPlayerUnits(PlayerID player_id);
 };
 

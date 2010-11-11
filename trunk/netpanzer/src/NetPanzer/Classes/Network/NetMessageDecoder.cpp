@@ -31,41 +31,41 @@ NetMessageDecoder::~NetMessageDecoder()
 }
 
 void
-NetMessageDecoder::setDecodeMessage(const NetMessage* message)
+NetMessageDecoder::setDecodeMessage(const NetMessage* message, const size_t size)
 {
-    if(message->getSize() > sizeof(decode_message)) {
+    if ( size > sizeof(decode_message) )
+    {
         LOGGER.warning("Multimessage with wrong size!");
         memset(&decode_message, 0, sizeof(decode_message));
         return;
     }
-    memcpy(&decode_message, message, message->getSize());
-    decode_message_index = 0;
-    decode_current_count = 0;
+
+    memcpy(&decode_message, message, size);
+    this->size = size;
+    offset = 0;
 }
 
-bool
+Uint16
 NetMessageDecoder::decodeMessage(NetMessage **message)
 {
-    if(decode_message.getHeaderSize() + decode_message_index
-            > decode_message.getSize()) {
-        LOGGER.warning("Malformed Multimessage!");
+    if ( sizeof(NetMessage) + offset >= size )
+    {
+        return 0; // no more messages
+    }
+
+    Uint16* mlen = (Uint16*)(decode_message.data + offset);
+    int msg_len = ltoh16(*mlen);
+
+    if( msg_len > size - sizeof(NetMessage) - offset)
+    {
+        LOGGER.warning("Malformed Multimessage!!");
         return false;
     }
-    if(decode_current_count >= decode_message.message_count
-            || decode_message.getHeaderSize() + decode_message_index
-                    >= decode_message.getSize())
-        return false;
 
-    *message = (NetMessage *) (decode_message.data + decode_message_index);
-    if( (*message)->getSize() >
-            decode_message.getSize() - decode_message.getHeaderSize() -
-            decode_message_index) {
-        LOGGER.warning("Malformed Multimessage!");
-        return false;
-    }
-    decode_message_index += (*message)->getSize();
-    decode_current_count++;
+    *message = (NetMessage *)(mlen+1);
 
-    return true;
+    offset += msg_len + 2;
+
+    return msg_len;
 }
 

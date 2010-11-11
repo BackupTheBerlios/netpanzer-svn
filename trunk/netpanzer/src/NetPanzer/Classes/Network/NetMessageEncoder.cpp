@@ -47,38 +47,46 @@ void NetMessageEncoder::resetEncoder()
 {
     encode_message.message_class = _net_message_class_multi ;
     encode_message.message_id = 0;
-    encode_message.message_count = 0;
-    memset(encode_message.data, 0, _MULTI_PACKET_LIMIT);
-    encode_message_index = 0;
+    memset(encode_message.data, 0, sizeof(encode_message.data));
+    offset = 0;
 }
 
 void NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
 {
-    if(encode_message_index + size > _MULTI_PACKET_LIMIT
-            || encode_message.message_count == 255) {
+    if (offset >= _MULTI_PACKET_LIMIT )
+    {
         sendEncodedMessage();
 
         resetEncoder();
     }
 
-    message->setSize(size);
-    memcpy(encode_message.data + encode_message_index, message, size);
+    Uint16* mlen = (Uint16*)(encode_message.data + offset);
+    *mlen = htol16(size);
 
-    encode_message_index += size;
-    encode_message.message_count++;
+    memcpy(mlen+1, message, size);
+
+    offset += size + 2;
 }
 
 void NetMessageEncoder::sendEncodedMessage()
 {
-    if (encode_message.message_count > 0) {
-        size_t size = encode_message_index + encode_message.getHeaderSize();
-        if(usePlayerID) {
+    if ( offset )
+    {
+        size_t size = offset + sizeof(NetMessage);
+        if(usePlayerID)
+        {
             SERVER->sendMessage(player, &encode_message, size);
-        } else if(sendAsClient) {
+        }
+        else if(sendAsClient)
+        {
             CLIENT->sendMessage(&encode_message, size);
-        } else if(NetworkState::status == _network_state_server) {
+        }
+        else if(NetworkState::status == _network_state_server)
+        {
             SERVER->broadcastMessage(&encode_message, size);
-        } else {
+        }
+        else
+        {
             CLIENT->sendMessage(&encode_message, size);
         }
 

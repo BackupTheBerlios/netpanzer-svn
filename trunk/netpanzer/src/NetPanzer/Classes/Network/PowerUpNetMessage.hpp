@@ -44,7 +44,6 @@ public:
     {
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_create;
-        setSize(sizeof(*this));
     }
     void set(iXY map_loc, PowerUpID ID, int type)
     {
@@ -83,7 +82,6 @@ public:
     {
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_hit;
-        setSize(sizeof(*this));
     }
     void set(PowerUpID ID, PlayerID player_id, int type=0)
     {

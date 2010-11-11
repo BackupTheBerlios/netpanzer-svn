@@ -24,15 +24,15 @@ class NetMessageDecoder
 {
 private:
     MultiMessage decode_message;
-    unsigned long decode_message_index;
-    unsigned char decode_current_count;
+    size_t size;
+    size_t offset;
 
 public:
     NetMessageDecoder();
     ~NetMessageDecoder();
 
-    void setDecodeMessage(const NetMessage* message);
-    bool decodeMessage(NetMessage** message);
+    void setDecodeMessage(const NetMessage* message, const size_t size);
+    Uint16 decodeMessage(NetMessage** message);
 };
 
 #endif

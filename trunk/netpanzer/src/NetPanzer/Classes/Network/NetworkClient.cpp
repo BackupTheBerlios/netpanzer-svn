@@ -107,8 +107,6 @@ void NetworkClient::partServer()
 
 void NetworkClient::sendMessage(NetMessage* message, size_t size)
 {
-    message->setSize(size);
-    
     if ( !clientsocket )
     {
         EnqueueIncomingPacket( message, size, PlayerInterface::getLocalPlayerIndex(), 0);
@@ -124,24 +122,20 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
 #endif
 }
 
-bool NetworkClient::getMessage(NetMessage *message)
+bool NetworkClient::getPacket(NetPacket *packet)
 {
-    if(clientsocket == 0)
-        return false;
-    
-    if(!receive_queue.isReady())
-        return false;
-    
-    receive_queue.dequeue( &net_packet );
-    memcpy(message, net_packet.data, net_packet.getSize());
+    if ( clientsocket && receive_queue.isReady() )
+    {
+        receive_queue.dequeue( packet );
 
 #ifdef NETWORKDEBUG
-    NetPacketDebugger::logMessage("R", message);
+        NetPacketDebugger::logMessage("R", packet->getNetMessage());
 #endif
 
-    NetworkState::incPacketsReceived(net_packet.getSize());
-
-    return true;
+        NetworkState::incPacketsReceived(packet->size);
+        return true;
+    }
+    return false;
 }
 
 void NetworkClient::checkIncoming()

@@ -28,6 +28,7 @@ void EnqueueIncomingPacket( const void *data, Uint16 size,
 
     TEMP_PACKET.fromPlayer = fromPlayer;
     TEMP_PACKET.fromClient = fromClient;
+    TEMP_PACKET.size = size;
     assert(size <= _MAX_NET_PACKET_SIZE);
 
     memcpy(TEMP_PACKET.data, data, size);

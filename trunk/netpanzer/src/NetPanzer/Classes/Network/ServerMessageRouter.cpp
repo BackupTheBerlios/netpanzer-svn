@@ -95,22 +95,23 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
 void ServerMessageRouter::routeMessages()
 {
     ServerConnectDaemon::connectProcess();
+    Uint16 msg_len;
+    NetMessage* mmessage;
 
     while(SERVER->getPacket(&temp_packet) == true)
     {
         const NetMessage* message = temp_packet.getNetMessage();
         if (message->message_class == _net_message_class_multi)
         {
-            message_decoder.setDecodeMessage((const MultiMessage *) message);
+            message_decoder.setDecodeMessage((const MultiMessage *) message, temp_packet.size);
 
             NetPacket packet;
             packet.fromPlayer = temp_packet.fromPlayer;
             packet.fromClient = temp_packet.fromClient;
             
-            NetMessage* mmessage;
-            while(message_decoder.decodeMessage(&mmessage))
+            while ( (msg_len = message_decoder.decodeMessage(&mmessage)) )
             {
-                memcpy(packet.data, mmessage, mmessage->getSize());
+                memcpy(packet.data, mmessage, msg_len);
                 routePacket(&packet);
             }
         }

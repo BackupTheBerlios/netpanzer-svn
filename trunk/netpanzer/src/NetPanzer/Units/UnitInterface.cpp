@@ -753,10 +753,10 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
 
 // ******************************************************************
 
-void UnitInterface::unitOpcodeMessage(const NetMessage *net_message)
+void UnitInterface::unitOpcodeMessage(const NetMessage *net_message, size_t size)
 {
     UnitOpcodeDecoder decoder;
-    decoder.setMessage(net_message);
+    decoder.setMessage(net_message, size);
 
     UnitOpcode* opcode;
     while(decoder.decode(&opcode)) {
@@ -820,7 +820,7 @@ void UnitInterface::unitSyncIntegrityCheckMessage(const NetMessage* )
 }
 
 // ******************************************************************
-void UnitInterface::processNetMessage(const NetMessage* net_message)
+void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size)
 {
     switch(net_message->message_id)  {
         case _net_message_id_ini_sync_mesg:
@@ -828,7 +828,7 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
             break;
 
         case _net_message_id_opcode_mesg:
-            unitOpcodeMessage(net_message);
+            unitOpcodeMessage(net_message, size);
             break;
 
         case _net_message_id_destroy_unit:

@@ -231,7 +231,7 @@ ObjectiveInterface::serverHandleNetPacket(const NetPacket* packet)
 
             if ( packet->fromClient )
             {
-                packet->fromClient->sendMessage(msg, msg->getSize());
+                packet->fromClient->sendMessage(msg, sizeof(ObjectiveChangeGeneratingUnit));
             }
 
             break;
@@ -269,7 +269,7 @@ ObjectiveInterface::serverHandleNetPacket(const NetPacket* packet)
 
             if ( packet->fromClient )
             {
-                packet->fromClient->sendMessage(msg, msg->getSize());
+                packet->fromClient->sendMessage(msg, sizeof(ObjectiveChangeOutputLocation));
             }
 
             break;
@@ -477,7 +477,6 @@ ObjectiveInterface::syncObjectives( ClientSocket * client )
     unsigned char buffer[_MAX_NET_PACKET_SIZE];
     unsigned int buffer_pos = 0;
     ObjectiveSyncMesg msg;
-    msg.setSize(sizeof(ObjectiveSyncMesg));
     for(int i = 0; i < num_objectives; ++i )
     {
         if ( buffer_pos+sizeof(ObjectiveSyncMesg) > sizeof(buffer) )

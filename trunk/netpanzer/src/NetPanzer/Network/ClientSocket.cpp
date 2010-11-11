@@ -94,47 +94,42 @@ void ClientSocket::sendMessage(const void* data, size_t size)
 {
     if ( socket )
     {
-        if ( sendpos )
+        if ( sendpos+size > sizeof(sendbuffer) )
         {
-            if ( sendpos+size > sizeof(sendbuffer) )
-            {
-                observer->onClientDisconected(this, "Send buffer full, need to disconnect");
-                return;
-            }
-            memcpy(sendbuffer+sendpos, data, size);
-            sendpos += size;
-//            sendRemaining(); // lets send later
+            observer->onClientDisconected(this, sendpos
+                                                ?"Send buffer full, need to disconnect"
+                                                :"Send data bigger than buffer, need to disconnect");
+            return;
         }
-        else
-        {
-//            size_t s = socket->send(data, size); // lets send later
-//            if ( s != size )
-//            {
-//                size_t remain = size-s;
-                if ( size > sizeof(sendbuffer) )
-                {
-                    observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
-                    return;
-                }
-                memcpy(sendbuffer, (char *)data, size);
-                sendpos = size;
-//            }
-        }
+
+        Uint16 *buf = (Uint16*)(sendbuffer+sendpos);
+        *buf = htol16(size);
+        memcpy(buf+1, data, size);
+        sendpos += size+2;
+//        sendRemaining(); // lets send later
     }
 }
 
 void
 ClientSocket::sendRemaining()
 {
-    if ( socket && sendpos ) {
+    if ( socket && sendpos )
+    {
         size_t s = socket->send(sendbuffer, sendpos);
         if ( !s )
-            return;
-        if ( s != sendpos ) {
+        {
+            return; // early bail out
+        }
+
+        if ( s != sendpos )
+        {
             memmove(sendbuffer, sendbuffer+s, sendpos-s);
             sendpos -= s;
-        } else
+        }
+        else
+        {
             sendpos = 0;
+        }
     }
 }
 
@@ -145,80 +140,54 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     int dataptr = 0;
     unsigned int remaining = len;
     Uint16 packetsize=0;
-    while ( remaining ) {
-        if ( !tempoffset ) {
-            if ( remaining < sizeof(NetMessage) ) {
-                memcpy(tempbuffer, data+dataptr, remaining);
-                tempoffset = remaining;
-                break; // no more data
-            }
-            
-            packetsize=htol16(*((Uint16*)(data+dataptr)));;
-            
-            if ( packetsize < sizeof(NetMessage) ) {
-                LOGGER.debug("Received wrong packetsize: less than required [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (less than required)");
-                break; // we are deleted
-            }
-            
-            if ( packetsize > _MAX_NET_PACKET_SIZE ) {
-                LOGGER.debug("Received wrong packetsize: more than limit [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (more than limit)");
-                break; // we are deleted
-            }
-            
-            if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, player_id, this);
-                remaining -= packetsize;
-                dataptr   += packetsize;
-            } else {
-                memcpy(tempbuffer, data+dataptr, remaining);
-                tempoffset = remaining;
-                remaining=0;
-            }
-        } else {
-            if ( tempoffset < sizeof(NetMessage) ) {
-                // copy the needed until netMessage
-                LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more for head", id);
-                unsigned int needsize = sizeof(NetMessage)-tempoffset;
-                unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
-                memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
-                remaining  -= tocopy;
-                tempoffset += tocopy;
-                dataptr    += tocopy;
-            }
-            
-            if ( tempoffset < sizeof(NetMessage) )
-                break; // no more data
-                
-            packetsize=htol16(*((Uint16*)tempbuffer));;
-            
-            if ( packetsize < sizeof(NetMessage) ) {
-                LOGGER.debug("Received wrong packetsize(half): less than required [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (less than required(half))");
-                break; // we are deleted
-            }
-            
-            if ( packetsize > _MAX_NET_PACKET_SIZE ) {
-                LOGGER.debug("Received wrong packetsize(half): more than limit [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (more than limit(half))");
-                break; // we are deleted
-            }
-                
-            if ( (tempoffset < packetsize) && remaining ) {
-                LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more data", id);
-                unsigned int needsize = packetsize-tempoffset;
-                unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
-                memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
-                remaining  -= tocopy;
-                tempoffset += tocopy;
-                dataptr    += tocopy;
-            }
-            
-            if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, player_id, this);
-                tempoffset = 0;
-            }
+    while ( remaining )
+    {
+        if ( tempoffset < sizeof(Uint16) )
+        {
+            // copy the needed until netMessage
+            LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more for head", id);
+            unsigned int needsize = sizeof(Uint16)-tempoffset;
+            unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
+            memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+            remaining  -= tocopy;
+            tempoffset += tocopy;
+            dataptr    += tocopy;
+        }
+
+        if ( tempoffset < sizeof(Uint16) )
+            break; // no more data
+
+        packetsize=ltoh16(*((Uint16*)tempbuffer));;
+
+        if ( packetsize < sizeof(NetMessage) )
+        {
+            LOGGER.debug("Received buggy packet size (< min) [%d]", packetsize);
+            observer->onClientDisconected(this, "Received buggy packet size (< min)");
+            break; // we are deleted
+        }
+
+        if ( packetsize > _MAX_NET_PACKET_SIZE )
+        {
+            LOGGER.debug("Received buggy packet size (> max) [%d]", packetsize);
+            observer->onClientDisconected(this, "Received buggy packet size (> max)");
+            break; // we are deleted
+        }
+
+        if ( (tempoffset-2 < packetsize) && remaining )
+        {
+            LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more data", id);
+            unsigned int needsize = packetsize-(tempoffset-2);
+            unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
+            memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+            remaining  -= tocopy;
+            tempoffset += tocopy;
+            dataptr    += tocopy;
+        }
+
+        if ( tempoffset-2 == packetsize )
+        {
+            EnqueueIncomingPacket(tempbuffer+sizeof(Uint16), packetsize, player_id, this);
+            tempoffset = 0;
         }
     } // while
 }

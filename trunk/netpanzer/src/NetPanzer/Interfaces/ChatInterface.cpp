@@ -61,9 +61,9 @@ public:
         message_scope = _chat_mesg_scope_all;
     }
 
-    int getTextLen() const
+    int getTextLen(size_t size) const
     {
-        return getSize() - CHATREQUEST_HEADER_LEN;
+        return size - CHATREQUEST_HEADER_LEN;
     }
 
 } __attribute__((packed));
@@ -85,9 +85,9 @@ public:
         memset(message_text, 0, sizeof(message_text));
     }
 
-    int getTextLen() const
+    int getTextLen(size_t size) const
     {
-        return getSize() - CHATMESG_HEADER_LEN;
+        return size - CHATMESG_HEADER_LEN;
     }
 
     PlayerID getSourcePlayerIndex() const
@@ -116,7 +116,7 @@ static void chatMessageRequest(const NetPacket* packet)
     bool post_on_server = false;
     ChatMesg chat_mesg;
     char text[MAX_CHAT_MSG_LEN+1];
-    int text_len = chat_request->getTextLen();
+    int text_len = chat_request->getTextLen(packet->size);
 
     chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
     chat_mesg.message_scope = chat_request->message_scope;
@@ -209,7 +209,7 @@ static void chatMessageRequest(const NetPacket* packet)
     }
 }
 
-void ChatInterface::clientHandleChatMessage(const NetMessage* message)
+void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t size)
 {
     if ( message->message_id != _net_message_id_chat_mesg )
     {
@@ -229,7 +229,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message)
     }
 
     unsigned char text[MAX_CHAT_MSG_LEN+1];
-    int text_len = chat_mesg->getTextLen();
+    int text_len = chat_mesg->getTextLen(size);
     memcpy(text, chat_mesg->message_text, text_len);
     text[text_len] = 0;
 
@@ -299,7 +299,6 @@ static void sendScopedMessage(const char *message, Uint8 scope)
     }
     else
     {
-        cmsg.setSize(CHATREQUEST_HEADER_LEN + text_len);
         EnqueueIncomingPacket(&cmsg, CHATREQUEST_HEADER_LEN + text_len,
                               PlayerInterface::getLocalPlayerIndex(), 0);
     }

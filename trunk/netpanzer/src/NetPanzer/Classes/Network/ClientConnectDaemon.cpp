@@ -35,9 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _connect_state_idle,
        _connect_state_waiting_link,
-
-
-
        _connect_state_waiting_connect_start,
        _connect_state_waiting_connect_result,
        _connect_state_wait_for_server_game_setup,

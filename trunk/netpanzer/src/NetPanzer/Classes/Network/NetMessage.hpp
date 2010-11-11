@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __NETMESSAGE_HPP__
 
 #include "Util/Endian.hpp"
+#include "Core/CoreTypes.hpp"
 
 enum { _net_message_class_multi = 0,
        _net_message_class_system,
@@ -38,22 +39,9 @@ enum { _net_message_class_multi = 0,
 
 class NetMessage
 {
-private:
-    Uint16 size;
-
 public:
     Uint8  message_class;
     Uint8  message_id;
-
-    Uint16 getSize() const
-    {
-        return ltoh16(size);
-    }
-
-    void setSize(Uint16 newsize)
-    {
-        size = htol16(newsize);
-    }
 } __attribute__((packed));
 
 #ifdef MSVC

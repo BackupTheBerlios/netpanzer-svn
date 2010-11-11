@@ -105,12 +105,12 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
     log->flags(std::ios::hex);
     log->fill('0');
     Uint8* data = (Uint8 *) message;
-    for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
-        if ((i%4) == 0)
-            *log << " ";
-        log->width(2);
-        *log << (int) data[i];
-    }
+//    for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
+//        if ((i%4) == 0)
+//            *log << " ";
+//        log->width(2);
+//        *log << (int) data[i];
+//    }
     log->flags(std::ios::dec);
     *log << std::endl;
 }
@@ -122,19 +122,19 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
     
     log << "multimessage:\n";
     size_t index = 0;
-    for(int i=0; i<mmessage->message_count; i++) {
-        if(index + mmessage->getHeaderSize() >= message->getSize()) {
-            log << "****Incorrect multi message!!!\n";
-            log << "Index: " << index << " HeaderSize: "
-                << mmessage->getHeaderSize() << " MessageSize: "
-                << message->getSize() << std::endl;
-            return;
-        }
-        NetMessage* submessage = (NetMessage*) (mmessage->data + index);
-        index += submessage->getSize();
+//    for(int i=0; i<mmessage->message_count; i++) {
+//        if(index + mmessage->getHeaderSize() >= message->getSize()) {
+//            log << "****Incorrect multi message!!!\n";
+//            log << "Index: " << index << " HeaderSize: "
+//                << mmessage->getHeaderSize() << " MessageSize: "
+//                << message->getSize() << std::endl;
+//            return;
+//        }
+//        NetMessage* submessage = (NetMessage*) (mmessage->data + index);
+//        index += submessage->getSize();
 
-        logMessage("  M", submessage);
-    }
+//        logMessage("  M", submessage);
+//    }
 }
 
 void NetPacketDebugger::logConnectMessage(std::ostream& log,
@@ -292,14 +292,14 @@ void NetPacketDebugger::logUnitMessage(std::ostream& log, const NetMessage* mess
 void NetPacketDebugger::logUnitOpcodeMessage(std::ostream& log,
         const NetMessage* message)
 {
-    UnitOpcodeMessage* opcodes = (UnitOpcodeMessage*) message;
-    Uint8* dataptr = opcodes->data;
-    Uint8* dataend 
-        = dataptr + (message->getSize() - UnitOpcodeMessage::getHeaderSize());
-    while(dataptr < dataend) {
-        log << "\n  ";
-        OpcodeDebugger::logOpcode(log, (UnitOpcode*) dataptr);
-        dataptr += sizeof(UnitOpcodeStruct);
-    }
+//    UnitOpcodeMessage* opcodes = (UnitOpcodeMessage*) message;
+//    Uint8* dataptr = opcodes->data;
+//    Uint8* dataend
+//        = dataptr + (message->getSize() - UnitOpcodeMessage::getHeaderSize());
+//    while(dataptr < dataend) {
+//        log << "\n  ";
+//        OpcodeDebugger::logOpcode(log, (UnitOpcode*) dataptr);
+//        dataptr += sizeof(UnitOpcodeStruct);
+//    }
 }
 

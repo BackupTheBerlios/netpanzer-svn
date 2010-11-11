@@ -27,7 +27,7 @@ class ChatInterface
 {
 public:
     static void processChatMessages(const NetPacket* packet);
-    static void clientHandleChatMessage(const NetMessage* message);
+    static void clientHandleChatMessage(const NetMessage* message, size_t size);
 
     static void say(const char * message);
     static void teamsay(const char * message);
