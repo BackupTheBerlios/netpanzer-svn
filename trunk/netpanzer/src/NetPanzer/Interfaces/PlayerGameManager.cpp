@@ -47,7 +47,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
-#include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Units/UnitInterface.hpp"
-
+#include "Resources/ResourceManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
 
@@ -38,10 +38,6 @@ PlayerID        PlayerInterface::max_players = MIN_PLAYER_ID;
 
 //static bool   * alliance_matrix = 0; // XXX ALLY
 PlayerID  PlayerInterface::local_player_index = INVALID_PLAYER_ID;
-
-PlayerID PlayerInterface::player_sync_index;
-PlayerID PlayerInterface::player_sync_connect_player_index;
-Timer PlayerInterface::player_sync_timer;
 
 PlayerID PlayerInterface::respawn_rule_player_index = INVALID_PLAYER_ID;
 
@@ -158,7 +154,7 @@ void PlayerInterface::resetPlayerStats()
 int PlayerInterface::getActivePlayerCount()
 {
     PlayerID player_id;
-    int count = 0;;
+    int count = 0;
 
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
@@ -209,6 +205,7 @@ PlayerState * PlayerInterface::allocateNewPlayer()
             player_lists[ player_id ].setStatus( _player_state_allocated );
             player_lists[ player_id ].resetStats();
             res = &player_lists[ player_id ];
+            break;
         }
     }
     SDL_mutexV(mutex);
@@ -334,48 +331,6 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
     return( false );
 }
 
-void PlayerInterface::startPlayerStateSync(PlayerID player_id)
-{
-    player_sync_index = 0;
-    player_sync_connect_player_index = player_id;
-    player_sync_timer.changeRate( 4 );
-}
-
-bool
-PlayerInterface::syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete)
-{
-    bool hasUpdatedData = false;
-
-    *percent_complete = -1;
-
-    if ( player_sync_index == player_sync_connect_player_index )
-    {
-        ++player_sync_index;
-    }
-    
-    if ( player_sync_index < max_players )
-    {
-        dest = player_lists[player_sync_index].getNetworkPlayerState();
-        ++player_sync_index;
-        hasUpdatedData = true;
-    }
-    
-    if ( player_sync_index >= max_players )
-    {
-        *percent_complete = 100;
-    }
-    else
-    {
-        float percent;
-        percent = ( ( (float) player_sync_index) / ( (float) max_players ) ) * 100;
-
-        *percent_complete = (int) percent;
-    }
-    
-    return hasUpdatedData;
-}
-
-
 void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
     const PlayerConnectID *connect_mesg
@@ -437,6 +392,13 @@ void PlayerInterface::processNetMessage(const NetMessage* message)
     switch(message->message_id) {
         case _net_message_id_player_connect_id :
             netMessageConnectID(message);
+            break;
+
+        case _net_message_id_player_sync_flag:
+            {
+                const PlayerFlagSync* pfs = (const PlayerFlagSync*)message;
+                ResourceManager::getFlag(pfs->player_id)->bufferToFrame(pfs->player_flag, sizeof(pfs->player_flag));
+            }
             break;
 
         case _net_message_id_player_sync_state :

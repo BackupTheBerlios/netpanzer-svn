@@ -108,6 +108,7 @@ public:
     FlagID getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;
+    void getNetworkPlayerState(NetworkPlayerState& state) const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
     Uint8 getColor() const;
 };

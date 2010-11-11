@@ -49,6 +49,11 @@ public:
     static bool isAllied(PlayerID player, PlayerID with_player);
     //static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
+    static bool isPlayerActive(PlayerID player)
+    {
+        return player_lists[player].getStatus() == _player_state_active;
+    }
+
     static void lockPlayerStats();
     static void unlockPlayerStats();
 
@@ -91,16 +96,10 @@ public:
 
     static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
 
-protected:
-    static PlayerID respawn_rule_player_index;
-public:
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
 
 protected:
-    static PlayerID player_sync_index;
-    static PlayerID player_sync_connect_player_index;
-    static Timer player_sync_timer;
-
+    static PlayerID respawn_rule_player_index;
     static void netMessageConnectID(const NetMessage *message );
     static void netMessageSyncState(const NetMessage *message );
     static void netMessageScoreUpdate(const NetMessage *message );
@@ -108,8 +107,6 @@ protected:
     //static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
-    static void startPlayerStateSync(PlayerID player_id);
-    static bool syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete);
     static void processNetMessage(const NetMessage *message );
     static void disconnectPlayerCleanup( PlayerID player_id );
 };

@@ -319,6 +319,21 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     return state;
 }
 
+void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
+{
+    state.id = id;
+    memset(state.name, 0, sizeof(state.name));
+    strncpy(state.name, name.c_str(), sizeof(state.name)-1);
+    state.status = status;
+    state.kills = htol16(kills);
+    state.kill_points = htol16(kill_points);
+    state.losses = htol16(losses);
+    state.loss_points = htol16(loss_points);
+    state.total = htol16(total);
+    state.objectives_held = htol16(objectives_held);
+    state.colorIndex = htol32(colorIndex);
+}
+
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
     char tmp[64];

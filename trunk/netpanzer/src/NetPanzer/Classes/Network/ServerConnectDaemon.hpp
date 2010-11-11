@@ -25,27 +25,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetPacket.hpp"
 #include "Network/ClientSocket.hpp"
 #include "Util/Timer.hpp"
-#include "UnitSync.hpp"
 
 class ServerConnectDaemon
 {
 protected:
-	enum ConnectionState {
-		connect_state_idle,
-	 	connect_state_wait_for_connect_request,
-	   	connect_state_wait_for_client_settings,
-		connect_state_wait_for_client_game_setup_ack,
-		connect_state_player_state_sync,
-		connect_state_unit_sync
-     };
-
-    static ConnectionState      connection_state;
-    static bool                 connection_lock_state;
-    static ClientSocket         *connect_client;
-    static UnitSync             *connect_unit_sync;
-    static Timer		time_out_timer;
-    static int	                time_out_counter;
-    static Timer                sendunitpercent_timer;
+    static int          connection_state;
+    static bool         connection_lock_state;
+    static ClientSocket *connect_client;
+    static Timer	time_out_timer;
+    static int	        time_out_counter;
+    static Timer        sendunitpercent_timer;
+    static int          sync_count;
+    static int          sync_end;
+    static int          sync_total;
+    static int          sync_done;
     
     typedef std::list<ClientSocket *> ConnectQueue;
     typedef ConnectQueue::iterator ConnectQueueIterator;
@@ -64,12 +57,13 @@ protected:
     static void resetConnectFsm();
 
     // ** FSM States
-    static bool connectStateIdle();
-    static bool connectStateWaitForConnectRequest(const NetMessage* message);
-    static bool connectStateWaitForClientSettings(const NetMessage* message);
-    static bool connectStateWaitForClientGameSetupAck(const NetMessage* message);
-    static bool connectStatePlayerStateSync();
-    static bool connectStateUnitSync();
+    static void connectStateIdle();
+    static void connectStateWaitForConnectRequest(const NetMessage* message);
+    static void connectStateWaitForClientSettings(const NetMessage* message);
+    static void connectStateWaitForClientGameSetupAck(const NetMessage* message);
+    static void connectStatePlayerStateSync();
+    static void connectStateSyncFlags();
+    static void connectStateUnitSync();
 
 public:
     static void initialize( unsigned long max_players );

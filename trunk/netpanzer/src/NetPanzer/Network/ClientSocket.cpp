@@ -145,7 +145,6 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         if ( tempoffset < sizeof(Uint16) )
         {
             // copy the needed until netMessage
-            LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more for head", id);
             unsigned int needsize = sizeof(Uint16)-tempoffset;
             unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
             memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
@@ -175,7 +174,6 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
         if ( (tempoffset-2 < packetsize) && remaining )
         {
-            LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more data", id);
             unsigned int needsize = packetsize-(tempoffset-2);
             unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
             memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);

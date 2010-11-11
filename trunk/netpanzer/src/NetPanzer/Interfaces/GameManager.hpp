@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
-#include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Types/iXY.hpp"
 
