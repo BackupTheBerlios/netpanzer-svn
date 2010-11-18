@@ -22,8 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Resources/ResourceManager.hpp"
 
 #include "Util/Log.hpp"
 
@@ -83,8 +84,24 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
             break;
         } else if(query == "echo") {
             string echotoken = qtokenizer.getNextToken();
+            LOGGER.info("InfoSocket:: Received echo query of size %lu", (unsigned long)echotoken.size());
             if ( echotoken.size() )
                 socket->send(from, echotoken.c_str(), echotoken.size());
+        }
+        else if ( query == "getflag" )
+        {
+            string flagstr = qtokenizer.getNextToken();
+
+            LOGGER.info("InfoSocket:: Received flag query for %s", flagstr.c_str());
+            if ( flagstr.size() )
+            {
+                unsigned int flagnum = atoi(flagstr.c_str());
+                if ( flagnum < 256 && PlayerInterface::isPlayerActive(flagnum) )
+                {
+                    string answer = prepareFlagPacket(flagnum);
+                    socket->send(from, answer.c_str(), answer.size());
+                }
+            }
         }
     }
 }
@@ -126,11 +143,41 @@ InfoSocket::prepareStatusPacket()
           << "\\deaths_" << n << "\\" << playerState->getLosses()
           << "\\score_"  << n << "\\" << playerState->getObjectivesHeld()
           << "\\points_"  << n << "\\" << playerState->getTotal()
-          << "\\flag_"   << n << "\\" << (int) playerState->getFlag();
+          << "\\flag_"   << n << "\\" << (int)i
+          << "\\flagu_"   << n << "\\" << ResourceManager::getFlagUsedCount(i);
         n++;
     }
     
     s << "\\final\\";
 
+    return s.str();
+}
+
+static const char hextochar[] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+
+string
+InfoSocket::prepareFlagPacket(const int flagNum)
+{
+    Uint8 rawflag[20*14];
+    ResourceManager::getFlagData(flagNum, rawflag, sizeof(rawflag));
+
+    unsigned char flagdata[(sizeof(rawflag)*2) + 1];
+    flagdata[sizeof(flagdata)-1] = 0;
+
+    int curpos = 0;
+    for ( int y = 0; y < 14; ++y )
+    {
+        for ( int x = 0; x < 20; ++x )
+        {
+            unsigned char b = rawflag[(y*20)+x];
+            flagdata[curpos] = hextochar[((b>>4)&0x0f)];
+            ++curpos;
+            flagdata[curpos] = hextochar[b&0x0f];
+            ++curpos;
+        }
+    }
+
+    stringstream s;
+    s << "\\flag\\" << flagNum << '\\' << flagdata << '\\';
     return s.str();
 }

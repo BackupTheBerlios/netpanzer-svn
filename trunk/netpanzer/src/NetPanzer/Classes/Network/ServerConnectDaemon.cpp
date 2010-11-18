@@ -282,7 +282,10 @@ void ServerConnectDaemon::connectStateWaitForClientSettings(
 
             client_setting = (ConnectClientSettings *) message;
             player->setName( client_setting->player_name );
-            ResourceManager::getFlag(connect_client->getPlayerIndex())->bufferToFrame(client_setting->player_flag, sizeof(ConnectClientSettings::player_flag));
+            ResourceManager::updateFlagData(connect_client->getPlayerIndex(),
+                                            client_setting->player_flag,
+                                            sizeof(ConnectClientSettings::player_flag) );
+
             player->setStatus( _player_state_connecting );
 
             // ** send server game setting map, units, player, etc.

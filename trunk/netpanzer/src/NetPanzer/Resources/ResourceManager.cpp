@@ -34,11 +34,11 @@ class _RMan
 public:
     _RMan()
     {
-        flagList = new Surface*[256];
         for (int n = 0; n < 256; n++)
         {
             flagList[n]=new Surface(20,14,1);
             flagList[n]->fill(0);
+            flagUsedCount[n] = 0;
         }
     }
 
@@ -49,13 +49,14 @@ public:
             for (int n = 0; n < 256; n++)
             {
                 delete flagList[n];
+                flagList[n] = 0;
+                flagUsedCount[n] = 0;
             }
-            delete[] flagList;
-            flagList = 0;
         }
     }
     
-    Surface ** flagList;
+    Surface * flagList[256];
+    unsigned char flagUsedCount[256];
 };
 
 _RMan *RMan = 0;
@@ -119,7 +120,27 @@ ResourceManager::loadFlag(Surface* dest, string name)
 }
 
 Surface *
-ResourceManager::getFlag(FlagID flag)
+ResourceManager::getFlag(const FlagID flag)
 {
     return RMan->flagList[flag];
 }
+
+void
+ResourceManager::getFlagData(const FlagID flag, Uint8 * dest, const size_t dest_len)
+{
+    RMan->flagList[flag]->frameToBuffer(dest, dest_len);
+}
+
+void
+ResourceManager::updateFlagData(const FlagID flag, const Uint8 * src, const size_t src_len)
+{
+    RMan->flagUsedCount[flag] += 1;
+    RMan->flagList[flag]->bufferToFrame(src, src_len);
+}
+
+int
+ResourceManager::getFlagUsedCount(const FlagID flag)
+{
+    return RMan->flagUsedCount[flag];
+}
+

@@ -37,6 +37,10 @@ public:
     static int loadAllFlags(Surface& flags, std::vector<std::string>& names);
     static bool loadFlag(Surface* dest, std::string name);
     static Surface * getFlag(FlagID flag);
+
+    static void getFlagData(const FlagID flag, Uint8 * dest, const size_t dest_len);
+    static void updateFlagData(const FlagID flag, const Uint8 * src, const size_t src_len);
+    static int getFlagUsedCount(const FlagID flag);
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

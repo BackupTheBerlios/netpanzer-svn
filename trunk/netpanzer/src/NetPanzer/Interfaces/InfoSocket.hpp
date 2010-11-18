@@ -37,6 +37,7 @@ protected:
     
 private:
     string prepareStatusPacket();
+    string prepareFlagPacket(const int flagNum);
     string statusHead;
     UDPSocket * socket;
     

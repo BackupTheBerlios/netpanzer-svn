@@ -51,7 +51,9 @@ public:
 
     static bool isPlayerActive(PlayerID player)
     {
-        return player_lists[player].getStatus() == _player_state_active;
+        return (player < getMaxPlayers())
+                ? player_lists[player].getStatus() == _player_state_active
+                : false;
     }
 
     static void lockPlayerStats();

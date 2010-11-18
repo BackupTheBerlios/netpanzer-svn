@@ -397,7 +397,9 @@ void PlayerInterface::processNetMessage(const NetMessage* message)
         case _net_message_id_player_sync_flag:
             {
                 const PlayerFlagSync* pfs = (const PlayerFlagSync*)message;
-                ResourceManager::getFlag(pfs->player_id)->bufferToFrame(pfs->player_flag, sizeof(pfs->player_flag));
+                ResourceManager::updateFlagData(pfs->player_id,
+                                                pfs->player_flag,
+                                                sizeof(pfs->player_flag) );
             }
             break;
 

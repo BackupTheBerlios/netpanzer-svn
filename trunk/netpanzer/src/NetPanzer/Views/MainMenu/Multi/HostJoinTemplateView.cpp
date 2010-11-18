@@ -95,8 +95,11 @@ static void bNext()
 
     MenuTemplateView::backgroundSurface.free();
 
+    ResourceManager::updateFlagData( 0,
+                                     GameConfig::player_flag_data,
+                                     sizeof(GameConfig::player_flag_data) );
+
     PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
-    ResourceManager::getFlag(0)->bufferToFrame(GameConfig::player_flag_data, sizeof(GameConfig::player_flag_data));
     manager->launchMultiPlayerGame();
 }
 
