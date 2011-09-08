@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_flag,
        _net_message_id_player_sync_state,
-       _net_message_id_player_score_update
+       _net_message_id_player_score_update,
+       _net_message_id_player_alliance_request,
+       _net_message_id_player_alliance_update
      };
 
 #ifdef MSVC
@@ -117,6 +119,76 @@ public:
     PlayerID getKillOnPlayerIndex() const
     {
         return kill_on_player_index;
+    }
+}
+__attribute__((packed));
+
+enum { _player_make_alliance,
+       _player_break_alliance
+     };
+
+class PlayerAllianceRequest : public NetMessage
+{
+private:
+    PlayerID allie_by_player_index;
+    PlayerID allie_with_player_index;
+public:
+    Uint8  alliance_request_type;
+
+    PlayerAllianceRequest()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_alliance_request;
+    }
+
+    void set(PlayerID allie_by_player_index, PlayerID allie_with_player_index,
+            Uint8 alliance_request_type)
+    {
+        this->allie_by_player_index = allie_by_player_index;
+        this->allie_with_player_index = allie_with_player_index;
+        this->alliance_request_type = alliance_request_type;
+    }
+    PlayerID getAllieByPlayerIndex() const
+    {
+        return allie_by_player_index;
+    }
+    PlayerID getAllieWithPlayerIndex() const
+    {
+        return allie_with_player_index;
+    }
+}
+__attribute__((packed));
+
+
+class PlayerAllianceUpdate : public NetMessage
+{
+private:
+    PlayerID allie_by_player_index;
+    PlayerID allie_with_player_index;
+public:
+    Uint8  alliance_update_type;
+
+    PlayerAllianceUpdate()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_alliance_update;
+    }
+
+    void set(PlayerID by_player_index, PlayerID with_player_index,
+            Uint8 update_type )
+    {
+        allie_by_player_index = by_player_index;
+        allie_with_player_index = with_player_index;
+        alliance_update_type = update_type;
+    }
+
+    Uint16 getAllieByPlayerIndex() const
+    {
+        return allie_by_player_index;
+    }
+    Uint16 getAllieWithPlayerIndex() const
+    {
+        return allie_with_player_index;
     }
 }
 __attribute__((packed));

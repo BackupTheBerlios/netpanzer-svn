@@ -47,7 +47,7 @@ public:
             UnitType unit_type );
 
     static bool isAllied(PlayerID player, PlayerID with_player);
-    //static bool isSingleAllied(unsigned short player, unsigned short with_player);
+    static bool isSingleAllied(PlayerID player, PlayerID with_player);
 
     static bool isPlayerActive(PlayerID player)
     {
@@ -105,8 +105,8 @@ protected:
     static void netMessageConnectID(const NetMessage *message );
     static void netMessageSyncState(const NetMessage *message );
     static void netMessageScoreUpdate(const NetMessage *message );
-    //static void netMessageAllianceRequest(const NetMessage *message );
-    //static void netMessageAllianceUpdate(const NetMessage *message );
+    static void netMessageAllianceRequest(const NetMessage *message );
+    static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
     static void processNetMessage(const NetMessage *message );
