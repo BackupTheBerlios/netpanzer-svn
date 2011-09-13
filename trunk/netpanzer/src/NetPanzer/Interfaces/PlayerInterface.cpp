@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
 
-// for UNIT_FLAGS_SURFACE
-
 // ** PlayerInterface Statics
 PlayerState   * PlayerInterface::player_lists = 0;
 PlayerID        PlayerInterface::max_players = MIN_PLAYER_ID;

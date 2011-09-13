@@ -61,8 +61,14 @@ void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
 void ServerMessageRouter::routePacket(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
+    PlayerState * player = PlayerInterface::getPlayer(packet->fromPlayer);
+
     switch (message->message_class) {
         case _net_message_class_terminal:
+            if ( player )
+            {
+                player->resetAutokick();
+            }
             processTerminalPacket(packet);
             break;
 
@@ -71,10 +77,18 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             break;
 
         case _net_message_class_system:
+            if ( player )
+            {
+                player->resetAutokick();
+            }
             GameManager::processSystemMessage(message);
             break;
             
         case _net_message_class_chat:
+            if ( player )
+            {
+                player->resetAutokick();
+            }
             ChatInterface::processChatMessages(packet);
             break;
 
@@ -83,6 +97,10 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             break;
 
         case _net_message_class_player:
+            if ( player )
+            {
+                player->resetAutokick();
+            }
             PlayerInterface::processNetMessage(message);
             break;
 

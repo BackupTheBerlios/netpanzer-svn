@@ -38,6 +38,7 @@ public:
     
     inline bool isTimeOut() { return (SDL_GetTicks()-starttime)>timeout; }
     inline bool isTimeOut(Uint32 t) { return (t-starttime)>timeout; }
+    inline bool checkWithTimeOut(Uint32 tout) { return (SDL_GetTicks()-starttime)>tout; }
     
 private:
     Uint32 starttime;

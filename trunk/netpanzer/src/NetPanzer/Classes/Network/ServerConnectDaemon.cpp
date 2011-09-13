@@ -199,6 +199,8 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
                                   player_state->getName().c_str(),
                                   client->getIPAddress().c_str() );
 
+    player_state->resetAutokick();
+
     if ( ((std::string)gameconfig->motd).length() > 0 )
     {
     	ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->motd.c_str());

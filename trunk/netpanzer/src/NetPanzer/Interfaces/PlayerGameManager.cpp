@@ -454,6 +454,36 @@ bool PlayerGameManager::mainLoop()
         return false;
     }
 
+    if ( NetworkState::getNetworkStatus() == _network_state_server )
+    {
+        static NTimer aktimer(10000); //all 10 sec only
+        if (aktimer.isTimeOut())
+        {
+            aktimer.reset();
+            PlayerState * player = 0;
+            unsigned long max_players;
+            max_players = PlayerInterface::getMaxPlayers();
+            for (unsigned long i = 0; i < max_players; i++)
+            {
+                if ( i != PlayerInterface::getLocalPlayerIndex() )
+                {
+                    player = PlayerInterface::getPlayer((unsigned short) i);
+                    if (player->getStatus() == _player_state_active)
+                    {
+                        if ( player->checkAutokick() )
+                        {
+                            char chat_string[256];
+                            sprintf(chat_string, "Server kicked '%s' due to inactivity",player->getName().c_str());
+                            LOGGER.info("PSE: %s", chat_string);
+                            ChatInterface::serversay(chat_string);
+                            SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     return BaseGameManager::mainLoop();
 }
 

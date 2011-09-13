@@ -75,6 +75,16 @@ ServerCommands =
 
     testrules = function(param)
         test_game_rules();
+    end,
+
+    autokick_help = "sets the idle time for kicking a player automatically",
+    autokick = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "autokick time is " .. netpanzer.config.game.autokicktime);
+        else
+            netpanzer.config.game.autokicktime = param;
+            netpanzer.serversayto( player, "autokick time was set to " .. netpanzer.config.game.autokicktime);
+        end
     end
 };
 

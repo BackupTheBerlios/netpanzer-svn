@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
@@ -97,8 +98,8 @@ static const size_t playerColorCount
 Uint8
 PlayerState::getColor() const
 {
-    assert(colorIndex < playerColorCount);
-    return ( *playerColorArray[ colorIndex ] );
+    assert(id < playerColorCount);
+    return ( *playerColorArray[ id ] );
 }
 
 PlayerState::PlayerState()
@@ -106,7 +107,7 @@ PlayerState::PlayerState()
       loss_points(0), total(0), objectives_held(0), stats_locked(false),
       colorIndex(0)
 {
-    // nothing
+    autokick.reset();
 }
 
 PlayerState::PlayerState(const PlayerState& other)
@@ -132,6 +133,7 @@ void PlayerState::operator= (const PlayerState& other)
     objectives_held = other.objectives_held;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
+    autokick.reset();
 }
 
 void PlayerState::setName(const std::string& newname)
@@ -189,6 +191,16 @@ void PlayerState::resetStats()
     total = 0;
     objectives_held = 0;
     stats_locked = false;
+}
+
+void PlayerState::resetAutokick()
+{
+    autokick.reset();
+}
+
+bool PlayerState::checkAutokick()
+{
+    return autokick.checkWithTimeOut(GameConfig::game_autokicktime * 60000);
 }
 
 const std::string& PlayerState::getName() const

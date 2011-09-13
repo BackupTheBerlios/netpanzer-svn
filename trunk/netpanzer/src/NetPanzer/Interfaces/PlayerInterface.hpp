@@ -51,15 +51,13 @@ public:
 
     static bool isPlayerActive(PlayerID player)
     {
-        return (player < getMaxPlayers())
-                ? player_lists[player].getStatus() == _player_state_active
-                : false;
+        return (player < getMaxPlayers()) && player_lists[player].isActive();
     }
 
     static void lockPlayerStats();
     static void unlockPlayerStats();
 
-    static PlayerID getMaxPlayers( )
+    static PlayerID getMaxPlayers()
     {
         return max_players;
     }

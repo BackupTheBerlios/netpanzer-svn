@@ -219,6 +219,27 @@ NetworkServer::dropClient(ClientSocket * client)
 }
 
 void
+NetworkServer::kickClient(ClientSocket * client)
+{
+    ClientList::iterator i = client_list.begin();
+    while( i != client_list.end() && (*i)->client_socket != client )
+    {
+        ++i;
+    }
+
+    if ( i != client_list.end() )
+    {
+        // XXX hack
+        PlayerState *p = PlayerInterface::getPlayer(client->getPlayerIndex());
+        if ( p )
+        {
+            p->setStatus( _player_state_kicked );
+        }
+        onClientDisconected(client, "kicked");
+    }
+}
+
+void
 NetworkServer::sendRemaining()
 {
     ClientList::iterator i = client_list.begin();
@@ -330,13 +351,16 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
     if ( player_index != INVALID_PLAYER_ID )
     {
         PlayerState * player = PlayerInterface::getPlayer(player_index);
-        if ( player && sendalert )
+        bool kicked = player ? player->isKicked() : false;
+
+        if ( player && sendalert && ! kicked)
         {
             ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
                                       "'%s' has left.",
                                       player->getName().c_str());
         }
-        
+
+
         ObjectiveInterface::disownPlayerObjectives( player_index );
 
         UnitInterface::destroyPlayerUnits( player_index );
@@ -349,6 +373,10 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
             if ( cleandisconnect )
             {
                 msg.set( player_index, _connect_alert_mesg_disconnect);
+            }
+            else if ( kicked )
+            {
+                msg.set( player_index, _connect_alert_mesg_client_kicked);
             }
             else
             {

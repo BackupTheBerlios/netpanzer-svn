@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScriptHelper.hpp"
 
 #include "Interfaces/ChatInterface.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
 static int npmodule_say (lua_State *L)
 {
@@ -55,17 +57,36 @@ static int npmodule_serversayto (lua_State *L)
     return 0;
 }
 
+static int npmodule_quit (lua_State *L)
+{
+    GameManager::exitNetPanzer();
+    return 0;
+}
+
+static int npmodule_scriptmessage (lua_State *L)
+{
+    ConsoleInterface::postMessage(Color::cyan, false, 0, "* %s", lua_tolstring(L,1,0) );
+    return 0;
+}
+
 static const luaL_Reg npmodule[] =
 {
     {"say",         npmodule_say},
     {"teamsay",     npmodule_teamsay},
     {"serversay",   npmodule_serversay},
     {"serversayto", npmodule_serversayto},
+    {"quit",        npmodule_quit},
+    {"scriptmessage", npmodule_scriptmessage},
     {NULL, NULL}
 };
 
 int npmodule_load (lua_State *L)
 {
   luaL_register(L, "netpanzer", npmodule);
+  lua_pushliteral(L, "config"); // +1
+  lua_getglobal(L, "config"); // +1
+  lua_settable(L, -3); // -2
+
+
   return 1;
 }

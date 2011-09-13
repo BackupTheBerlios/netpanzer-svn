@@ -133,7 +133,8 @@ public:
 
 enum { _connect_alert_mesg_connect,
        _connect_alert_mesg_disconnect,
-       _connect_alert_mesg_client_drop
+       _connect_alert_mesg_client_drop,
+       _connect_alert_mesg_client_kicked
      };
 
 class SystemConnectAlert : public NetMessage

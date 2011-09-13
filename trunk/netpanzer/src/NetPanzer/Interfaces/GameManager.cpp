@@ -297,6 +297,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "Map: " << gameconfig->map << "\n"
         << "MaxPlayers: " << gameconfig->maxplayers << "\n"
         << "MaxUnits: " << gameconfig->maxunits << "\n"
+        << "AutoKick: " << GameConfig::game_autokicktime << "\n"
         << "Gametype: " << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
             gameconfig->objectiveoccupationpercentage << "\n"
@@ -428,6 +429,12 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                     "Connection to %s has been unexpectedly broken.",
                     player_state->getName().c_str());
+            break;
+
+        case _connect_alert_mesg_client_kicked:
+            ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
+                "Player %s was kicked.",
+                player_state->getName().c_str());
             break;
 
         default:

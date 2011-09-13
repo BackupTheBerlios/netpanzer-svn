@@ -78,7 +78,8 @@ public:
     bool getPacket(NetPacket* packet);
 
     void dropClient(ClientSocket * client);
-    
+    void kickClient(ClientSocket * client);
+
     ClientSocket * getClientSocketByPlayerIndex ( const PlayerID index );
 
     std::string getIP(const PlayerID player_index);

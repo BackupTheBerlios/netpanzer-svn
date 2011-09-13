@@ -33,7 +33,7 @@ UserCommands =
                 end
             end
         end
-        ConsoleInterface:post( Color.cyan, false, 0, out);
+        netpanzer.scriptmessage(out);
     end,
 
     _help = "Type /help <wanted_command> or /listcommands",
@@ -41,15 +41,15 @@ UserCommands =
     help = function(param)
         local ht = UserCommands[param .. "_help"];
         if ht then
-            ConsoleInterface:post( Color.cyan, false, 0, param .. ": " .. ht);
+            netpanzer.scriptmessage(param .. ": " .. ht);
         else
-            ConsoleInterface:post( Color.cyan, false, 0, "Help not found for " .. param .. ". Use /listcommands");
+            netpanzer.scriptmessage("Help not found for " .. param .. ". Use /listcommands");
         end
     end,
 
     quit_help = "Quits NetPanzer.",
     quit = function(param)
-        GameManager:exitNetPanzer();
+       netpanzer.quit();
     end,
 
 	-- doesn't work as expected, needs checking.

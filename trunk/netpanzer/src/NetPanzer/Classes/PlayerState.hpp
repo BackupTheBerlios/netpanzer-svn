@@ -23,11 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 #include "2D/Palette.hpp"
+#include "Util/NTimer.hpp"
 
 enum { _player_state_free,
        _player_state_allocated,
        _player_state_connecting,
-       _player_state_active
+       _player_state_active,
+       _player_state_kicked
      };
 
 #ifdef MSVC
@@ -75,6 +77,7 @@ private:
     short objectives_held;
     bool stats_locked;
     Uint32 colorIndex;
+    NTimer autokick;
 
 public:
     PlayerUnitConfig unit_config;
@@ -89,6 +92,8 @@ public:
 
     PlayerID getID() const { return id; }
 
+	void resetAutokick();
+    bool checkAutokick();
     void resetStats();
     void lockStats();
     void unlockStats();
@@ -111,6 +116,12 @@ public:
     void getNetworkPlayerState(NetworkPlayerState& state) const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
     Uint8 getColor() const;
+
+    bool isFree() const { return status == _player_state_free; }
+    bool isAllocated() const { return status == _player_state_allocated; }
+    bool isConnecting() const { return status == _player_state_connecting; }
+    bool isActive() const { return status == _player_state_active; }
+    bool isKicked() const { return status == _player_state_kicked; }
 };
 
 #endif // ** _PLAYERSTATE_HPP

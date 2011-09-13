@@ -50,6 +50,8 @@ bool GameConfig::interface_show_names = true;
 
 bool GameConfig::game_enable_bases = true;
 int  GameConfig::game_base_capture_mode = 1; // normal capture;
+int  GameConfig::game_autokicktime = 20; // minutes;
+bool GameConfig::game_allowmultiip = true;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -106,6 +108,8 @@ static const ScriptVarBindRecord game_getters[] =
 {
     { "enable_bases",      GETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
     { "base_capture_mode", GETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    { "autokicktime",      GETSVTYPE_INT,     &GameConfig::game_autokicktime },
+    { "allowmultiip",      GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     {0,0}
 };
 
@@ -113,6 +117,8 @@ static const ScriptVarBindRecord game_setters[] =
 {
     { "enable_bases",      SETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
     { "base_capture_mode", SETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    { "autokicktime",      SETSVTYPE_INT,     &GameConfig::game_autokicktime },
+    { "allowmultiip",      SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     {0,0}
 };
 
