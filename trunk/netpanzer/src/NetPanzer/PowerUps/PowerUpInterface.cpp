@@ -161,6 +161,11 @@ void PowerUpInterface::resetLogic( void )
     }
 
     // here memory leak, should delete the pointer to powerups in the list
+    PowerUpList::iterator i;
+    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
+    {
+        delete *i;
+    }
     powerup_list.clear();
 
     map_size_x = MapInterface::getWidth();

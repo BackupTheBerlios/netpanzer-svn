@@ -57,8 +57,8 @@ void ConsoleInterface::initialize( long size )
 
     line_index = console_size - 1;
 
-    surface_size = iXY( 640, 480 );
-    bounds = iRect( 5, 5, 640 - 5, 480 - 5 );
+    surface_size = iXY( 800, 600 );
+    bounds = iRect( 5, 5, 800 - 5, 600 - 5 );
 
     max_char_per_line = (bounds.max.x - bounds.min.x) / 8;
 

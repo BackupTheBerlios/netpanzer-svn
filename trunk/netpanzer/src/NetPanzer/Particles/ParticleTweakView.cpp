@@ -30,7 +30,7 @@ ParticleTweakView::ParticleTweakView() : View()
     setVisible(false);
 
     moveTo(0, 0);
-    resizeClientArea(640, 480);
+    resizeClientArea(800, 600);
 
 } // end ParticleTweakView::ParticleTweakView
 

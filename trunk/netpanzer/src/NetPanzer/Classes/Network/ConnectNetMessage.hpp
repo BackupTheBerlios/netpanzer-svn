@@ -59,7 +59,9 @@ public:
 
 enum { _join_request_result_success,
        _join_request_result_invalid_protocol,
-       _join_request_result_server_busy
+       _join_request_result_server_busy,
+       _join_request_result_already_connected,
+       _join_request_result_banned // XXX to be done
      };
 
 class ClientConnectJoinRequestAck : public NetMessage

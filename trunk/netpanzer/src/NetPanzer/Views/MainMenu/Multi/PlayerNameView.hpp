@@ -29,8 +29,6 @@ public:
     virtual ~PlayerNameView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void drawBorder(Surface&)
-    {}
 
     void init();
 

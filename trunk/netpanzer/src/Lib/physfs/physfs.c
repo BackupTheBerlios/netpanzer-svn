@@ -245,7 +245,8 @@ static void __PHYSFS_quick_sort(void *a, PHYSFS_uint32 lo, PHYSFS_uint32 hi,
                 break;
             swapfn(a, i, j);
         } /* while */
-        swapfn(a, i, hi-1);
+        if (i != (hi-1))
+            swapfn(a, i, hi-1);
         __PHYSFS_quick_sort(a, lo, j, cmpfn, swapfn);
         __PHYSFS_quick_sort(a, i+1, hi, cmpfn, swapfn);
     } /* else */
@@ -604,18 +605,21 @@ static int freeDirHandle(DirHandle *dh, FileHandle *openList)
 
 static char *calculateUserDir(void)
 {
-    char *retval = NULL;
-    const char *str = NULL;
+    char *retval = __PHYSFS_platformGetUserDir();
+    if (retval != NULL)
+    {
+        /* make sure it really exists and is normalized. */
+        char *ptr = __PHYSFS_platformRealPath(retval);
+        allocator.Free(retval);
+        retval = ptr;
+    } /* if */
 
-    str = __PHYSFS_platformGetUserDir();
-    if (str != NULL)
-        retval = (char *) str;
-    else
+    if (retval == NULL)
     {
         const char *dirsep = PHYSFS_getDirSeparator();
         const char *uname = __PHYSFS_platformGetUserName();
+        const char *str = (uname != NULL) ? uname : "default";
 
-        str = (uname != NULL) ? uname : "default";
         retval = (char *) allocator.Malloc(strlen(baseDir) + strlen(str) +
                                            strlen(dirsep) + 6);
 
@@ -753,13 +757,6 @@ int PHYSFS_init(const char *argv0)
     BAIL_IF_MACRO(!appendDirSep(&baseDir), NULL, 0);
 
     userDir = calculateUserDir();
-    if (userDir != NULL)
-    {
-        ptr = __PHYSFS_platformRealPath(userDir);
-        allocator.Free(userDir);
-        userDir = ptr;
-    } /* if */
-
     if ((userDir == NULL) || (!appendDirSep(&userDir)))
     {
         allocator.Free(baseDir);
@@ -1978,6 +1975,8 @@ PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle, void *buffer,
     FileHandle *fh = (FileHandle *) handle;
 
     BAIL_IF_MACRO(!fh->forReading, ERR_FILE_ALREADY_OPEN_W, -1);
+    BAIL_IF_MACRO(objSize == 0, NULL, 0);
+    BAIL_IF_MACRO(objCount == 0, NULL, 0);
     if (fh->buffer != NULL)
         return(doBufferedRead(fh, buffer, objSize, objCount));
 
@@ -2011,6 +2010,8 @@ PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle, const void *buffer,
     FileHandle *fh = (FileHandle *) handle;
 
     BAIL_IF_MACRO(fh->forReading, ERR_FILE_ALREADY_OPEN_R, -1);
+    BAIL_IF_MACRO(objSize == 0, NULL, 0);
+    BAIL_IF_MACRO(objCount == 0, NULL, 0);
     if (fh->buffer != NULL)
         return(doBufferedWrite(handle, buffer, objSize, objCount));
 

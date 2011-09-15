@@ -193,7 +193,9 @@ void HelpScrollView::insert(const char *string)
 //--------------------------------------------------------------------------
 void HelpScrollView::actionPerformed(mMouseEvent me)
 {
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
+    if ((me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) ||
+        (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED))
+    {
         if (me.getSource()==upButton) {
             if (--topViewableItem < 0) {
                 topViewableItem = 0;
