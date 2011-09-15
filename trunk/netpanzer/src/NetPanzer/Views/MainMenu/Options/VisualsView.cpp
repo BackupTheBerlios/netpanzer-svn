@@ -46,15 +46,12 @@ void VisualsView::initButtons()
     
     int xTextStart       = bodyTextRect.min.x;
     int x                = xTextStart + 10;
-    int y                = bodyTextRect.min.y;
+    int y                = bodyTextRect.min.y+10;
     int yOffset          =  20;
     
     // Settings
     //----------------------------------------------------------------------
     int minWidth = 19 * 8;
-    
-    x = xTextStart + 10;
-    y = 100;
     
     char res_str[20];
     choiceResolution = new Choice();

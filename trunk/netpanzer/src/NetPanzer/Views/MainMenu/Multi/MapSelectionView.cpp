@@ -272,8 +272,8 @@ void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
     dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
-    int sizeX = (mapList[curMap]->cells.y * 32) / 480;
-    int sizeY = (mapList[curMap]->cells.x * 32) / 640;
+    int sizeX = (mapList[curMap]->cells.y * 32) / 800;
+    int sizeY = (mapList[curMap]->cells.x * 32) / 600;
     sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
     dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;

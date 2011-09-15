@@ -165,14 +165,14 @@ void GameManager::setVideoMode()
         flags |= SDL_RESIZABLE;
     }
 
-    if ( GameConfig::video_width < 640 )
+    if ( GameConfig::video_width < 800 )
     {
-        GameConfig::video_width = 640;
+        GameConfig::video_width = 800;
     }
 
-    if ( GameConfig::video_height < 480 )
+    if ( GameConfig::video_height < 600 )
     {
-        GameConfig::video_height = 480;
+        GameConfig::video_height = 600;
     }
 
     mode_res.x = GameConfig::video_width;

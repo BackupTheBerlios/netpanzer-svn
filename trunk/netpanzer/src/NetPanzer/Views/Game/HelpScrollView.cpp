@@ -81,12 +81,16 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("  Enter                            Send message to all");
     insert("  Ctrl + 'A'                       Send message to allies");
+    insert("  Ctrl + 'C'                       Send count down message");
     insert("");
     insert("");
     insert("View Related");
     insert("");
     insert("  F1                               Help View");
+    insert("  'D'                              Damage View");
+    insert("  'F'                              Flag View");
     insert("  'M'                              Mini Map View");
+    insert("  'N'                              Name View");
     insert("  TAB                              Rank View");
     insert("  RMH + mouse movement             Moves any view on the screen");
     insert("  RMH + [1 - 5]                    Sets the background drawing mode");
@@ -102,7 +106,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("System Related");
     insert("");
     insert("  ALT + Enter                      Toggle Fullscreen/Windowed mode");
-    //insert("  F9                               BMP screen shot");
+    insert("  F9                               BMP screen shot");
     //insert("  Alt + '-'                        Decrease brightness");
     //insert("  Alt + '='                        Increase brightness");
 

@@ -55,7 +55,7 @@ void PlayerNameView::init()
 {
     playerName.init(gameconfig->playername.c_str(), INPUT_FIELD_CHARACTERS);
     cInputField* input 
-        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
+        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE+2), &playerName, "", true);
     input->setTextAction(textChanged);
     input->setExcludedCharacters("\\");
 } // end PlayerNameView::init

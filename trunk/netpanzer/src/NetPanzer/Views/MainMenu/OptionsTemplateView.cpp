@@ -105,16 +105,13 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    clientArea.bltStringCenter("Select your option category above", Color::white);
-
+    clientArea.bltString(bodyTextRect.min.x, bodyTextRect.min.y, "Select your option category above", Color::white);
 } // end OptionsTemplateView::doDraw
 
 // loadBackgroundSurface
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/optionsMB.bmp");
-
 } // end OptionsTemplateView::loadBackgroundSurface
 
 // loadTitleSurface

@@ -64,7 +64,7 @@ GameView::GameView() : View()
     setDisplayStatusBar(false);
     setVisible(false);
 
-    resize(640,480);
+    resize(800,600);
     moveTo(iXY(0, 0));
 
     add(new InfoBar(0,0));

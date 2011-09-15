@@ -283,6 +283,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
         if ( (best_node->map_loc == goal_node.map_loc) ) {
             done = true;
+            break; // early exit
         } else {
             for ( succ_loop = 0; succ_loop < 8; succ_loop++ ) {
                 unsigned char movement_value;
@@ -306,6 +307,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
                             if ( node == 0 ) {
                                 done = true;
                                 goal_reachable = false;
+                                break; // early exit
                             } else {
                                 *node = temp_node;
                                 node->parent = best_node;

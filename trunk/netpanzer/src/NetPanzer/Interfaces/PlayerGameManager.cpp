@@ -212,7 +212,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 
-    Desktop::checkResolution(iXY(640,480), iXY(screen->getWidth(),screen->getHeight()));
+    Desktop::checkResolution(iXY(800,600), iXY(screen->getWidth(),screen->getHeight()));
     Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
 
 
@@ -376,8 +376,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
-    // XXX FLAG
-    //player_state->setFlag((unsigned char) gameconfig->playerflag);
     
     //GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
     

@@ -191,8 +191,6 @@ void GetSessionView::doActivate()
 //---------------------------------------------------------------------------
 void GetSessionView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/sessionMB.bmp");
-
 } // end GetSessionView::loadBackgroundSurface
 
 // loadTitleSurface

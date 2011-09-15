@@ -33,6 +33,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Views/GameViewGlobals.hpp"
 
+#ifndef PACKAGE_VERSION
+	#define PACKAGE_VERSION "testing"
+#endif
+
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
 
@@ -141,7 +145,7 @@ MenuTemplateView::MenuTemplateView() : SpecialButtonView()
     setAlwaysOnBottom(true);
 
     moveTo(iXY(0, 0));
-    resize(iXY(640, 480));
+    resize(iXY(800, 600));
 
     initButtons();
 
@@ -226,8 +230,12 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         }
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
+        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y, Palette::colorTable6040);
     }
+
+    static char text[] =
+        "NetPanzer " PACKAGE_VERSION;
+        clientArea.bltString(10, 590, text, Color::yellow);
 
     View::doDraw(viewArea, clientArea);
 } // end doDraw

@@ -39,7 +39,7 @@ ServerListView::ServerListView()
     setTitle("Servers");
     setSubTitle("");
 
-    moveTo(bodyTextRect.min + iXY(0, 170));
+    moveTo(bodyTextRect.min + iXY(0, 205));
     resizeClientArea(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
 
     setAllowResize(false);

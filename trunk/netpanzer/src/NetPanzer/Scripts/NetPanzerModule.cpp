@@ -83,9 +83,9 @@ static const luaL_Reg npmodule[] =
 int npmodule_load (lua_State *L)
 {
   luaL_register(L, "netpanzer", npmodule);
-  lua_pushliteral(L, "config"); // +1
-  lua_getglobal(L, "config"); // +1
-  lua_settable(L, -3); // -2
+//  lua_pushliteral(L, "config"); // +1
+//  lua_getglobal(L, "config"); // +1
+//  lua_settable(L, -3); // -2
 
 
   return 1;

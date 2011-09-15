@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/Label.hpp"
 #include "Views/Components/MouseEvent.hpp"
 #include "2D/Color.hpp"
 
@@ -79,16 +80,17 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
     setVisible(false);
 
     // The thirty is to give more room to the map selectior view.
-    moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30,
-           bodyTextRect.min.y + 50);
+    moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 30,
+           bodyTextRect.min.y + 5);
 
-    resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
+    resizeClientArea(bodyTextRect.getSizeX() / 2 - 30, 180);
 
-    text_current = "Current:";
-    loc_text_current.x = BORDER_SPACE;
-    loc_text_current.y = BORDER_SPACE + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
+    int tx = BORDER_SPACE;
+    int ty = BORDER_SPACE + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
 
-    loc_player_flag.x = loc_text_current.x + Surface::getTextLength(text_current) + BORDER_SPACE;
+    add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
+
+    loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
     loc_player_flag.y = BORDER_SPACE;
 
     init();
@@ -125,12 +127,6 @@ void FlagSelectionView::init()
         }
     }
 
-    if(gameconfig->playerflag.isDefaultValue())
-    {
-        // new player, no flag...
-        gameconfig->playerflag=rand()%max_flags;
-    }
-    
     setSelectedFlag(0);
     
 } // end FlagSelectionView::init
@@ -142,12 +138,6 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
     //clientArea.drawRect(clientArea.getRect(), Color::white);
-    
-    clientArea.bltStringShadowed(loc_text_current.x,
-                                 loc_text_current.y,
-                                 text_current,
-                                 windowTextColor,
-                                 windowTextColorShadow);
     
     menu_flags.blt(clientArea, loc_player_flag.x, loc_player_flag.y);
 

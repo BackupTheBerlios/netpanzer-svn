@@ -44,10 +44,10 @@ LoadingView::init()
     setVisible(false);
     setBordered(false);
 
-    resize(640, 480);
-    
-    addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
-    
+    resize(800, 600);
+
+    addButtonCenterText(iXY(340, 15), 100, "Abort", "Cancel the joining of this game.", bAbort);
+
 }
 
 
@@ -64,9 +64,9 @@ LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
     
     screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
-    surface.blt(clientArea, 179, 153);
-    
-    View::doDraw(viewArea, clientArea);    
+    surface.blt(clientArea, 172, 45);
+
+    View::doDraw(viewArea, clientArea);
 }
 
 void
@@ -92,7 +92,7 @@ void
 LoadingView::doActivate()
 {
     backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
-    surface.create(628 - 179, 302 - 153, 1);
+    surface.create(455, 175, 1);
     dirty=true;
 }
 

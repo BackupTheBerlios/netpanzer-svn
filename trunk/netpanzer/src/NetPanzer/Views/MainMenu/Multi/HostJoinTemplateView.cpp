@@ -80,10 +80,6 @@ static void bNext()
         strcmp(IPAddressView::szServer.getString(), "") == 0)
         return;
 
-    // Set the player flag.
-    // XXX FLAG
-    //gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
-
     // Close all menu views.
     Desktop::setVisibilityAllWindows(false);
 
@@ -144,5 +140,4 @@ void HostJoinTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end HostJoinTemplateView::loadBackgroundSurface

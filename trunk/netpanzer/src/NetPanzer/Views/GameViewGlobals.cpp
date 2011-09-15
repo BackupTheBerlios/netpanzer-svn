@@ -21,20 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 
-iXY exitPos(6, 454);
+iXY exitPos(635, 10);
 iXY readyPos(480, 32);
-iXY backPos(347, 454);
-iXY nextPos(493, 454);
+iXY backPos(480, 575);
+iXY nextPos(635, 575);
 iXY mainPos(16, 7);
-iXY multiPos(169, 7);
-iXY optionsPos(325, 7);
-iXY helpPos(480, 7);
+iXY multiPos(16, 27);
+iXY optionsPos(16, 47);
+iXY helpPos(16, 67);
 iXY creditsPos(0, 0);
 
-const iXY sub1(16, 32);
-const iXY sub2(169, 32);
-const iXY sub3(325, 32);
-const iXY sub4(480, 32);
+const iXY sub1(169, 7);
+const iXY sub2(169, 27);
+const iXY sub3(169, 47);
+const iXY sub4(169, 67);
 
 #if 0 // XXX
 iXY soundPos = sub1;
@@ -53,7 +53,7 @@ iXY joinPos = sub2;
 iXY returnToGamePos = mainPos;
 iXY resignPos = multiPos;
 
-iRect bodyTextRect(27, 72, 620, 430);
+iRect bodyTextRect(145, 110, 760, 510);
 
 bool gDrawGameHelp          = false;
 

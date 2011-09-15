@@ -48,14 +48,13 @@ IPAddressView::IPAddressView() : View()
 void IPAddressView::Init()
 {
     szServer.init("", 256,29);
-    addInputField(iXY(8, 8), &szServer, "", true);
+    addInputField(iXY(8, 6), &szServer, "", true);
 } // end IPAddressView::init
 
 // doDraw
 //---------------------------------------------------------------------------
 void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    clientArea.fill(Color::black);
     View::doDraw(viewArea, clientArea);
 } // end IPAddressView::doDraw
 

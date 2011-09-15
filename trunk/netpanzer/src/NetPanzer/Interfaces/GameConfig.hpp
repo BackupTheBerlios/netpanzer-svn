@@ -173,7 +173,6 @@ public:
    
     // interface settings
     ConfigInt   unitcolor;
-    ConfigInt   playerflag;
     ConfigInt   attacknotificationtime;
     ConfigInt   vehicleselectioncolor;
     ConfigInt   unitselectionmode;

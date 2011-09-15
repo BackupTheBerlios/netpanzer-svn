@@ -126,7 +126,7 @@ SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
         msg << "Couldn't bind socket to address '"
             << toaddr.getIP() << "' port " << toaddr.getPort()
             << ": " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());           
+        throw NetworkException(msg.str());
     }
 }
 

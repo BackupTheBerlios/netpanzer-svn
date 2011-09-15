@@ -73,24 +73,13 @@ ServerCommands =
         netpanzer.serversayto(player, out);
     end,
 
-    testrules = function(param)
-        test_game_rules();
-    end,
-
     autokick_help = "sets the idle time for kicking a player automatically",
     autokick = function(param, player)
         if ( param == "" ) then
-            netpanzer.serversayto( player, "autokick time is " .. netpanzer.config.game.autokicktime);
+            netpanzer.serversayto( player, "autokick time is " .. config.game.autokicktime);
         else
-            netpanzer.config.game.autokicktime = param;
-            netpanzer.serversayto( player, "autokick time was set to " .. netpanzer.config.game.autokicktime);
+            config.game.autokicktime = param;
+            netpanzer.serversayto( player, "autokick time was set to " .. config.game.autokicktime);
         end
     end
 };
-
--- modes: 0=objective, 1=frag limit, 2=time limit
-function test_game_rules()
-    if gameconfig.gametype == 2 then
-        ConsoleInterface:post( Color.cyan, false, 0, "Game is time limit");
-    end
-end
