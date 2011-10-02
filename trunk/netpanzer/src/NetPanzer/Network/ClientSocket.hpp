@@ -51,8 +51,9 @@ public:
     ProxyServer proxy;
 
     int getId() { return id; };
+    std::string getFullIPAddress();
     std::string getIPAddress();
-    
+
     PlayerID getPlayerIndex()
     {
         return player_id;

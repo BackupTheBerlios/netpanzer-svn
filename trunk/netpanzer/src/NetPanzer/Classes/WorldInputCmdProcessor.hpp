@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SelectionList.hpp"
 #include "Interfaces/MouseInterface.hpp"
-#include "Util/Timer.hpp"
+#include "Util/NTimer.hpp"
 
 class WorldInputCmdProcessor
 {
@@ -46,7 +46,8 @@ protected:
     bool manual_fire_state;
 
     /// timer that detects double keypressed (for centering selected unit group)
-    TimeStamp lastSelectTime;
+    NTimer lastSelectTimer;
+    NTimer actionTimer;
 
     SelectionList selection_group_lists[10];
     SelectionList working_list;

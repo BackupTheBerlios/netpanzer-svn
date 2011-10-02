@@ -217,7 +217,7 @@ ClientSocket::onSocketError(network::TCPSocket *so)
 }
 
 std::string
-ClientSocket::getIPAddress()
+ClientSocket::getFullIPAddress()
 {
     std::stringstream ip;
     ip << socket->getAddress().getIP();
@@ -225,3 +225,8 @@ ClientSocket::getIPAddress()
     return ip.str();
 }
 
+std::string
+ClientSocket::getIPAddress()
+{
+    return socket->getAddress().getIP();
+}

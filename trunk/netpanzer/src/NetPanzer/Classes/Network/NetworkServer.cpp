@@ -253,6 +253,27 @@ NetworkServer::sendRemaining()
     }
 }
 
+bool
+NetworkServer::isAlreadyConnected( ClientSocket * client )
+{
+    if ( GameConfig::game_allowmultiip )
+    {
+        return false;
+    }
+
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if ( ! (*i)->wannadie
+                && (*i)->client_socket->getIPAddress() == client->getIPAddress() )
+        {
+            return true;
+        }
+        i++;
+    }
+    return false;
+}
+
 std::string
 NetworkServer::getIP(const PlayerID player_index)
 {
@@ -262,7 +283,7 @@ NetworkServer::getIP(const PlayerID player_index)
         if ( ! (*i)->wannadie
              && (*i)->client_socket->getPlayerIndex() == player_index )
         {
-            return (*i)->client_socket->getIPAddress();
+            return (*i)->client_socket->getFullIPAddress();
         }
         
         i++;

@@ -63,6 +63,7 @@ enum { _cursor_regular,
        _cursor_blocked,
        _cursor_player_unit,
        _cursor_enemy_unit,
+       _cursor_blocked_target,
        _cursor_make_allie,
        _cursor_break_allie
      };
@@ -86,6 +87,10 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     right_mouse_scroll = false;
     right_mouse_scroll_moved = false;
+
+    lastSelectTimer.setTimeOut(400);
+    actionTimer.setTimeOut(200);
+
 }
 
 void
@@ -179,15 +184,39 @@ unsigned char
 WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
+    bool fielddraws = false;
     
     if (selection_box_active)
         return _cursor_regular;
 
     if( ((manual_control_state == true) || (manual_fire_state == true)) && working_list.isSelected() )
     {
-        return  _cursor_enemy_unit;
+        unsigned long id_list_index;
+        size_t id_list_size;
+        UnitBase *unit_ptr;
+        iXY range_vector;
+
+        id_list_size = working_list.unit_list.size();
+        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
+        {
+            unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
+            if ( unit_ptr != 0 )
+            {
+                range_vector = loc - unit_ptr->unit_state.location;
+                if ( range_vector.mag2() < unit_ptr->unit_state.weapon_range )
+                {
+                    fielddraws = true;
+                    return  _cursor_enemy_unit;
+                    break;
+                }
+            }
+        }
     }
 
+    if ((fielddraws == false) && ((manual_control_state == true) || (manual_fire_state == true)))
+    {
+        return _cursor_blocked_target;
+    }
     MapInterface::pointXYtoMapXY( loc, &map_loc );
 
     if (MapInterface::getMovementValue(map_loc) >= 0xFF)
@@ -206,26 +235,30 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         // XXX ALLY
         if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
         {
-//            if ( KeyboardInterface::getKeyState(SDLK_a) )
-//            {
-//                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
-//                {
-//                    return _cursor_break_allie;
-//                }
-//
-//                return _cursor_make_allie;
-//            }
-            if ( working_list.isSelected() )
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            {
+                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
+                {
+                    return _cursor_break_allie;
+                }
+
+                return _cursor_make_allie;
+            }
+            else if ( working_list.isSelected() && (fielddraws == true))
+            {
+                return _cursor_enemy_unit;
+            }
+            else if ( working_list.isSelected() && (fielddraws == false) && (manual_fire_state == false))
             {
                 return _cursor_enemy_unit;
             }
         }
         else
         {
-//            if ( KeyboardInterface::getKeyState(SDLK_a) )
-//            {
-//                return _cursor_break_allie;
-//            }
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            {
+                return _cursor_break_allie;
+            }
         }
         return _cursor_regular;
     }
@@ -267,6 +300,9 @@ WorldInputCmdProcessor::setMouseCursor(unsigned char world_cursor_status)
 
         case _cursor_break_allie :
             MouseInterface::setCursor("breakallie.bmp");
+            break;
+        case _cursor_blocked_target :
+            MouseInterface::setCursor("grey-target.bmp");
             break;
     }
 }
@@ -371,6 +407,9 @@ WorldInputCmdProcessor::jumpLastAttackedUnit()
 void
 WorldInputCmdProcessor::evaluateGroupingKeys()
 {
+    static const int KeyAzerty[10] = {38, 233, 34, 39, 40, 45, 232, 95, 231, 224};
+    static const int KeyQwerty[10] = {SDLK_1, SDLK_2, SDLK_3,SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9, SDLK_0};
+
     bool alt_status = false;
     bool ctrl_status = false;
 
@@ -387,17 +426,21 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
     
     unsigned selected_bits=0;
     int released=0;
-    for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
+    for(int key_code= 0;  key_code<=9; key_code++)
+    {
         unsigned int b=1 << (key_code-SDLK_0);
-        if ( (KeyboardInterface::getKeyState( key_code ) == true) ) {
-            selected_bits|=b;
+        if ( (KeyboardInterface::getKeyState( KeyAzerty[key_code] ) == true) ||
+                (KeyboardInterface::getKeyState( KeyQwerty[key_code] ) == true) )
+        {
+            selected_bits|=key_code+1;
         }
-        else if(current_selection_list_bits&b) {
+        else if(current_selection_list_bits&b)
+        {
             // we've released a key
             released++;
         }
     }
-    
+
     if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
         // we've pressed down a number key
         if(ctrl_status != true && alt_status != true &&
@@ -405,29 +448,32 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
                 !KeyboardInterface::getKeyState(SDLK_RSHIFT)) {
             working_list.unGroup();
         }
-        for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
-            if ( (KeyboardInterface::getKeyState( key_code ) != true) ) {
-                continue;
+        for(int key_code=0;  key_code<=9; key_code++)
+        {
+            if ( (KeyboardInterface::getKeyState( KeyAzerty[key_code] ) == true) ||
+                    (KeyboardInterface::getKeyState( KeyQwerty[key_code] ) == true) )
+            {
+                if(ctrl_status == true)
+                {
+                    setSelectionList(key_code+1);
+                    ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", key_code+1);
+                    continue;
+                }
+                if(alt_status == true)
+                {
+                    cycleSelectedUnits(key_code+1);
+                    continue;
+                }
+                working_list.addList( selection_group_lists[key_code+1] );
             }
-            int n=key_code-SDLK_0;
-            if(ctrl_status == true) {
-                setSelectionList(n);
-                ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", n );
-                continue;
-            }
-            if(alt_status == true) {
-                cycleSelectedUnits(n);
-                continue;
-            }
-            working_list.addList( selection_group_lists[ n ] );
         }
         if(alt_status != true) {
             working_list.select();
             if(ctrl_status != true) {
-                if(now() - lastSelectTime < .4) {
+                if ( lastSelectTimer.isTimeOut() ) {
                     centerSelectedUnits();
                 }
-                lastSelectTime = now();
+                lastSelectTimer.reset();
             }
         }
     }
@@ -764,6 +810,13 @@ WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 void
 WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 {
+    if ( !actionTimer.isTimeOut() )
+    {
+        return;
+    }
+
+    actionTimer.reset();
+
     iXY map_pos;
     PlacementMatrix matrix;
 
@@ -928,6 +981,13 @@ WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
 void
 WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
+    if ( !actionTimer.isTimeOut() )
+    {
+       return;
+    }
+
+    actionTimer.reset();
+
     TerminalUnitCmdRequest msg;
 
     size_t id_list_index;
@@ -980,19 +1040,19 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
     if ( target_list.isSelected() == true ) {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        //Uint8 type;
-        //if ( make_break ) {
-        //    type = _player_make_alliance;
-        //} else {
-        //    type = _player_break_alliance;
-        //}
+        Uint8 type;
+        if ( make_break ) {
+            type = _player_make_alliance;
+        } else {
+            type = _player_break_alliance;
+        }
 
         // XXX ALLY
-        //PlayerAllianceRequest allie_request;
-        //allie_request.set(PlayerInterface::getLocalPlayerIndex(),
-        //        target_ptr->player->getID(), type);
+        PlayerAllianceRequest allie_request;
+        allie_request.set(PlayerInterface::getLocalPlayerIndex(),
+                target_ptr->player->getID(), type);
 
-        //CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }
 }
 

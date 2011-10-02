@@ -197,7 +197,7 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
     ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(), 
                                   "'%s' [%s] has joined the game.",
                                   player_state->getName().c_str(),
-                                  client->getIPAddress().c_str() );
+                                  client->getFullIPAddress().c_str() );
 
     player_state->resetAutokick();
 
