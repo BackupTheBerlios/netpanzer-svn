@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -290,18 +290,11 @@ bool Astar::process_succ( PathList *path, int *result_code )
                 movement_value = generateSucc( succ_loop, best_node, &temp_node );
 
                 if ( movement_value != 0xFF ) {
-                    if ( open_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
-                        //best_node->child[ succ_loop ] = old;
-
-                    } // ** if in open
-                    else
-                        if ( closed_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
+                    if ( !open_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) )
+                        if ( !closed_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
                             //best_node->child[ succ_loop ] = old;
 
-                        } // ** if in closed
-                        else {
                             node = 0;
-
                             node = getNewNode();
 
                             if ( node == 0 ) {
@@ -319,9 +312,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
                                 open.push(node);
                             }
-
-                        } // ** else
-
+                        }
                 } // ** if valid succesor
             }  // ** for succ_loop
 
@@ -355,13 +346,13 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
         ini_flag = true;
         cleanUp();
-                                                              
+
         PathingState::astar_gen_time = total_pathing_time;
         PathingState::astar_gen_time_total += total_pathing_time;
         *result_code = _path_result_goal_unreachable;
         return true;
     }
-    
+
     if (done) {
         bool insert_successful = true;
         path_length = 0;
@@ -398,7 +389,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
         PathingState::astar_gen_time_total += total_pathing_time;
         *result_code = _path_result_success;
         return true;
-    } 
+    }
 
     return false;
 }

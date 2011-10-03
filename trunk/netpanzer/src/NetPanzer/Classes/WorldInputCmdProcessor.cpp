@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -89,7 +89,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     right_mouse_scroll_moved = false;
 
     lastSelectTimer.setTimeOut(400);
-    actionTimer.setTimeOut(200);
+    actionTimer.setTimeOut(100);
 
 }
 
@@ -185,7 +185,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
     bool fielddraws = false;
-    
+
     if (selection_box_active)
         return _cursor_regular;
 
@@ -334,7 +334,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
         GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
     }
-    
+
     if ( (KeyboardInterface::getKeyPressed( SDLK_n ) == true) )
     {
         GameConfig::interface_show_names = !GameConfig::interface_show_names;
@@ -374,7 +374,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
     	WorldViewInterface::scroll_down( 15 );
     }
-    
+
     if( KeyboardInterface::getKeyState( SDLK_RIGHT ) == true )
     {
     	WorldViewInterface::scroll_right( 15 );
@@ -423,7 +423,7 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
       ) {
         alt_status = true;
     }
-    
+
     unsigned selected_bits=0;
     int released=0;
     for(int key_code= 0;  key_code<=9; key_code++)
@@ -517,7 +517,7 @@ WorldInputCmdProcessor::keyboardInputModeChatMesg()
             }
         }
         keyboard_input_mode = _keyboard_input_mode_command;
-        ConsoleInterface::setInputStringStatus(false);             
+        ConsoleInterface::setInputStringStatus(false);
     }
 }
 
@@ -566,7 +566,7 @@ WorldInputCmdProcessor::selectBoundBoxUnits()
 {
     bool select_success;
     iRect r;
-    
+
     if ( box_press.x > box_release.x ) {
         r.min.x=box_release.x;
         r.max.x=box_press.x;
@@ -659,7 +659,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
     else if (event.event == MouseEvent::EVENT_DOWN)
     {
         Objective *objective = ObjectiveInterface::getObjectiveAtWorldXY(world_pos);
-	
+
         if ( objective && objective->occupying_player == PlayerInterface::getLocalPlayer() )
         {
             selection_box_active = false;
@@ -685,7 +685,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 return;
             }
         }
-        
+
         if (outpost_goal_selection != OBJECTIVE_NONE )
         {
             Objective *objective = ObjectiveInterface::getObjectiveAtWorldXY(world_pos);
@@ -708,7 +708,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
             outpost_goal_selection = OBJECTIVE_NONE;
             return;
         }
-        
+
         click_status = getCursorStatus(world_pos);
         switch(click_status)
         {
@@ -762,7 +762,6 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 break;
             }
             case _cursor_move:
-            case _cursor_blocked:
                 if(outpost_goal_selection == OBJECTIVE_NONE)
                     sendMoveCommand(world_pos);
                 break;
@@ -794,7 +793,7 @@ WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
         right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
         mtimer.reset();
     }
-    
+
     if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP )
     {
         right_mouse_scroll=false;
@@ -1024,7 +1023,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
             CLIENT->sendMessage(encoder.getEncodedMessage(),
                                 encoder.getEncodedLen());
         }
-        
+
         // SFX
         sound->playSound("target");
     } // ** if containsItems() > 0
@@ -1163,17 +1162,17 @@ WorldInputCmdProcessor::isObjectiveSelected()
     if (Desktop::getVisible("VehicleSelectionView") == true) {
         return true;
     }
-                                                                                
+
     return false;
 }
-                                                                                
+
 const char*
 WorldInputCmdProcessor::getSelectedObjectiveName()
 {
     Objective *objective_state;
-                                                                                
+
     objective_state = ObjectiveInterface::getObjective(selected_objective_id);
-                                                                                
+
     return objective_state->name;
 }
 
@@ -1181,9 +1180,9 @@ iXY
 WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
 {
     Objective *objective_state;
-                                                                                
+
     objective_state = ObjectiveInterface::getObjective(selected_objective_id);
-                                                                                
+
     return objective_state->location;
 }
 
@@ -1199,7 +1198,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
      * direction. So in most cases you will have a focus on the right end of a
      * group (if that group is in a very long queue passing the map).
      */
-    
+
     UnitBase *maxyunit = 0;
     UnitBase *maxxunit = 0;
     UnitBase *minyunit = 0;
@@ -1209,7 +1208,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
     int direction[8];
     for(int i=0;i<8;++i)
         direction[i]=0;
-    
+
     // Vote direction
     bool firstunit = true;
     for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
@@ -1217,7 +1216,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
 
         if(unit_ptr == 0)
             continue;
-                
+
             // increment one direction
         direction[unit_ptr->unit_state.orientation]+=1;
             // initialize some pointers, get them from first unit
@@ -1239,7 +1238,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
                 minxunit=unit_ptr;
         }
     }
-    
+
     // Index of chosen direction (which is most used by all units of a group)
     int preferred_direction = 0;
     int max = -1;
@@ -1249,7 +1248,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
             preferred_direction = i;
         }
     }
-        
+
     // Chose Best unit correspondig to chosen direction
     UnitBase* unit = 0;
     switch(preferred_direction) {
@@ -1293,7 +1292,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
           assert(false);
           break;
     }
-    
+
     if(unit != 0)
         WorldViewInterface::setCameraPosition(unit->unit_state.location);
 }
