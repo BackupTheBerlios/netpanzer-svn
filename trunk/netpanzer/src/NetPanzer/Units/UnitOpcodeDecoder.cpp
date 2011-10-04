@@ -45,20 +45,19 @@ UnitOpcodeDecoder::setMessage(const NetMessage* message, size_t size)
         reset();
         return;
     }
-
     memcpy(&opcode_message, message, size);
-    message_size = size;
+    opcode_size = size;
     reset();
 }
 
 bool
 UnitOpcodeDecoder::decode(UnitOpcode** opcode)
 {
-    if(opcode_index + opcode_message.getHeaderSize() >= message_size)
+    if(opcode_index + opcode_message.getHeaderSize() >= opcode_size)
         return false;
-    
+
     *opcode = (UnitOpcode*) (opcode_message.data + opcode_index);
-    opcode_index += UnitOpcode::getSize();
+    opcode_index += (*opcode)->getSize();
     return true;
 }
 
