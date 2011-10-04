@@ -130,10 +130,10 @@ static const luaL_Reg color_methods[] =
 };
 
 void
-Color::registerScript(const char *table_name)
+Color::registerScript(const NPString& table_name)
 {
     ScriptManager::registerLib( table_name, color_methods);
-    ScriptManager::bindStaticVariables(table_name, 0, "ColorMetaTable",
+    ScriptManager::bindStaticVariables(table_name, "ColorMetaTable",
                                        color_getters, color_setters);
 }
 

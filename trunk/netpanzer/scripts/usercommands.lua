@@ -67,7 +67,16 @@ UserCommands =
         if (numOb == 0) then ConsoleInterface:post( Color.cyan, false, 0, "You have'nt bases")
         elseif (numOb == 1) then ConsoleInterface:post( Color.cyan, false, 0, "You have 1 base")
     	else ConsoleInterface:post( Color.cyan, false, 0, "You have " .. numOb .. " bases") end
-    end
+    end,
+
+    test = function(param)
+        netpanzer.scriptmessage("The value of the thing is: " .. game.frametime);
+    end,
     
+    countdown_help = "Do a countdown.",
+    countdown = function(param)
+        netpanzer.say("/countdown " .. param);
+    end
+
 };
 

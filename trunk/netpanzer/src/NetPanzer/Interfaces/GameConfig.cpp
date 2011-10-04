@@ -122,18 +122,18 @@ static const ScriptVarBindRecord game_setters[] =
     {0,0}
 };
 
-void GameConfig::registerScript(const char * table_name)
+void GameConfig::registerScript(const NPString& table_name)
 {
 //    ScriptManager::registerLib( table_name, video_methods);
-    ScriptManager::bindStaticVariables(table_name, "video",
+    ScriptManager::bindStaticVariables(table_name + ".video",
                                        "ConfigVideoMetaTable",
                                        video_getters, video_setters);
 
-    ScriptManager::bindStaticVariables(table_name, "interface",
+    ScriptManager::bindStaticVariables(table_name + ".interface",
                                        "ConfigInterfaceMetaTable",
                                        interface_getters, interface_setters);
 
-    ScriptManager::bindStaticVariables(table_name, "game",
+    ScriptManager::bindStaticVariables(table_name + ".game",
                                        "ConfigGameMetaTable",
                                        game_getters, game_setters);
 

@@ -81,5 +81,28 @@ ServerCommands =
             config.game.autokicktime = param;
             netpanzer.serversayto( player, "autokick time was set to " .. config.game.autokicktime);
         end
+    end,
+
+    countdown_help = "Do a countdown, use 'countdown <time> <message>'",
+    countdown = function(param, player)
+        local counttime, message = string.match(param, "(%d+) *(.*)");
+        counttime = counttime or 5;
+        message = message or "Countdown...";
+        local count = 0;
+        netpanzer.serversay(message .. " " .. counttime);
+
+        game.addTask(function()
+                count = count + game.frametime;
+                if count > 1.0 then
+                    count = count - 1.0;
+                    counttime = counttime - 1;
+                    if counttime == 0 then
+                        netpanzer.serversay(message .. " FIGHT!!!!");
+                    else
+                        netpanzer.serversay(message .. " " .. counttime);
+                    end
+                end
+                return counttime == 0;
+            end);
     end
 };

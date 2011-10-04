@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // SDL.h included for the basic types [U|S]int[8|16|32]
 #include "SDL.h"
 #include "Util/Endian.hpp"
+#include <string>
+
+typedef std::string NPString;
 
 //#define __TEST_PLAYERID__
-
 
 typedef Sint32 PowerUpID;
 #define PowerUpID_toPortable(a) htol32(a)

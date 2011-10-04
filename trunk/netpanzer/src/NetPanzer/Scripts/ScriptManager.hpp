@@ -33,28 +33,34 @@ public:
     static void initialize();
     static void close();
     
-    static void registerLib(const char * libname, const luaL_Reg * functions);
+    static void registerLib(const NPString& libname, const luaL_Reg * functions);
         
-    static void runStr(const char * runname, const char * str);
-    static bool runUserCommand(const char * str);
-    static bool runServerCommand(const char * str, PlayerID runPlayer);
+    static void runStr(const NPString& runname, const NPString& str);
+    static void runFunction(const NPString& func_name);
+    static bool runUserCommand(const NPString& str);
+    static bool runServerCommand(const NPString& str, PlayerID runPlayer);
     
     // NOTE: runFile has to run after FileSystem has been initialized.
-    static void runFile(const char * runname, const char * filename);
+    static void runFile(const NPString& runname, const NPString& filename);
 
-    static void runFileInTable(const char * filename, const char * table);
-    static void loadConfigFile(const char * filename, const char * table);
+    static void runFileInTable(const NPString& filename, const NPString& table);
+    static void loadConfigFile(const NPString& filename, const NPString& table);
 
     static lua_State* getLuavm() { return luavm; }
 
-    static void bindStaticVariables(const char * objectName,
-                                    const char * fieldName,
-                                    const char * metaName,
+    static void PrepareMetaTable(const NPString& metaName,
+                                 ScriptVarBindRecord * getters,
+                                 ScriptVarBindRecord * setters);
+
+    static void bindStaticVariables(const NPString& objectName,
+                                    const NPString& metaName,
                                     ScriptVarBindRecord * getters,
                                     ScriptVarBindRecord * setters);
 
     static void bindStaticVars(ScriptVarBindRecord * recordlist);
-    
+
+    static void setIntValue(const NPString& variable, int n);
+    static void setDoubleValue(const NPString& variable, double n);
 private:        
     static lua_State *luavm;
 };

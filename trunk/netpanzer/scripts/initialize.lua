@@ -9,6 +9,11 @@ function pairs(t)
     return iter, t, nil
 end
 
+game = { tasks = {} };
+game.addTask = function(task)
+    table.insert(game.tasks, task);
+end;
+
 function dump_table(result, t, extra)
     local lin = extra or ""
 
@@ -55,6 +60,14 @@ config.dump = function(table)
     result = {}
     dump_table(result, table)
     return gconcat(result,"\n");
+end
+
+count_time = 0;
+
+function scriptLoop()
+    for i, func in ipairs(game.tasks) do
+        if func() then table.remove(game.tasks,i) end
+    end
 end
 
 --LOGGER:log("Dumping conf:\n" .. config.dump(config))

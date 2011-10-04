@@ -115,18 +115,16 @@ static void chatMessageRequest(const NetPacket* packet)
 
     bool post_on_server = false;
     ChatMesg chat_mesg;
-    char text[MAX_CHAT_MSG_LEN+1];
     int text_len = chat_request->getTextLen(packet->size);
+    const NPString text(chat_request->message_text, 0, text_len);
 
     chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
     chat_mesg.message_scope = chat_request->message_scope;
-    memcpy(chat_mesg.message_text, chat_request->message_text, text_len);
-    memcpy(text, chat_request->message_text, text_len);
-    text[text_len] = 0;
+    text.copy(chat_mesg.message_text, text_len);
 
     if ( chat_request->message_scope == _chat_mesg_scope_all )
     {
-        if ( text[0] != '/' || ! ScriptManager::runServerCommand(&text[1], packet->fromPlayer) )
+        if ( text[0] != '/' || ! ScriptManager::runServerCommand(text.substr(1), packet->fromPlayer) )
         {
             SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
             post_on_server = true;
@@ -175,7 +173,7 @@ static void chatMessageRequest(const NetPacket* packet)
     else if ( chat_request->message_scope == _chat_mesg_scope_server )
     {
         SERVER->broadcastMessage(&chat_mesg, CHATMESG_HEADER_LEN + text_len);
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", text);
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", text.c_str());
         return;
     }
 
@@ -205,7 +203,7 @@ static void chatMessageRequest(const NetPacket* packet)
 
         // TODO add unitcolor
         ConsoleInterface::postMessage(color, true, player_state->getFlag(),
-                        "%s: %s", player_state->getName().c_str(), text);
+                        "%s: %s", player_state->getName().c_str(), text.c_str());
     }
 }
 
@@ -217,6 +215,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
                        message->message_id);
         return;
     }
+
     const ChatMesg *chat_mesg = (const ChatMesg*) message;
 
     if ( chat_mesg->message_scope != _chat_mesg_scope_server
@@ -228,15 +227,13 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
             return;
     }
 
-    unsigned char text[MAX_CHAT_MSG_LEN+1];
     int text_len = chat_mesg->getTextLen(size);
-    memcpy(text, chat_mesg->message_text, text_len);
-    text[text_len] = 0;
+    const NPString text(chat_mesg->message_text, text_len);
 
     if ( chat_mesg->message_scope == _chat_mesg_scope_server )
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
-                                      text);
+                                      text.c_str());
         return;
     }
 
@@ -262,7 +259,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
     } // ** switch
 
     ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
-                                  player_state->getName().c_str(), text);
+                                  player_state->getName().c_str(), text.c_str());
 }
 
 void ChatInterface::processChatMessages(const NetPacket* packet)
@@ -280,17 +277,12 @@ void ChatInterface::processChatMessages(const NetPacket* packet)
     }
 }
 
-static void sendScopedMessage(const char *message, Uint8 scope)
+static void sendScopedMessage(const NPString& message, Uint8 scope)
 {
-    unsigned int text_len = strlen(message);
+    unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
     ChatMesgRequest cmsg;
 
-    if ( text_len >= sizeof(cmsg.message_text) )
-    {
-        text_len = sizeof(cmsg.message_text);
-    }
-
-    memcpy(cmsg.message_text, message, text_len);
+    message.copy(cmsg.message_text, text_len);
     cmsg.message_scope = scope;
 
     if (NetworkState::status == _network_state_client)
@@ -304,22 +296,22 @@ static void sendScopedMessage(const char *message, Uint8 scope)
     }
 }
 
-void ChatInterface::say(const char *message)
+void ChatInterface::say(const NPString& message)
 {
     sendScopedMessage(message, _chat_mesg_scope_all);
 }
 
-void ChatInterface::teamsay(const char* message)
+void ChatInterface::teamsay(const NPString& message)
 {
     sendScopedMessage(message, _chat_mesg_scope_alliance);
 }
 
-void ChatInterface::serversay(const char* message)
+void ChatInterface::serversay(const NPString& message)
 {
     sendScopedMessage(message, _chat_mesg_scope_server);
 }
 
-void ChatInterface::serversayTo(const PlayerID player, const char* message)
+void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
 {
     if ( player >= PlayerInterface::getMaxPlayers() || player == INVALID_PLAYER_ID )
     {
@@ -336,20 +328,15 @@ void ChatInterface::serversayTo(const PlayerID player, const char* message)
     if (player == PlayerInterface::getLocalPlayerIndex())
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
-                                      message);
+                                      message.c_str());
     }
     else
     {
-        unsigned int text_len = strlen(message);
+        unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
         ChatMesg cmsg;
 
+        message.copy(cmsg.message_text, 0, text_len);
         cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
-
-        if ( text_len >= sizeof(cmsg.message_text) )
-        {
-                text_len = sizeof(cmsg.message_text);
-        }
-        memcpy(cmsg.message_text, message, text_len);
         cmsg.message_scope = _chat_mesg_scope_server;
 
         SERVER->sendMessage(player, &cmsg, CHATMESG_HEADER_LEN + text_len);

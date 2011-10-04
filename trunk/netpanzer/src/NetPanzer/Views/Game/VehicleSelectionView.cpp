@@ -512,11 +512,13 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 {
+
     char strBuf[256];
     char outpostNameBuf[256];
     char outpostUserNameBuf[256];
     char productionUnitBuf[256];
     char timeLeftBuf[256];
+
     iRect         objectiveBounds;
     iRect         gameViewRect;
 

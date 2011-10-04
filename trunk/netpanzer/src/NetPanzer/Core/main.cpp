@@ -303,8 +303,8 @@ int netpanzer_main(int argc, char** argv)
 {
     ScriptManager::initialize();
     
-    ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
-        
+    //ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
+
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");

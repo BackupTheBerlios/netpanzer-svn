@@ -318,7 +318,7 @@ public:
 
 private:
     friend class ScriptManager;
-    static void registerScript(const char * table_name);
+    static void registerScript(const NPString& table_name);
 
     std::string configfile;
     bool usePhysFS;

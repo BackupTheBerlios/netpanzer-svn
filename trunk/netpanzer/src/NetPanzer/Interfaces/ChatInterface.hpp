@@ -29,10 +29,10 @@ public:
     static void processChatMessages(const NetPacket* packet);
     static void clientHandleChatMessage(const NetMessage* message, size_t size);
 
-    static void say(const char * message);
-    static void teamsay(const char * message);
-    static void serversay(const char * message);
-    static void serversayTo(const PlayerID player, const char * message);
+    static void say(const NPString& message);
+    static void teamsay(const NPString& message);
+    static void serversay(const NPString& message);
+    static void serversayTo(const PlayerID player, const NPString& message);
 };
 
 #endif // ** _CHATINTERFACE_HPP
