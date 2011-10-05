@@ -543,18 +543,18 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         miniProductionRect.min = obj->area.getAbsRect(obj->location).min - gameViewRect.min;
         miniProductionRect.max.x = miniProductionRect.min.x + 140;
         miniProductionRect.max.y = miniProductionRect.min.y + (owned ? 50 : 20);
-        if ( owned ) 
+        if ( obj->occupying_player ) 
         {
             miniProductionRect.min.y-=16;
             int length = strlen( obj->occupying_player->getName().c_str() );
-            if (length > 10)
+            if (length > 13)
             {
-                strncpy(strBuf, obj->occupying_player->getName().c_str() , 7);
-                sprintf(outpostUserNameBuf, "User:  %s...", strBuf);
+                strncpy(strBuf, obj->occupying_player->getName().c_str() , 10);
+                sprintf(outpostUserNameBuf, "Owner:  %s...", strBuf);
             }
             else
             {
-                sprintf(outpostUserNameBuf, "User:  %s", obj->occupying_player->getName().c_str() );
+                sprintf(outpostUserNameBuf, "Owner:  %s", obj->occupying_player->getName().c_str() );
             }
         }
         iXY pos(miniProductionRect.min);
@@ -565,8 +565,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         int length = strlen( obj->name );
         if (length > 10)
         {
-            strncpy(strBuf, obj->name , 7);
-            sprintf(outpostNameBuf, "Outpost:  %s...", strBuf);
+            strncpy(strBuf, (const char *) obj->name , 7);
+            sprintf(outpostNameBuf, "Outpost:  %s...",  strBuf);
         }
         else
         {
@@ -580,7 +580,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             {
                 // Objective is off.
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
-                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::white);
+                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 pos.y += 16;
@@ -589,7 +589,6 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             else
             {
                 // Objective is on.
-                pos.x += unitImages.getWidth();
 
                 sprintf(productionUnitBuf, "Production: %s", getUnitName(obj->unit_generation_type));
                 checkMiniProductionRect(productionUnitBuf);
@@ -599,10 +598,10 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                         ((int)tleft) / 60,
                         ((int)tleft) % 60);
                 checkMiniProductionRect(timeLeftBuf);
-
                 dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
-                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::white);
+                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
+                pos.x += unitImages.getWidth();
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 pos.y += 16;
@@ -612,12 +611,17 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 pos.y += 16;
 
                 // Draw the current production unit image.
-                drawUnitImage(dest, miniProductionRect.min + iXY(1,1), obj->unit_generation_type);
+                drawUnitImage(dest, miniProductionRect.min + iXY(1,16), obj->unit_generation_type);
             }
         }
         else
         {
             dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+            if ( obj->occupying_player) 
+            {
+                dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
+                pos.y += 16;
+            }
             dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
         }
     }
