@@ -181,7 +181,10 @@ static void SplitCommandAndParams(const NPString& str, NPString& cmd, NPString& 
         if ( end != NPString::npos )
         {
             NPString::size_type param_start = str.find_first_not_of(" \t", end);
-            params.assign(str, param_start, -1);
+            if ( param_start != NPString::npos )
+            {
+                params.assign(str, param_start, -1);
+            }
         }
     }
 }
