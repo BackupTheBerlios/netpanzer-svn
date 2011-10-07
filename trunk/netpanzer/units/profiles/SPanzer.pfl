@@ -1,5 +1,4 @@
 HITPOINTS         60;
-DAMAGE_FACTOR      0;
 ATTACK_FACTOR     15;
 RELOAD_TIME       20;
 RANGE_MAX         10;
