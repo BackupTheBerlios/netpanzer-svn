@@ -71,6 +71,8 @@ protected:
     void sendAttackCommand(const iXY &world_pos);
     void sendAllianceRequest(const iXY &world_pos, bool make_break);
 
+    void evalLeftMButtonDownEvents(const MouseEvent &event);
+    void evalLeftMButtonUpEvents(const MouseEvent &event);
     void evalLeftMButtonEvents(const MouseEvent &event);
     void evalRightMButtonEvents(const MouseEvent &event);
 
