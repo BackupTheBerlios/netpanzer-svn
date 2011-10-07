@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Created on October 9, 2008, 12:33 AM
  */
 
+#include <sstream>
+
 #include <cstring>
 #include "ScriptManager.hpp"
 #include "ScriptHelper.hpp"
@@ -74,9 +76,8 @@ static void DumpStack (const NPString& text, lua_State *L)
   */
 static void PrepareTableIndex(lua_State *luavm, const NPString& table, NPString& finalName)
 {
-//    DumpStack(" PrepareBegin", luavm);
     lua_pushvalue(luavm, LUA_GLOBALSINDEX);
-//    DumpStack("  push global", luavm);
+
     NPString::size_type start = 0;
     NPString::size_type end = table.find_first_of(".");
     while ( end != NPString::npos )
@@ -84,25 +85,18 @@ static void PrepareTableIndex(lua_State *luavm, const NPString& table, NPString&
         lua_getfield(luavm, -1, table.substr(start,end).c_str());
         if ( lua_isnil(luavm, -1) )
         {
-//            DumpStack("  not-exits", luavm);
             lua_pop(luavm, 1);
-//            DumpStack("   pop", luavm);
             lua_newtable(luavm);
-//            DumpStack("   new table", luavm);
             lua_pushvalue(luavm, -1); // dup table
-//            DumpStack("   dup table", luavm);
             lua_setfield(luavm, -3, table.substr(start,end).c_str());
-//            DumpStack("   set field", luavm);
         }
         lua_replace(luavm, -2); // table is at top
-//        DumpStack("  replace top", luavm);
+
         start = end+1;
         end = table.find_first_of(".", start);
     }
 
     finalName.assign(table.substr(start));
-
-//    DumpStack(" PrepareEnd", luavm);
 }
 
 void
@@ -113,19 +107,17 @@ ScriptManager::initialize()
         luavm = luaL_newstate();
         if ( luavm )
         {
-            DumpStack("Real Init", luavm);
             luaL_openlibs(luavm);
         }
-        DumpStack("Init",luavm);
+
         Color::registerScript("Color");
 //        ParticleInterface::registerScript("particles");
-        DumpStack("Color", luavm);
+
         GameConfig::registerScript("config");
-        DumpStack("Config", luavm);
+
         int to_pop = npmodule_load(luavm);
         lua_pop(luavm, to_pop);
 
-        DumpStack("Module",luavm);
     }
 }
     
@@ -142,10 +134,8 @@ ScriptManager::close()
 void
 ScriptManager::registerLib(const NPString& libname, const luaL_Reg * functions)
 {
-    DumpStack("RegisterLib sta:" + libname,luavm);
     luaL_register(luavm, libname.c_str(), functions);
     lua_pop(luavm, -1);
-    DumpStack("RegisterLib end:" + libname, luavm);
 }
     
 void
@@ -259,20 +249,18 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
             
             if ( lua_pcall(luavm, 2, 0, 0) != 0 )
             {
-                char errormsg[512];
-                snprintf(errormsg,sizeof(errormsg),
-                        "Error running server command '%s': %s",
-                        str.c_str(), lua_tostring(luavm, -1));
-                errormsg[sizeof(errormsg)-1] = 0;
-                ChatInterface::serversayTo(runPlayer, errormsg);
+                std::stringstream errormsg;
+                errormsg << "Error running server command '"
+                         << str << "': "
+                         << lua_tostring(luavm, -1);
+                ChatInterface::serversayTo(runPlayer, errormsg.str());
             }
         }
         else
         {
-            char errormsg[512];
-            snprintf(errormsg,sizeof(errormsg), "Server command '%s' not found", str.c_str());
-            errormsg[sizeof(errormsg)-1] = 0;
-            ChatInterface::serversayTo(runPlayer, errormsg);
+            std::stringstream errormsg;
+            errormsg << "Server command '" << str << "' not found";
+            ChatInterface::serversayTo(runPlayer, errormsg.str());
         }
     }
     else
@@ -425,10 +413,9 @@ ScriptManager::bindStaticVariables(const NPString& objectName,
                                    const NPString& metaName,
                                    ScriptVarBindRecord * getters,
                                    ScriptVarBindRecord * setters)
-{                                                               // stack change
-    DumpStack("bindStaticVariables "+ objectName +" start",luavm);
+{
     NPString finalName;
-    PrepareTableIndex(luavm, objectName, finalName); // -1 table
+    PrepareTableIndex(luavm, objectName, finalName);
 
     lua_getfield(luavm, -1, finalName.c_str());
     if ( lua_isnil(luavm, -1) )
@@ -440,17 +427,9 @@ ScriptManager::bindStaticVariables(const NPString& objectName,
     }
 
     lua_replace(luavm, -2);
-
-    DumpStack("PrepareTable, should have only one", luavm);
-
     PrepareMetaTable( metaName, getters, setters);
-    DumpStack("PrepareMeta, should have two", luavm);
-
-    lua_setmetatable(luavm,-2);                                 // -1
-    DumpStack("SetMetatable, should be 1 remaining", luavm);
-
+    lua_setmetatable(luavm,-2);
     lua_pop(luavm, 1);
-    DumpStack("bindStaticVariables end", luavm);
 }
 
 /**

@@ -676,20 +676,10 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
       short attack_factor;
       long  attack_range;
       long  defend_range;
-      char  reaction_time;
       char  speed_factor;
       char  speed_rate;
-      char  tracking_rate;
-      short fuel_capacity;
       char  reload_time;
-      char  repath_time; 
       short regen_time;
-      char  jammable;
-      char  jamming_time;
-      // ** for fuel truck only
-      long  fueling_range;
-      // ** for ecm truck only ** 
-      long  jamming_range; 
     */
 
     ExplosionSystem e;

@@ -1136,6 +1136,33 @@ WorldInputCmdProcessor::draw()
         WorldViewInterface::worldXYtoClientXY(world_win, output_pos_press,&pos);
         screen->drawLine(pos, mouse_pos, Color::blue);
     }
+
+//    WorldViewInterface::getViewWindow(&world_win);
+
+//    iXY mpos = MouseInterface::getMousePosition();
+//    iXY wpos;
+//    iXY mappos;
+
+//    WorldViewInterface::clientXYtoWorldXY(world_win, mpos, &wpos);
+//    MapInterface::pointXYtoMapXY( wpos, &mappos );
+
+//    iXY mappos2(mappos.x+1, mappos.y+1);
+
+//    iXY wp1, wp2;
+//    iXY r1, r2;
+
+//    MapInterface::mapXYtoPointXY(mappos,  &wp1);
+//    MapInterface::mapXYtoPointXY(mappos2, &wp2);
+
+//    wp1.x -= 16;
+//    wp1.y -= 16;
+//    wp2.x -= 16;
+//    wp2.y -= 16;
+
+//    WorldViewInterface::worldXYtoClientXY(world_win, wp1, &r1);
+//    WorldViewInterface::worldXYtoClientXY(world_win, wp2, &r2);
+
+//    screen->drawRect(iRect(r1, r2), Color::white);
 }
 
 void

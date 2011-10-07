@@ -38,9 +38,8 @@ parameter_list;
 char field_headers[28][64] =
 { 
     "[TURRET_PLACEMENT]", "[MOVE_OFFSET]", "HITPOINTS",
-    "ATTACK_FACTOR", "RELOAD_TIME", "REACTION_TIME", "RANGE_MAX", "REGEN_TIME",
-    "DEFEND_RANGE", "SPEED_RATE", "SPEED_FACTOR", "REPATH_TIME", "FUEL_CAPACITY",
-    "TRACKING_RATE", "JAMM_ABLE", "JAMMING_TIME", "JAMMING_RANGE", "FUELING_RANGE",
+    "ATTACK_FACTOR", "RELOAD_TIME", "RANGE_MAX", "REGEN_TIME",
+    "DEFEND_RANGE", "SPEED_RATE", "SPEED_FACTOR",
     "IMAGE","BODYSPRITE", "BODYSHADOW", "TURRETSPRITE", "TURRETSHADOW", "SOUNDSELECTED",
     "FIRESOUND", "WEAPON", "BOUNDBOX", 
     "END"
@@ -49,8 +48,7 @@ char field_headers[28][64] =
 enum
 { 
     _turret_place, _move_offset, _hit_points, _attack_x, _reload_time,
-    _react_time, _range_max, _regen_time, _defend_range, _speed_rate, _speed_factor, _repath_time, _fuel_capacity,
-    _tracking_rate, _jamm_able, _jamming_time, _jamming_range, _fueling_range,
+    _range_max, _regen_time, _defend_range, _speed_rate, _speed_factor,
     _image, _bodysprite, _bodyshadow, _turretsprite, _turretshadow, _soundselected,
     _firesound, _weapontype, _boundbox,
     _end
@@ -206,16 +204,11 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
 		    }
 		    break;
 
-		case _react_time :
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->reaction_time = (char) temp_int;
-		    }
-		    break;
-
 		case _range_max : 
 		    {
 			sscanf( param_list.params[1], "%d", &temp_int );
+                        temp_int *= 32;         // adjust new values
+                        temp_int *= temp_int;
 			profile->attack_range = (long) temp_int;
 		    }
 		    break;
@@ -230,7 +223,9 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
 		case _defend_range: 
 		    {
 			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->defend_range = (long) temp_int;
+                        temp_int *= 32;         // adjust new values
+                        temp_int *= temp_int;
+                        profile->defend_range = (long) temp_int;
 		    }
 		    break;
 
@@ -248,55 +243,6 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
 		    }
 		    break;
 
-		case _repath_time: 
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->repath_time = (char) temp_int;
-		    }
-		    break;
-
-		case _fuel_capacity:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->fuel_capacity = (short ) temp_int;
-		    }
-		    break;
-
-		case _tracking_rate:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->tracking_rate = (char) temp_int;
-		    }
-		    break;
-
-		case _jamm_able:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->jammable = (char) temp_int;
-		    }
-		    break;
-
-		case _jamming_time:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->jamming_time = (char) temp_int;
-		    }
-		    break;
-
-		case _jamming_range:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->jamming_range = (long) temp_int;
-		    }
-		    break;
-
-		case _fueling_range:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->fueling_range = (long) temp_int;
-		    }
-		    break;
-        
         case _image:
             profile->imagefile = param_list.params[1];
             break;
