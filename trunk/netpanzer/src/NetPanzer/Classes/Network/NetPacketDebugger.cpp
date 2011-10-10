@@ -104,7 +104,7 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
 
     log->flags(std::ios::hex);
     log->fill('0');
-    Uint8* data = (Uint8 *) message;
+//    Uint8* data = (Uint8 *) message;
 //    for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
 //        if ((i%4) == 0)
 //            *log << " ";
@@ -118,10 +118,10 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
 void NetPacketDebugger::logMultiMessage(std::ostream& log,
         const NetMessage* message)
 {
-    MultiMessage* mmessage = (MultiMessage*) message;
+//    MultiMessage* mmessage = (MultiMessage*) message;
     
     log << "multimessage:\n";
-    size_t index = 0;
+//    size_t index = 0;
 //    for(int i=0; i<mmessage->message_count; i++) {
 //        if(index + mmessage->getHeaderSize() >= message->getSize()) {
 //            log << "****Incorrect multi message!!!\n";

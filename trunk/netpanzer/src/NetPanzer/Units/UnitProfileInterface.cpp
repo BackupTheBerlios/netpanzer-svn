@@ -18,279 +18,331 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "Units/UnitProfileInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
 #include <ctype.h>
 #include <memory>
 #include <string.h>
 
-typedef
-struct
-{
-    char params[32][128];
-    short param_count;
-}
-parameter_list;
+#include <vector>
 
-#define _MAX_KEY_LENGTH 64
-
-char field_headers[28][64] =
-{ 
-    "[TURRET_PLACEMENT]", "[MOVE_OFFSET]", "HITPOINTS",
-    "ATTACK_FACTOR", "RELOAD_TIME", "RANGE_MAX", "REGEN_TIME",
-    "DEFEND_RANGE", "SPEED_RATE", "SPEED_FACTOR",
-    "IMAGE","BODYSPRITE", "BODYSHADOW", "TURRETSPRITE", "TURRETSHADOW", "SOUNDSELECTED",
-    "FIRESOUND", "WEAPON", "BOUNDBOX", 
-    "END"
-};
+#include "Classes/Network/NetMessage.hpp"
+#include "Classes/Network/NetPacket.hpp"
 
 enum
-{ 
-    _turret_place, _move_offset, _hit_points, _attack_x, _reload_time,
-    _range_max, _regen_time, _defend_range, _speed_rate, _speed_factor,
-    _image, _bodysprite, _bodyshadow, _turretsprite, _turretshadow, _soundselected,
-    _firesound, _weapontype, _boundbox,
-    _end
+{
+    _profile_msg_profile_desc = 0
 };
 
-short max_field_key = 28;
-
-
-//****************************************************************************************
-
-char * extract_spaces(char *string,int index)
-
+class ByteBufferWriter
 {
-    int i=0;
-    char *stroffset;
+private:
+    unsigned char * buffer;
+    size_t len;
+    size_t pos;
 
-    stroffset = string+index;
-
-    while( *(stroffset+i) == ' ' )/* extract leading spaces just encase */
-        i++;
-
-    return(stroffset+i);
-}
-
-//****************************************************************************************
-
-void find_keyword(char *string, int *command, char *key_list, char max_key_list )
-{
-    int comindex;    /* index to config commands */
-    short int notfound=1;
-    char *str;
-
-    str = extract_spaces(string,0);
-
-    for(comindex=0; ( (comindex < max_key_list )  && notfound); comindex++ ) {
-        notfound = strncasecmp( str, &key_list[ comindex * _MAX_KEY_LENGTH ], strlen( &key_list[ comindex * _MAX_KEY_LENGTH ]) );
+public:
+    ByteBufferWriter(unsigned char * buffer, int len)
+    {
+        this->buffer = buffer;
+        this->len = len;
+        this->pos = 0;
     }
 
-    comindex = comindex-1;
+    int writedBytesCount() const { return pos; }
 
-    if ( (comindex == max_key_list - 1 ) && (notfound != 0) ) /* Checks if no commands found */
-        *command = max_key_list;
-    else
-        *command = comindex;
+    bool writeInt8( Uint8 c )
+    {
+        if ( len >= pos+1 )
+        {
+            buffer[pos++] = c;
+            return true;
+        }
+        return false;
+    }
 
-}
-//****************************************************************************************
+    bool writeInt16( Uint16 c )
+    {
+        if ( len >= pos+2 )
+        {
+            buffer[pos++] = c & 0xff;
+            buffer[pos++] = (c >> 8) & 0xff;
+            return true;
+        }
+        return false;
+    }
 
-short extract_token( char *token, char **string )
+    bool writeInt32( Uint32 c )
+    {
+        if ( len >= pos+4 )
+        {
+            buffer[pos++] = c & 0xff;
+            buffer[pos++] = (c >> 8) & 0xff;
+            buffer[pos++] = (c >> 16) & 0xff;
+            buffer[pos++] = (c >> 24) & 0xff;
+            return true;
+        }
+        return false;
+    }
+
+    bool writeString( const NPString& str)
+    {
+        if ( len >= pos + 2 + str.length() )
+        {
+            writeInt16(str.length());
+            str.copy((char *)&buffer[pos], str.length());
+            pos += str.length();
+            return true;
+        }
+        return false;
+    }
+};
+
+class ByteBufferReader
 {
-    char token_char = ' ';
-    char *str;
-    short index = 0;
-    short token_index = 0;
+private:
+    const unsigned char * buffer;
+    size_t len;
+    size_t pos;
 
-    str = *string;
+public:
+    ByteBufferReader(const unsigned char * buffer, int len)
+    {
+        this->buffer = buffer;
+        this->len = len;
+        this->pos = 0;
+    }
 
-    str = extract_spaces( str, 0 );
+    int readedBytesCount() const { return pos; }
 
-    while( (str[index] != 0) && (str[ index ] != token_char) ) {
-        if (str[index] == '"')
-            token_char = '"';
+    bool readInt8( Uint8* c )
+    {
+        if ( pos < len )
+        {
+            *c = buffer[pos++];
+            return true;
+        }
+        return false;
+    }
+
+    bool readInt16( Uint16* c )
+    {
+        if ( len >= pos+2 )
+        {
+            *c = buffer[pos] | (buffer[pos+1] << 8);
+            pos+=2;
+            return true;
+        }
+        return false;
+    }
+
+    bool readInt32( Uint32* c )
+    {
+        if ( len >= pos+4 )
+        {
+            *c = buffer[pos]
+               | (buffer[pos+1] << 8)
+               | (buffer[pos+2] << 16)
+               | (buffer[pos+3] << 24);
+            pos += 4;
+            return true;
+        }
+        return false;
+    }
+
+    bool readString( NPString& str)
+    {
+        Uint16 slen = 0;
+        if ( readInt16(&slen) )
+        {
+            if ( len >= pos+slen )
+            {
+                if ( slen > 0 )
+                {
+                    str.assign((char *)&buffer[pos], slen);
+                    pos += str.length();
+                }
+                else
+                {
+                    str.clear();
+                }
+                return true;
+            }
+            else
+            {
+                pos -= 2;
+            }
+        }
         else
-            if ( (str[index] != '\n') && (str[index] != '\r') ) {
-                token[ token_index ] = str[index];
-                token_index++;
+        {
+            pos -= 2;
+        }
+        return false;
+    }
+};
+
+void string_to_params( const NPString& str, vector<NPString>& parameters )
+{
+    parameters.clear();
+
+    static char* limiters[] = { ", \t", "\"" };
+
+    NPString::size_type start = 0;
+    NPString::size_type end = 0;
+
+    do
+    {
+        start = str.find_first_not_of(" \t", start);
+        if ( start != NPString::npos )
+        {
+            int limit_index = 0;
+            if ( str[start] == '"' && start < str.length()-1 )
+            {
+                limit_index = 1;
+                ++start;
             }
 
-        index++;
-    }
+            end = str.find_first_of(limiters[limit_index], start);
 
-    token[ token_index ] = 0;
+            parameters.push_back( str.substr(start, end != NPString::npos ? end-start : end) );
 
-    *string = (str+index);
-
-    if(str[index] == 0)
-        *string = 0;
-
-    if ( token_index == 0 )
-        return (false);
-
-    return (true);
-
+            if ( end != NPString::npos )
+            {
+                start = str.find_first_not_of(limiters[limit_index], end);
+            }
+        }
+    } while ( start != NPString::npos && end != NPString::npos );
 }
 
-void string_to_params( char *string, parameter_list *params )
+bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 {
-    params->param_count = 0;
-
-    if( extract_token( params->params[ params->param_count ], &string ) )
-        params->param_count++;
-
-
-    while ( string != 0 ) {
-        if( extract_token( params->params[ params->param_count ], &string ) )
-            params->param_count++;
-    }
-
-}
-
-
-void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
-{
-    int field;
-    char temp_str[256];
-    parameter_list param_list;
     int temp_int;
-    short not_done = true;
+    bool not_done = true;
 
-    std::string file_path = "units/profiles/";
+    NPString file_path = "units/profiles/";
     file_path += unitName;
     file_path += ".pfl";
 
     profile->unitname = unitName;
     
-    try {
-	std::auto_ptr<filesystem::ReadFile> file(
-                filesystem::openRead(file_path));
+    try
+    {
+        IFileStream in(file_path);
+        NPString line;
+        std::vector<NPString> parameters;
 
-	while( not_done ) {
-	    for(int i=0; i<256; i++)
+        while( not_done && !in.eof() )
         {
-            file->read(&(temp_str[i]), 1, 1);
-            if(temp_str[i] == '\n')
+            std::getline(in,line);
+            string_to_params( line, parameters );
+
+            if ( parameters.size() == 0 )
             {
-                temp_str[i] = 0;
-                break;
+                continue;
             }
-	    }
-        
-	    string_to_params( temp_str, &param_list );
-	    find_keyword( param_list.params[0], &field, (char * ) field_headers, max_field_key );
 
-	    switch(field) {
-		case _hit_points:
-		    {
- 			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->hit_points = (short) temp_int;
-		    }
-		    break;
-
-		case _attack_x:
-		    {
-   			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->attack_factor = (short) temp_int;
-		    }
-		    break;
-
-		case _reload_time:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->reload_time = (char) temp_int;
-		    }
-		    break;
-
-		case _range_max : 
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-                        temp_int *= 32;         // adjust new values
-                        temp_int *= temp_int;
-			profile->attack_range = (long) temp_int;
-		    }
-		    break;
-
-		case _regen_time: 
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->regen_time = (short) temp_int;
-		    }
-		    break;
-
-		case _defend_range: 
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-                        temp_int *= 32;         // adjust new values
-                        temp_int *= temp_int;
-                        profile->defend_range = (long) temp_int;
-		    }
-		    break;
-
-		case _speed_rate: 
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->speed_rate = (char) temp_int;
-		    }
-		    break;
-
-		case _speed_factor:
-		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
-			profile->speed_factor = (char) temp_int;
-		    }
-		    break;
-
-        case _image:
-            profile->imagefile = param_list.params[1];
-            break;
-        
-        case _bodysprite:
-            profile->bodySprite.load(param_list.params[1]);
-            break;
-
-        case _bodyshadow:
-            profile->bodyShadow.load(param_list.params[1]);
-            break;
-            
-        case _turretsprite:
-            profile->turretSprite.load(param_list.params[1]);
-            break;
-
-        case _turretshadow:
-            profile->turretShadow.load(param_list.params[1]);
-            break;
-                
-        case _soundselected:
-            profile->soundSelected = param_list.params[1];
-            break;
-
-        case _firesound:
-            profile->fireSound = param_list.params[1];
-            break;
-            
-        case _weapontype:
-            profile->weaponType = param_list.params[1];
-            break;
-                
-        case _boundbox:
-            sscanf( param_list.params[1], "%d", &temp_int );
-            profile->boundBox = (short) temp_int;
-            break;
-                
-		case _end :
-		    {
-			not_done = false;
-		    }
-		    break;
-	    } // ** switch
+            if ( parameters[0] == "HITPOINTS" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->hit_points = (short) temp_int;
+            }
+            else if ( parameters[0] == "ATTACK_FACTOR" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->attack_factor = (short) temp_int;
+            }
+            else if ( parameters[0] == "RELOAD_TIME" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->reload_time = (char) temp_int;
+            }
+            else if ( parameters[0] == "RANGE_MAX" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->cfg_attack_range = temp_int;
+                temp_int *= 32;         // adjust new values
+                temp_int *= temp_int;
+                profile->attack_range = (long) temp_int;
+            }
+            else if ( parameters[0] == "REGEN_TIME" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->regen_time = (short) temp_int;
+            }
+            else if ( parameters[0] == "DEFEND_RANGE" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->cfg_defend_range = temp_int;
+                temp_int *= 32;         // adjust new values
+                temp_int *= temp_int;
+                profile->defend_range = (long) temp_int;
+            }
+            else if ( parameters[0] == "SPEED_RATE" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->speed_rate = (char) temp_int;
+            }
+            else if ( parameters[0] == "SPEED_FACTOR" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->speed_factor = (char) temp_int;
+            }
+            else if ( parameters[0] == "IMAGE" )
+            {
+                profile->imagefile = parameters[1];
+            }
+            else if ( parameters[0] == "BODYSPRITE" )
+            {
+                profile->bodySprite_name = parameters[1];
+                profile->bodySprite.load(parameters[1]);
+            }
+            else if ( parameters[0] == "BODYSHADOW" )
+            {
+                profile->bodyShadow_name = parameters[1];
+                profile->bodyShadow.load(parameters[1]);
+            }
+            else if ( parameters[0] == "TURRETSPRITE" )
+            {
+                profile->turretSprite_name = parameters[1];
+                profile->turretSprite.load(parameters[1]);
+            }
+            else if ( parameters[0] == "TURRETSHADOW" )
+            {
+                profile->turretShadow_name = parameters[1];
+                profile->turretShadow.load(parameters[1]);
+            }
+            else if ( parameters[0] == "SOUNDSELECTED" )
+            {
+                profile->soundSelected = parameters[1];
+            }
+            else if ( parameters[0] == "FIRESOUND" )
+            {
+                profile->fireSound = parameters[1];
+            }
+            else if ( parameters[0] == "WEAPON" )
+            {
+                profile->weaponType = parameters[1];
+            }
+            else if ( parameters[0] == "BOUNDBOX" )
+            {
+                sscanf( parameters[1].c_str(), "%d", &temp_int );
+                profile->boundBox = (short) temp_int;
+            }
+            else if ( parameters[0] == "END" || parameters[0] == "END;" )
+            {
+                not_done = false;
+            }
 	} // ** while ( !feof )
     } catch(std::exception& e) {
-	throw Exception("Error while reading unitprofile '%s': %s",
-		file_path.c_str(), e.what());
+        LOGGER.warning("Error while reading unitprofile '%s': %s",
+                       file_path.c_str(), e.what() );
+        return false;
     }
+
+    return true;
 } // function
 
 vector<UnitProfile *> UnitProfileInterface::profiles;
@@ -310,57 +362,45 @@ UnitProfileInterface::clearProfiles()
 void UnitProfileInterface::loadUnitProfiles( void )
 {
     clearProfiles();
-    UnitProfile * p;
-    
-    p = new UnitProfile();
-    read_vehicle_profile("Manta", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
-    
-    p = new UnitProfile();
-    read_vehicle_profile("Panther1", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
 
-    p = new UnitProfile();
-    read_vehicle_profile("Titan", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
+    std::vector<NPString> plist;
+    NPString pl = *GameConfig::game_unit_profiles;
 
-    p = new UnitProfile();
-    read_vehicle_profile("Stinger", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
-    
-    p = new UnitProfile();
-    read_vehicle_profile("Bobcat", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
-    
-    p = new UnitProfile();
-    read_vehicle_profile("Bear", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
+    string_to_params(pl, plist);
 
-    p = new UnitProfile();
-    read_vehicle_profile("Archer", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
+    for ( int n = 0; n < plist.size(); ++n )
+    {
+        addLocalProfile(plist[n]);
+    }
 
-    p = new UnitProfile();
-    read_vehicle_profile("Wolf", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
-    
-    p = new UnitProfile();
-    read_vehicle_profile("Drake", p);
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
+    if ( profiles.size() == 0 )
+    {
+        LOGGER.warning("Didn't load ANY PROFILE!!! I should die.");
+    }
+//    addLocalProfile("Manta");
+//    addLocalProfile("Panther1");
+//    addLocalProfile("Titan");
+//    addLocalProfile("Stinger");
+//    addLocalProfile("Bobcat");
+//    addLocalProfile("Bear");
+//    addLocalProfile("Archer");
+//    addLocalProfile("Wolf");
+//    addLocalProfile("Drake");
+//    addLocalProfile("Spanzer");
+}
 
-    p = new UnitProfile();
-    read_vehicle_profile("SPanzer", p); // should be scout or humvee?
-    p->unit_type = profiles.size();
-    profiles.push_back(p);
+bool UnitProfileInterface::addLocalProfile(const NPString& name)
+{
+    UnitProfile * p = new UnitProfile();
+
+    bool isok = read_vehicle_profile(name, p);
+    if ( isok )
+    {
+        p->unit_type = profiles.size();
+        profiles.push_back(p);
+    }
+
+    return isok;
 }
 
 UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
@@ -371,7 +411,7 @@ UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 }
 
 UnitProfile *
-UnitProfileInterface::getProfileByName( const std::string &name )
+UnitProfileInterface::getProfileByName( const NPString& name )
 {
     vector<UnitProfile *>::iterator i = profiles.begin();
     while ( i != profiles.end() )
@@ -395,4 +435,98 @@ UnitProfileInterface::getProfileByName( const std::string &name )
         i++;
     }
     return 0; // null pointer warning
+}
+
+int
+UnitProfileInterface::fillProfileSyncMessage(NetMessage* message, int profile_id)
+{
+    UnitProfile *p = getUnitProfile(profile_id);
+    ByteBufferWriter bb((unsigned char *)message, _MAX_NET_PACKET_SIZE);
+
+    bb.writeInt8( _net_message_class_unit_profile );
+    bb.writeInt8( _profile_msg_profile_desc );
+
+    bb.writeString( p->unitname );
+    bb.writeInt16(  p->hit_points );
+    bb.writeInt16(  p->attack_factor );
+    bb.writeInt16(  p->cfg_attack_range );
+    bb.writeInt16(  p->cfg_defend_range );
+    bb.writeInt8(   p->speed_factor );
+    bb.writeInt8(   p->speed_rate );
+    bb.writeInt8(   p->reload_time );
+    bb.writeInt16(  p->regen_time );
+    bb.writeString( p->imagefile );
+    bb.writeString( p->bodySprite_name );
+    bb.writeString( p->bodyShadow_name );
+    bb.writeString( p->turretSprite_name );
+    bb.writeString( p->turretShadow_name );
+    bb.writeInt16(  p->boundBox );
+
+    return bb.writedBytesCount();
+}
+
+UnitProfile *
+UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t size)
+{
+    UnitProfile *p = new UnitProfile();
+    ByteBufferReader br((const unsigned char *)message, size);
+
+    Uint8 unused;
+    br.readInt8( &unused );
+    br.readInt8( &unused );
+
+    br.readString( p->unitname );
+    br.readInt16( &p->hit_points );
+    br.readInt16( &p->attack_factor );
+    br.readInt16( &p->cfg_attack_range );
+    br.readInt16( &p->cfg_defend_range );
+    br.readInt8(  &p->speed_factor );
+    br.readInt8(  &p->speed_rate );
+    br.readInt8(  &p->reload_time );
+    br.readInt16( &p->regen_time );
+    br.readString( p->imagefile );
+    br.readString( p->bodySprite_name );
+    br.readString( p->bodyShadow_name );
+    br.readString( p->turretSprite_name );
+    br.readString( p->turretShadow_name );
+    br.readInt16( &p->boundBox );
+
+    p->bodySprite.load(p->bodySprite_name);
+    p->bodyShadow.load(p->bodyShadow_name);
+    p->turretSprite.load(p->turretSprite_name);
+    p->turretShadow.load(p->turretShadow_name);
+
+    Uint32 i = p->cfg_attack_range * 32;
+    p->attack_range = i*i;
+
+    i = p->cfg_defend_range * 32;
+    p->defend_range = i*i;
+
+    return p;
+}
+
+void
+UnitProfileInterface::processNetMessage(const NetMessage* net_message, size_t size)
+{
+    switch ( net_message->message_id )
+    {
+        case _profile_msg_profile_desc:
+            handleProfileDescMessage(net_message, size);
+            break;
+
+        default:
+            LOGGER.warning("Unknown message id in UnitProfileMessage (%d)",
+                           net_message->message_id);
+    }
+}
+
+void
+UnitProfileInterface::handleProfileDescMessage(const NetMessage *net_message, size_t size)
+{
+    UnitProfile* p = loadProfileFromMessage(net_message, size);
+    if ( p )
+    {
+        p->unit_type = profiles.size();
+        profiles.push_back(p);
+    }
 }

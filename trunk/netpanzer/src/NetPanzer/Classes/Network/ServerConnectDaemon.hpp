@@ -61,6 +61,7 @@ protected:
     static void connectStateWaitForConnectRequest(const NetMessage* message);
     static void connectStateWaitForClientSettings(const NetMessage* message);
     static void connectStateWaitForClientGameSetupAck(const NetMessage* message);
+    static void connectStateUnitProfileSync( const NetMessage* message);
     static void connectStatePlayerStateSync();
     static void connectStateSyncFlags();
     static void connectStateUnitSync();

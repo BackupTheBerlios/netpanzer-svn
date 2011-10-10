@@ -37,6 +37,7 @@ enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_server_game_setup,
        _net_message_id_connect_client_game_setup_ping,
        _net_message_id_connect_client_game_setup_ack,
+       _net_message_id_connect_client_send_next_unit_profile,
        _net_message_id_connect_client_abort,
        _net_message_id_connect_netPanzer_client_disconnect,
        _net_message_id_connect_netPanzer_server_disconnect
@@ -129,6 +130,7 @@ public:
 } __attribute__((packed));
 
 enum { _connect_state_message_load_game_data,
+       _connect_state_message_sync_unit_profiles,
        _connect_state_message_sync_player_info,
        _connect_state_message_sync_player_info_percent,
        _connect_state_message_sync_units,
@@ -208,6 +210,18 @@ public:
         message_id = _net_message_id_connect_client_game_setup_ack;
     }
 } __attribute__((packed));
+
+class ConnectMesgClientSendNextUnit : public NetMessage
+{
+public:
+    ConnectMesgClientSendNextUnit()
+    {
+        message_class = _net_message_class_connect;
+        message_id = _net_message_id_connect_client_send_next_unit_profile;
+    }
+} __attribute__((packed));
+
+
 
 class ConnectMesgClientGameSetupPing : public NetMessage
 {

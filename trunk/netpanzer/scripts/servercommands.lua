@@ -83,6 +83,16 @@ ServerCommands =
         end
     end,
 
+    unitprofiles_help = "sets or get list of unit profiles loaded",
+    unitprofiles = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "Unit profile list: " .. config.game.unit_profiles);
+        else
+            config.game.unit_profiles = param;
+            netpanzer.serversayto( player, "Unit profile list set to: " .. config.game.unit_profiles);
+        end
+    end,
+
     countdown_help = "Do a countdown, use 'countdown <time> <message>'",
     countdown = function(param, player)
         local counttime, message = string.match(param, "(%d+) *(.*)");

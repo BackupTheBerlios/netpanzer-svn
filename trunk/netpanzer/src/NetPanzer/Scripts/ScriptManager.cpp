@@ -36,6 +36,7 @@ lua_State * ScriptManager::luavm = 0;
 
 int npmodule_load (lua_State *L);
 
+#if 0
 static void DumpStack (const NPString& text, lua_State *L)
 {
     int i;
@@ -66,6 +67,9 @@ static void DumpStack (const NPString& text, lua_State *L)
     }
     printf("\n");  /* end the listing */
 }
+
+#endif
+
 /**
   * Prepares the lua stack to be able to do an indexing operationg:
   *     table[key]

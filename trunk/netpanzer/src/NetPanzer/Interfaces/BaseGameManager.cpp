@@ -117,8 +117,6 @@ void BaseGameManager::shutdownInputDevices()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameObjects()
 {
-    loadGameData();
-
     Physics::init();
     Weapon::init();
 
@@ -133,7 +131,7 @@ void BaseGameManager::shutdownGameObjects()
 //-----------------------------------------------------------------
 void BaseGameManager::loadGameData()
 {
-    UnitProfileInterface::loadUnitProfiles();
+//    UnitProfileInterface::loadUnitProfiles();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()

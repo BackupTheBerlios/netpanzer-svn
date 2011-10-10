@@ -37,6 +37,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 
+#include "Units/UnitProfileInterface.hpp"
+
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 
@@ -232,6 +234,9 @@ bool DedicatedGameManager::launchNetPanzerGame()
     gameconfig->map = MapsManager::getNextMap("");
 
     GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
+
+    UnitProfileInterface::loadUnitProfiles();
+    ParticleInterface::rebuildUnitParticleData();
 
     GameManager::reinitializeGameLogic();
 

@@ -23,6 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Util/Log.hpp"
 #include "Interfaces/GameManager.hpp"
+
+#include "Particles/ParticleInterface.hpp"
+#include "Views/Game/VehicleSelectionView.hpp"
+
 #include <list>
 #include <string>
 
@@ -62,9 +66,20 @@ public:
     {
         Desktop::setVisibilityAllWindows(false);
         GameManager::loadPalette("netp");
+
+        // XXX rebuild the particle stuff here for units...
+        ParticleInterface::rebuildUnitParticleData();
+
+        // XXX this needed because has to create the special buttons for the
+        // defined units, has to be here because it has to be the "netp" palette
+        // and after loading the unit profiles
+        Desktop::remove(Desktop::getView("VehicleSelectionView"));
+        Desktop::add(new VehicleSelectionView());
+
         GameManager::setNetPanzerGameOptions();
         Desktop::setVisibility("MiniMapView", true);
         Desktop::setVisibility("GameView", true);
+        Desktop::setActiveView("GameView");
     }
 
     static void loadError()

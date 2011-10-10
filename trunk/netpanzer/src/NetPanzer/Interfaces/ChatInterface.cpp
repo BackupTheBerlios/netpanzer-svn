@@ -335,7 +335,7 @@ void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
         unsigned int text_len = std::min(message.length(), MAX_CHAT_MSG_LEN);
         ChatMesg cmsg;
 
-        message.copy(cmsg.message_text, 0, text_len);
+        message.copy(cmsg.message_text, text_len);
         cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
         cmsg.message_scope = _chat_mesg_scope_server;
 

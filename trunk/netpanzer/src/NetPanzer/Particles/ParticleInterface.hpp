@@ -144,6 +144,7 @@ public:
     static void addMoveDirtPuff(const UnitState &unitState);
 
     static void initParticleSystems();
+    static void rebuildUnitParticleData();
 
     static void addUnitDamagePuffParticle(const UnitState &unitState);
 }; // end ParticleInterface

@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Util/Log.hpp"
 
@@ -45,6 +46,7 @@ enum ConnectionState
     connect_state_wait_for_connect_request,
     connect_state_wait_for_client_settings,
     connect_state_wait_for_client_game_setup_ack,
+    connect_state_unit_profile_sync,
     connect_state_player_state_sync,
     connect_state_sync_flags,
     connect_state_unit_sync
@@ -323,17 +325,55 @@ void ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
             connect_client->sendMessage( &player_connect_mesg,
                                          sizeof(PlayerConnectID));
             
-            sync_count = 0;
-            sync_end = PlayerInterface::getMaxPlayers();
-
             ConnectProcessStateMessage state_mesg;
-            state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
+            state_mesg.setMessageEnum(_connect_state_message_sync_unit_profiles);
             state_mesg.setPercentComplete(0);
             connect_client->sendMessage( &state_mesg,
                                          sizeof(ConnectProcessStateMessage));
             connect_client->sendRemaining();
             if(connection_state != connect_state_idle)
             {
+                sync_count = 0;
+                sync_end = UnitProfileInterface::getNumUnitTypes();
+                connection_state = connect_state_unit_profile_sync;
+            }
+        }
+        else if ( message->message_id == _net_message_id_connect_client_game_setup_ping )
+        {
+            time_out_timer.reset();
+        }
+    }
+    else if ( time_out_timer.count() )
+    {
+        player->setStatus( _player_state_free );
+        resetConnectFsm();
+    }
+}
+
+void ServerConnectDaemon::connectStateUnitProfileSync( const NetMessage* message )
+{
+    PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
+    if ( message != 0 || sync_count == 0)
+    {
+        if ( sync_count == 0 || message->message_id == _net_message_id_connect_client_send_next_unit_profile )
+        {
+            Uint8 data[ _MAX_NET_PACKET_SIZE ];
+            NetMessage *pmsg = (NetMessage*)&data;
+            int len = UnitProfileInterface::fillProfileSyncMessage(pmsg, sync_count++);
+            connect_client->sendMessage(data, len);
+            connect_client->sendRemaining();
+
+            if ( sync_count == sync_end && connection_state != connect_state_idle )
+            {
+                ConnectProcessStateMessage state_mesg;
+                state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
+                state_mesg.setPercentComplete(0);
+                connect_client->sendMessage( &state_mesg,
+                                             sizeof(ConnectProcessStateMessage));
+                connect_client->sendRemaining();
+
+                sync_count = 0;
+                sync_end = PlayerInterface::getMaxPlayers();
                 connection_state = connect_state_player_state_sync;
             }
         }
@@ -551,6 +591,10 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
 
         case connect_state_wait_for_client_game_setup_ack:
             connectStateWaitForClientGameSetupAck( message );
+            break;
+
+        case connect_state_unit_profile_sync:
+            connectStateUnitProfileSync( message );
             break;
 
         case connect_state_player_state_sync:

@@ -54,7 +54,9 @@ public:
 
     static Objective* getObjective( ObjectiveID objective_id )
     {
-        return objective_list[objective_id];
+        return (objective_list && objective_id < num_objectives)
+                ? objective_list[objective_id]
+                : 0;
     }
     
     static Objective* getObjectiveAtWorldXY( const iXY& loc );

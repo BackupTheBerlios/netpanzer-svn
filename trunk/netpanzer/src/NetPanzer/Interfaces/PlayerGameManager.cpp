@@ -109,6 +109,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/NTimer.hpp"
 
 #include "Bot/Bot.hpp"
 
@@ -359,6 +360,36 @@ void PlayerGameManager::hostMultiPlayerGame()
         graphicsLoop();
     }
 
+    UnitProfileInterface::loadUnitProfiles();
+    if ( UnitProfileInterface::getNumUnitTypes() == 0 )
+    {
+        LoadingView::append( "ERROR loading unit profiles, check your configuration" );
+        LoadingView::append( "game.unit_profiles is: " + *GameConfig::game_unit_profiles );
+        graphicsLoop();
+        SDL_Delay(5000);
+        if ( infosocket )
+        {
+            delete infosocket;
+            infosocket = 0;
+        }
+        if ( heartbeat )
+        {
+            delete heartbeat;
+            heartbeat = 0;
+        }
+        if (CLIENT)
+        {
+            delete CLIENT;
+            CLIENT=0;
+        }
+
+        SERVER->closeSession();
+
+        GameControlRulesDaemon::setStateServerIdle();
+        LoadingView::loadError();
+        return;
+    }
+
     sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
     LoadingView::update( strbuf );
     graphicsLoop();
@@ -367,6 +398,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::append( "Initializing Game Logic ..." );
     graphicsLoop();
     GameManager::reinitializeGameLogic();
+
     LoadingView::update( "Initializing Game Logic ... (100%) " );
     graphicsLoop();
     
@@ -388,18 +420,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     GameManager::startGameTimer();
 
-    LoadingView::hide();
-
-    // Set the palette to the game palette.
-    GameManager::loadPalette( "netp");
-
-    GameManager::setNetPanzerGameOptions();
-
-    // Need to open at beginning of game until we are saving status of things.
-    // when last played.
-    Desktop::setVisibility("MiniMapView", true);
-    Desktop::setVisibility("GameView", true);
-    Desktop::setActiveView("GameView");
+    LoadingView::loadFinish();
 }
 
 void PlayerGameManager::quitGame()

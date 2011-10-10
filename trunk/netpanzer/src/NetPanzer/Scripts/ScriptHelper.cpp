@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScriptHelper.hpp"
 #include "Util/Log.hpp"
 
+#include "Core/CoreTypes.hpp"
+
 static void notExistsError(lua_State *L )
 {
     lua_Debug ar;
@@ -117,8 +119,39 @@ ScriptHelper::set_number (lua_State *L, void *v)
 int
 ScriptHelper::get_string (lua_State *L, void *v)
 {
-    lua_pushstring(L, (char*)v );
+    NPString** strp = (NPString**)v;
+    if ( strp )
+    {
+        lua_pushstring(L, (*strp)->c_str() );
+    }
+    else
+    {
+        lua_pushstring(L, "" );
+    }
     return 1;
+}
+
+int
+ScriptHelper::set_string (lua_State *L, void *v)
+{
+    const char * s = lua_tostring(L, 3);
+    if ( !s )
+    {
+        notModifiedError(L,"string");
+    }
+    else
+    {
+        NPString** strp = (NPString**)v;
+        if ( ! *strp )
+        {
+            *strp = new NPString(s);
+        }
+        else
+        {
+            (*strp)->assign(s);
+        }
+    }
+    return 0;
 }
 
 int

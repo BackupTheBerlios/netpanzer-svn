@@ -70,7 +70,7 @@ UserCommands =
     end,
 
     test = function(param)
-        netpanzer.scriptmessage("The value of the thing is: " .. game.frametime);
+        netpanzer.scriptmessage("the thing is: " .. config.game.unit_profiles);
     end,
     
     countdown_help = "Do a countdown.",

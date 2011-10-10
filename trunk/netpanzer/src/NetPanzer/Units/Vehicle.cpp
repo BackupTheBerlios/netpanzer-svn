@@ -40,6 +40,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
+/*
+Unit speeds as the profiles says:
+  Archer   16 x 2 = 32 px/s (1.0   tile/second)
+  Bear     14 x 2 = 28 px/s (0.875 t/s)
+  Bobcat   20 x 4 = 80 px/s (2.5   t/s)
+  Drake    16 x 2 = 32 px/s (1.0   t/s)
+  Manta    20 x 4 = 80 px/s (2.5   t/s)
+  Panther1 18 x 2 = 36 px/s (1.125 t/s)
+  SPanzer  22 x 4 = 88 px/s (2.75  t/s)
+  Stinger  18 x 2 = 36 px/s (1.125 t/s)
+  Titan    16 x 2 = 32 px/s (1.0   t/s)
+  Wolf     20 x 4 = 80 px/s (2.5   t/s)
+
+UnitState timer ticks 10 times per second, so reload times are:
+  Archer   110 = 11.0 s
+  Bear      40 =  4.0 s
+  Bobcat    20 =  2.0 s
+  Drake     50 =  5.0 s
+  Manta     35 =  3.5 s
+  Panther1  50 =  5.0 s
+  SPanzer   20 =  2.0 s
+  Stinger  100 = 10.0 s
+  Titan     60 =  6.0 s
+  Wolf      40 =  4.0 s
+
+
+*/
+
 #define MOVEWAIT_TIME 0.9f
 
 enum{ _rotate_and_move, _rotate_stop_move };

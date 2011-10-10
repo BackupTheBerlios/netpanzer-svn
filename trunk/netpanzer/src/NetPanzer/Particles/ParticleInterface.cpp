@@ -914,6 +914,11 @@ void ParticleInterface::initParticleSystems()
     //MapInterface::getMapPointSize(&shit);
     //addCloudParticle(iXY(400, 400), iXY(shit.x, shit.y));
 
+    rebuildUnitParticleData();
+}
+
+void ParticleInterface::rebuildUnitParticleData()
+{
     buildUnitTables();
     getUnitParticleInfo();
 }

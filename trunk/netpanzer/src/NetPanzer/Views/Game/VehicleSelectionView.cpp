@@ -298,10 +298,12 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 //--------------------------------------------------------------------------
 void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    if ( ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID)->occupying_player != PlayerInterface::getLocalPlayer() )
+    Objective* obj = ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID);
+    if ( !obj || obj->occupying_player != PlayerInterface::getLocalPlayer() )
     {
         Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
         changeMade = false;
+        return;
     }
     
     char strBuf[256];
@@ -375,8 +377,6 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         }}
 
     bltViewBackground(viewArea);
-
-    Objective* obj = ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID);
 
     int remaining_time = 0;
     int generation_time = 0;

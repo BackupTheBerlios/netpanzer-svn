@@ -125,10 +125,11 @@ public:
     static bool interface_show_flags;
     static bool interface_show_names;
 
-    static bool game_enable_bases;
-    static int  game_base_capture_mode; // 0=no capture, 1=normal, 2=...
-    static int  game_autokicktime; // in minutes
-    static bool game_allowmultiip; // allow multi connect from same ip
+    static bool      game_enable_bases;
+    static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
+    static int       game_autokicktime; // in minutes
+    static bool      game_allowmultiip; // allow multi connect from same ip
+    static NPString* game_unit_profiles; // "," separated list of profiles to load
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 

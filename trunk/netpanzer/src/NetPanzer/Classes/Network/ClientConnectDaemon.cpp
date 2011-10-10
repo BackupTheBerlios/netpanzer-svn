@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClient.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Units/UnitProfileInterface.hpp"
 
 #include "Resources/ResourceManager.hpp"
 
@@ -158,6 +159,11 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
                     state_mesg->getPercentComplete());
             LoadingView::update( str_buf );
         }
+        break;
+
+    case _connect_state_message_sync_unit_profiles:
+        LoadingView::append("Synchronizing unit profiles...");
+        UnitProfileInterface::clearProfiles();
         break;
 
     case  _connect_state_message_sync_units : {

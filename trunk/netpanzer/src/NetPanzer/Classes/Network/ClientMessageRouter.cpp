@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientMessageRouter.hpp"
 
 #include "NetworkClient.hpp"
+
 #include "Classes/Network/ClientConnectDaemon.hpp"
 
 #include "Interfaces/GameManager.hpp"
@@ -30,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
@@ -51,25 +53,31 @@ void ClientMessageRouter::cleanUp()
 void
 ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
 {
-    switch (message->message_class) {
-        case _net_message_class_unit:
-            UnitInterface::processNetMessage(message, size);
+    switch (message->message_class)
+    {
+        case _net_message_class_system:
+            GameManager::processSystemMessage(message);
+            break;
+
+        case _net_message_class_connect:
+            ClientConnectDaemon::processNetMessage(message);
             break;
 
         case _net_message_class_player:
             PlayerInterface::processNetMessage(message);
             break;
 
-        case _net_message_class_system:
-            GameManager::processSystemMessage(message);
+        case _net_message_class_unit:
+            UnitInterface::processNetMessage(message, size);
             break;
 
-        case _net_message_class_chat:
-            ChatInterface::clientHandleChatMessage(message, size);
-            break;
-
-        case _net_message_class_connect:
-            ClientConnectDaemon::processNetMessage(message);
+        case _net_message_class_unit_profile:
+            {
+                UnitProfileInterface::processNetMessage(message, size);
+                ConnectMesgClientSendNextUnit msg;
+                CLIENT->sendMessage(&msg, sizeof(msg));
+//                CLIENT->sendRemaining();
+            }
             break;
 
         case _net_message_class_objective:
@@ -82,6 +90,10 @@ ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
 
         case _net_message_class_powerup:
             PowerUpInterface::processNetMessages(message);
+            break;
+
+        case _net_message_class_chat:
+            ChatInterface::clientHandleChatMessage(message, size);
             break;
 
         default:

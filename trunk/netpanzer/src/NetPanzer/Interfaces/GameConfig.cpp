@@ -48,10 +48,11 @@ bool GameConfig::interface_show_health = true;
 bool GameConfig::interface_show_flags = true;
 bool GameConfig::interface_show_names = true;
 
-bool GameConfig::game_enable_bases = true;
-int  GameConfig::game_base_capture_mode = 1; // normal capture;
-int  GameConfig::game_autokicktime = 20; // minutes;
-bool GameConfig::game_allowmultiip = true;
+bool      GameConfig::game_enable_bases = true;
+int       GameConfig::game_base_capture_mode = 1; // normal capture;
+int       GameConfig::game_autokicktime = 20; // minutes;
+bool      GameConfig::game_allowmultiip = true;
+NPString* GameConfig::game_unit_profiles = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -110,6 +111,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "base_capture_mode", GETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
     { "autokicktime",      GETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
+    { "unit_profiles",     GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
     {0,0}
 };
 
@@ -119,12 +121,17 @@ static const ScriptVarBindRecord game_setters[] =
     { "base_capture_mode", SETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
     { "autokicktime",      SETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
+    { "unit_profiles",     SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
     {0,0}
 };
 
 void GameConfig::registerScript(const NPString& table_name)
 {
-//    ScriptManager::registerLib( table_name, video_methods);
+    if ( ! game_unit_profiles )
+    {
+        game_unit_profiles = new NPString("Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer");
+    }
+
     ScriptManager::bindStaticVariables(table_name + ".video",
                                        "ConfigVideoMetaTable",
                                        video_getters, video_setters);

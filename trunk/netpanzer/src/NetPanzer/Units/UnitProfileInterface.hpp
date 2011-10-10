@@ -27,45 +27,61 @@ using namespace std;
 #include "Units/UnitState.hpp"
 #include "2D/PackedSurface.hpp"
 
+#include "Core/CoreTypes.hpp"
+
+class NetMessage;
+
 class UnitProfile
 {
 public:
-    std::string unitname;
-    unsigned short unit_type;
+    NPString unitname;
+    Uint16 unit_type;
 
-    short hit_points;
-    short attack_factor;
-    long  attack_range;
-    long  defend_range;
-    char  speed_factor;
-    char  speed_rate;
-    char  reload_time;
-    short regen_time;
-    std::string imagefile;
+    Uint16 hit_points;
+    Uint16 attack_factor;
+    Uint32 attack_range;
+    Uint16 cfg_attack_range;
+    Uint32  defend_range;
+    Uint16 cfg_defend_range;
+    Uint8  speed_factor;
+    Uint8  speed_rate;
+    Uint8  reload_time;
+    Uint16 regen_time;
+    NPString imagefile;
+    NPString bodySprite_name;
+    NPString bodyShadow_name;
+    NPString turretSprite_name;
+    NPString turretShadow_name;
     PackedSurface bodySprite;
     PackedSurface bodyShadow;
     PackedSurface turretSprite;
     PackedSurface turretShadow;
-    std::string soundSelected;
-    std::string fireSound;
-    std::string weaponType;
-    short boundBox;
+    NPString soundSelected;
+    NPString fireSound;
+    NPString weaponType;
+    Uint16 boundBox;
 };
 
 class UnitProfileInterface
 {
 protected:
     static vector<UnitProfile *> profiles;
-    static void clearProfiles();
     
 public:
+    static void clearProfiles();
+    static bool addLocalProfile(const NPString& name);
     static void loadUnitProfiles( void );
     static UnitProfile * getUnitProfile( unsigned short unit_type );
-    static UnitProfile * getProfileByName( const std::string &name );
-    static unsigned short getNumUnitTypes()
+    static UnitProfile * getProfileByName( const NPString& name );
+    static int getNumUnitTypes()
     {
         return profiles.size();
     }
+
+    static int fillProfileSyncMessage(NetMessage* message, int profile_id);
+    static UnitProfile* loadProfileFromMessage(const NetMessage* message, size_t size);
+    static void processNetMessage(const NetMessage* net_message, size_t size);
+    static void handleProfileDescMessage(const NetMessage* net_message, size_t size);
 };
 
 
