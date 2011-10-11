@@ -455,22 +455,22 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
             {
                 if(ctrl_status == true)
                 {
-                    setSelectionList(key_code+1);
+                    setSelectionList(key_code);
                     ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", key_code+1);
                     continue;
                 }
                 if(alt_status == true)
                 {
-                    cycleSelectedUnits(key_code+1);
+                    cycleSelectedUnits(key_code);
                     continue;
                 }
-                working_list.addList( selection_group_lists[key_code+1] );
+                working_list.addList( selection_group_lists[key_code] );
             }
         }
         if(alt_status != true) {
             working_list.select();
             if(ctrl_status != true) {
-                if ( lastSelectTimer.isTimeOut() ) {
+                if ( !lastSelectTimer.isTimeOut() ) {
                     centerSelectedUnits();
                 }
                 lastSelectTimer.reset();

@@ -486,11 +486,6 @@ void PathScheduler::killRequest( UnitID &unit_id )
 
 void PathScheduler::run()
 {
-    //This procedure takes too much resource, not to execute at each cycle.
-    static NTimer rctimer(90);
-    if (!rctimer.isTimeOut()) return;
-    rctimer.reset();
-
     unsigned long i;
     PathRequest request;
 
