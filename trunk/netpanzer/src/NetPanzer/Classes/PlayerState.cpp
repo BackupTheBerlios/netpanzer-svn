@@ -105,7 +105,7 @@ PlayerState::getColor() const
 PlayerState::PlayerState()
     : status(0), kills(0), kill_points(0), losses(0),
       loss_points(0), total(0), objectives_held(0), stats_locked(false),
-      colorIndex(0)
+      admin_flag(false)
 {
     autokick.reset();
 }
@@ -133,6 +133,7 @@ void PlayerState::operator= (const PlayerState& other)
     objectives_held = other.objectives_held;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
+    admin_flag = other.admin_flag;
     autokick.reset();
 }
 
@@ -191,6 +192,7 @@ void PlayerState::resetStats()
     total = 0;
     objectives_held = 0;
     stats_locked = false;
+    admin_flag = false;
 }
 
 void PlayerState::resetAutokick()
@@ -326,7 +328,6 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
-    state.colorIndex = htol32(colorIndex);
     
     return state;
 }
@@ -343,7 +344,6 @@ void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
     state.loss_points = htol16(loss_points);
     state.total = htol16(total);
     state.objectives_held = htol16(objectives_held);
-    state.colorIndex = htol32(colorIndex);
 }
 
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)

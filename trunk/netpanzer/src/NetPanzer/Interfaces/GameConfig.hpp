@@ -130,6 +130,7 @@ public:
     static int       game_autokicktime; // in minutes
     static bool      game_allowmultiip; // allow multi connect from same ip
     static NPString* game_unit_profiles; // "," separated list of profiles to load
+    static NPString* game_adminpass;     // the secret password for admins
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 

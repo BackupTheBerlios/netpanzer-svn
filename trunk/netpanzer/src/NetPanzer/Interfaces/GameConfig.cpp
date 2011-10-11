@@ -53,6 +53,7 @@ int       GameConfig::game_base_capture_mode = 1; // normal capture;
 int       GameConfig::game_autokicktime = 20; // minutes;
 bool      GameConfig::game_allowmultiip = true;
 NPString* GameConfig::game_unit_profiles = 0;
+NPString* GameConfig::game_adminpass = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -112,6 +113,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "autokicktime",      GETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     { "unit_profiles",     GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "adminpass",         GETSVTYPE_STRING,  &GameConfig::game_adminpass},
     {0,0}
 };
 
@@ -122,6 +124,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "autokicktime",      SETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     { "unit_profiles",     SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "adminpass",         SETSVTYPE_STRING,  &GameConfig::game_adminpass},
     {0,0}
 };
 
@@ -130,6 +133,11 @@ void GameConfig::registerScript(const NPString& table_name)
     if ( ! game_unit_profiles )
     {
         game_unit_profiles = new NPString("Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer");
+    }
+
+    if ( ! game_adminpass )
+    {
+        game_adminpass = new NPString("");
     }
 
     ScriptManager::bindStaticVariables(table_name + ".video",

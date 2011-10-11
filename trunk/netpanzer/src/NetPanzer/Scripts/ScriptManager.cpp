@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 
 lua_State * ScriptManager::luavm = 0;
 
@@ -245,26 +246,59 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
             return false;
         }
 
-        lua_getfield(luavm, -1, command.c_str());
-        if ( lua_isfunction(luavm, -1) )
+        if ( ! PlayerInterface::isLocalPlayer(runPlayer) && command == "adminlogin" )
         {
-            lua_pushstring(luavm, params.c_str());
-            lua_pushnumber(luavm, runPlayer);
-            
-            if ( lua_pcall(luavm, 2, 0, 0) != 0 )
+            if ( ! GameConfig::game_adminpass || GameConfig::game_adminpass->empty() )
             {
-                std::stringstream errormsg;
-                errormsg << "Error running server command '"
-                         << str << "': "
-                         << lua_tostring(luavm, -1);
-                ChatInterface::serversayTo(runPlayer, errormsg.str());
+                ChatInterface::serversayTo(runPlayer, "Remote admin is disabled.");
+            }
+            else if ( GameConfig::game_adminpass->compare(params) == 0 )
+            {
+                PlayerInterface::setAdmin(runPlayer, true);
+                ChatInterface::serversayTo(runPlayer, "You are admin!");
+            }
+            else
+            {
+                // XXX a limit on retries is needed... some other day will do.
+                ChatInterface::serversayTo(runPlayer, "Wrong password.");
+            }
+
+        }
+        else if ( PlayerInterface::isLocalPlayer(runPlayer) || PlayerInterface::isAdmin(runPlayer) )
+        {
+            if ( ! PlayerInterface::isLocalPlayer(runPlayer) && command == "adminlogout" )
+            {
+                PlayerInterface::setAdmin(runPlayer, false);
+                ChatInterface::serversayTo(runPlayer, "You are admin no more.");
+            }
+            else
+            {
+                lua_getfield(luavm, -1, command.c_str());
+                if ( lua_isfunction(luavm, -1) )
+                {
+                    lua_pushstring(luavm, params.c_str());
+                    lua_pushnumber(luavm, runPlayer);
+
+                    if ( lua_pcall(luavm, 2, 0, 0) != 0 )
+                    {
+                        std::stringstream errormsg;
+                        errormsg << "Error running server command '"
+                                 << str << "': "
+                                 << lua_tostring(luavm, -1);
+                        ChatInterface::serversayTo(runPlayer, errormsg.str());
+                    }
+                }
+                else
+                {
+                    std::stringstream errormsg;
+                    errormsg << "Server command '" << str << "' not found";
+                    ChatInterface::serversayTo(runPlayer, errormsg.str());
+                }
             }
         }
         else
         {
-            std::stringstream errormsg;
-            errormsg << "Server command '" << str << "' not found";
-            ChatInterface::serversayTo(runPlayer, errormsg.str());
+            ChatInterface::serversayTo(runPlayer, "You need to be admin.");
         }
     }
     else

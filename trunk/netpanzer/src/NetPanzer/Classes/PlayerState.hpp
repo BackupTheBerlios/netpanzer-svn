@@ -56,7 +56,6 @@ private:
     Sint16 loss_points;
     Sint16 total;
     Sint16 objectives_held;
-    Uint32 colorIndex;
 }__attribute__((packed));
 
 #ifdef MSVC
@@ -76,7 +75,7 @@ private:
     short total;
     short objectives_held;
     bool stats_locked;
-    Uint32 colorIndex;
+    bool admin_flag;
     NTimer autokick;
 
 public:
@@ -92,7 +91,7 @@ public:
 
     PlayerID getID() const { return id; }
 
-	void resetAutokick();
+    void resetAutokick();
     bool checkAutokick();
     void resetStats();
     void lockStats();
@@ -117,6 +116,9 @@ public:
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
     Uint8 getColor() const;
 
+    void setAdmin(bool flag) { admin_flag = flag; }
+
+    bool isAdmin() const { return admin_flag; }
     bool isFree() const { return status == _player_state_free; }
     bool isAllocated() const { return status == _player_state_allocated; }
     bool isConnecting() const { return status == _player_state_connecting; }

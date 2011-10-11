@@ -54,6 +54,21 @@ public:
         return (player < getMaxPlayers()) && player_lists[player].isActive();
     }
 
+    static bool isLocalPlayer(PlayerID player) { return player == local_player_index; }
+
+    static void setAdmin(PlayerID player, bool flag)
+    {
+        if ( player < getMaxPlayers() )
+        {
+            player_lists[player].setAdmin(flag);
+        }
+    }
+
+    static bool isAdmin(PlayerID player)
+    {
+        return (player < getMaxPlayers()) && player_lists[player].isAdmin();
+    }
+
     static void lockPlayerStats();
     static void unlockPlayerStats();
 
