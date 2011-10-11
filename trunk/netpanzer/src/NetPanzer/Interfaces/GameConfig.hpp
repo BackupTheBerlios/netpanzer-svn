@@ -129,7 +129,8 @@ public:
     static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
     static int       game_autokicktime; // in minutes
     static bool      game_allowmultiip; // allow multi connect from same ip
-    static NPString* game_unit_profiles; // "," separated list of profiles to load
+    static NPString* game_unit_profiles; // "," or space separated list of profiles to load
+    static NPString* game_unit_spawnlist; // "," or space separated list with the numbers of each unit to spawn with
     static NPString* game_adminpass;     // the secret password for admins
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
@@ -203,31 +204,7 @@ public:
     ConfigInt   radar_objectivedrawmode;
     ConfigInt   radar_resizerate;
     
-    // spawnconfig settings
-    ConfigInt   titan;
-    ConfigInt   manta;
-    ConfigInt   panther1;
-    ConfigInt   stinger;
-    ConfigInt   spanzer;
-    ConfigInt   bobcat;
-    ConfigInt   wolf;
-    ConfigInt   bear;
-    ConfigInt   drake;
-    ConfigInt   archer;
-    
-    std::vector<ConfigVariable*> spawnsettings;
-    
 public:
-    void clearSpawnSettings()
-    {
-        std::vector<ConfigVariable*>::iterator i = spawnsettings.begin();
-        while ( i != spawnsettings.end() )
-        {
-            delete *i;
-            i++;
-        }
-        spawnsettings.clear();
-    }
     const char* getGameTypeString() const
     {
         switch(gametype) {
@@ -352,8 +329,6 @@ private:
 
     void loadSettings(const INI::Section&,
             std::vector<ConfigVariable*>& settings);
-    void loadSpawnSettings(const INI::Section& section,
-                           std::vector<ConfigVariable*>& settings);
     void saveSettings(INI::Section&, std::vector<ConfigVariable*>& settings);
 
     std::vector<ConfigVariable*> gamesettings;

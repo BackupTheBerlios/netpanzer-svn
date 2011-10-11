@@ -191,7 +191,6 @@ void PlayerInterface::initialize(const unsigned int _max_players)
         player_lists[ player_id ].setID( player_id );
         player_lists[ player_id ].resetStats();
         player_lists[ player_id ].setStatus( _player_state_free );
-        player_lists[ player_id ].unit_config.initialize();
         sprintf( temp_str, "Player %u", player_id );
         player_lists[ player_id ].setName( temp_str );
     }
@@ -302,6 +301,7 @@ PlayerState* PlayerInterface::allocateLoopBackPlayer()
 
     SDL_mutexP(mutex);
     player_lists[local_player_index].setStatus(_player_state_active);
+    player_lists[local_player_index].unit_config.initialize();
     SDL_mutexV(mutex);
 
     return &player_lists[local_player_index];
@@ -333,6 +333,7 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         {
             player_lists[ player_id ].setStatus( _player_state_allocated );
             player_lists[ player_id ].resetStats();
+            player_lists[ player_id ].unit_config.initialize();
             res = &player_lists[ player_id ];
             break;
         }
@@ -619,6 +620,7 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID player_id )
         disconnectedPlayerAllianceCleanup(player_id);
 
         player_state->setStatus( _player_state_free );
+        player_state->setAdmin(false);
 
         PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
 

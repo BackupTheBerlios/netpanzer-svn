@@ -53,6 +53,7 @@ int       GameConfig::game_base_capture_mode = 1; // normal capture;
 int       GameConfig::game_autokicktime = 20; // minutes;
 bool      GameConfig::game_allowmultiip = true;
 NPString* GameConfig::game_unit_profiles = 0;
+NPString* GameConfig::game_unit_spawnlist = 0;
 NPString* GameConfig::game_adminpass = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
@@ -113,6 +114,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "autokicktime",      GETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     { "unit_profiles",     GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "unit_spawnlist",    GETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         GETSVTYPE_STRING,  &GameConfig::game_adminpass},
     {0,0}
 };
@@ -124,6 +126,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "autokicktime",      SETSVTYPE_INT,     &GameConfig::game_autokicktime },
     { "allowmultiip",      SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
     { "unit_profiles",     SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "unit_spawnlist",    SETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         SETSVTYPE_STRING,  &GameConfig::game_adminpass},
     {0,0}
 };
@@ -133,6 +136,11 @@ void GameConfig::registerScript(const NPString& table_name)
     if ( ! game_unit_profiles )
     {
         game_unit_profiles = new NPString("Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer");
+    }
+
+    if ( ! game_unit_spawnlist )
+    {
+        game_unit_spawnlist = new NPString("1, 1, 1, 1, 1, 1, 1, 1, 1, 1");
     }
 
     if ( ! game_adminpass )
@@ -219,18 +227,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       radar_enemyoutpostcolor("enemyoutpostcolor", _color_red, 0, _color_last-1),
       radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1),
       radar_objectivedrawmode("objectivedrawmode", _mini_map_objective_draw_mode_outline_rect, 0, _mini_map_objective_draw_mode_last-1),
-      radar_resizerate("resizerate", 400, 10, 1000),
-      
-      titan("titan",2),
-      manta("manta",2),
-      panther1("panther1",2),
-      stinger("stinger",1),
-      spanzer("spanzer",2),
-      bobcat("bobcat",0),
-      wolf("wolf",0),
-      bear("bear",0),
-      drake("drake",0),
-      archer("archer",0)
+      radar_resizerate("resizerate", 400, 10, 1000)
 {
     this->configfile = configfile;
     this->usePhysFS = usePhysFS;
@@ -337,7 +334,6 @@ void GameConfig::loadConfig()
     loadSettings(inifile.getSection("interface"), interfacesettings);
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
-    loadSpawnSettings(inifile.getSection("spawnconfig"),spawnsettings);
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -401,19 +397,6 @@ void GameConfig::loadSettings(const INI::Section& section,
     }
 }
 
-void GameConfig::loadSpawnSettings(const INI::Section& section,
-                                   std::vector<ConfigVariable*>& settings)
-{
-    INI::valuesIterator i = section.getValuesBegin();
-    while ( i != section.getValuesEnd() )
-    {
-        ConfigInt * intvar = new ConfigInt( i->first, section.getIntValue(i->first) );
-        settings.push_back(intvar);
-        i++;
-    }
-}
-
-
 void GameConfig::saveConfig()
 {
     INI::Store inifile;
@@ -424,7 +407,6 @@ void GameConfig::saveConfig()
     saveSettings(inifile.getSection("interface"), interfacesettings);
     saveSettings(inifile.getSection("radar"), radarsettings);
     saveSettings(inifile.getSection("server"), serversettings);
-    saveSettings(inifile.getSection("spawnconfig"),spawnsettings);
 
     if(usePhysFS) {
         OFileStream out (configfile);

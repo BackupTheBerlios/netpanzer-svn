@@ -93,6 +93,16 @@ ServerCommands =
         end
     end,
 
+    unitspawnlist_help = "sets or get the unitspawnlist",
+    unitspawnlist = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "Unit spawn list: " .. config.game.unit_spawnlist);
+        else
+            config.game.unit_spawnlist = param;
+            netpanzer.serversayto( player, "Unit spawn list set to: " .. config.game.unit_spawnlist);
+        end
+    end,
+
     countdown_help = "Do a countdown, use 'countdown <time> <message>'",
     countdown = function(param, player)
         local counttime, message = string.match(param, "(%d+) *(.*)");

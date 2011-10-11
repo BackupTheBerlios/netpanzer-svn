@@ -40,3 +40,35 @@ std::string removeSurroundingSpaces(const std::string& str)
     return std::string(str, s, e-s+1);
 }
 
+void string_to_params( const NPString& str, std::vector<NPString>& parameters )
+{
+    parameters.clear();
+
+    static char* limiters[] = { ", \t", "\"" };
+
+    NPString::size_type start = 0;
+    NPString::size_type end = 0;
+
+    do
+    {
+        start = str.find_first_not_of(" \t", start);
+        if ( start != NPString::npos )
+        {
+            int limit_index = 0;
+            if ( str[start] == '"' && start < str.length()-1 )
+            {
+                limit_index = 1;
+                ++start;
+            }
+
+            end = str.find_first_of(limiters[limit_index], start);
+
+            parameters.push_back( str.substr(start, end != NPString::npos ? end-start : end) );
+
+            if ( end != NPString::npos )
+            {
+                start = str.find_first_not_of(limiters[limit_index], end);
+            }
+        }
+    } while ( start != NPString::npos && end != NPString::npos );
+}

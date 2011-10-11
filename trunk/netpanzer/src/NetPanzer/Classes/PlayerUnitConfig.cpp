@@ -20,6 +20,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
+#include "Util/StringUtil.hpp"
+
+#include "Util/Log.hpp"
+
+// for atoi for now
+#include <stdlib.h>
+
 PlayerUnitConfig::PlayerUnitConfig()
 {
 }
@@ -27,36 +34,45 @@ PlayerUnitConfig::PlayerUnitConfig()
 void PlayerUnitConfig::initialize()
 {
     max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
-    unit_spawn_list.resize(UnitProfileInterface::getNumUnitTypes(), 0);
+
+    int num_types = UnitProfileInterface::getNumUnitTypes();
+    unit_spawn_list.resize(num_types, 0);
     
     int rem_units = max_allowed_units;
-    int numunits;
+    int num_units;
 
-    vector<ConfigVariable*>::iterator i = gameconfig->spawnsettings.begin();
-    while ( i != gameconfig->spawnsettings.end() )
+    std::vector<NPString> str_counts;
+
+    string_to_params(*GameConfig::game_unit_spawnlist, str_counts);
+
+    for ( int n = 0; n < num_types ; n++ )
     {
-        UnitProfile * u = UnitProfileInterface::getProfileByName((*i)->getName());
-        if ( u )
+        num_units = n < (int)str_counts.size() ? atoi(str_counts[n].c_str()) : 0;
+
+        if ( num_units < 0 )
         {
-            numunits = *(ConfigInt *)(*i);
-            if ( numunits > rem_units )
-                numunits = rem_units;
-            rem_units -= numunits;
-            unit_spawn_list[u->unit_type] = numunits;
+            num_units = 0;
         }
-        i++;
+        else if ( num_units > rem_units )
+        {
+            num_units = rem_units;
+        }
+
+        rem_units -= num_units;
+
+        unit_spawn_list[n] = num_units;
     }
     
     if ( ! unitTotal() )
     {
         // there wasn't any unit, create some and add to config
-        gameconfig->clearSpawnSettings();
+        NPString cfg_str;
         for ( int a=0; a<(int)unit_spawn_list.size(); a++ )
         {
             unit_spawn_list[a] = 1;
-            UnitProfile * u = UnitProfileInterface::getUnitProfile(a);
-            gameconfig->spawnsettings.push_back(new ConfigInt(u->unitname,1));
+            cfg_str += " 1";
         }
+        GameConfig::game_unit_spawnlist->assign(cfg_str);
     }
     
     unit_color = 0;

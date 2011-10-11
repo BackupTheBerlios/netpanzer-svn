@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
+#include "Util/StringUtil.hpp"
+
 enum
 {
     _profile_msg_profile_desc = 0
@@ -184,39 +186,6 @@ public:
     }
 };
 
-void string_to_params( const NPString& str, vector<NPString>& parameters )
-{
-    parameters.clear();
-
-    static char* limiters[] = { ", \t", "\"" };
-
-    NPString::size_type start = 0;
-    NPString::size_type end = 0;
-
-    do
-    {
-        start = str.find_first_not_of(" \t", start);
-        if ( start != NPString::npos )
-        {
-            int limit_index = 0;
-            if ( str[start] == '"' && start < str.length()-1 )
-            {
-                limit_index = 1;
-                ++start;
-            }
-
-            end = str.find_first_of(limiters[limit_index], start);
-
-            parameters.push_back( str.substr(start, end != NPString::npos ? end-start : end) );
-
-            if ( end != NPString::npos )
-            {
-                start = str.find_first_not_of(limiters[limit_index], end);
-            }
-        }
-    } while ( start != NPString::npos && end != NPString::npos );
-}
-
 bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 {
     int temp_int;
@@ -368,7 +337,7 @@ void UnitProfileInterface::loadUnitProfiles( void )
 
     string_to_params(pl, plist);
 
-    for ( int n = 0; n < plist.size(); ++n )
+    for ( unsigned int n = 0; n < plist.size(); ++n )
     {
         addLocalProfile(plist[n]);
     }
