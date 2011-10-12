@@ -127,21 +127,14 @@ void Palette::setColorTables()
     // 256 shades of gray.
     gray256.init(256);
     for (num = 0; num < 256; num++) {
-        int c = int(color[num].r+color[num].g+color[num].b)/3; //brightness
-        int nearestColor = findNearestColor((int) (c * 1.2f),
-                                            (int) (c * 1.2f),
-                                            (int) (c * 1.2f));
-        gray256.setColor(num, nearestColor);
+        gray256.setColor(num, int(findNearestColor(color[num].r, color[num].r,color[num].r))); // gray
     }
 
     // 256 shades of dark gray.
     darkGray256.init(256);
     for (num = 0; num < 256; num++) {
-        int c = int(color[num].r+color[num].g+color[num].b)/3; //brightness
-        int nearestColor = findNearestColor((int) (float(c) / 2.0f),
-                                            (int) (float(c) / 2.0f),
-                                            (int) (float(c) / 2.0f));
-        darkGray256.setColor(num, nearestColor);
+        int c = color[num].r/2;// dark gray
+        darkGray256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
     }
 
     /*// 64 shades of gray.
@@ -158,8 +151,8 @@ void Palette::setColorTables()
     // 256 brightness values.
     brightness256.init(256);
     for (num = 0; num < 256; num++) {
-        // this is brihtness int(color[num].r+color[num].g+color[num].b)/3;
-        brightness256.setColor(num, int(color[num].r+color[num].g+color[num].b)/3);
+        int c = color[num].r/1.3;// dark gray
+        brightness256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
     }
 
     // 32 shades of red.

@@ -1106,11 +1106,14 @@ WorldInputCmdProcessor::getConsoleInputString(char *input_string)
                     OpenClipboard(NULL);
                     HANDLE clip = GetClipboardData(CF_TEXT);
                     CloseClipboard();
-                    char* pntchr = (char*)clip;
-                    while (*pntchr != 0) 
+                    if (clip)
                     {
-                        ConsoleInterface::addChar(*pntchr);
-                        pntchr++;
+                        char* pntchr = (char*)clip;
+                        while (*pntchr != 0) 
+                        {
+                            ConsoleInterface::addChar(*pntchr);
+                            pntchr++;
+                        }
                     }
                 }
 #endif
