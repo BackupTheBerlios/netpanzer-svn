@@ -16,6 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include <sstream>
 #include "WorldInputCmdProcessor.hpp"
 
@@ -1096,6 +1100,20 @@ WorldInputCmdProcessor::getConsoleInputString(char *input_string)
                         return true;
                     }
                 }
+#ifdef WIN32                
+                if ((key_char == SDLK_INSERT))
+                {
+                    OpenClipboard(NULL);
+                    HANDLE clip = GetClipboardData(CF_TEXT);
+                    CloseClipboard();
+                    char* pntchr = (char*)clip;
+                    while (*pntchr != 0) 
+                    {
+                        ConsoleInterface::addChar(*pntchr);
+                        pntchr++;
+                    }
+                }
+#endif
             }
         }
         else
