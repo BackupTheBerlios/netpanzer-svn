@@ -127,6 +127,7 @@ public:
 
     static bool      game_enable_bases;
     static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
+    static int       game_base_limit;  // 0=no limit, other number max bases per player
     static int       game_autokicktime; // in minutes
     static bool      game_allowmultiip; // allow multi connect from same ip
     static NPString* game_unit_profiles; // "," or space separated list of profiles to load

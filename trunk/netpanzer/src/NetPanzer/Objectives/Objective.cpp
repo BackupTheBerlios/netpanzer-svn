@@ -136,6 +136,11 @@ Objective::attemptOccupationChange(PlayerState* player)
         return;
     }
 
+    if ( GameConfig::game_base_limit > 0 && player->getObjectivesHeld() >= GameConfig::game_base_limit )
+    {
+        return; // cannot capture more bases.
+    }
+
     if ( occupying_player )
     {
         occupying_player->decObjectivesHeld();

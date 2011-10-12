@@ -87,6 +87,16 @@ ServerCommands =
         end
     end,
 
+    baselimit_help = "sets or get the base limit for players",
+    baselimit = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "Base limit: " .. config.game.base_limit);
+        else
+            config.game.base_limit = param;
+            netpanzer.serversayto( player, "Base limit set to: " .. config.game.base_limit);
+        end
+    end,
+
     countdown_help = "Do a countdown, use 'countdown <time> <message>'",
     countdown = function(param, player)
         local counttime, message = string.match(param, "(%d+) *(.*)");
