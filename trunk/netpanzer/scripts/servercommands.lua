@@ -7,10 +7,17 @@ ServerCommands =
         end
     end,
 
+    listplayers_help = "List the players with their Id",
+    listplayers = function(param, player)
+        if param then
+            netpanzer.serversayto(player, "List of players:" .. netpanzer.listplayers());
+        end
+    end,
+
     kick_help = "Kicks a player, use the player number (starts in 0)",
     kick = function(param, player)
         if param then
-            GameManager:kickPlayer(param);
+            netpanzer.kick(param);
         end
     end,
 
@@ -48,29 +55,6 @@ ServerCommands =
         else
             netpanzer.serversayto( player, "Help not found for " .. param .. ". Use /server listcommands");
         end
-    end,
-
-    listplayers_help = "List the players",
-    listplayers = function(param,player)
-        local playerst;
-        local out;
-        for p = 0,PlayerInterface:getMaxPlayers()-1 do
-            playerst = PlayerInterface:getPlayer(p);
-            if playerst:isConnecting() then
-                if out then
-                    out = out .. ",".. p .. ":" .. playerst:getName() .. "[connecting:" .. PlayerInterface:getPlayerIP(p) .. "]";
-                else
-                    out = p .. ":" .. playerst:getName() .. "[connecting:".. PlayerInterface:getPlayerIP(p) .. "]";
-                end
-            elseif playerst:isActive() then
-                if out then
-                    out = out .. ",".. p .. ":" .. playerst:getName() .. "[" .. PlayerInterface:getPlayerIP(p) .. "]";
-                else
-                    out = p .. ":" .. playerst:getName() .. "[" .. PlayerInterface:getPlayerIP(p) .. "]";
-                end
-            end
-        end
-        netpanzer.serversayto(player, out);
     end,
 
     autokick_help = "sets the idle time for kicking a player automatically",

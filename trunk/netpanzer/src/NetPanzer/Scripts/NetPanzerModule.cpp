@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+
+#include <sstream>
 
 static int npmodule_say (lua_State *L)
 {
@@ -52,14 +56,12 @@ static int npmodule_serversayto (lua_State *L)
     }
     else
     {
-        ChatInterface::serversayTo(n, lua_tolstring(L,2,0));
+        const char * str = lua_tolstring(L,2,0);
+        if ( str )
+        {
+            ChatInterface::serversayTo(n, str);
+        }
     }
-    return 0;
-}
-
-static int npmodule_quit (lua_State *L)
-{
-    GameManager::exitNetPanzer();
     return 0;
 }
 
@@ -69,14 +71,55 @@ static int npmodule_scriptmessage (lua_State *L)
     return 0;
 }
 
+static int npmodule_quit (lua_State *L)
+{
+    GameManager::exitNetPanzer();
+    return 0;
+}
+
+static int npmodule_kick (lua_State *L)
+{
+    int n = lua_tonumber(L, 1);
+    if ( !n && ! lua_isnumber(L, 1) )
+    {
+        // TODO it is missing a parameter or it is not a number, do something
+    }
+    else
+    {
+        SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short)n));
+    }
+    return 0;
+}
+
+static int npmodule_listPlayers (lua_State *L)
+{
+    std::stringstream ss("");
+
+    for ( int n = 0; n < PlayerInterface::getMaxPlayers(); n++)
+    {
+        PlayerState *p = PlayerInterface::getPlayer(n);
+        if ( ! p->isFree() )
+        {
+            ss << ' ' << n << " - "
+               << (p->isAllocated() ? "<preconnect>" : p->getName())
+               << " |";
+        }
+    }
+
+    lua_pushstring( L, ss.str().c_str() );
+    return 1;
+}
+
 static const luaL_Reg npmodule[] =
 {
-    {"say",         npmodule_say},
-    {"teamsay",     npmodule_teamsay},
-    {"serversay",   npmodule_serversay},
-    {"serversayto", npmodule_serversayto},
-    {"quit",        npmodule_quit},
+    {"say",           npmodule_say},
+    {"teamsay",       npmodule_teamsay},
+    {"serversay",     npmodule_serversay},
+    {"serversayto",   npmodule_serversayto},
     {"scriptmessage", npmodule_scriptmessage},
+    {"quit",          npmodule_quit},
+    {"kick",          npmodule_kick},
+    {"listplayers",   npmodule_listPlayers},
     {NULL, NULL}
 };
 

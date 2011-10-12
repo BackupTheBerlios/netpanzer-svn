@@ -144,6 +144,7 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     View::doDraw(viewArea, clientArea);
 
 } // end FlagSelectionView::doDraw
+
 void
 FlagSelectionView::setSelectedFlag(FlagID code)
 {

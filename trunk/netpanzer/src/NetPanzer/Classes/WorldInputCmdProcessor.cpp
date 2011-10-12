@@ -345,6 +345,11 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         GameConfig::interface_show_health = !GameConfig::interface_show_health;
     }
 
+    if ( KeyboardInterface::getKeyPressed( SDLK_c ) == true )
+    {
+        ScriptManager::runUserCommand("countdown 5 Prepare to fight...");
+    }
+
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
             && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))

@@ -14,7 +14,7 @@ UserCommands =
         end
     end,
 
-    server_help = "Sends the command to the server, no need to add '/' in command";
+    server_help = "Sends the command to the server";
     server = function(param)
         if param then
             netpanzer.say('/' .. param);
@@ -52,22 +52,11 @@ UserCommands =
        netpanzer.quit();
     end,
 
-	-- doesn't work as expected, needs checking.
+    -- doesn't work as expected, needs checking.
     --disconnect_help = "Disconnects from current server.",
     --disconnect = function(param)
     --    GameManager:quitNetPanzerGame();
     --end,
-
-    info = function(param)
-        ConsoleInterface:post( Color.cyan, false, 0, "You are player: " .. PlayerInterface:getLocalPlayerIndex());
-        local ps = PlayerInterface:getLocalPlayer();
-        ConsoleInterface:post( Color.cyan, true, ps:getFlag(), "Your name is " .. ps:getName());
-        ConsoleInterface:post( Color.cyan, false, 0, "Your id is " .. ps:getID());
-        local numOb = ps:getObjectivesHeld();
-        if (numOb == 0) then ConsoleInterface:post( Color.cyan, false, 0, "You have'nt bases")
-        elseif (numOb == 1) then ConsoleInterface:post( Color.cyan, false, 0, "You have 1 base")
-    	else ConsoleInterface:post( Color.cyan, false, 0, "You have " .. numOb .. " bases") end
-    end,
 
     test = function(param)
         netpanzer.scriptmessage("the thing is: " .. config.game.unit_profiles);
@@ -75,7 +64,25 @@ UserCommands =
     
     countdown_help = "Do a countdown.",
     countdown = function(param)
-        netpanzer.say("/countdown " .. param);
+        local counttime, message = string.match(param, "(%d+) *(.*)");
+        counttime = counttime or 5;
+        message = message or "Countdown...";
+        local count = 0;
+        netpanzer.say(message .. " " .. counttime);
+
+        game.addTask(function()
+            count = count + game.frametime;
+            if count > 1.0 then
+                count = count - 1.0;
+                counttime = counttime - 1;
+                if counttime == 0 then
+                    netpanzer.say(message .. " FIGHT!!!!");
+                else
+                    netpanzer.say(message .. " " .. counttime);
+                end
+            end
+            return counttime == 0;
+        end);
     end
 
 };
