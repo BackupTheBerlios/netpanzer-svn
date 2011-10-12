@@ -54,7 +54,7 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "Gnu General Public license (GPL). See the COPYING file for details."
         "\n\nWe command you to go to www.netpanzer.org and meet us in forum.\n\n\n"
         "Current Team\n\n"
-        "   krom: the warrior\n"
+        "   krom: the joker\n"
         "   C-D: the insurgent\n"
         "   fu: the ninja\n"
         "   Wile64: the hunter\n"
