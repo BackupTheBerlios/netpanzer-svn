@@ -429,6 +429,9 @@ UnitProfileInterface::fillProfileSyncMessage(NetMessage* message, int profile_id
     bb.writeString( p->bodyShadow_name );
     bb.writeString( p->turretSprite_name );
     bb.writeString( p->turretShadow_name );
+    bb.writeString( p->soundSelected);
+    bb.writeString( p->fireSound);
+    bb.writeString( p->weaponType);
     bb.writeInt16(  p->boundBox );
 
     return bb.writedBytesCount();
@@ -458,6 +461,9 @@ UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t s
     br.readString( p->bodyShadow_name );
     br.readString( p->turretSprite_name );
     br.readString( p->turretShadow_name );
+    br.readString( p->soundSelected);
+    br.readString( p->fireSound);
+    br.readString (p->weaponType);
     br.readInt16( &p->boundBox );
 
     p->bodySprite.load(p->bodySprite_name);
