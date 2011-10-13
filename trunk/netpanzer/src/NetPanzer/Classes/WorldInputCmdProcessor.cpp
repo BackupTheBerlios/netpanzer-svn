@@ -1109,9 +1109,14 @@ WorldInputCmdProcessor::getConsoleInputString(char *input_string)
                     if (clip)
                     {
                         char* pntchr = (char*)clip;
-                        while (*pntchr != 0) 
+						int count = 0;
+                        while ((*pntchr != 0) && (count < 150))
                         {
-                            ConsoleInterface::addChar(*pntchr);
+                            if (isprint(*pntchr))
+							{
+								ConsoleInterface::addChar(*pntchr);
+								count++;
+							}
                             pntchr++;
                         }
                     }
