@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetMessageEncoder.hpp"
 
 #include "Network/ClientSocket.hpp"
 
@@ -474,23 +475,25 @@ ObjectiveInterface::getObjectiveAtWorldXY(const iXY& loc)
 void
 ObjectiveInterface::syncObjectives( ClientSocket * client )
 {
-    unsigned char buffer[_MAX_NET_PACKET_SIZE];
-    unsigned int buffer_pos = 0;
+    NetMessageEncoder encoder;
     ObjectiveSyncMesg msg;
-    for(int i = 0; i < num_objectives; ++i )
+
+    for ( int i = 0; i < num_objectives; ++i )
     {
-        if ( buffer_pos+sizeof(ObjectiveSyncMesg) > sizeof(buffer) )
-        {
-            client->sendMessage(buffer,buffer_pos);
-            buffer_pos=0;
-        }
         msg.set(i);
         objective_list[i]->getSyncData( msg.sync_data );
-        memcpy(buffer+buffer_pos, &msg, sizeof(ObjectiveSyncMesg));
-        buffer_pos += sizeof(ObjectiveSyncMesg);
+
+        if ( ! encoder.encodeMessage(&msg, sizeof(msg)) )
+        {
+            client->sendMessage(encoder.getEncodedMessage(),
+                                encoder.getEncodedLen());
+            encoder.resetEncoder();
+            encoder.encodeMessage(&msg, sizeof(msg)); // this time shuold be good
+        }
     }
 
-    client->sendMessage(buffer,buffer_pos);
+    client->sendMessage(encoder.getEncodedMessage(),
+                        encoder.getEncodedLen());
 }
 
 int
