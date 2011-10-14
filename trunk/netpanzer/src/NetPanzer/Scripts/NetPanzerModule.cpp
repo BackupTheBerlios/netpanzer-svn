@@ -25,7 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/MapsManager.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Util/FileSystem.hpp"
 
 #include <sstream>
 
@@ -110,6 +113,74 @@ static int npmodule_listPlayers (lua_State *L)
     return 1;
 }
 
+static int npmodule_map (lua_State *L)
+{
+    const char *mname = lua_tolstring(L,1,0);
+    std::stringstream ss("");
+
+    if ( mname )
+    {
+        NPString map_name(mname);
+
+        if ( !MapsManager::existsMap(map_name) )
+        {
+            ss << "Map '" << map_name << "' doesn't exists";
+        }
+        else
+        {
+            ss << "Switching to map '" << map_name << "'";
+            GameControlRulesDaemon::forceMapChange(map_name);
+        }
+    }
+    else
+    {
+        ss << "Missing map name parameter";
+    }
+
+    lua_pushstring( L, ss.str().c_str() );
+    return 1;
+}
+
+static int npmodule_listMaps (lua_State *L)
+{
+    std::stringstream ss("");
+
+    const char mapsPath[] = "maps/";
+
+    // scan directory for .npm files
+    std::string suffix = ".npm";
+    char **list = filesystem::enumerateFiles(mapsPath);
+
+    for (char **i = list; *i != NULL; i++)
+    {
+        std::string filename = mapsPath;
+        filename.append(*i);
+
+        if ( !filesystem::isDirectory(filename.c_str()) )
+        {
+            if ( filename.size() >= suffix.size()
+                && (filename.compare( filename.size() - suffix.size(),
+                                      suffix.size(), suffix) == 0) )
+            {
+                std::string mapname;
+                size_t p = 0;
+                char c;
+                while( (c = (*i)[p++]) != 0) {
+                    if(c == '.')
+                        break;
+                    mapname += c;
+                }
+
+                ss << mapname << ',';
+            }
+        }
+    }
+    filesystem::freeList(list);
+
+    lua_pushstring( L, ss.str().c_str() );
+    return 1;
+}
+
 static const luaL_Reg npmodule[] =
 {
     {"say",           npmodule_say},
@@ -120,6 +191,8 @@ static const luaL_Reg npmodule[] =
     {"quit",          npmodule_quit},
     {"kick",          npmodule_kick},
     {"listplayers",   npmodule_listPlayers},
+    {"map",           npmodule_map},
+    {"listmaps",      npmodule_listMaps},
     {NULL, NULL}
 };
 

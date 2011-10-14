@@ -23,12 +23,12 @@ ServerCommands =
 
     map_help = "Change the map",
     map = function(param, player)
-        local ok = GameManager:changeMap(param);
-        if ok then
-            netpanzer.serversayto(player, 'Switching map to "' .. param .. '"');
-        else
-            netpanzer.serversayto(player, 'Map "' .. param .. '" doesn\'t exists');
-        end
+        netpanzer.serversayto(player, netpanzer.map(param));
+    end,
+
+    listmaps_help = "List the available maps in server",
+    listmaps = function(param, player)
+        netpanzer.serversayto(player, netpanzer.listmaps());
     end,
 
     listcommands_help = "List the server commands",
