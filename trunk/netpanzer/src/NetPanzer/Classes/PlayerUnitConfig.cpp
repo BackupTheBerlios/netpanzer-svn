@@ -40,7 +40,6 @@ void PlayerUnitConfig::initialize()
     
     int rem_units = max_allowed_units;
     int num_units;
-
     std::vector<NPString> str_counts;
 
     string_to_params(*GameConfig::game_unit_spawnlist, str_counts);
@@ -48,7 +47,6 @@ void PlayerUnitConfig::initialize()
     for ( int n = 0; n < num_types ; n++ )
     {
         num_units = n < (int)str_counts.size() ? atoi(str_counts[n].c_str()) : 0;
-
         if ( num_units < 0 )
         {
             num_units = 0;
@@ -57,7 +55,6 @@ void PlayerUnitConfig::initialize()
         {
             num_units = rem_units;
         }
-
         rem_units -= num_units;
 
         unit_spawn_list[n] = num_units;

@@ -43,7 +43,7 @@ void NetMessageEncoder::resetEncoder()
 
 bool NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
 {
-    if (offset+size > _MULTI_PACKET_LIMIT )
+    if (offset+size >= _MULTI_PACKET_LIMIT )
     {
         return false;
     }

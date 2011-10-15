@@ -408,7 +408,6 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
             unit = createUnit(unit_type_index, next_loc, player_id);
             UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
                     next_loc.x, next_loc.y, unit->unit_state.unit_type);
-
             if ( !encoder.encodeMessage(&create_mesg, sizeof(create_mesg)) )
             {
                 LOGGER.info("UnitInterface encoder full, sending and resetting");
