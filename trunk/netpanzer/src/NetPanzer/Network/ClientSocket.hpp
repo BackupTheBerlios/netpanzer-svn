@@ -77,7 +77,7 @@ private:
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     Uint16 tempoffset;
     int id;
-    PlayerID player_id;
+public:    PlayerID player_id;
 };
 
 #endif
