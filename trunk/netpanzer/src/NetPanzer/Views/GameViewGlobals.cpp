@@ -21,20 +21,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 
-iXY exitPos(635, 10);
 iXY readyPos(480, 32);
 iXY backPos(480, 575);
-iXY nextPos(635, 575);
-iXY mainPos(16, 7);
-iXY multiPos(16, 27);
-iXY optionsPos(16, 47);
-iXY helpPos(16, 67);
+iXY mainPos(20, 7);
+iXY joinPos(mainPos.x+ButonWidth, 7);
+iXY hostPos(joinPos.x+ButonWidth, 7);
+iXY optionsPos(hostPos.x+ButonWidth, 7);
+iXY helpPos(optionsPos.x+ButonWidth, 7);
+iXY exitPos(optionsPos.x+ButonWidth, helpPos.y+ButonHeight);
+iXY nextPos(optionsPos.x+ButonWidth, 573);
 iXY creditsPos(0, 0);
 
-const iXY sub1(169, 7);
-const iXY sub2(169, 27);
-const iXY sub3(169, 47);
-const iXY sub4(169, 67);
+const iXY sub1(mainPos.x, mainPos.y+ButonHeight);
+const iXY sub2(joinPos.x, sub1.y);
+const iXY sub3(hostPos.x, sub1.y);
+const iXY sub4(optionsPos.x, sub1.y);
 
 #if 0 // XXX
 iXY soundPos = sub1;
@@ -47,11 +48,9 @@ iXY interfacePos = sub2;
 iXY soundPos = sub3; // XXX 2
 #endif
 
-iXY hostPos = sub1;
-iXY joinPos = sub2;
 
 iXY returnToGamePos = mainPos;
-iXY resignPos = multiPos;
+iXY resignPos = joinPos;
 
 iRect bodyTextRect(145, 110, 760, 510);
 

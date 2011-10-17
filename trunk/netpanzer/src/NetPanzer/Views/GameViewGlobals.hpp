@@ -36,6 +36,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define optionsMeterStartX          (448)
 #define optionsColorMeterStartX     (342)
 
+#define ButonWidth                  (155)
+#define ButonHeight                  (30)
+
 // Button placement locations.
 extern iXY exitPos;
 extern iXY readyPos;

@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Util/Exception.hpp"
 #include "Views/GameViewGlobals.hpp"
+#include "Multi/ServerListView.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -51,12 +52,9 @@ static void bMain()
     Desktop::setVisibility("MainView", true);
 }
 
-static void bMulti()
+static void bHost()
 {
-    if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GetSessionView", true);
-    } else if (strcmp(MenuTemplateView::currentMultiView, "HostView") == 0) {
+        gameconfig->hostorjoin = _game_session_host;
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("HostView", true);
         Desktop::setVisibility("UnitSelectionView", true);
@@ -64,16 +62,17 @@ static void bMulti()
         Desktop::setVisibility("HostOptionsView", true);
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
-    } else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
+}
+static void bJoin()
+{
+        gameconfig->hostorjoin = _game_session_join;
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("JoinView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("ServerListView", true);
-    } else {
-        assert(false);
-    }
+        serverlistview->refresh();
 }
 
 static void bOptions()
@@ -161,9 +160,13 @@ void MenuTemplateView::initPreGameOptionButtons()
                       "Main",
                       bMain);
 
-    addSpecialButton(	multiPos,
-                      "Multiplayer",
-                      bMulti);
+    addSpecialButton(	joinPos,
+                      "Join",
+                      bJoin);
+
+    addSpecialButton(	hostPos,
+                      "Host",
+                      bHost);
 
     addSpecialButton(	optionsPos,
                       "Options",

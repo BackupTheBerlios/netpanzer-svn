@@ -108,12 +108,12 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setSubTitle("");
 
     // Back.
-    addSpecialButton(	backPos,
-                      "Back",
-                      bBack);
+//    addSpecialButton(	backPos,
+//                      "Back",
+//                      bBack);
 
     addSpecialButton(   nextPos,
-                      "Next",
+                      "Join",
                       bNext);
 
 } // end HostJoinTemplateView constructor
