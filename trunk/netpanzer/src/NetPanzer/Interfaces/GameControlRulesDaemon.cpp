@@ -173,11 +173,11 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
                 ServerConnectDaemon::lockConnectProcess();
 
-                view_control.set("RankView", _view_control_flag_visible_on | _view_control_flag_close_all );
+                view_control.set("EndRoundView", _view_control_flag_visible_on | _view_control_flag_close_all );
 
                 if ( GameControlRulesDaemon::execution_mode == _execution_mode_loop_back_server ) {
                     Desktop::setVisibility("GameView", true);
-                    Desktop::setVisibility("RankView", true );
+                    Desktop::setVisibility("EndRoundView", true );
                 }
 
                 SERVER->broadcastMessage(&view_control, sizeof(SystemViewControl));

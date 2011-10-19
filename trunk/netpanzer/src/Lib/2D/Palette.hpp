@@ -66,9 +66,13 @@ public:
     static ColorTable gray256;
     static ColorTable darkGray256;
     static ColorTable brightness256;
+    static ColorTable red256;
+    static ColorTable green256;
+    static ColorTable blue256;
     static ColorTable red32;
     static ColorTable green32;
     static ColorTable blue32;
+    static ColorTable lightorange256;
 
     //static ColorTable earth256;  // Earth colors from sea 2 land 2 mountain 2 snow.
 

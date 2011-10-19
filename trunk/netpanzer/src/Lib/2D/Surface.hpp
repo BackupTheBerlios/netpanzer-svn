@@ -234,6 +234,11 @@ public:
         return getTextLength(text.c_str());
     }
 
+    void circle(int cx, int cy, int radius, PIX color);
+    void FillCircle(int cx, int cy, int radius, PIX color);
+    void RoundRect(iRect rect, int radius, PIX color);
+    void FillRoundRect(iRect rect, int radius, PIX color);
+    
     void frameToBuffer(Uint8* dest, size_t dest_len)
     {
         size_t frame_len = getPitch()*getHeight();

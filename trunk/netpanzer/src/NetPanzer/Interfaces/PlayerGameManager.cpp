@@ -81,6 +81,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Options/VisualsView.hpp"
 
 #include "Views/Game/RankView.hpp"
+#include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
@@ -177,6 +178,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new GameView());
     Desktop::add(new RankView());
+    Desktop::add(new EndRoundView());
     Desktop::add(new VehicleSelectionView());
     Desktop::add(new MiniMapView() );
     Desktop::add(new CodeStatsView());

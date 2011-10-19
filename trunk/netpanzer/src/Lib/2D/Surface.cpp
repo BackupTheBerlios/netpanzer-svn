@@ -1688,3 +1688,148 @@ void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color)
     drawVLine(rect.min.x, rect.max.y - 1, rect.max.y - cornerLength, color);
 
 } // end Surface::drawBoxCorners
+
+void Surface::circle(int cx, int cy, int radius, PIX color)
+{
+  int d, y, x;
+
+  d = 3 - (2 * radius);
+  x = 0;
+  y = radius;
+
+  while (y >= x) {
+    putPixel(cx + x, cy + y, color);// down right corner
+    putPixel(cx + y, cy + x, color);// down right corner
+    putPixel(cx - x, cy + y, color);// up left corner
+    putPixel(cx - y, cy + x, color);// up left corner
+    putPixel(cx + x, cy - y, color);// up right corner
+    putPixel(cx + y, cy - x, color);// up right corner
+    putPixel(cx - x, cy - y, color);// down left corner
+    putPixel(cx - y, cy - x, color);// down left corner
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+
+void Surface::FillCircle(int cx, int cy, int radius, PIX color)
+{
+  int d, y, x;
+
+  d = 3 - (2 * radius);
+  x = 0;
+  y = radius;
+
+  while (y >= x) {
+    drawHLine(cx - x, cy - y,cx+ (x + 1), color);
+    drawHLine(cx - x, cy + y,cx+ (x + 1), color);
+    drawHLine(cx - y, cy - x,cx+ (y + 1), color);
+    drawHLine(cx - y, cy + x,cx+ (y + 1), color);
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+
+void Surface::RoundRect(iRect rect, int radius, PIX color)
+{
+    int d, y, x;
+
+    d = 3 - (2 * radius);
+    x = 0;
+    y = radius;
+
+    if ( !getWidth() || !getHeight() ) return;
+
+    orderCoords(rect);
+
+    // Check for trivial rejection
+    if      (rect.max.x <  0)     return;
+    else if (rect.max.y <  0)     return;
+    else if (rect.min.x >= (int)getWidth()) return;
+    else if (rect.min.y >= (int)getHeight()) return;
+
+    // Check for clipping
+    if (rect.min.x <  0)     rect.min.x = 0;
+    if (rect.min.y <  0)     rect.min.y = 0;
+    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+
+    drawHLine(rect.min.x+radius, rect.min.y, rect.max.x-radius,   color);
+    drawHLine(rect.min.x+radius, rect.max.y, rect.max.x+1-radius, color);
+    drawVLine(rect.min.x, rect.min.y+radius, rect.max.y-radius,   color);
+    drawVLine(rect.max.x, rect.min.y+radius, rect.max.y-radius,   color);
+
+  while (y >= x) {
+    putPixel((rect.max.x-radius) + x, (rect.max.y-radius) + y, color);// down right corner
+    putPixel((rect.max.x-radius) + y, (rect.max.y-radius) + x, color);// down right corner
+    putPixel((rect.min.x+radius) - x, (rect.max.y-radius) + y, color);// down left corner
+    putPixel((rect.min.x+radius) - y, (rect.max.y-radius) + x, color);// down left corner
+    putPixel((rect.max.x-radius) + x, (rect.min.y+radius) - y, color);// up right corner
+    putPixel((rect.max.x-radius) + y, (rect.min.y+radius) - x, color);// up right corner
+    putPixel((rect.min.x+radius) - x, (rect.min.y+radius) - y, color);// up left corner
+    putPixel((rect.min.x+radius) - y, (rect.min.y+radius) - x, color);// up left corner
+//
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+
+void Surface::FillRoundRect(iRect rect, int radius, PIX color)
+{
+    int d, y, x;
+
+    d = 3 - (2 * radius);
+    x = 0;
+    y = radius;
+
+    if ( !getWidth() || !getHeight() ) return;
+
+    orderCoords(rect);
+
+    // Check for trivial rejection
+    if      (rect.max.x <  0)     return;
+    else if (rect.max.y <  0)     return;
+    else if (rect.min.x >= (int)getWidth()) return;
+    else if (rect.min.y >= (int)getHeight()) return;
+
+    // Check for clipping
+    if (rect.min.x <  0)     rect.min.x = 0;
+    if (rect.min.y <  0)     rect.min.y = 0;
+    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+
+    fillRect(iRect(rect.min.x,rect.min.y+radius,
+                   rect.max.x,rect.max.y-radius), color);
+
+  while (y >= x) {
+    drawHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, color);//up
+    drawHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, color);//down
+    drawHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, color);//up
+    drawHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, color);//down
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+

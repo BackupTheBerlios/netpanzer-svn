@@ -56,6 +56,10 @@ ColorTable Palette::brightness256;
 ColorTable Palette::red32;
 ColorTable Palette::green32;
 ColorTable Palette::blue32;
+ColorTable Palette::red256;
+ColorTable Palette::green256;
+ColorTable Palette::blue256;
+ColorTable Palette::lightorange256;
 //ColorTable Palette::earth256;
 SDL_Color   Palette::color[PALETTE_LENGTH];
 SDL_Color   Palette::originalColor[PALETTE_LENGTH];
@@ -137,6 +141,25 @@ void Palette::setColorTables()
         darkGray256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
     }
 
+    red256.init(256);
+    for (num = 0; num < 256; num++) {
+        red256.setColor(num, int(findNearestColor(color[num].r, 0, 0))); 
+    }
+    
+    blue256.init(256);
+    for (num = 0; num < 256; num++) {
+        blue256.setColor(num, int(findNearestColor(0,0,color[num].b))); 
+    }
+
+    green256.init(256);
+    for (num = 0; num < 256; num++) {
+        green256.setColor(num, int(findNearestColor(0, color[num].g/1.2, 0))); 
+    }
+    
+    lightorange256.init(256);
+    for (num = 0; num < 256; num++) {
+        lightorange256.setColor(num, int(findNearestColor(color[num].r, color[num].r/1.1f,0)));
+    }
     /*// 64 shades of gray.
     for (num = 0; num < 64; num++)
     {

@@ -51,19 +51,6 @@ int cOrange;
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
 
-static void bBack()
-{
-    if (gameconfig->hostorjoin == _game_session_join) {
-        CLIENT->partServer();
-    } else
-        if (gameconfig->hostorjoin == _game_session_host) {
-            SERVER->closeSession();
-        }
-
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GetSessionView", true);
-}
-
 static void bNext()
 {
     if ((const std::string&) gameconfig->playername == "")
