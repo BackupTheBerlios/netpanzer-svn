@@ -1741,6 +1741,31 @@ void Surface::FillCircle(int cx, int cy, int radius, PIX color)
   }
 }
 
+void Surface::BltCircle(int cx, int cy, int radius, const PIX table[])
+{
+  int d, y, x;
+
+  d = 3 - (2 * radius);
+  x = 0;
+  y = radius;
+
+  while (y >= x) {
+    bltHLine(cx - x, cy - y,cx+ (x + 1), table);
+    bltHLine(cx - x, cy + y,cx+ (x + 1), table);
+    bltHLine(cx - y, cy - x,cx+ (y + 1), table);
+    bltHLine(cx - y, cy + x,cx+ (y + 1), table);
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+
+
 void Surface::RoundRect(iRect rect, int radius, PIX color)
 {
     int d, y, x;
@@ -1832,4 +1857,81 @@ void Surface::FillRoundRect(iRect rect, int radius, PIX color)
     x++;
   }
 }
+
+void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
+{
+    int d, y, x;
+
+    d = 3 - (2 * radius);
+    x = 0;
+    y = radius;
+
+    if ( !getWidth() || !getHeight() ) return;
+
+    orderCoords(rect);
+
+    // Check for trivial rejection
+    if      (rect.max.x <  0)     return;
+    else if (rect.max.y <  0)     return;
+    else if (rect.min.x >= (int)getWidth()) return;
+    else if (rect.min.y >= (int)getHeight()) return;
+
+    // Check for clipping
+    if (rect.min.x <  0)     rect.min.x = 0;
+    if (rect.min.y <  0)     rect.min.y = 0;
+    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+
+    bltLookup(iRect(rect.min.x,rect.min.y+radius,
+                   rect.max.x,rect.max.y-radius), table);
+
+  while (y >= x) {
+    bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, table);//up
+    bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, table);//down
+    bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up
+    bltHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, table);//down
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
+}
+
+void Surface::bltHLine(int x1, int y, int x2, const PIX table[])
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    // Check for trivial rejection
+    if ( y < 0 || x2 <= 0
+         || y >= (int)getHeight()
+         || x1 >= (int)getWidth() )
+         return;
+
+    assert(mem != 0);
+    if (mem == 0) return;
+
+    orderCoords(x1, x2);
+
+    unsigned length = x2 - x1;
+    PIX *ptr = mem + y * (int)getPitch();
+
+    // CLIP LEFT
+    if (x1 < 0) {
+        length += x1;
+    }	else {
+        ptr += x1;
+    }
+
+    // CLIP RIGHT
+    if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
+
+    for(size_t x=0; x<length; x++)
+        ptr[x] = table[ptr[x]];
+
+} // end Surface::drawHLine
 

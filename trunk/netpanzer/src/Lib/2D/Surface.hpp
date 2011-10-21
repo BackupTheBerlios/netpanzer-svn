@@ -236,9 +236,12 @@ public:
 
     void circle(int cx, int cy, int radius, PIX color);
     void FillCircle(int cx, int cy, int radius, PIX color);
+    void BltCircle(int cx, int cy, int radius, const PIX table[]);
     void RoundRect(iRect rect, int radius, PIX color);
     void FillRoundRect(iRect rect, int radius, PIX color);
-    
+    void BltRoundRect(iRect rect, int radius, const PIX table[]);
+    void bltHLine(int x1, int y, int x2, const PIX table[]);
+        
     void frameToBuffer(Uint8* dest, size_t dest_len)
     {
         size_t frame_len = getPitch()*getHeight();

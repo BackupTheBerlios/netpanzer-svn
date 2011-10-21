@@ -86,13 +86,13 @@ void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
     RectWinner.min.x = RectWinner.min.y = 0;
     RectStates = RectWinner;
     RectWinner.max.y = HEADER_HEIGHT-10;
-    clientArea.bltLookup(RectWinner, Palette::green256.getColorArray());
-    clientArea.drawRect(RectWinner, Color::gray);
+    clientArea.BltRoundRect(RectWinner, 15, Palette::green256.getColorArray());
+    clientArea.RoundRect(RectWinner,15, Color::gray);
 
     RectStates.min.y = HEADER_HEIGHT;
     
-    clientArea.bltLookup(RectStates, Palette::brightness256.getColorArray());
-    clientArea.drawRect(RectStates, Color::gray);
+    clientArea.BltRoundRect(RectStates, 15, Palette::brightness256.getColorArray());
+    clientArea.RoundRect(RectStates, 15, Color::gray);
     
     drawPlayerStats(clientArea, flagHeight);
 
