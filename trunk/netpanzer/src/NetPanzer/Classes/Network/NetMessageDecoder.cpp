@@ -54,7 +54,7 @@ NetMessageDecoder::decodeMessage(NetMessage **message)
     }
 
     Uint16* mlen = (Uint16*)(decode_message.data + offset);
-    int msg_len = ltoh16(*mlen);
+    unsigned int msg_len = ltoh16(*mlen);
 
     if( msg_len > size - sizeof(NetMessage) - offset)
     {

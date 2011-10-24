@@ -82,6 +82,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
+#include "Views/Game/GFlagSelectionView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
@@ -179,6 +180,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new GameView());
     Desktop::add(new RankView());
     Desktop::add(new EndRoundView());
+    Desktop::add(new GFlagSelectionView());
     Desktop::add(new VehicleSelectionView());
     Desktop::add(new MiniMapView() );
     Desktop::add(new CodeStatsView());
@@ -538,6 +540,9 @@ void PlayerGameManager::processSystemKeys()
     if (Desktop::getView("GameView")->getVisible()) {
         if (KeyboardInterface::getKeyPressed(SDLK_m)) {
             Desktop::toggleVisibility( "MiniMapView" );
+        }
+        if (KeyboardInterface::getKeyPressed(SDLK_b)) {
+            Desktop::toggleVisibility( "GFlagSelectionView" );
         }
         if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
             Desktop::toggleVisibility( "RankView" );

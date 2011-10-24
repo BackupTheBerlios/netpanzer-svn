@@ -26,7 +26,7 @@ class ClientMessageRouter
 public:
     static void initialize();
     static void cleanUp();
-    static void routeMessage(const NetMessage* message, size_t size);
+    static void routeMessage(const NetPacket* packet);
     static void routeMessages();
 };
 

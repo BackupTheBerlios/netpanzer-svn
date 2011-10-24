@@ -232,7 +232,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     UnitProfile *uprofile;
     unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
     // XXX order by something?
-    for ( int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
+    for ( unsigned int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
     {
         uprofile = UnitProfileInterface::getUnitProfile(ut);
         
@@ -662,7 +662,7 @@ void VehicleSelectionView::doActivate()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::getProfileData()
 {
-    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
+    for (unsigned int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
         const UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
         checkMaxValues(*p);

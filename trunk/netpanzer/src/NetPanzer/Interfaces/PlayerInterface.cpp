@@ -575,8 +575,9 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
     SDL_mutexV(mutex);
 }
 
-void PlayerInterface::processNetMessage(const NetMessage* message)
+void PlayerInterface::processNetMessage(const NetPacket* packet)
 {
+    const NetMessage* message = packet->getNetMessage();
     switch(message->message_id) {
         case _net_message_id_player_connect_id :
             netMessageConnectID(message);
@@ -588,6 +589,21 @@ void PlayerInterface::processNetMessage(const NetMessage* message)
                 ResourceManager::updateFlagData(pfs->player_id,
                                                 pfs->player_flag,
                                                 sizeof(pfs->player_flag) );
+            }
+            break;
+
+        case _net_message_id_player_update_flag:
+            {
+                const UpdatePlayerFlag* upf = (const UpdatePlayerFlag*)message;
+                ResourceManager::updateFlagData(packet->fromPlayer,
+                                                upf->player_flag,
+                                                sizeof(upf->player_flag) );
+
+                PlayerFlagSync pfs;
+                pfs.player_id = packet->fromPlayer;
+                memcpy(pfs.player_flag, upf->player_flag, sizeof(pfs.player_flag));
+
+                SERVER->broadcastMessage(&pfs, sizeof(pfs));
             }
             break;
 

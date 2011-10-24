@@ -128,7 +128,6 @@ void FlagSelectionView::init()
     }
 
     setSelectedFlag(0);
-    
 } // end FlagSelectionView::init
 
 // doDraw

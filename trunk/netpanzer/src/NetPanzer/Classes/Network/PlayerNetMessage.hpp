@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_flag,
+       _net_message_id_player_update_flag,
        _net_message_id_player_sync_state,
        _net_message_id_player_score_update,
        _net_message_id_player_alliance_request,
@@ -78,6 +79,19 @@ public:
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_sync_flag;
+    }
+}
+__attribute__((packed));
+
+class UpdatePlayerFlag : public NetMessage
+{
+public:
+    Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
+
+    UpdatePlayerFlag()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_update_flag;
     }
 }
 __attribute__((packed));

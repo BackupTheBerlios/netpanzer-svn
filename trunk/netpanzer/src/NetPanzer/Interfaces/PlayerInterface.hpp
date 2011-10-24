@@ -122,7 +122,7 @@ protected:
     static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
-    static void processNetMessage(const NetMessage *message );
+    static void processNetMessage(const NetPacket *packet );
     static void disconnectPlayerCleanup( PlayerID player_id );
 };
 

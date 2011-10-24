@@ -1882,10 +1882,11 @@ void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
     if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
     if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
 
-    bltLookup(iRect(rect.min.x,rect.min.y+radius,
+    bltLookup(iRect(rect.min.x,rect.min.y+radius+1,
                    rect.max.x,rect.max.y-radius), table);
 
-  while (y >= x) {
+  while (y >= x)
+  {
     bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, table);//up
     bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, table);//down
     bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up

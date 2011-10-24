@@ -73,7 +73,7 @@ public:
     static void loadUnitProfiles( void );
     static UnitProfile * getUnitProfile( unsigned short unit_type );
     static UnitProfile * getProfileByName( const NPString& name );
-    static int getNumUnitTypes()
+    static unsigned int getNumUnitTypes()
     {
         return profiles.size();
     }

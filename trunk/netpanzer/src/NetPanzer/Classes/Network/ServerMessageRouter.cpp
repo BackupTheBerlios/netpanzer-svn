@@ -101,7 +101,7 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
             {
                 player->resetAutokick();
             }
-            PlayerInterface::processNetMessage(message);
+            PlayerInterface::processNetMessage(packet);
             break;
 
         default:

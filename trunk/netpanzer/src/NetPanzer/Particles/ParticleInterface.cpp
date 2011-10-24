@@ -744,7 +744,7 @@ void ParticleInterface::buildUnitTables()
     unitHitPointTable.resize(UnitProfileInterface::getNumUnitTypes());
     unitAttackFactorTable.resize(UnitProfileInterface::getNumUnitTypes());
     
-    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
+    for (unsigned int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
         UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
         unitHitPointTable[i]     = int(sqrt(p->hit_points));
@@ -981,7 +981,7 @@ void ParticleInterface::getUnitParticleInfo()
     // Create the correct number of unit information slots.
     unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
     
-    for ( int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
+    for ( unsigned int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
     {
         UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
         getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);

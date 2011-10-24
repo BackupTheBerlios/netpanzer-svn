@@ -51,8 +51,9 @@ void ClientMessageRouter::cleanUp()
 }
 
 void
-ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
+ClientMessageRouter::routeMessage(const NetPacket* packet)
 {
+    const NetMessage* message = packet->getNetMessage();
     switch (message->message_class)
     {
         case _net_message_class_system:
@@ -64,16 +65,16 @@ ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
             break;
 
         case _net_message_class_player:
-            PlayerInterface::processNetMessage(message);
+            PlayerInterface::processNetMessage(packet);
             break;
 
         case _net_message_class_unit:
-            UnitInterface::processNetMessage(message, size);
+            UnitInterface::processNetMessage(message, packet->size);
             break;
 
         case _net_message_class_unit_profile:
             {
-                UnitProfileInterface::processNetMessage(message, size);
+                UnitProfileInterface::processNetMessage(message, packet->size);
                 ConnectMesgClientSendNextUnit msg;
                 CLIENT->sendMessage(&msg, sizeof(msg));
 //                CLIENT->sendRemaining();
@@ -93,7 +94,7 @@ ClientMessageRouter::routeMessage(const NetMessage* message, size_t size)
             break;
 
         case _net_message_class_chat:
-            ChatInterface::clientHandleChatMessage(message, size);
+            ChatInterface::clientHandleChatMessage(message, packet->size);
             break;
 
         default:
@@ -114,22 +115,29 @@ ClientMessageRouter::routeMessages()
     }
 
     NetPacket packet;
-    size_t size;
+
+    Uint16 msg_len;
+    NetMessage* mmessage;
 
     while ( CLIENT->getPacket(&packet) )
     {
-        if (packet.getNetMessage()->message_class == _net_message_class_multi)
+        const NetMessage* message = packet.getNetMessage();
+        if (message->message_class == _net_message_class_multi)
         {
             NetMessageDecoder message_decoder;
-            NetMessage *message;
-            message_decoder.setDecodeMessage( (MultiMessage *) packet.getNetMessage(), packet.size );
+            message_decoder.setDecodeMessage( (const MultiMessage *) message, packet.size );
 
-            while( (size = message_decoder.decodeMessage(&message)) )
+            NetPacket pp;
+            pp.fromPlayer = packet.fromPlayer;
+            pp.fromClient = packet.fromClient;
+
+            while( (msg_len = message_decoder.decodeMessage(&mmessage)) )
             {
-                routeMessage(message, size);
+                memcpy(pp.data, mmessage, msg_len);
+                routeMessage(&pp);
             }
         } else {
-            routeMessage(packet.getNetMessage(), packet.size);
+            routeMessage(&packet);
         }
     }
 
