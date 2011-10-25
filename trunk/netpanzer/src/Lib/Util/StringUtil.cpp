@@ -44,7 +44,7 @@ void string_to_params( const NPString& str, std::vector<NPString>& parameters )
 {
     parameters.clear();
 
-    static char* limiters[] = { ", \t", "\"" };
+    static const char* limiters[] = { ", \t", "\"" };
 
     NPString::size_type start = 0;
     NPString::size_type end = 0;

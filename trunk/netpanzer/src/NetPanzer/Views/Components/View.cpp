@@ -1015,13 +1015,6 @@ void View::drawHighlightedButton(Surface &clientArea)
 
 } // end drawHighlightedButton
 
-void View::addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
-{
-    cButton* button = new cButton;
-    button->createPacked(pos, source, toolTip, leftClickFunc);
-    buttons.push_back(button);
-}
-
 // addButtonCenterText
 //---------------------------------------------------------------------------
 // Purpose: Adds a centered type button to the list of buttons.

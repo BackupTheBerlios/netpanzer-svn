@@ -110,7 +110,6 @@ void FlagSelectionView::init()
 
     ResourceManager::loadAllFlags(game_flags, flag_names);
     menu_flags.copy(game_flags);
-    menu_flags.mapFromPalette("netp");
 
     unsigned int max_flags = menu_flags.getNumFrames();
     for (unsigned int i = 0; i < max_flags; ++i)

@@ -214,8 +214,6 @@ public:
 
     void loadBMP(const char *fileName, bool needAlloc = true);
 
-    void mapFromPalette(const std::string& oldPalette);
-
     void drawBoxCorners(const iRect &rect, int cornerLength, PIX color);
     void drawBoxCorners(const iXY &min, const iXY &max,
             int cornerLength, PIX color)
