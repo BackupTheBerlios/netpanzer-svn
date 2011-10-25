@@ -107,8 +107,6 @@ public:
     short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
     void setID( PlayerID id );
-    void setStatus( unsigned char status );
-    unsigned char getStatus() const;
     FlagID getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;
@@ -117,13 +115,19 @@ public:
     Uint8 getColor() const;
 
     void setAdmin(bool flag) { admin_flag = flag; }
+    bool isAdmin()     const { return admin_flag; }
 
-    bool isAdmin() const { return admin_flag; }
-    bool isFree() const { return status == _player_state_free; }
-    bool isAllocated() const { return status == _player_state_allocated; }
+    void setStateFree()       { status = _player_state_free; }
+    void setStateAllocated()  { status = _player_state_allocated; }
+    void setStateConnecting() { status = _player_state_connecting; }
+    void setStateActive()     { status = _player_state_active; }
+    void setStateKicked()     { status = _player_state_kicked; }
+
+    bool isFree()       const { return status == _player_state_free; }
+    bool isAllocated()  const { return status == _player_state_allocated; }
     bool isConnecting() const { return status == _player_state_connecting; }
-    bool isActive() const { return status == _player_state_active; }
-    bool isKicked() const { return status == _player_state_kicked; }
+    bool isActive()     const { return status == _player_state_active; }
+    bool isKicked()     const { return status == _player_state_kicked; }
 };
 
 #endif // ** _PLAYERSTATE_HPP

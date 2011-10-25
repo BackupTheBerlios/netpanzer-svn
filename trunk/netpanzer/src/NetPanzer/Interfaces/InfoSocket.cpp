@@ -136,16 +136,17 @@ InfoSocket::prepareStatusPacket()
     for ( i = 0; i < maxPlayers; ++i)
     {
         PlayerState* playerState = PlayerInterface::getPlayer(i);
-        if(playerState->getStatus() != _player_state_active)
-            continue;
-        s << "\\player_" << n << "\\" << playerState->getName()
-          << "\\kills_"  << n << "\\" << playerState->getKills()
-          << "\\deaths_" << n << "\\" << playerState->getLosses()
-          << "\\score_"  << n << "\\" << playerState->getObjectivesHeld()
-          << "\\points_"  << n << "\\" << playerState->getTotal()
-          << "\\flag_"   << n << "\\" << (int)i
-          << "\\flagu_"   << n << "\\" << ResourceManager::getFlagUsedCount(i);
-        n++;
+        if( playerState->isActive() )
+        {
+            s << "\\player_" << n << "\\" << playerState->getName()
+              << "\\kills_"  << n << "\\" << playerState->getKills()
+              << "\\deaths_" << n << "\\" << playerState->getLosses()
+              << "\\score_"  << n << "\\" << playerState->getObjectivesHeld()
+              << "\\points_"  << n << "\\" << playerState->getTotal()
+              << "\\flag_"   << n << "\\" << (int)i
+              << "\\flagu_"   << n << "\\" << ResourceManager::getFlagUsedCount(i);
+            n++;
+        }
     }
     
     s << "\\final\\";

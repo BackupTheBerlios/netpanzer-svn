@@ -413,8 +413,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
     
-    //GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
-    
     LoadingView::update( "Spawning Player ... (100%)" );
     
     graphicsLoop();
@@ -491,7 +489,7 @@ bool PlayerGameManager::mainLoop()
                 if ( i != PlayerInterface::getLocalPlayerIndex() )
                 {
                     player = PlayerInterface::getPlayer((unsigned short) i);
-                    if (player->getStatus() == _player_state_active)
+                    if ( player->isActive() )
                     {
                         if ( player->checkAutokick() )
                         {

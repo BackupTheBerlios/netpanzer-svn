@@ -160,9 +160,8 @@ void PlayerState::setName(const std::string& newname)
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
-            if (   (ps->status==_player_state_connecting 
-                   || ps->status==_player_state_active )
-                  && ps->name == name
+            if ( (ps->isConnecting() || ps->isActive())
+               && ps->name == name
                )
             {
                 std::stringstream ssnamenum;
@@ -291,16 +290,6 @@ void PlayerState::setObjectivesHeld( short objectives )
 void PlayerState::setID( PlayerID id )
 {
     this->id = id;
-}
-
-void PlayerState::setStatus( unsigned char status )
-{
-    PlayerState::status = status;
-}
-
-unsigned char PlayerState::getStatus() const
-{
-    return status;
 }
 
 FlagID PlayerState::getFlag() const

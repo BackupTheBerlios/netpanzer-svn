@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Components/Label.hpp"
+#include "Views/Components/Desktop.hpp"
 
 #include "2D/Palette.hpp"
 
@@ -67,6 +68,8 @@ public:
                    sizeof(GameConfig::player_flag_data));
 
             CLIENT->sendMessage(&upf, sizeof(upf));
+
+            Desktop::setVisibility("GFlagSelectionView", false);
         }
         else
         {
@@ -86,20 +89,18 @@ GFlagSelectionView::GFlagSelectionView() : View()
     setVisible(false);
     setBordered(false);
 
-    int x = (screen->getWidth() / 2) - 250;
-    int y = (screen->getHeight() / 2) - 250;
-    moveTo(iXY(x,y));
-    resize(iXY(500, 500));
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
-
     loaded = false;
-    //init();
-
 }
 
 void GFlagSelectionView::init()
 {
     removeComponents();
+
+    int x = (screen->getWidth() / 2) - 250;
+    int y = (screen->getHeight() / 2) - 250;
+    moveTo(iXY(x,y));
+    resize(iXY(500, 500));
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     int tx = 20;
     int ty = 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
@@ -112,8 +113,8 @@ void GFlagSelectionView::init()
 
     int yOffset = FLAG_HEIGHT + 8;
 
-    int x = flagStartOffset.x;
-    int y = flagStartOffset.y;
+    x = flagStartOffset.x;
+    y = flagStartOffset.y;
 
     Surface game_flags;
     std::vector<string> flag_names;

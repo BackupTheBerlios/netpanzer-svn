@@ -135,20 +135,20 @@ void DedicatedGameManager::inputLoop()
                 PlayerID i;
                 for ( i = 0; i<PlayerInterface::getMaxPlayers(); ++i)
                 {
-                    PlayerState* playerstate =
-                        PlayerInterface::getPlayer(i);
-                    if(playerstate->getStatus() != _player_state_active)
-                        continue;
-                    //*Console::server
-                    std::cout
-                        << std::setw(3) << i << " "
-                        << std::setw(30) << playerstate->getName() << " "
-                        << std::setw(4) << playerstate->getKills() << " "
-                        << std::setw(4) << playerstate->getLosses() << " "
-                        << std::setw(5) << playerstate->getTotal() << " "
-                        << std::setw(21) 
-                        << SERVER->getIP(playerstate->getID())
-                        << "\n";
+                    PlayerState* playerstate = PlayerInterface::getPlayer(i);
+                    if ( playerstate->isActive() )
+                    {
+                        //*Console::server
+                        std::cout
+                            << std::setw(3) << i << " "
+                            << std::setw(30) << playerstate->getName() << " "
+                            << std::setw(4) << playerstate->getKills() << " "
+                            << std::setw(4) << playerstate->getLosses() << " "
+                            << std::setw(5) << playerstate->getTotal() << " "
+                            << std::setw(21)
+                            << SERVER->getIP(playerstate->getID())
+                            << "\n";
+                    }
                 }
                 //*Console::server << std::flush;
                 std::cout << std::flush;
@@ -196,7 +196,7 @@ DedicatedGameManager::mainLoop()
         for (unsigned long i = 0; i < max_players; i++)
         {
             player = PlayerInterface::getPlayer((unsigned short) i);
-            if (player->getStatus() == _player_state_active)
+            if ( player->isActive() )
             {
                 if ( player->checkAutokick() )
                 {

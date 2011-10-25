@@ -314,7 +314,7 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
             if ( player_id != INVALID_PLAYER_ID )
             {
                 player = PlayerInterface::getPlayer(player_id);
-                if ( player && player->getStatus() != _player_state_active )
+                if ( player && ! player->isActive() )
                 {
                     LOGGER.warning("OICH_OOU CHEAT SERVER sent inactive player_id %u",
                                    player_id);

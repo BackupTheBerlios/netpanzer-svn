@@ -66,7 +66,6 @@ public:
 
     // ** Game Rules Methods
     static void spawnPlayer( PlayerID player );
-    static void respawnAllPlayers();
 
     static void initializeGameLogic();
     static void reinitializeGameLogic();

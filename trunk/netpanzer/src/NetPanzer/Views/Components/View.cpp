@@ -724,7 +724,7 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     // Check all components for a clicked event.
     {    
         ComponentsIterator i;
-        for ( i=components.begin(); i != components.end(); i++)
+        for ( i=components.begin(); ! components.empty() && i != components.end(); i++ )
         {        
             if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
@@ -733,12 +733,13 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 
                 actionPerformed(me);
             }
-        }}
+        }
+    }
 
     // Report a mouse release to all components except for a clicked one.
     {    
         ComponentsIterator i;
-        for ( i=components.begin(); i != components.end(); i++)
+        for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
         {        
             if ((*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);

@@ -131,7 +131,7 @@ Objective::syncFromData(const ObjectiveSyncData& sync_data)
 void
 Objective::attemptOccupationChange(PlayerState* player)
 {
-    if ( player->getStatus() != _player_state_active )
+    if ( ! player->isActive() )
     {
         return;
     }

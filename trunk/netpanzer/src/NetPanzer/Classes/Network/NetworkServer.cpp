@@ -233,7 +233,7 @@ NetworkServer::kickClient(ClientSocket * client)
         PlayerState *p = PlayerInterface::getPlayer(client->getPlayerIndex());
         if ( p )
         {
-            p->setStatus( _player_state_kicked );
+            p->setStateKicked();
         }
         onClientDisconected(client, "kicked");
     }

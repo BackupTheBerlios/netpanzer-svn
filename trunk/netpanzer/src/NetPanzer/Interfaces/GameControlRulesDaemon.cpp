@@ -275,8 +275,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 GameManager::resetGameLogic();
                 SERVER->broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
 
-                GameManager::respawnAllPlayers();
-
                 PlayerInterface::unlockPlayerStats();
                 GameControlRulesDaemon::game_state = _game_state_in_progress;
 

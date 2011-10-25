@@ -135,27 +135,21 @@ static void chatMessageRequest(const NetPacket* packet)
     {
         PlayerID max_players;
         PlayerID local_player_index;
-        PlayerState * player = 0;
 
         local_player_index = PlayerInterface::getLocalPlayerIndex();
 
         max_players = PlayerInterface::getMaxPlayers();
         for (PlayerID i = 0; i < max_players; ++i)
         {
-            player = PlayerInterface::getPlayer(i);
-
-            if (player->getStatus() == _player_state_active)
+            if ( PlayerInterface::isAllied( packet->fromPlayer, i) == true )
             {
-                if ( PlayerInterface::isAllied( packet->fromPlayer, i) == true )
+                if (local_player_index != i)
                 {
-                    if (local_player_index != i)
-                    {
-                        SERVER->sendMessage(i, &chat_mesg, CHATMESG_HEADER_LEN + text_len);
-                    }
-                    else
-                    {
-                        post_on_server = true;
-                    }
+                    SERVER->sendMessage(i, &chat_mesg, CHATMESG_HEADER_LEN + text_len);
+                }
+                else
+                {
+                    post_on_server = true;
                 }
             }
         }
@@ -313,19 +307,19 @@ void ChatInterface::serversay(const NPString& message)
 
 void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
 {
-    if ( player >= PlayerInterface::getMaxPlayers() || player == INVALID_PLAYER_ID )
+    if ( ! PlayerInterface::isValidPlayerID(player) )
     {
         LOGGER.warning("CI_SST CHEAT Try to say something to unexisting player: %u",
                        player);
     }
 
-    if ( PlayerInterface::getPlayer(player)->getStatus() != _player_state_active )
+    if ( ! PlayerInterface::isPlayerActive(player) )
     {
         LOGGER.warning("CI_SST CHEAT Try to say something to inactive player: %u",
                        player);
     }
 
-    if (player == PlayerInterface::getLocalPlayerIndex())
+    if ( PlayerInterface::isLocalPlayer(player) )
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
                                       message.c_str());

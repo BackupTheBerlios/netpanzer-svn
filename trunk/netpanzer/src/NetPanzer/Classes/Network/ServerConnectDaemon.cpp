@@ -268,7 +268,7 @@ public:
     {
         if ( time_out_timer.count() )
         {
-            player->setStatus( _player_state_free );
+            player->setStateFree();
             return connect_state_idle;
         }
         return State<T>::state;
@@ -288,7 +288,7 @@ public:
                                             client_setting->player_flag,
                                             sizeof(client_setting->player_flag) );
 
-            player->setStatus( _player_state_connecting );
+            player->setStateConnecting();
 
             // ** send server game setting map, units, player, etc.
             ConnectMesgServerGameSettings* server_game_setup
@@ -321,7 +321,7 @@ public:
     {
         if ( time_out_timer.count() )
         {
-            player->setStatus( _player_state_free );
+            player->setStateFree();
             return connect_state_idle;
         }
         return State<T>::state;
@@ -390,7 +390,7 @@ public:
         }
         else if ( time_out_timer.count() )
         {
-            player->setStatus( _player_state_free );
+            player->setStateFree();
             return connect_state_idle;
         }
         return State<T>::state;
@@ -481,7 +481,7 @@ public:
         }
         else if ( time_out_timer.count() )
         {
-            player->setStatus( _player_state_free );
+            player->setStateFree();
             return connect_state_idle;
         }
         return State<T>::state;
@@ -546,7 +546,7 @@ public:
         }
         else if ( time_out_timer.count() )
         {
-            player->setStatus( _player_state_free );
+            player->setStateFree();
             return connect_state_idle;
         }
         return State<T>::state;
@@ -701,7 +701,7 @@ public:
 
         PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
 
-        player->setStatus( _player_state_active );
+        player->setStateActive();
 
         PlayerFlagSync pfs;
         pfs.player_id = connect_client->player_id;

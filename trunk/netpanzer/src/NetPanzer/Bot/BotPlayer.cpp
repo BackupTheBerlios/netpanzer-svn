@@ -122,8 +122,7 @@ BotPlayer::getEnemyPlayers()
     PlayerID player_index;
     for ( player_index = 0; player_index < max_players; ++player_index)
     {
-        if (PlayerInterface::getPlayer(player_index)->getStatus() ==
-                _player_state_active
+        if (PlayerInterface::isPlayerActive(player_index)
                 && localIndex != player_index
                 && !PlayerInterface::isAllied(localIndex, player_index) // XXX ALLY
             )

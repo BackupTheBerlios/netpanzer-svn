@@ -148,9 +148,10 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
     {
         PlayerState* state = PlayerInterface::getPlayer(i);
-        if(state->getStatus() != _player_state_active)
-            continue;
-        states.push_back(state);
+        if ( state->isActive() )
+        {
+            states.push_back(state);
+        }
     }
 
     switch(gameconfig->gametype) {
