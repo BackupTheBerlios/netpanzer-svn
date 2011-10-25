@@ -163,7 +163,7 @@ protected:
     void  drawTitle(Surface &windowArea);
 
     // Input Field Functions
-    cInputField* addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected);
+    cInputField* addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected, const int maxCharCount);
     int  findInputFieldContaining(const iXY &pos);
     void drawInputFields(Surface &clientArea);
 

@@ -105,9 +105,13 @@ public:
     void setInputFieldString(cInputFieldString *string);
     void setTextAction(ACTION_FUNC_PTR func);
     void setExcludedCharacters(const char *exChars);
+    void setmaxChar(const int maxChar)
+    {
+        maxCharCount = maxChar;
+    }
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
-   void draw(Surface &dest);
+    void draw(Surface &dest);
     void drawHighlighted(Surface &dest);
     void checkCursor();
     void resetString();     // reset string position

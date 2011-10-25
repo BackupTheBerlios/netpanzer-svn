@@ -1382,14 +1382,15 @@ cInputField* View::addInputField(
     const iXY &pos,
     cInputFieldString *string,
     const char *excludedCharacters,
-    const bool &isSelected)
+    const bool &isSelected,
+    const int maxCharCount)
 {
     cInputField* inputfield = new cInputField;
 
     inputfield->setPos(pos);
     inputfield->setInputFieldString(string);
     inputfield->setExcludedCharacters(excludedCharacters);
-
+    inputfield->setmaxChar(maxCharCount);
     inputFields.push_back(inputfield);
 
     if (isSelected) {

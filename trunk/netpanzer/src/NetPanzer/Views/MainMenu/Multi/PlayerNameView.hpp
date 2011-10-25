@@ -37,7 +37,7 @@ private:
     
     enum { BORDER_SPACE           =  4 };    
     // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
-    enum { INPUT_FIELD_CHARACTERS = 13 };
+    enum { INPUT_FIELD_CHARACTERS = 15 };
 
     cInputFieldString playerName;
 }; // end PlayerNameView
