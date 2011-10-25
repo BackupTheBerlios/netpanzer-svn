@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "AreYouSureExitView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
@@ -63,15 +64,9 @@ void AreYouSureExitView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = screen->getHeight()/2 + 30;
-    addSpecialButton(	iXY(x, y),
-                      "YES",
-                      bYES);
-
+    add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
     x += 141 + 10;
-    addSpecialButton(	iXY(x, y),
-                      "NO",
-                      bNO);
-
+    add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
 } // end AreYouSureExitView::init
 
 // doDraw
@@ -96,3 +91,16 @@ void AreYouSureExitView::doActivate()
     Desktop::setActiveView(this);
 
 } // end AreYouSureExitView::doActivate
+
+void AreYouSureExitView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.YES") )
+    {
+        bYES();
+    }
+    else if ( !cname.compare("Button.NO") )
+    {
+        bNO();
+    }
+}

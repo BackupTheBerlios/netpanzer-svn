@@ -39,7 +39,7 @@ DisconectedView::buttonOk()
         GameManager::exitNetPanzer();
         return;
     }
-    
+
     GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
     sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
@@ -53,7 +53,7 @@ DisconectedView::buttonOk()
 
     GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
-    GameManager::loadPalette("netpmenu");
+//    GameManager::loadPalette("netpmenu");
 
     // Must remove the gameView first so that the initButtons detects that
     // and loads the correct buttons.

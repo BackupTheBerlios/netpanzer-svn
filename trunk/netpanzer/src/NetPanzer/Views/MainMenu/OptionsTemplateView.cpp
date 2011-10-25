@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "Views/GameViewGlobals.hpp"
 
 static void bInterface()
@@ -89,13 +90,9 @@ void OptionsTemplateView::initButtons()
 
     MenuTemplateView::initButtons();
 
-    addSpecialButton( soundPos,     "Sound",     bSound);
-    addSpecialButton( interfacePos, "Interface", bInterface);
-    addSpecialButton( visualsPos,   "Visuals",   bVisuals);
-
-#if 0 // XXX
-    addSpecialButton( controlsPos,  "Controls",  bControls);
-#endif
+    add( Button::createSpecialButton( "SOUND", "Sound", soundPos) );
+    add( Button::createSpecialButton( "INTERFACE", "Interface", interfacePos) );
+    add( Button::createSpecialButton( "VISUALS", "Visuals", visualsPos) );
 
 } // end OptionsTemplateView::initButtons
 
@@ -121,3 +118,24 @@ void OptionsTemplateView::loadTitleSurface()
     doLoadTitleSurface("optionsTitle");
 
 } // end ControlsView::loadTitleSurface
+
+void OptionsTemplateView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.SOUND") )
+    {
+        bSound();
+    }
+    else if ( !cname.compare("Button.INTERFACE") )
+    {
+        bInterface();
+    }
+    else if ( !cname.compare("Button.VISUALS") )
+    {
+        bVisuals();
+    }
+    else
+    {
+        MenuTemplateView::onComponentClicked(c);
+    }
+}

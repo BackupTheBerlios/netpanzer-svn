@@ -34,6 +34,7 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
+    void onComponentClicked(Component* c);
 }; // end OptionsTemplateView
 
 #endif // end __OptionsTemplateView_hpp__

@@ -189,7 +189,6 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new LoadingView());
 
-    GameManager::loadPalette("netpmenu");
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());

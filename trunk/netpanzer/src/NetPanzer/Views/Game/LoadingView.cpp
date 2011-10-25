@@ -37,7 +37,7 @@ LoadingView::init()
     setSearchName("LoadingView");
     setTitle("Loading Progress");
     setSubTitle("");
-    
+
     setAllowResize(false);
     setAllowMove(false);
     setDisplayStatusBar(false);
@@ -54,16 +54,18 @@ LoadingView::init()
 void
 LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    if ( Palette::getName() != "netpmenu" )
-    {
-        GameManager::loadPalette("netpmenu");
-    }
-    
+//    if ( Palette::getName() != "netpmenu" )
+//    {
+//        GameManager::loadPalette("netpmenu");
+//    }
+
     if (dirty)
         render();
-    
-    screen->fill(Color::black);
+
+    //screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
+    clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
+    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::yellow);
     surface.blt(clientArea, 172, 45);
 
     View::doDraw(viewArea, clientArea);
@@ -73,12 +75,12 @@ void
 LoadingView::render()
 {
     dirty=false;
-    
+
     surface.fill(Color::black);
-    
+
     int ypos = surface.getHeight() - Surface::getFontHeight();
     int fontHeight = Surface::getFontHeight();
-    
+
     list<string>::reverse_iterator i = lines.rbegin();
     while ( i != lines.rend() && ypos > -fontHeight )
     {
@@ -91,7 +93,7 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/defaultMB.bmp");
     surface.create(455, 175, 1);
     dirty=true;
 }

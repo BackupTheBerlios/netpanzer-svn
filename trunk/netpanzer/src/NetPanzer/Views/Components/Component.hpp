@@ -116,7 +116,8 @@ public:
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::componentName = name; }
-
+    std::string getName() { return componentName; }
+    
     virtual void draw(Surface &dest)
     {
         iRect bounds;
@@ -125,7 +126,7 @@ public:
         if ( dirty )
             render();
         
-        surface.blt(dest, bounds.min.x, bounds.min.y);
+        surface.bltTrans(dest, bounds.min.x, bounds.min.y);
     }
     
     virtual void render() = 0;

@@ -18,10 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "JoinView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "Interfaces/GameManager.hpp"
 #include "Views/GameViewGlobals.hpp"
 
 // JoinView
@@ -42,15 +39,6 @@ void JoinView::doDraw(Surface &viewArea, Surface &clientArea)
 
 // doDeactivate
 //---------------------------------------------------------------------------
-void JoinView::doDeactivate()
-{
-    if (strcmp(MenuTemplateView::currentMultiView, searchName) != 0 ||
-            strcmp(MenuTemplateView::currentView, searchName) != 0) {
-        MenuTemplateView::doDeactivate();
-        Desktop::setVisibility("GetSessionJoinView", false);
-    }
-
-} // end JoinView::doDeactivate
 
 // loadTitleSurface
 //---------------------------------------------------------------------------

@@ -33,7 +33,6 @@ public:
     JoinView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void doDeactivate();
 }; // end JoinView
 
 #endif // end __JoinView_hpp__

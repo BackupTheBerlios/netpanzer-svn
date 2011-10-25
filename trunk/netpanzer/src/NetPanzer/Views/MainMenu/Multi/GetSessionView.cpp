@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GetSessionView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/MouseInterface.hpp"
@@ -89,25 +90,10 @@ GetSessionView::GetSessionView() : MenuTemplateView()
     setTitle("Select Session");
     setSubTitle("");
 
-    // Join.
-    addSpecialButton(	joinPos,
-                      "Join",
-                      bJoin);
-
-    // Host.
-    addSpecialButton(	hostPos,
-                      "Host",
-                      bHost);
-
-    // Next.
-    addSpecialButton(	nextPos,
-                      "Next",
-                      bNext);
-
-    // Back.
-    addSpecialButton(	backPos,
-                      "Back",
-                      bBack);
+    add( Button::createSpecialButton( "JOIN", "Join", joinPos) );
+    add( Button::createSpecialButton( "HOST", "Host", hostPos) );
+    add( Button::createSpecialButton( "NEXT", "Next", nextPos) );
+    add( Button::createSpecialButton( "BACK", "Back", backPos) );
 } // end GetSessionView::GetSessionView
 
 // doDraw
@@ -204,3 +190,24 @@ void GetSessionView::loadTitleSurface()
     }
 
 } // end GetSessionView::loadTitleSurface
+
+void GetSessionView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.JOIN") )
+    {
+        bJoin();
+    }
+    else if ( !cname.compare("Button.HOST") )
+    {
+        bHost();
+    }
+    else if ( !cname.compare("Button.NEXT") )
+    {
+        bNext();
+    }
+    else if ( !cname.compare("Button.BACK") )
+    {
+        bBack();
+    }
+}

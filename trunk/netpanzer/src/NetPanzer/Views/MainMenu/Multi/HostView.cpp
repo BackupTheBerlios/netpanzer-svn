@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
-#include "Particles/ParticleSystemGlobals.hpp"
 #include "HostOptionsView.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -119,7 +118,7 @@ void HostView::doDraw(Surface &viewArea, Surface &clientArea)
     	sprintf(strBuf, "%3d", gameconfig->GetNumberPlayers());
     	clientArea.bltString(x + 125, y, strBuf, Color::white);
     */
-    View::doDraw(viewArea, clientArea);
+//    View::doDraw(viewArea, clientArea);
 
 } // end HostView::doDraw
 

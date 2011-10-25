@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include "HostJoinTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "HostJoinTemplateView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
@@ -51,7 +52,7 @@ int cOrange;
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
 
-static void bNext()
+static void bPlay()
 {
     if ((const std::string&) gameconfig->playername == "")
         return;
@@ -93,16 +94,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setSearchName("HostJoinTemplateView");
     setTitle("");
     setSubTitle("");
-
-    // Back.
-//    addSpecialButton(	backPos,
-//                      "Back",
-//                      bBack);
-
-    addSpecialButton(   nextPos,
-                      "Join",
-                      bNext);
-
+    add( Button::createSpecialButton( "PLAY", "Play", nextPos) );
 } // end HostJoinTemplateView constructor
 
 // doDraw
@@ -111,7 +103,7 @@ void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    View::doDraw(viewArea, clientArea);
+    //View::doDraw(viewArea, clientArea);
 } // end doDraw
 
 // doActivate
@@ -128,3 +120,17 @@ void HostJoinTemplateView::doActivate()
 void HostJoinTemplateView::loadBackgroundSurface()
 {
 } // end HostJoinTemplateView::loadBackgroundSurface
+
+void HostJoinTemplateView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.PLAY") )
+    {
+        bPlay();
+    }
+    else
+    {
+        MenuTemplateView::onComponentClicked(c);
+    }
+
+}

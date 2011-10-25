@@ -43,6 +43,7 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
+    void onComponentClicked(Component* c);
 }; // end HostJoinTemplateView
 
 #endif // end __HostJoinTemplateView_hpp__

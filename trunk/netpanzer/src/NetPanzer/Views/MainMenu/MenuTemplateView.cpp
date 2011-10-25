@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
 #include "Views/Components/ViewGlobals.hpp"
+#include "Views/Components/Button.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Particles/Particle2D.hpp"
@@ -130,7 +131,7 @@ static void bExitNetPanzer()
 
 // MenuTemplateView
 //---------------------------------------------------------------------------
-MenuTemplateView::MenuTemplateView() : SpecialButtonView()
+MenuTemplateView::MenuTemplateView() : RMouseHackView()
 {
     setSearchName("MenuTemplateView");
     setTitle("MenuTemplate");
@@ -156,30 +157,12 @@ MenuTemplateView::MenuTemplateView() : SpecialButtonView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    addSpecialButton(	mainPos,
-                      "Main",
-                      bMain);
-
-    addSpecialButton(	joinPos,
-                      "Join",
-                      bJoin);
-
-    addSpecialButton(	hostPos,
-                      "Host",
-                      bHost);
-
-    addSpecialButton(	optionsPos,
-                      "Options",
-                      bOptions);
-
-    addSpecialButton(	helpPos,
-                      "Help",
-                      bHelp);
-
-    addSpecialButton( exitPos,
-                      "Exit netPanzer",
-                      bExit);
-
+    add( Button::createSpecialButton( "MAIN", "Main", mainPos) );
+    add( Button::createSpecialButton( "JOIN", "Join", joinPos) );
+    add( Button::createSpecialButton( "HOST", "Host", hostPos) );
+    add( Button::createSpecialButton( "OPTIONS", "Options", optionsPos) );
+    add( Button::createSpecialButton( "HELP", "Help", helpPos) );
+    add( Button::createSpecialButton( "EXITNP", "Exit netPanzer", exitPos) );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -187,15 +170,13 @@ void MenuTemplateView::initPreGameOptionButtons()
 void MenuTemplateView::initInGameOptionButtons()
 {
     if(!gameconfig->quickConnect) {
-        addSpecialButton(resignPos, "Resign", bResign);
-        addSpecialButton(exitPos, "Exit netPanzer", bExitNetPanzer);
+        add( Button::createSpecialButton( "RESIGN", "Resign", resignPos) );
+        add( Button::createSpecialButton( "EXITNETNP", "Exit netPanzer", exitPos) );
     } else {
-        addSpecialButton(exitPos, "Resign", bResign);
+        add( Button::createSpecialButton( "RESIGN", "Resign", exitPos) );
     }
 
-    addSpecialButton( returnToGamePos,
-                      "Close Options",
-                      bCloseOptions);
+    add( Button::createSpecialButton( "CLOSEOPT", "Close Options", returnToGamePos) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
@@ -217,20 +198,18 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
         clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
+        clientArea.RoundRect(MenuRect, 10, Color::yellow);
         clientArea.drawWindowsBorder();
 
-    } else {
-	// When in mainmenu, make background dark and draw menu image
-        if(screen->getWidth() > 640 ||
-           screen->getHeight() > 480)
-            screen->fill(Color::black);
-        
+    } else {        
         // Set the following to get does exist.
         if (backgroundSurface.getNumFrames() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);
         } else {
             throw Exception("Where is the background surface?");
         }
+        clientArea.BltRoundRect(MenuRect, 10, Palette::darkGray256.getColorArray());
+        clientArea.RoundRect(MenuRect, 10, Color::yellow);
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y, Palette::colorTable6040);
@@ -254,8 +233,6 @@ void MenuTemplateView::doActivate()
     loadBackgroundSurface();
     loadTitleSurface();
     loadNetPanzerLogo();
-
-    SpecialButtonView::doActivate();
 } // end doActivate
 
 // loadBackgroundSurface
@@ -309,3 +286,51 @@ void MenuTemplateView::processEvents()
 {
 } // end MenuTemplateView::processEvents
 
+void MenuTemplateView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.MAIN") )
+    {
+        bMain();
+    }
+    else if ( !cname.compare("Button.JOIN") )
+    {
+        bJoin();
+    }
+    else if ( !cname.compare("Button.HOST") )
+    {
+        bHost();
+    }
+    else if ( !cname.compare("Button.OPTIONS") )
+    {
+        bOptions();
+    }
+    else if ( !cname.compare("Button.HELP") )
+    {
+        bHelp();
+    }
+    else if ( !cname.compare("Button.EXITNP") )
+    {
+        bExit();
+    }
+    else if ( !cname.compare("Button.EXITNETNP") )
+    {
+        bExitNetPanzer();
+    }
+    else if ( !cname.compare("Button.RESIGN") )
+    {
+        bResign();
+    }
+    else if ( !cname.compare("Button.CLOSEOPT") )
+    {
+        bCloseOptions();
+    }
+    else if ( !cname.compare("Button.EXITNETNP") )
+    {
+        bExitNetPanzer();
+    }
+    else if ( !cname.compare("Button.EXITNETNP") )
+    {
+        bExitNetPanzer();
+    }
+}

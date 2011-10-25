@@ -81,6 +81,7 @@ public:
     {
         return prevHighlightedButton;
     }
+    virtual void onComponentClicked(Component *c) { (void)c; }
 
 protected:
     virtual void     actionPerformed(mMouseEvent )
@@ -148,6 +149,7 @@ protected:
 
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
+    void addButtonSurface(const iXY &pos, std::string cname, const char *toolTip, ITEM_FUNC leftClickFunc);
     void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
     /*!FIXME!*/ void drawDefinedButtons   (Surface &clientArea);
     void drawHighlightedButton(Surface &clientArea);

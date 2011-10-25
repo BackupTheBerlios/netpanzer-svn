@@ -53,6 +53,7 @@ iXY returnToGamePos = mainPos;
 iXY resignPos = joinPos;
 
 iRect bodyTextRect(145, 110, 760, 510);
+iRect MenuRect(138, 99, 775, 566);
 
 bool gDrawGameHelp          = false;
 

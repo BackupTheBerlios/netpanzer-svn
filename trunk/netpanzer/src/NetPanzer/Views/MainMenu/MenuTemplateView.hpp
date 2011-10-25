@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 
 //--------------------------------------------------------------------------
-class MenuTemplateView : public SpecialButtonView
+class MenuTemplateView : public RMouseHackView
 {
 protected:
     static  void loadNetPanzerLogo();
@@ -40,6 +40,7 @@ protected:
     float titleFlashTimeHalf; // Time it takes for a half flash.
 
     typedef void (*ITEM_FUNC)(void);
+    void onComponentClicked(Component *c);
 
 public:
     MenuTemplateView();

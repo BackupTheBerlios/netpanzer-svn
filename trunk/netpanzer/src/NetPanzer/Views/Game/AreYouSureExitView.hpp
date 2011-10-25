@@ -32,6 +32,7 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
+    void onComponentClicked(Component* c);
 }; // end AreYouSureExitView
 
 #endif // end __AreYouSureExitView_hpp__
