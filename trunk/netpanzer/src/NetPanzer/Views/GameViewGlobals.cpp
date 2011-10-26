@@ -28,8 +28,8 @@ iXY joinPos(mainPos.x+ButonWidth, 7);
 iXY hostPos(joinPos.x+ButonWidth, 7);
 iXY optionsPos(hostPos.x+ButonWidth, 7);
 iXY helpPos(optionsPos.x+ButonWidth, 7);
-iXY exitPos(optionsPos.x+ButonWidth, helpPos.y+ButonHeight);
-iXY nextPos(optionsPos.x+ButonWidth, 573);
+iXY nextPos(joinPos.x, helpPos.y+ButonHeight*2);
+iXY exitPos(optionsPos.x+ButonWidth, 573);
 iXY creditsPos(0, 0);
 
 const iXY sub1(mainPos.x, mainPos.y+ButonHeight);

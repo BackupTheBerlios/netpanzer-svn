@@ -351,7 +351,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed( SDLK_c ) == true )
     {
-        ScriptManager::runUserCommand("countdown 5 Prepare to fight...");
+        static NTimer spamtimer(5000);
+        if (spamtimer.isTimeOut())
+        {
+            ScriptManager::runUserCommand("countdown 5 Prepare to fight...");
+            spamtimer.reset();
+        }
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)

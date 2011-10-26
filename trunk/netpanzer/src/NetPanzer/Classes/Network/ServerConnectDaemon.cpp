@@ -788,7 +788,12 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
 
     join_request_ack.setResultCode(_join_request_result_success);
 
-    if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
+
+    if ((GameConfig::game_allowmultiip == false) && (SERVER->isAlreadyConnected(packet->fromClient) == true))
+    {
+        join_request_ack.setResultCode(_join_request_result_already_connected);
+    }
+    else if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
     {
         join_request_ack.setResultCode(_join_request_result_invalid_protocol);
     }
