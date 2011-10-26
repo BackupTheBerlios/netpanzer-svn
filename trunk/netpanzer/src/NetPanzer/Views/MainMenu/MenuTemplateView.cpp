@@ -202,7 +202,8 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         clientArea.drawWindowsBorder();
 
     } else {        
-        // Set the following to get does exist.
+        screen->fill(0);
+		// Set the following to get does exist.
         if (backgroundSurface.getNumFrames() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);
         } else {
