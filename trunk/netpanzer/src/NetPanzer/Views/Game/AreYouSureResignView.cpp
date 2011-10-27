@@ -117,7 +117,8 @@ AreYouSureResignView::AreYouSureResignView() : SpecialButtonView()
     setSearchName("AreYouSureResignView");
     setTitle("Resign");
     setSubTitle("");
-} // end AreYouSureResignView::AreYouSureResignView
+    loaded = false;
+	} // end AreYouSureResignView::AreYouSureResignView
 
 // init
 //---------------------------------------------------------------------------
@@ -137,7 +138,8 @@ void AreYouSureResignView::init()
     add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
     x += 141 + 10;
     add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
-} // end AreYouSureResignView::init
+    loaded = true;
+	} // end AreYouSureResignView::init
 
 // doDraw
 //---------------------------------------------------------------------------
@@ -157,7 +159,10 @@ void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doActivate()
 {
-    init();
+    if ( ! loaded )
+    {
+	init();
+    }
     Desktop::setActiveView(this);
 } // end AreYouSureResignView::doActivate
 

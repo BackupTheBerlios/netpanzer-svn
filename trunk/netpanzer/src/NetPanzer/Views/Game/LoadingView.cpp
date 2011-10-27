@@ -54,15 +54,10 @@ LoadingView::init()
 void
 LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-//    if ( Palette::getName() != "netpmenu" )
-//    {
-//        GameManager::loadPalette("netpmenu");
-//    }
-
     if (dirty)
         render();
 
-    //screen->fill(Color::black);
+    screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
     clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
     clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::yellow);

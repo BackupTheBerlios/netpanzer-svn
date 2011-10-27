@@ -46,8 +46,8 @@ AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
     setSearchName("AreYouSureExitView");
     setTitle("Exit netPanzer");
     setSubTitle("");
-
-} // end AreYouSureExitView::AreYouSureExitView
+    loaded = false;
+	} // end AreYouSureExitView::AreYouSureExitView
 
 // init
 //---------------------------------------------------------------------------
@@ -67,6 +67,7 @@ void AreYouSureExitView::init()
     add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
     x += 141 + 10;
     add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
+    loaded = true;
 } // end AreYouSureExitView::init
 
 // doDraw
@@ -87,7 +88,10 @@ void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void AreYouSureExitView::doActivate()
 {
-    init();
+    if ( ! loaded )
+    {
+	init();
+    }
     Desktop::setActiveView(this);
 
 } // end AreYouSureExitView::doActivate

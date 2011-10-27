@@ -26,7 +26,8 @@ class AreYouSureExitView : public SpecialButtonView
 {
 private:
     void init();
-
+    bool loaded;
+	
 public:
     AreYouSureExitView();
 

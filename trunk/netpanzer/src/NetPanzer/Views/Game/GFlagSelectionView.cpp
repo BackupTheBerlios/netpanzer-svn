@@ -155,7 +155,8 @@ void GFlagSelectionView::doActivate()
     {
         init();
     }
-}
+    Desktop::setActiveView(this);
+	}
 
 void GFlagSelectionView::doDeactivate()
 {
