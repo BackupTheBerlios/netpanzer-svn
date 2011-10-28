@@ -102,7 +102,8 @@ public:
 
 enum { _connect_result_success,
        _connect_result_server_busy,
-       _connect_result_server_full
+       _connect_result_server_full,
+       _connect_result_server_already_connected
      };
 
 class ClientConnectResult : public NetMessage

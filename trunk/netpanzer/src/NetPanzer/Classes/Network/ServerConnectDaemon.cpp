@@ -232,7 +232,12 @@ public:
             ClientConnectResult connect_result;
 
             PlayerState * player = PlayerInterface::allocateNewPlayer();
-            if ( player == 0 )
+            if ((GameConfig::game_allowmultiip == false) && 
+               (SERVER->isAlreadyConnected(connect_client) == true))
+            {
+                connect_result.result_code = _connect_result_server_already_connected;
+            }
+            else if ( player == 0 )
             {
                 connect_result.result_code = _connect_result_server_full;
             }
@@ -788,12 +793,7 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
 
     join_request_ack.setResultCode(_join_request_result_success);
 
-
-    if ((GameConfig::game_allowmultiip == false) && (SERVER->isAlreadyConnected(packet->fromClient) == true))
-    {
-        join_request_ack.setResultCode(_join_request_result_already_connected);
-    }
-    else if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
+    if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
     {
         join_request_ack.setResultCode(_join_request_result_invalid_protocol);
     }

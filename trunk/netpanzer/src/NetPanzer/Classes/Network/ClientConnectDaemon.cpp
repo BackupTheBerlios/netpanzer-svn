@@ -230,6 +230,11 @@ void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
             LoadingView::append( "Connect Failure: Server Full" );
         }
         break;
+
+    case _connect_result_server_already_connected : {
+            LoadingView::append( "Connect Failure: You are aready connected" );
+        }
+        break;
     } // ** switch
 
 }
