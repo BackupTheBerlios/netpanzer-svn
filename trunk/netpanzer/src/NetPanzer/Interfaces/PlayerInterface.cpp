@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
 
+#include "Views/Components/Desktop.hpp"
+
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
@@ -297,7 +299,7 @@ PlayerState* PlayerInterface::allocateLoopBackPlayer()
     local_player_index = 0;
 
     SDL_mutexP(mutex);
-    player_lists[local_player_index].setStateActive();
+    player_lists[local_player_index].setStateSelectingFlag();
     player_lists[local_player_index].unit_config.initialize();
     SDL_mutexV(mutex);
 
@@ -443,13 +445,13 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
         *completed = false;
     }
     
-    if ( player_lists[ respawn_rule_player_index ].isActive() )
-        if ( UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
-        {
-            *player_state = &player_lists[ respawn_rule_player_index ];
-            ++respawn_rule_player_index;
-            return( true );
-        }
+    if (  player_lists[ respawn_rule_player_index ].isPlaying()
+       && UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
+    {
+        *player_state = &player_lists[ respawn_rule_player_index ];
+        ++respawn_rule_player_index;
+        return( true );
+    }
 
     ++respawn_rule_player_index;
     return( false );
@@ -489,6 +491,10 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
         if ( player_lists[player_id].isFree() )
         {
             disconnectedPlayerAllianceCleanup(player_id);
+        }
+        if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
+        {
+            Desktop::setVisibility("GFlagSelectionView", true);
         }
     SDL_mutexV(mutex);
 }
@@ -583,6 +589,8 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
                 ResourceManager::updateFlagData(pfs->player_id,
                                                 pfs->player_flag,
                                                 sizeof(pfs->player_flag) );
+
+                player_lists[pfs->player_id].setStateActive();
             }
             break;
 
@@ -596,6 +604,8 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
                 PlayerFlagSync pfs;
                 pfs.player_id = packet->fromPlayer;
                 memcpy(pfs.player_flag, upf->player_flag, sizeof(pfs.player_flag));
+
+                player_lists[packet->fromPlayer].setStateActive();
 
                 SERVER->broadcastMessage(&pfs, sizeof(pfs));
             }

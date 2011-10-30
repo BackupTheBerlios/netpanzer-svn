@@ -70,6 +70,7 @@ public:
             CLIENT->sendMessage(&upf, sizeof(upf));
 
             Desktop::setVisibility("GFlagSelectionView", false);
+//            PlayerInterface::getLocalPlayer()->setStateActive();
         }
         else
         {
@@ -96,25 +97,26 @@ void GFlagSelectionView::init()
 {
     removeComponents();
 
-    int x = (screen->getWidth() / 2) - 250;
-    int y = (screen->getHeight() / 2) - 250;
-    moveTo(iXY(x,y));
-    resize(iXY(500, 500));
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
+    iRect viewrect = getClientRect();
 
-    int tx = 20;
-    int ty = 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
+    rect.min.x = (viewrect.getSizeX()/2) - 250;
+    rect.min.y = (viewrect.getSizeY()/2) - 250;
+    rect.max.x = rect.min.x + 500;
+    rect.max.y = rect.min.y + 500;
+
+    int tx = rect.min.x + 20;
+    int ty = rect.min.y + 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
     add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
 
     loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
-    loc_player_flag.y = 14;
+    loc_player_flag.y = rect.min.y + 14;
 
-    iXY flagStartOffset(14, 14*3);
+    iXY flagStartOffset(rect.min.x + 14, rect.min.y + 14*3);
 
     int yOffset = FLAG_HEIGHT + 8;
 
-    x = flagStartOffset.x;
-    y = flagStartOffset.y;
+    int x = flagStartOffset.x;
+    int y = flagStartOffset.y;
 
     Surface game_flags;
     std::vector<string> flag_names;
@@ -129,7 +131,7 @@ void GFlagSelectionView::init()
 
         x += FLAG_WIDTH + 8;
 
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - 20 - FLAG_WIDTH)
+        if (x > flagStartOffset.x + rect.getSizeX() - 20 - FLAG_WIDTH)
         {
             x = flagStartOffset.x;
             y += yOffset;
@@ -140,9 +142,8 @@ void GFlagSelectionView::init()
 
 void GFlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect RectWinner = getClientRect();
-    clientArea.BltRoundRect(RectWinner, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(RectWinner,14, Color::gray);
+    clientArea.BltRoundRect(rect, 14, Palette::darkGray256.getColorArray());
+    clientArea.RoundRect(rect,14, Color::gray);
 
     ResourceManager::getFlag(PlayerInterface::getLocalPlayerIndex())->blt(clientArea, loc_player_flag.x, loc_player_flag.y);
 
@@ -167,3 +168,9 @@ void GFlagSelectionView::doDeactivate()
     }
 }
 
+void
+GFlagSelectionView::checkResolution(iXY oldResolution, iXY newResolution)
+{
+    resize(iXY(newResolution.x, newResolution.y));
+    moveTo(iXY(0,0));
+}

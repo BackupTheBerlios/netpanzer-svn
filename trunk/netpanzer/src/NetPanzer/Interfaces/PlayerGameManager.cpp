@@ -538,7 +538,8 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_m)) {
             Desktop::toggleVisibility( "MiniMapView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_b)) {
+        if (KeyboardInterface::getKeyPressed(SDLK_b)
+           && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) {
             Desktop::toggleVisibility( "GFlagSelectionView" );
         }
         if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {

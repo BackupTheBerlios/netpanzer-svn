@@ -706,7 +706,7 @@ public:
 
         PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
 
-        player->setStateActive();
+        player->setStateSelectingFlag();
 
         PlayerFlagSync pfs;
         pfs.player_id = connect_client->player_id;

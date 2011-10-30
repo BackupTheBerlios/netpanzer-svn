@@ -79,7 +79,8 @@ public:
         GameManager::setNetPanzerGameOptions();
         Desktop::setVisibility("MiniMapView", true);
         Desktop::setVisibility("GameView", true);
-        Desktop::setActiveView("GameView");
+        Desktop::setVisibility("GFlagSelectionView", true);
+        Desktop::setActiveView("GFlagSelectionView");
     }
 
     static void loadError()

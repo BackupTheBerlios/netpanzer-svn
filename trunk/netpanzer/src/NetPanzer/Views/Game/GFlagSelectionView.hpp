@@ -32,6 +32,8 @@ private:
     iXY loc_text_current;
     bool loaded;
 
+    iRect rect;
+
 public:
     GFlagSelectionView();
     virtual ~GFlagSelectionView()
@@ -40,6 +42,7 @@ public:
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void checkResolution(iXY oldResolution, iXY newResolution);
     //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     //virtual void drawBorder(Surface& )
     //{}

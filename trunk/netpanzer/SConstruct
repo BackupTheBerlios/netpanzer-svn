@@ -205,9 +205,9 @@ print 'Building version ' + NPVERSION + ' in ' + sys.platform
 # Configure Environments
 ################################################################
 
-env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -265,12 +265,12 @@ MakeStaticLib(crossmingwnetworkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crosslinuxnetworkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
-luaenv.Append(           CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
-crossmingwluaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
-crosslinuxluaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
-MakeStaticLib(          luaenv, 'nplua', 'lua toluapp', '*.c')
-MakeStaticLib(crossmingwluaenv, 'nplua', 'lua toluapp', '*.c')
-MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua toluapp', '*.c')
+luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
+crossmingwluaenv.Append( CPPPATH = [ 'src/Lib/lua'] )
+crosslinuxluaenv.Append( CPPPATH = [ 'src/Lib/lua'] )
+MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
+MakeStaticLib(crossmingwluaenv, 'nplua', 'lua', '*.c')
+MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua', '*.c')
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )

@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum { _player_state_free,
        _player_state_allocated,
        _player_state_connecting,
+       _player_state_selecting_flag,
        _player_state_active,
        _player_state_kicked
      };
@@ -120,13 +121,16 @@ public:
     void setStateFree()       { status = _player_state_free; }
     void setStateAllocated()  { status = _player_state_allocated; }
     void setStateConnecting() { status = _player_state_connecting; }
+    void setStateSelectingFlag() { status = _player_state_selecting_flag; }
     void setStateActive()     { status = _player_state_active; }
     void setStateKicked()     { status = _player_state_kicked; }
 
     bool isFree()       const { return status == _player_state_free; }
     bool isAllocated()  const { return status == _player_state_allocated; }
     bool isConnecting() const { return status == _player_state_connecting; }
-    bool isActive()     const { return status == _player_state_active; }
+    bool isSelectingFlag() const { return status == _player_state_selecting_flag; }
+    bool isActive()     const { return status == _player_state_active || isSelectingFlag(); }
+    bool isPlaying()    const { return status == _player_state_active; }
     bool isKicked()     const { return status == _player_state_kicked; }
 };
 
