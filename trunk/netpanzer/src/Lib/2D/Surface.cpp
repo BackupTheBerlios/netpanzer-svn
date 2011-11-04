@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -153,7 +153,7 @@ Surface::Surface()
 Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
 {
     reset();
-    
+
     alloc( w, h, nframes);
 
     totalSurfaceCount++;
@@ -202,7 +202,7 @@ void Surface::reset()
     twidth      = 0;
     theight     = 0;
     tpitch      = 0;
-    
+
     mem         = 0;
     frame0      = 0;
     myMem       = false;
@@ -295,16 +295,16 @@ void Surface::setTo(const Surface &source, iRect bounds)
         twidth = source.getWidth() - bounds.min.x;
     else
         twidth     = bounds.getSizeX();
-        
+
     if ( (unsigned int)bounds.max.y > source.getHeight() )
         theight = source.getHeight() - bounds.min.y;
     else
         theight    = bounds.getSizeY();
-        
+
     tpitch     = source.getPitch();
     numFrames  = source.getNumFrames();
     fps        = source.getFPS();
-    
+
     doesExist  = source.getDoesExist();
 
 } // end Surface::setTo
@@ -348,7 +348,7 @@ bool Surface::grab(const Surface &source,
     orderCoords(bounds);
 
     alloc(bounds.getSizeX(), bounds.getSizeY(), 1);
-    
+
     // We can blit like this because everything will be clipped away for us.
     source.blt(*this, -bounds.min.x, -bounds.min.y);
 
@@ -367,7 +367,7 @@ void Surface::blt(Surface &dest, int x, int y) const
     assert(dest.getDoesExist());
     assert(this != 0);
     assert(mem != 0);
-    assert(dest.mem != 0);    
+    assert(dest.mem != 0);
 
     // Add in the offset factor.
     x+=offset.x;
@@ -452,7 +452,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
     assert(dest.getDoesExist());
     assert(this != 0);
     assert(mem != 0);
-    assert(dest.mem != 0);    
+    assert(dest.mem != 0);
 
     // Add in the offset factor.
     x+=offset.x;
@@ -541,7 +541,7 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
     assert(dest.getDoesExist());
     assert(this != 0);
     assert(mem != 0);
-    assert(dest.mem != 0);    
+    assert(dest.mem != 0);
 
     // Add in the offset factor.
     x+=offset.x;
@@ -894,7 +894,7 @@ void Surface::copy(const Surface &source)
 {
     if(!source.getDoesExist())
         return;
-    
+
     assert(this != 0);
 
     // XXX ugly ugly ugly
@@ -966,7 +966,7 @@ void Surface::scale(unsigned int x, unsigned int y)
 {
     if ( !x || !y || (x==getWidth() && y==getHeight()))
         return;
-        
+
     // Create a temporary surface to scale the image onto.
     Surface tempSurface(x, y, getNumFrames());
 
@@ -996,23 +996,23 @@ void Surface::scale(unsigned int x, unsigned int y)
     	fXY stepPix;
     	stepPix.x = float(Surface::pix.x) / float(pix.x);
     	stepPix.y = float(Surface::pix.y) / float(pix.y);
-     
+
     	// Create a temporary surface to scale the image onto.
     	Surface tempSurface(pix, pix.x, frameCount);
-     
+
     	// build a table the first time you go through, then scaling all
     	// additional frames can be done by getting the values from the table.
-     
+
     	fXY curPix;
     	curPix = 0.0;
-     
+
     	// Go through all the frames of the surface.
     	for (int frame = 0; frame < frameCount; frame++)
     	{
     		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
     		tempSurface.setFrame(frame);
     		this->setFrame(frame);
-     
+
     		for (int x = 0; x < pix.x; x++)
     		{
     			for (int y = 0; y < pix.y; y++)
@@ -1025,12 +1025,12 @@ void Surface::scale(unsigned int x, unsigned int y)
     		}
     		curPix.x = 0.0;
     	}
-     
+
     	// Resize the calling surface, then map all the scaled images on it.
     	this->resize(pix);
-     
+
     	assert(frameCount == tempSurface.frameCount);
-     
+
     	for (frame = 0; frame < frameCount; frame++)
     	{
     		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
@@ -1168,7 +1168,7 @@ void Surface::shrinkWrap()
 {
     assert(getDoesExist());
     assert(this != 0);
-    
+
     int center_x = getWidth()>>1;
     int center_y = getHeight()>>1;
 
@@ -1332,14 +1332,14 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 {
     if ( !str )
         return;
-    
+
     int len = strlen(str);
     if ( !len )
         return;
 
     unsigned int need_width = len * FONT_WIDTH;
     unsigned int need_height = FONT_HEIGHT;
-    
+
     if ( frame0 != 0 ) {
         if ( getWidth() != need_width || getHeight() != need_height ) {
             free();
@@ -1348,21 +1348,21 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     } else {
         create( need_width, need_height, 1);
     }
-    
+
     for ( int line = 0; line < FONT_HEIGHT; ++line) {
         PIX * dptr = getFrame0() + (line * (int)getPitch());
         const char * pstr = str;
         for ( unsigned char c = *pstr; c; c= *(++pstr)) {
             if ( c >=128 ) c = ' ';
-            
+
             char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
             PIX * eptr = dptr+FONT_WIDTH;
             do {
                 *(dptr++) = *(fptr++)?color:bgcolor;
             } while ( dptr < eptr );
-            
+
         }
-        
+
     }
 }
 
@@ -1496,7 +1496,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
             throw Exception("%s is not a valid 8-bit BMP file", fileName);
 
         BitmapInfoHeader info_header(file.get());
-        
+
         if ( info_header.biBitCount != 8 )
             throw Exception("%s is not a 8-bit BMP file", fileName);
 
@@ -1855,14 +1855,15 @@ void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
 
   while (y >= x)
   {
-    bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, table);//up
-    bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, table);//down
     bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up
     bltHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, table);//down
 
     if (d < 0)
       d = d + (4 * x) + 6;
-    else {
+    else
+    {
+      bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - (y+1),(rect.max.x-radius)+ x, table);//up
+      bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) +(y+1),(rect.max.x-radius)+ x, table);//down
       d = d + 4 * (x - y) + 10;
       y--;
     }
