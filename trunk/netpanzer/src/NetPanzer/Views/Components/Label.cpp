@@ -17,13 +17,14 @@
  */
 
 #include "Label.hpp"
+#include "ViewGlobals.hpp"
 
 void
 Label::draw(Surface &dest)
 {    
     if ( shadowed )
     {
-        dest.bltStringShadowed(position.x, position.y, text.c_str(), foreground, background);
+        dest.bltStringShadowed(position.x, position.y, text.c_str(), foreground, componentBodyColor);
     }
     else
     {

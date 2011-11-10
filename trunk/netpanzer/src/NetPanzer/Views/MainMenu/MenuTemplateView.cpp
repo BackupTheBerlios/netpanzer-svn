@@ -326,12 +326,4 @@ void MenuTemplateView::onComponentClicked(Component* c)
     {
         bCloseOptions();
     }
-    else if ( !cname.compare("Button.EXITNETNP") )
-    {
-        bExitNetPanzer();
-    }
-    else if ( !cname.compare("Button.EXITNETNP") )
-    {
-        bExitNetPanzer();
-    }
 }

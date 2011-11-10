@@ -25,13 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "System/Sound.hpp"
-#include "Views/MainMenu/Options/SoundView.hpp"
 #include "Classes/ScreenSurface.hpp"
-#include "Views/MainMenu/Options/ControlsView.hpp"
-#include "Views/MainMenu/Options/VisualsView.hpp"
 #include "2D/Palette.hpp"
-#include "Views/MainMenu/Options/InterfaceView.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Views/MainMenu/OptionsTemplateView.hpp"
 
 //---------------------------------------------------------------------------
 static void bYES()
@@ -63,44 +60,12 @@ static void bYES()
 
     View *v = Desktop::getView("OptionsView");
 
-    if (v != 0) {
+    if (v != 0) 
+    {
         ((OptionsTemplateView *)v)->initButtons();
         ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
     }
 
-    v = Desktop::getView("SoundView");
-    if (v != 0) {
-        ((SoundView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("ControlsView");
-    if (v != 0) {
-        ((ControlsView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("VisualsView");
-    if (v != 0) {
-        ((VisualsView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("InterfaceView");
-    if (v != 0) {
-        ((InterfaceView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
 }
 
 //---------------------------------------------------------------------------

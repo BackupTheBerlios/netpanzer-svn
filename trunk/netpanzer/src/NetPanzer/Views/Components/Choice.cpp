@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Choice.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
+#include "ViewGlobals.hpp"
 
 //---------------------------------------------------------------------------
 void Choice::reset()
@@ -184,9 +185,9 @@ void Choice::draw(Surface &dest)
     s.setTo(dest, r);
 
     // Draw the border.
-    s.drawRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), Color::gray96);
-    s.drawRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), Color::white);
-    s.fillRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), Color::terreVerte);
+    s.RoundRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), 4, Color::gray96);
+    s.RoundRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), 4, Color::white);
+    s.FillRoundRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), 4, componentBodyColor);
 
     if (!isOpen)	{
         s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);

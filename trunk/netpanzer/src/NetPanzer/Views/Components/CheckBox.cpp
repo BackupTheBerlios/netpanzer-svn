@@ -20,22 +20,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/CheckBox.hpp"
 #include "MouseEvent.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
+#include "ViewGlobals.hpp"
 
 void
 CheckBox::render()
 {
-    surface.fill(Color::black);
+    surface.fill(componentBodyColor);
     Surface text;
     text.renderText( label.c_str(), textColor, 0);
-    surface.drawRect( iRect(0,0,12,12), Color::gray96);
-    surface.drawRect( iRect(1,1,13,13), Color::white);
-    surface.drawRect( iRect(1,1,12,12), Color::black);
+    surface.FillRoundRect( iRect(0,0,14,14),2,  componentBodyColor);
+    surface.RoundRect( iRect(1,1,12,12), 2, textColor);
     if (state) {
-        surface.drawLine( 2, 2, 11, 11, Color::white);
-        surface.drawLine( 2, 11, 11, 2, Color::white);
+        surface.drawLine( 3, 6, 6, 9, textColor);
+        surface.drawLine( 3, 7, 6, 10, textColor);
+        surface.drawLine( 6, 9, 10, 3, textColor);
+        surface.drawLine( 6, 10, 10, 4, textColor);
     }
     
-    text.blt( surface, 14+2, (surface.getHeight()/2) - (text.getHeight()/2) );
+    surface.bltString(14+4, (surface.getHeight()/2) - (text.getHeight()/2),label.c_str(), textColor);
+    //text.blt( surface, 14+2, (surface.getHeight()/2) - (text.getHeight()/2) );
     dirty = false;
 }
 

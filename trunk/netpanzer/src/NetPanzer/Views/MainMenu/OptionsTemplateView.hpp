@@ -21,13 +21,53 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
+#include "Views/Components/CheckBox.hpp"
+#include "Views/Components/Choice.hpp"
+#include "Views/Components/StateChangedCallback.hpp"
 
 //--------------------------------------------------------------------------
-class OptionsTemplateView : public MenuTemplateView
+class OptionsTemplateView : public MenuTemplateView, public StateChangedCallback
 {
+private:
+    int      selectedColorStartY;
+
+    // Option check boxes.
+    CheckBox * checkBoxDrawAllShadows;
+    CheckBox * checkBoxBlendSmoke;
+    CheckBox * checkBoxFullscreen;
+    CheckBox * checkBoxSoundEnabled;
+    CheckBox * checkBoxMusicEnabled;
+#ifdef _WIN32
+    CheckBox * checkBoxUseDirectX;
+#endif
+    //CheckBox drawUnitReload;
+
+    // Option choices.
+    Choice   * choiceResolution;
+    unsigned int current_width;
+    unsigned int current_height;
+
+    Choice   * choiceGameViewBackgroundColor;
+    Choice   * choiceMiniMapObjectiveDrawMode;
+    Choice   * choiceMiniMapUnitSize;
+    Choice   * choiceUnitSelectionDrawMode;
+
+    //Choice   choiceUnitInfoDrawLayer;
+
+#if 0
+    // Color choices.
+    Choice   choiceYourRadarUnit;
+    Choice   choiceAlliedRadarUnit;
+    Choice   choiceYourRadarObjective;
+    Choice   choiceAlliedRadarObjective;
+    Choice   choiceEnemyRadarObjective;
+    Choice   choiceVehicleSelectionBox;
+    Choice   choiceConsoleText;
+#endif
+
+    virtual void loadTitleSurface();
 protected:
     virtual void loadBackgroundSurface();
-    virtual void loadTitleSurface();
 
 public:
     OptionsTemplateView();
@@ -35,6 +75,7 @@ public:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
     void onComponentClicked(Component* c);
+    virtual void stateChanged(Component* source);
 }; // end OptionsTemplateView
 
 #endif // end __OptionsTemplateView_hpp__

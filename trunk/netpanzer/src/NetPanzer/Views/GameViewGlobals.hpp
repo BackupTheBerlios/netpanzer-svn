@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define meterWidth                  (280)
 
 #define optionsMeterWidth           (148)
-#define optionsMeterStartX          (448)
+#define optionsMeterStartX          (120)
 #define optionsColorMeterStartX     (342)
 
 #define ButonWidth                  (155)

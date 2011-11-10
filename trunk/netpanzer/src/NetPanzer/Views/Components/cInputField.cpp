@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Util/Log.hpp"
+#include "ViewGlobals.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // cInputFieldString definitions.
@@ -317,7 +318,7 @@ void cInputField::draw(Surface &dest)
     checkCursor();
     checkRepeat();
 
-    inputFieldSurface.fill(Color::black);
+    inputFieldSurface.fill(componentBodyColor);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
     inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
     inputFieldSurface.blt(dest, pos.x, pos.y);

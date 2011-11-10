@@ -75,10 +75,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
 #include "Views/MainMenu/Multi/IPAddressView.hpp"
 #include "Views/MainMenu/Multi/ServerListView.hpp"
-#include "Views/MainMenu/Options/SoundView.hpp"
-#include "Views/MainMenu/Options/ControlsView.hpp"
-#include "Views/MainMenu/Options/InterfaceView.hpp"
-#include "Views/MainMenu/Options/VisualsView.hpp"
 
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
@@ -198,10 +194,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
-    Desktop::add(new SoundView());
-    Desktop::add(new ControlsView());
-    Desktop::add(new VisualsView());
-    Desktop::add(new InterfaceView());
     Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
@@ -558,36 +550,12 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (Desktop::getView("GameView")->getVisible())
             {
-                if (!Desktop::getView("OptionsView")->getVisible() &&
-                        !Desktop::getView("SoundView")->getVisible() &&
-                        !Desktop::getView("ControlsView")->getVisible() &&
-                        !Desktop::getView("InterfaceView")->getVisible() &&
-                        !Desktop::getView("VisualsView")->getVisible())
+                if (!Desktop::getView("OptionsView")->getVisible())
                 {
                     
                     View *v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("SoundView");
-                    assert(v != 0);
-                    ((SoundView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("ControlsView");
-                    assert(v != 0);
-                    ((ControlsView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("VisualsView");
-                    assert(v != 0);
-                    ((VisualsView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("InterfaceView");
-                    assert(v != 0);
-                    ((InterfaceView *)v)->initButtons();
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
                     Desktop::setVisibility("OptionsView", true);
@@ -596,26 +564,6 @@ void PlayerGameManager::processSystemKeys()
                 else
                 {
                     View *v = Desktop::getView("OptionsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-
-                    v = Desktop::getView("InterfaceView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-
-                    v = Desktop::getView("VisualsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-
-                    v = Desktop::getView("SoundView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-
-                    v = Desktop::getView("ControlsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
                     ((OptionsTemplateView *)v)->setVisible(false);

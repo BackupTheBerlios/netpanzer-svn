@@ -48,7 +48,7 @@ public:
     CheckBox(const std::string& newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
-        setSize( 14+label.length()*8, 14);
+        setSize( 20+label.length()*8, 14);
         textColor = Color::white;
         dirty = true;
     }
@@ -69,7 +69,7 @@ public:
     void setLabel(const std::string& label)
     {
         CheckBox::label = label;
-        setSize( 14+label.length()*8, 14);
+        setSize( 20+label.length()*8, 14);
         dirty = true;
     }
     void setState(bool state)
