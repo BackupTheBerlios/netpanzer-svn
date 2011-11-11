@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/MainMenu/Options/SoundView.hpp"
-#include "Views/MainMenu/Options/ControlsView.hpp"
-#include "Views/MainMenu/Options/VisualsView.hpp"
-#include "Views/MainMenu/Options/InterfaceView.hpp"
 #include "Classes/ScreenSurface.hpp"
 
 #include "Util/Log.hpp"
@@ -64,38 +60,6 @@ DisconectedView::buttonOk()
 
     if (v != 0) {
         ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("SoundView");
-    if (v != 0) {
-        ((SoundView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("ControlsView");
-    if (v != 0) {
-        ((ControlsView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("VisualsView");
-    if (v != 0) {
-        ((VisualsView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("InterfaceView");
-    if (v != 0) {
-        ((InterfaceView *)v)->initButtons();
         ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
     } else {
         assert(false);

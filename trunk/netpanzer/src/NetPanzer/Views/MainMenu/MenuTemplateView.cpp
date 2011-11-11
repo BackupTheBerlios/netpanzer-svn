@@ -59,7 +59,6 @@ static void bHost()
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("HostView", true);
         Desktop::setVisibility("UnitSelectionView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("HostOptionsView", true);
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
@@ -69,7 +68,6 @@ static void bJoin()
         gameconfig->hostorjoin = _game_session_join;
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("JoinView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("ServerListView", true);

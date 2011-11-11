@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
-#include "FlagSelectionView.hpp"
 #include "2D/Palette.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "IPAddressView.hpp"

@@ -68,7 +68,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Views/MainMenu/Multi/UnitSelectionView.hpp"
-#include "Views/MainMenu/Multi/FlagSelectionView.hpp"
 #include "Views/MainMenu/Multi/UnitColorView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
@@ -194,7 +193,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
-    Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());

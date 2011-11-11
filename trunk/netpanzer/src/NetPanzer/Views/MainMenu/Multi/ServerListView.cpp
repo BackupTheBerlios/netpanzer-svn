@@ -37,7 +37,7 @@ ServerListView::ServerListView()
 {
     setSearchName("ServerListView");
     setTitle("Servers");
-    setSubTitle("");
+    setSubTitle(" Name                         Players/max     Map          Ping   ");
 
     moveTo(bodyTextRect.min + iXY(0, 205));
     resizeClientArea(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
