@@ -40,7 +40,7 @@ PlayerNameView::PlayerNameView() : View()
     // The plus 8 for x and 4 for y are what I put in input field.  Add function to find out,
     // inpit field dimension.
     int CHAR_XPIX = 8; // XXX hardcoded :-/
-    resizeClientArea(INPUT_FIELD_CHARACTERS * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
+    resizeClientArea((INPUT_FIELD_CHARACTERS+1) * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
 
     init();
 } // end PlayerNameView::PlayerNameView

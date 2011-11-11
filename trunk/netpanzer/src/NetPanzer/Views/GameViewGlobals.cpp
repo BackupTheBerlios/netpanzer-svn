@@ -28,7 +28,7 @@ iXY joinPos(mainPos.x+ButonWidth, 7);
 iXY hostPos(joinPos.x+ButonWidth, 7);
 iXY optionsPos(hostPos.x+ButonWidth, 7);
 iXY helpPos(optionsPos.x+ButonWidth, 7);
-iXY nextPos(joinPos.x, helpPos.y+ButonHeight*2);
+iXY nextPos(helpPos.x-55, helpPos.y+ButonHeight*7);
 iXY exitPos(optionsPos.x+ButonWidth, 573);
 iXY creditsPos(0, 0);
 

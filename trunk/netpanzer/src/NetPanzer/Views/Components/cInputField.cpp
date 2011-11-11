@@ -166,7 +166,7 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
     iXY size;
     // XXX (8 is hardcoded here...)
-    size.x = string->maxWidth * 8 + 8;
+    size.x = (string->maxWidth+1) * 8 + 8;
     size.y = Surface::getFontHeight() + 4;
 
     bounds.max = bounds.min + size;

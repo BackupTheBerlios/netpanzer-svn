@@ -38,7 +38,7 @@ IPAddressView::IPAddressView() : View()
     moveTo(iXY(bodyTextRect.min.x, bodyTextRect.min.y + 50));
 
     iXY  area_size = iXY(
-            30 * 8 + 16,
+            31 * 8 + 16,
             Surface::getFontHeight() + 4 + 8);
     resizeClientArea(area_size);
 
