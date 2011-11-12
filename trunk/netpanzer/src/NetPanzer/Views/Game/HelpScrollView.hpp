@@ -37,8 +37,6 @@ protected:
     int  maxYOffset;
     void drawHelpText(Surface &dest, const int &x, const int &y);
 
-    void drawBorder(Surface &windowArea)
-    {}
     ScrollBar *scrollBar;
     std::vector<std::string> text;
 

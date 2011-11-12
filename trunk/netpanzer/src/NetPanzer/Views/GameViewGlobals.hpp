@@ -27,13 +27,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define windowTextColorShadow       (Color::black)
 #define meterColor                  (Color::terreVerte)
 #define meterTextColor              (Color::black)
-#define meterTopLeftBorderColor     (Color::white)
+#define meterTopLeftBorderColor     (Color::lightGray)
 #define meterBottomRightBorderColor (Color::black)
 #define viewHeadingColor            (Color::tan)
 #define meterWidth                  (280)
 
 #define optionsMeterWidth           (148)
-#define optionsMeterStartX          (120)
+#define optionsMeterStartX          (140)
 #define optionsColorMeterStartX     (342)
 
 #define ButonWidth                  (155)

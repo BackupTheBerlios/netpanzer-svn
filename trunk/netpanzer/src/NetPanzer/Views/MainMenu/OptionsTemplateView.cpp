@@ -26,6 +26,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
 
+class Separator:public Component
+{
+public:
+    Separator(int x, int y, int endx, string t, PIX color)
+    {
+        text = t;
+        foreground = color;
+        position.x = x;
+        position.y = y;
+        xend = endx;
+    }
+    
+    void draw(Surface &dest);
+    
+    virtual void render()
+    {
+        // nothing
+    }
+    
+    void actionPerformed(const mMouseEvent &me)
+    {
+        // nothing
+    }
+    
+private:
+    string text;
+    int xend;
+};
+
+void Separator::draw(Surface &dest)
+{    
+    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, Color::white);
+    dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::black);
+    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  Color::white, Color::black);
+    int lentxt = 30+dest.getTextLength(text);
+    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, Color::white);
+    dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
+}
+
 static void bIncreaseScrollRate()
 {
     if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
@@ -126,6 +165,7 @@ void OptionsTemplateView::initButtons()
     //----------------------------------------------------------------------
     int minWidth = 19 * 8;
 
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "VISUAL", Color::white) );
     y += yOffset;
     x = xTextStart;
     checkBoxFullscreen = new CheckBox();
@@ -198,20 +238,25 @@ void OptionsTemplateView::initButtons()
     choiceMiniMapUnitSize->setMinWidth(minWidth);
     choiceMiniMapUnitSize->setStateChangedCallback(this);
     add(choiceMiniMapUnitSize);
-    y += yOffset*4;
+    y += yOffset*2;
    
 // VISUAL OPTIONS
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "INTERFACE", Color::white) );
 
+    y += yOffset;
     x = xTextStart;
     add( new Label( x, y+3, "Scroll Rate:", Color::white) );
     x += optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
     x += optionsMeterWidth + arrowButtonWidth;
     addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseScrollRate);
-    y += yOffset*4;
+    y += yOffset*3;
 
 // SOUND OPTIONS
 
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "SOUND", Color::white) );
+
+    y += yOffset;
     x = xTextStart;
     add( new Label( x, y, "Sound Status:", Color::white) );
     checkBoxSoundEnabled = new CheckBox();
@@ -252,15 +297,6 @@ void OptionsTemplateView::initButtons()
     y += yOffset;
 } // end OptionsTemplateView::initButtons
 
-void Separator(int x, int y, std::string title, Surface &clientArea)
-{
-    clientArea.drawLine(bodyTextRect.min.x, y+3, bodyTextRect.min.x+20, y+3, Color::white);
-    clientArea.drawLine(bodyTextRect.min.x, y+2, bodyTextRect.min.x+20, y+2, Color::black);
-    clientArea.bltStringShadowed(bodyTextRect.min.x+25,y, title.c_str(),  Color::white, Color::black);
-    clientArea.drawLine(bodyTextRect.min.x+30+clientArea.getTextLength(title), y+3, bodyTextRect.max.x, y+3, Color::white);
-    clientArea.drawLine(bodyTextRect.min.x+30+clientArea.getTextLength(title), y+2, bodyTextRect.max.x, y+2, Color::black);
-}
-
 // doDraw
 //---------------------------------------------------------------------------
 void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
@@ -283,18 +319,13 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     int   y               = bodyTextRect.min.y ;
     int yOffset          =  17;
 
-    Separator(bodyTextRect.min.x, y, "VISUAL", clientArea);
-    y += yOffset*6;
-    Separator(bodyTextRect.min.x, y, "INTERFACE", clientArea);
-    y += yOffset*2;
+    y += yOffset*7;
 
     sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 
                     float(gameconfig->scrollrate.getMax())) * 100.0f));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(clientArea, x, y);
     y += yOffset*2;
-
-    Separator(bodyTextRect.min.x, y, "SOUND", clientArea);
     
     // Sound Volume
     y += yOffset*3;

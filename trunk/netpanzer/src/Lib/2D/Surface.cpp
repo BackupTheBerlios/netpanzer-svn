@@ -1546,10 +1546,11 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
     assert(this != 0);
 
     orderCoords(bounds);
-    drawHLine(bounds.min.x,bounds.min.y,bounds.max.x-1,topLeftColor);
-    drawVLine(bounds.min.x,bounds.min.y,bounds.max.y-1,topLeftColor);
-    drawHLine(bounds.min.x,bounds.max.y-1,bounds.max.x-1,bottomRightColor);
-    drawVLine(bounds.max.x-1,bounds.min.y,bounds.max.y-1,bottomRightColor);
+//    drawHLine(bounds.min.x,bounds.min.y,bounds.max.x-1,topLeftColor);
+//    drawVLine(bounds.min.x,bounds.min.y,bounds.max.y-1,topLeftColor);
+//    drawHLine(bounds.min.x,bounds.max.y-1,bounds.max.x-1,bottomRightColor);
+//    drawVLine(bounds.max.x-1,bounds.min.y,bounds.max.y-1,bottomRightColor);
+    RoundRect(bounds,3, topLeftColor);
 
 } // end Surface::drawButtonBorder
 
@@ -1557,7 +1558,8 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
 //--------------------------------------------------------------------------
 void Surface::drawWindowsBorder()
 {
-    drawRect(iRect(0,0,getWidth(),getHeight()), Color::darkGray);
+    //drawRect(iRect(0,0,getWidth(),getHeight()), Color::darkGray);
+    RoundRect(iRect(0,0,getWidth(),getHeight()),8, Color::lightGray);
 } // end Surface::drawWindowsBorder
 
 // bltStringInBox

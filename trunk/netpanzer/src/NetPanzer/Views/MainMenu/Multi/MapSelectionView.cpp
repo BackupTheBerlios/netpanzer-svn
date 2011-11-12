@@ -133,7 +133,6 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
         drawCurMapInfo(clientArea, iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
     }
-
     View::doDraw(viewArea, clientArea);
 
 } // end MapSelectionView::doDraw
