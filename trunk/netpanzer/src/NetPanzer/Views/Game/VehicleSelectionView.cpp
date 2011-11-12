@@ -85,7 +85,7 @@ public:
         : Button(cname), unitType(unit_type), p(vsv)
     {
         bimage.copy(s);
-        setSize( bimage.getWidth(), bimage.getHeight());
+        setSize( bimage.getWidth()-1, bimage.getHeight()-1);
         setLocation(x, y);
         setUnitSelectionBorder();
     }
@@ -168,40 +168,40 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     moveTo(iXY(0, 0));
 
-    const int yOffset  = 15;
+    const int yOffset  = 16;
     const int gapSpace =  1;
 
-    resizeClientArea(48 * 5 + gapSpace * 4, 198 + 84);
+    resizeClientArea(48 * 5 + gapSpace+1 * 4, 198 + 100);
 
     // Power status.
-    iXY pos(0 ,0);
+    iXY pos(0 ,2);
 
     pos.x = 0;
     add( new Label( pos.x+2, pos.y+2, "Static Display:", Color::white) );
 
-    pos.x = getClientRect().getSizeX() - 100;
+    pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonStaticDisplay )
         buttonStaticDisplay = new Button( "ButtonStaticDisplay");
     buttonStaticDisplay->setLabel("On");
     buttonStaticDisplay->setLocation(pos.x, pos.y);
-    buttonStaticDisplay->setSize( 100, 15);
+    buttonStaticDisplay->setSize( 100, 14);
     buttonStaticDisplay->setNormalBorder();
     add(buttonStaticDisplay);
-    pos.y += yOffset;
+    pos.y += yOffset+2;
 
     pos.x = 0;
     add( new Label( pos.x+2, pos.y+2, "Power:", Color::white) );
 
-    pos.x = getClientRect().getSizeX() - 100;
+    pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonPower )
         buttonPower = new Button( "ButtonPower");
     
     buttonPower->setLabel("Off");
     buttonPower->setLocation(pos.x,pos.y);
-    buttonPower->setSize( 100, 15);
+    buttonPower->setSize( 100, 14);
     buttonPower->setNormalBorder();
     add(buttonPower);
-    pos.y += yOffset;
+    pos.y += yOffset+5;
 
     // XXX hardcoded for now
     int CHAR_XPIX = 8;
@@ -264,7 +264,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     }
     
     unitProfileDataY = pos.y;
-    pos.y += 74;
+    pos.y += 73;
 
     //addLabel(pos + 2, "Time Remaining:", Color::white);
     //timeRemainingPos.x = (strlen("Time Remaining: ") + 1) * CHAR_XPIX + 2;
@@ -277,7 +277,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     
     buttonOk->setLabel("Close");
     buttonOk->setLocation(pos.x,pos.y);
-    buttonOk->setSize(100, 15);
+    buttonOk->setSize(100, 14);
     buttonOk->setNormalBorder();
     add(buttonOk);
 
