@@ -266,7 +266,7 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
     setVisible(false);
 
     moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 205);
-    resizeClientArea(bodyTextRect.getSizeX(), 168);
+    resizeClientArea(bodyTextRect.getSizeX()-5, 168);
 
     addMeterButtons(iXY(BORDER_SPACE, BORDER_SPACE));
 

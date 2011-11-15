@@ -21,16 +21,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 
+iRect MenuRect(80, 80, 80+640, 80+470);
+iRect bodyTextRect(MenuRect.min.x +10, MenuRect.min.y+10, MenuRect.max.x-10, MenuRect.max.y-10);
+
+iXY mainPos(MenuRect.min.x+8, MenuRect.min.y-26);
+iXY joinPos(mainPos.x+54, mainPos.y);
+iXY hostPos(joinPos.x+54, mainPos.y);
+iXY optionsPos(hostPos.x+54, mainPos.y);
+iXY helpPos(optionsPos.x+78, mainPos.y);
+iXY exitPos(MenuRect.max.x-140, mainPos.y);
+iXY playPos(MenuRect.max.x-58, MenuRect.max.y);
+iXY returnToGamePos(mainPos);
+iXY resignPos(optionsPos);
+
+iXY creditsPos(0, 0);
 iXY readyPos(480, 32);
 iXY backPos(480, 575);
-iXY mainPos(20, 7);
-iXY joinPos(mainPos.x+ButonWidth, 7);
-iXY hostPos(joinPos.x+ButonWidth, 7);
-iXY optionsPos(hostPos.x+ButonWidth, 7);
-iXY helpPos(optionsPos.x+ButonWidth, 7);
-iXY nextPos(helpPos.x-55, helpPos.y+ButonHeight*7);
-iXY exitPos(optionsPos.x+ButonWidth, 573);
-iXY creditsPos(0, 0);
 
 const iXY sub1(mainPos.x, mainPos.y+ButonHeight);
 const iXY sub2(joinPos.x, sub1.y);
@@ -49,11 +55,7 @@ iXY soundPos = sub3; // XXX 2
 #endif
 
 
-iXY returnToGamePos = mainPos;
-iXY resignPos = joinPos;
 
-iRect bodyTextRect(145, 110, 760, 510);
-iRect MenuRect(138, 99, 775, 566);
 
 bool gDrawGameHelp          = false;
 

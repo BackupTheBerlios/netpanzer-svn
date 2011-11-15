@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Globals meter colors.
 #define windowTextColor             (Color::white)
 #define windowTextColorShadow       (Color::black)
-#define meterColor                  (Color::terreVerte)
-#define meterTextColor              (Color::black)
+#define meterColor                  (Color::darkGray)
+#define meterTextColor              (Color::gray)
 #define meterTopLeftBorderColor     (Color::lightGray)
 #define meterBottomRightBorderColor (Color::black)
 #define viewHeadingColor            (Color::tan)
@@ -42,8 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Button placement locations.
 extern iXY exitPos;
 extern iXY readyPos;
-extern iXY backPos;
-extern iXY nextPos;
+extern iXY playPos;
 extern iXY mainPos;
 extern iXY multiPos;
 extern iXY optionsPos;

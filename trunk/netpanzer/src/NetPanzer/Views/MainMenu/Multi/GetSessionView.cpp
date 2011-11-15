@@ -90,8 +90,6 @@ GetSessionView::GetSessionView() : MenuTemplateView()
 
     add( Button::createSpecialButton( "JOIN", "Join", joinPos) );
     add( Button::createSpecialButton( "HOST", "Host", hostPos) );
-    add( Button::createSpecialButton( "NEXT", "Next", nextPos) );
-    add( Button::createSpecialButton( "BACK", "Back", backPos) );
 } // end GetSessionView::GetSessionView
 
 // doDraw

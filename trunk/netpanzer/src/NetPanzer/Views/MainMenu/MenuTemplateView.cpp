@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Views/Components/Button.hpp"
+#include "Views/Components/newButton.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Particles/Particle2D.hpp"
@@ -43,6 +43,7 @@ Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
 
 //PackedSurface MenuTemplateView::netPanzerLogo;
+
 
 char MenuTemplateView::currentMultiView[] = "GetSessionView";
 char MenuTemplateView::currentView[]      = "";
@@ -155,12 +156,12 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( Button::createSpecialButton( "MAIN", "Main", mainPos) );
-    add( Button::createSpecialButton( "JOIN", "Join", joinPos) );
-    add( Button::createSpecialButton( "HOST", "Host", hostPos) );
-    add( Button::createSpecialButton( "OPTIONS", "Options", optionsPos) );
-    add( Button::createSpecialButton( "HELP", "Help", helpPos) );
-    add( Button::createSpecialButton( "EXITNP", "Exit netPanzer", exitPos) );
+    add( new newButton("MAIN", "Main", mainPos, 0) );
+    add( new newButton( "JOIN", "Join", joinPos, 0) );
+    add( new newButton( "HOST", "Host", hostPos, 0) );
+    add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
+    add( new newButton( "HELP", "Help", helpPos, 0) );
+    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 1) );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -168,13 +169,13 @@ void MenuTemplateView::initPreGameOptionButtons()
 void MenuTemplateView::initInGameOptionButtons()
 {
     if(!gameconfig->quickConnect) {
-        add( Button::createSpecialButton( "RESIGN", "Resign", resignPos) );
-        add( Button::createSpecialButton( "EXITNETNP", "Exit netPanzer", exitPos) );
+        add( new newButton( "RESIGN", "Resign", resignPos, 0) );
+        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 1) );
     } else {
-        add( Button::createSpecialButton( "RESIGN", "Resign", exitPos) );
+        add( new newButton( "RESIGN", "Resign", exitPos, 1) );
     }
 
-    add( Button::createSpecialButton( "CLOSEOPT", "Close Options", returnToGamePos) );
+    add( new newButton( "CLOSEOPT", "Close Options", returnToGamePos, 0) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
@@ -196,7 +197,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
         clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
-        clientArea.RoundRect(MenuRect, 10, Color::yellow);
+        clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 
     } else {        
@@ -208,10 +209,10 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
             throw Exception("Where is the background surface?");
         }
         clientArea.BltRoundRect(MenuRect, 10, Palette::darkGray256.getColorArray());
-        clientArea.RoundRect(MenuRect, 10, Color::yellow);
+        clientArea.RoundRect(MenuRect, 10, Color::gray);
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y, Palette::colorTable6040);
+        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
     }
 
     static char text[] =

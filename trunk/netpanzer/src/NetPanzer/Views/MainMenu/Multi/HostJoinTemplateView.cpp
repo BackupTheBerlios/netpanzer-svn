@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include "HostJoinTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/Components/Button.hpp"
+#include "Views/Components/newButton.hpp"
 #include "HostJoinTemplateView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
@@ -93,7 +93,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setSearchName("HostJoinTemplateView");
     setTitle("");
     setSubTitle("");
-    add( Button::createSpecialButton( "PLAY", "Play", nextPos) );
+    add( new newButton( "PLAY", "Play", playPos, 0) );
 } // end HostJoinTemplateView constructor
 
 // doDraw

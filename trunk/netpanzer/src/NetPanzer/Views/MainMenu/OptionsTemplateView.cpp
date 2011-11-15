@@ -57,11 +57,11 @@ private:
 
 void Separator::draw(Surface &dest)
 {    
-    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, Color::white);
+    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, Color::lightGray);
     dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::black);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  Color::white, Color::black);
+    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  Color::lightGray, Color::black);
     int lentxt = 30+dest.getTextLength(text);
-    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, Color::white);
+    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, Color::lightGray);
     dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
 }
 
