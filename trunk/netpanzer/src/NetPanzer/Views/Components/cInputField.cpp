@@ -318,9 +318,9 @@ void cInputField::draw(Surface &dest)
     checkCursor();
     checkRepeat();
 
-    inputFieldSurface.fill(componentBodyColor);
-    inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
-    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
+    inputFieldSurface.fill(componentTextColor);
+    inputFieldSurface.drawButtonBorder(topLeftBorderColor, Color::gray64);
+    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, componentActiveTextColor);
     inputFieldSurface.blt(dest, pos.x, pos.y);
 } // draw
 

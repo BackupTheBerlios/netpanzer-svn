@@ -21,11 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
+#include "Components/ViewGlobals.hpp"
 
 // Globals meter colors.
 #define windowTextColor             (Color::white)
 #define windowTextColorShadow       (Color::black)
-#define meterColor                  (Color::darkGray)
+#define meterColor                  (componentBodyColor)
 #define meterTextColor              (Color::gray)
 #define meterTopLeftBorderColor     (Color::lightGray)
 #define meterBottomRightBorderColor (Color::black)

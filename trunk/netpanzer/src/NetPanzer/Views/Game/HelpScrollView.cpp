@@ -147,7 +147,7 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.bltString(   4,
                             clientArea.getHeight() - Surface::getFontHeight(),
                             "Note: Use the right mouse button to accomplish fast mouse clicking.",
-                            Color::white);
+                            windowTextColor);
 
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());
@@ -160,7 +160,7 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 //--------------------------------------------------------------------------
 void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
 {
-    PIX color   = Color::white;
+    PIX color   = windowTextColor;
 
     //if (scrollBar != 0)
     //{

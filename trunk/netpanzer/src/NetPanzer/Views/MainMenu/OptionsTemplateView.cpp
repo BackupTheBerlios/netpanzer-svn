@@ -57,11 +57,11 @@ private:
 
 void Separator::draw(Surface &dest)
 {    
-    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, Color::lightGray);
+    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, foreground);
     dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::black);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  Color::lightGray, Color::black);
+    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::black);
     int lentxt = 30+dest.getTextLength(text);
-    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, Color::lightGray);
+    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, foreground);
     dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
 }
 
@@ -165,7 +165,7 @@ void OptionsTemplateView::initButtons()
     //----------------------------------------------------------------------
     int minWidth = 19 * 8;
 
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "VISUAL", Color::white) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "VISUAL", componentActiveTextColor) );
     y += yOffset;
     x = xTextStart;
     checkBoxFullscreen = new CheckBox();
@@ -244,11 +244,11 @@ void OptionsTemplateView::initButtons()
     y += yOffset*2;
    
 // VISUAL OPTIONS
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "INTERFACE", Color::white) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "INTERFACE", componentActiveTextColor) );
 
     y += yOffset;
     x = xTextStart;
-    add( new Label( x, y+3, "Scroll Rate:", Color::white) );
+    add( new Label( x, y+3, "Scroll Rate:", windowTextColor) );
     x += optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
     x += optionsMeterWidth + arrowButtonWidth;
@@ -257,11 +257,11 @@ void OptionsTemplateView::initButtons()
 
 // SOUND OPTIONS
 
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "SOUND", Color::white) );
+    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  "SOUND", componentActiveTextColor) );
 
     y += yOffset;
     x = xTextStart;
-    add( new Label( x, y, "Sound Status:", Color::white) );
+    add( new Label( x, y, "Sound Status:", windowTextColor) );
     checkBoxSoundEnabled = new CheckBox();
     checkBoxSoundEnabled->setLabel(gameconfig->enablesound?"Enabled":"Disabled");
     checkBoxSoundEnabled->setState(gameconfig->enablesound);
@@ -272,7 +272,7 @@ void OptionsTemplateView::initButtons()
     y += yOffset;
 
     x = xTextStart;
-    add( new Label( x, y+3, "Sound Volume:", Color::white) );
+    add( new Label( x, y+3, "Sound Volume:", windowTextColor) );
     x += optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
     x += optionsMeterWidth + arrowButtonWidth;
@@ -281,7 +281,7 @@ void OptionsTemplateView::initButtons()
 
     y += yOffset; 
     x = xTextStart;
-    add( new Label( x, y, "Music Status:", Color::white) );
+    add( new Label( x, y, "Music Status:", windowTextColor) );
     checkBoxMusicEnabled = new CheckBox();
     checkBoxMusicEnabled->setLabel(gameconfig->enablemusic?"Enabled":"Disabled");
     checkBoxMusicEnabled->setState(gameconfig->enablemusic);
@@ -292,7 +292,7 @@ void OptionsTemplateView::initButtons()
     y += yOffset;
 
     x = xTextStart;
-    add( new Label( x, y+3, "Music Volume:", Color::white) );
+    add( new Label( x, y+3, "Music Volume:", windowTextColor) );
     x += optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
     x += optionsMeterWidth + arrowButtonWidth;

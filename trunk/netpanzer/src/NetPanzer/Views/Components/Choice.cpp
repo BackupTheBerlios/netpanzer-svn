@@ -178,7 +178,7 @@ void Choice::draw(Surface &dest)
 
     // Draw the name of the choice.
     dest.bltStringShadowed( position.x, pos.y + adjustedY,
-                            componentName.c_str(), Color::white, Color::black);
+                            componentName.c_str(), componentActiveTextColor, Color::black);
 
     getBounds(r);
 
@@ -186,11 +186,11 @@ void Choice::draw(Surface &dest)
 
     // Draw the border.
     s.RoundRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), 4, Color::gray96);
-    s.RoundRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), 4, Color::white);
+    s.RoundRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), 4, componentActiveTextColor);
     s.FillRoundRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), 4, componentBodyColor);
 
     if (!isOpen)	{
-        s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
+        s.bltStringShadowedCenter(choiceList[index].c_str(), componentActiveTextColor, Color::black);
     } else {
         r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
@@ -201,11 +201,11 @@ void Choice::draw(Surface &dest)
 
             if (i == mouseover) {
                 // Higlight the selected item.
-                s.fill(Color::white);
+                s.fill(componentActiveTextColor);
                 s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
             } else {
-                s.bltStringShadowedCenter(choiceList[i].c_str(), Color::white, Color::black);
+                s.bltStringShadowedCenter(choiceList[i].c_str(), componentActiveTextColor, Color::black);
             }
 
             r.translate(iXY(0, ChoiceItemHeight));

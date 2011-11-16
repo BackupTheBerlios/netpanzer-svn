@@ -157,7 +157,7 @@ void MenuTemplateView::initInGameOptionButtons()
 {
     if(!gameconfig->quickConnect) {
         add( new newButton( "RESIGN", "Resign", resignPos, 0) );
-        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 1) );
+        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
     } else {
         add( new newButton( "RESIGN", "Resign", exitPos, 1) );
     }

@@ -280,7 +280,7 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
 
     clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
                     "Note: Use the right mouse button to accomplish fast mouse clicking.",
-                    Color::white);
+                    windowTextColor);
 
     View::doDraw(viewArea, clientArea);
 

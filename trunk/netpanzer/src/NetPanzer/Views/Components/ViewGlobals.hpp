@@ -23,16 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define topLeftBorderColor           (Color::lightGray)
 #define bottomRightBorderColor       (Color::black)
 
-#define componentBodyColor           (Color::darkGray)
+#define componentBodyColor           (41)
 #define componentTextColor           (Color::black)
 #define componentInActiveTextColor   (Color::gray)
 #define componentActiveTextColor     (Color::lightGray)
 #define componentFocusTextColor      (Color::white)
 
 #define activeWindowTitleTextColor   (Color::white)
-#define activeWindowTitleBodyColor   (Color::darkGray)
+#define activeWindowTitleBodyColor   (componentBodyColor)
 #define inactiveWindowTitleTextColor (Color::gray)
-#define inactiveWindowTitleBodyColor (Color::darkGray)
+#define inactiveWindowTitleBodyColor (componentBodyColor)
 
 extern Uint8 gForeground;
 extern Uint8 gBackground;

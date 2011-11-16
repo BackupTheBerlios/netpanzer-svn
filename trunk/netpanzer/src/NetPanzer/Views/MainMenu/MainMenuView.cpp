@@ -70,5 +70,5 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "Related Tools:\n"
         "   Tobias Blerch, Ingo Ruhnke\n";
 
-    viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
+    viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12);
 } // end MainMenuView::doDraw

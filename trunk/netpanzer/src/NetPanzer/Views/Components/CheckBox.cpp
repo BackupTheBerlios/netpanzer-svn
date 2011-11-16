@@ -53,10 +53,10 @@ void CheckBox::actionPerformed(const mMouseEvent &me)
             callback->stateChanged(this);
         dirty = true;
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED) {
-        textColor = Color::yellow;
+        textColor = componentFocusTextColor;
         dirty = true; // draw text in red
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
-        textColor = Color::white;
+        textColor = componentActiveTextColor;
         dirty = true; // draw defaults;
     }
 

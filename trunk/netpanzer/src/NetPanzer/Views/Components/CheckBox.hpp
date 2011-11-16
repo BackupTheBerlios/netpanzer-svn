@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 #include "Util/Log.hpp"
+#include "ViewGlobals.hpp"
 
 class StateChangedCallback;
 
@@ -42,14 +43,14 @@ public:
             : Component(), state(false), callback(newcallback)
     {
         setSize( 14, 14);
-        textColor = Color::white;
+        textColor = componentActiveTextColor;
     }
 
     CheckBox(const std::string& newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
         setSize( 20+label.length()*8, 14);
-        textColor = Color::white;
+        textColor = componentActiveTextColor;
         dirty = true;
     }
 
