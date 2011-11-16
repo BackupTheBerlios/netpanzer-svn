@@ -193,9 +193,12 @@ void OptionsTemplateView::initButtons()
     {
         while ( modes[cur_mode] )
         {
-            snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
-            res_str[sizeof(res_str)-1] = 0;
-            choiceResolution->addItem(res_str);
+            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) ) 
+            {
+                snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
+                res_str[sizeof(res_str)-1] = 0;
+                choiceResolution->addItem(res_str);
+            }
             ++cur_mode;
         }
     }

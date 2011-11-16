@@ -34,8 +34,6 @@ void newButton::render()
         bimage.bltTrans(surface, 1, 1);
     }
     surface.RoundRect(surface.getRect(), 3, borders[bstate][0]);
-    //surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
-    // blit centered and transparent
     text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
                  (surface.getHeight()/2) - (text.getHeight()/2));        
     dirty = false;

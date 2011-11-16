@@ -93,7 +93,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setSearchName("HostJoinTemplateView");
     setTitle("");
     setSubTitle("");
-    add( new newButton( "PLAY", "Play", playPos, 0) );
+    add( new newButton( "PLAY", "Play", playPos, 1) );
 } // end HostJoinTemplateView constructor
 
 // doDraw

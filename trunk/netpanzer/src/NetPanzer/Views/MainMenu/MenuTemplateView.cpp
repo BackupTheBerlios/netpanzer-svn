@@ -89,18 +89,14 @@ static void bHelp()
 
 static void bExit()
 {
+    Desktop::setVisibilityAllWindows(false);
     GameManager::exitNetPanzer();
 }
 
 //---------------------------------------------------------------------------
 static void bResign()
 {
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
-
     Desktop::setVisibility("AreYouSureResignView", true);
 }
 
@@ -109,22 +105,13 @@ static void bCloseOptions()
 {
     GameManager::setNetPanzerGameOptions();
 
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
 }
 
 //---------------------------------------------------------------------------
 static void bExitNetPanzer()
 {
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
-
     Desktop::setVisibility("AreYouSureExitView", true);
 }
 
@@ -161,7 +148,7 @@ void MenuTemplateView::initPreGameOptionButtons()
     add( new newButton( "HOST", "Host", hostPos, 0) );
     add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
     add( new newButton( "HELP", "Help", helpPos, 0) );
-    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 1) );
+    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 0) );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons

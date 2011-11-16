@@ -95,8 +95,8 @@ void AreYouSureResignView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    resize(screen->getWidth(), screen->getHeight());
-    moveTo(0,0);
+    moveTo(iXY(0, 0));
+    resize(iXY(800, 600));
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
@@ -104,15 +104,13 @@ void AreYouSureResignView::init()
     x += 141 + 10;
     add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
     loaded = true;
-	} // end AreYouSureResignView::init
+} // end AreYouSureResignView::init
 
 // doDraw
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect r(min, max);
-
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
     viewArea.bltStringCenter("Are you sure you wish to Resign?", Color::white);
