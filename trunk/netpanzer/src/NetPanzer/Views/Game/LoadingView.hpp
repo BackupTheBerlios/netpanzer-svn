@@ -65,7 +65,6 @@ public:
     static void loadFinish()
     {
         Desktop::setVisibilityAllWindows(false);
-        GameManager::loadPalette("netp");
 
         // XXX rebuild the particle stuff here for units...
         ParticleInterface::rebuildUnitParticleData();
@@ -85,7 +84,6 @@ public:
 
     static void loadError()
     {
-//        GameManager::loadPalette("netpmenu");
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("MainView", true);
 

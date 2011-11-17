@@ -170,8 +170,6 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    GameManager::loadPalette("netp");
-
     Desktop::add(new GameView());
     Desktop::add(new RankView());
     Desktop::add(new EndRoundView());

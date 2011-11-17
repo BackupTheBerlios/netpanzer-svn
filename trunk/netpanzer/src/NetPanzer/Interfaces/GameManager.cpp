@@ -185,20 +185,15 @@ void GameManager::setVideoMode()
 
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
+    loadPalette("netp");
 
     if(old_res == iXY(0,0)) {
         // users can get annoyed when they see a black screen for half a minute
         // so we display something here... (we're just hoping that palette1 is
         // not black)
-        Palette::color[255].r = 255;
-        Palette::color[255].g = 255;
-        Palette::color[255].b = 255;
-        Screen->setPalette(Palette::color);
         drawTextCenteredOnScreen("Please wait... generating palettes", 255);
     }
     
-    // reset palette
-    Screen->setPalette(Palette::color);
 }
 
 // ******************************************************************
