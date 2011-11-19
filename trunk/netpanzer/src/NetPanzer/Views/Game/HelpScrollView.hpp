@@ -40,7 +40,7 @@ protected:
     ScrollBar *scrollBar;
     std::vector<std::string> text;
 
-    enum { TEXT_GAP_SPACE = 2 };
+    enum { TEXT_GAP_SPACE = 3 };
     void insert(const char *string);
 
     Button * upButton;

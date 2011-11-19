@@ -72,7 +72,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("Outpost Related");
     insert("");
-    insert("  'O'                              Cycle through your outposts");
+    insert("  'O'                              Toggle outpost names");
     insert("  LMC on captured outpost          Displays the outpost view");
     insert("  mouse drag on captured outpost   Select unit spawn point");
     insert("");
@@ -81,12 +81,13 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("  Enter                            Send message to all");
     insert("  Ctrl + 'A'                       Send message to allies");
-    insert("  Ctrl + 'C'                       Send count down message");
+    insert("  'C'                              Send count down message");
     insert("");
     insert("");
     insert("View Related");
     insert("");
     insert("  F1                               Help View");
+    insert("  'B'                              Toggle flag selection window");
     insert("  'D'                              Damage View");
     insert("  'F'                              Flag View");
     insert("  'M'                              Mini Map View");
@@ -107,6 +108,36 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("  ALT + Enter                      Toggle Fullscreen/Windowed mode");
     insert("  F9                               BMP screen shot");
+    insert(" ");
+    insert(" ");
+    insert("Scripting");
+    insert(" ");
+    insert("");
+    insert("Client Related");
+    insert("");
+    insert("  /listcommands                     List of available commands");
+    insert("  /countdown [timeout in seconds]   Generate a countdown");
+    insert("  /quit                             Quit the game");
+    insert("  /help                             Show Help window (same 'F1')");
+    insert("  /say [your talk]                  Send message to all (same 'Enter'");
+    insert("  /teamsay [your talk]              Send message to allies (same Ctrl + 'A')");
+    insert("");
+    insert("Server Related");
+    insert("");
+    insert("  /server listcommands              List of Gameserver available commands");
+    insert("  /server adminlogin [password]     Gameserver admin login");
+    insert("  /server unitspawnlist [list]      List/set spawn units (number)");
+    insert("  /server unitprofiles [list]       List/set spawn units (types)");
+    insert("  /server help                      Show Help window (same 'F1')");
+    insert("  /server map [map name]            Restart game with the given map");
+    insert("  /server autokick [timeout]        Show/set autokick for inactive players");
+    insert("  /server countdown [timeout]       Generate a countdown (same 'c')");
+    insert("  /server say [your talk]           Server say something in chat");
+    insert("  /server listplayers               List players with the assigned number");
+    insert("  /server kick [player number]      Kick a given player");
+    insert("  /server baselimit [max bases]     Show/set the max bases number per player");
+    insert(" ");
+    insert(" ");
     //insert("  Alt + '-'                        Decrease brightness");
     //insert("  Alt + '='                        Increase brightness");
 
@@ -148,7 +179,6 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
                             clientArea.getHeight() - Surface::getFontHeight(),
                             "Note: Use the right mouse button to accomplish fast mouse clicking.",
                             windowTextColor);
-
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());
     //clientArea.bltStringCenter(strBuf, Color::red);
