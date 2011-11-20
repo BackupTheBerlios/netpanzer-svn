@@ -45,6 +45,7 @@ public:
 
     static void runFileInTable(const NPString& filename, const NPString& table);
     static void loadConfigFile(const NPString& filename, const NPString& table);
+    static bool loadSimpleConfig(const NPString& filename);
 
     static lua_State* getLuavm() { return luavm; }
 
@@ -61,6 +62,12 @@ public:
 
     static void setIntValue(const NPString& variable, int n);
     static void setDoubleValue(const NPString& variable, double n);
+
+    static void popElements(int n);
+    static int getIntField(const char* name, const int default_value);
+    static NPString getStringField(const char* name, const NPString& default_value);
+
+
 private:        
     static lua_State *luavm;
 };

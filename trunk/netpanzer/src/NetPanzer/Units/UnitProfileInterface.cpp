@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
-#include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
+#include "Scripts/ScriptManager.hpp"
 #include <ctype.h>
 #include <memory>
 #include <string.h>
@@ -190,129 +190,68 @@ public:
 bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 {
     int temp_int;
-    bool not_done = true;
 
     NPString file_path = "units/profiles/";
     file_path += unitName;
-    file_path += ".pfl";
+    file_path += ".upf";
 
     profile->unitname = unitName;
-    
-    try
+
+    bool isok = ScriptManager::loadSimpleConfig(file_path);
+    if ( isok )
     {
-        IFileStream in(file_path);
-        NPString line;
-        std::vector<NPString> parameters;
+        // loaded file in top
+        profile->hit_points       = ScriptManager::getIntField("hitpoints",    100);
+        profile->attack_factor    = ScriptManager::getIntField("attack",       100);
+        profile->reload_time      = ScriptManager::getIntField("reload",       100);
+        profile->cfg_attack_range = ScriptManager::getIntField("range",         10);
+        profile->cfg_defend_range = ScriptManager::getIntField("defend_range",  10);
+        profile->regen_time       = ScriptManager::getIntField("regen",         60);
+        profile->speed_rate       = ScriptManager::getIntField("speed_rate",    16);
+        profile->speed_factor     = ScriptManager::getIntField("speed_factor",   2);
+        profile->boundBox         = ScriptManager::getIntField("boundbox",      40);
 
-        while( not_done && !in.eof() )
+        profile->imagefile         = ScriptManager::getStringField("image",        "");
+        profile->bodySprite_name   = ScriptManager::getStringField("bodysprite",   "");
+        profile->bodyShadow_name   = ScriptManager::getStringField("bodyshadow",   "");
+        profile->turretSprite_name = ScriptManager::getStringField("turretsprite", "");
+        profile->turretShadow_name = ScriptManager::getStringField("turretshadow", "");
+        profile->soundSelected     = ScriptManager::getStringField("soundselected","");
+        profile->fireSound         = ScriptManager::getStringField("soundfire",    "");
+        profile->weaponType        = ScriptManager::getStringField("weapon",       "");
+
+        ScriptManager::popElements(1);
+
+        temp_int = profile->cfg_attack_range << 5;
+        profile->attack_range = temp_int * temp_int;
+
+        temp_int = profile->cfg_defend_range << 5;
+        profile->defend_range = temp_int * temp_int;
+
+        try
         {
-            std::getline(in,line);
-            string_to_params( line, parameters );
+            profile->bodySprite.load(profile->bodySprite_name);
+            profile->bodyShadow.load(profile->bodyShadow_name);
+            profile->turretSprite.load(profile->turretSprite_name);
+            profile->turretShadow.load(profile->turretShadow_name);
 
-            if ( parameters.size() == 0 )
-            {
-                continue;
-            }
+        }
+        catch (std::exception& e)
+        {
+            LOGGER.warning("Error loading unitprofile sprites '%s': %s",
+                           file_path.c_str(), e.what() );
 
-            if ( parameters[0] == "HITPOINTS" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->hit_points = (short) temp_int;
-            }
-            else if ( parameters[0] == "ATTACK_FACTOR" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->attack_factor = (short) temp_int;
-            }
-            else if ( parameters[0] == "RELOAD_TIME" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->reload_time = (char) temp_int;
-            }
-            else if ( parameters[0] == "RANGE_MAX" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->cfg_attack_range = temp_int;
-                temp_int *= 32;         // adjust new values
-                temp_int *= temp_int;
-                profile->attack_range = (long) temp_int;
-            }
-            else if ( parameters[0] == "REGEN_TIME" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->regen_time = (short) temp_int;
-            }
-            else if ( parameters[0] == "DEFEND_RANGE" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->cfg_defend_range = temp_int;
-                temp_int *= 32;         // adjust new values
-                temp_int *= temp_int;
-                profile->defend_range = (long) temp_int;
-            }
-            else if ( parameters[0] == "SPEED_RATE" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->speed_rate = (char) temp_int;
-            }
-            else if ( parameters[0] == "SPEED_FACTOR" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->speed_factor = (char) temp_int;
-            }
-            else if ( parameters[0] == "IMAGE" )
-            {
-                profile->imagefile = parameters[1];
-            }
-            else if ( parameters[0] == "BODYSPRITE" )
-            {
-                profile->bodySprite_name = parameters[1];
-                profile->bodySprite.load(parameters[1]);
-            }
-            else if ( parameters[0] == "BODYSHADOW" )
-            {
-                profile->bodyShadow_name = parameters[1];
-                profile->bodyShadow.load(parameters[1]);
-            }
-            else if ( parameters[0] == "TURRETSPRITE" )
-            {
-                profile->turretSprite_name = parameters[1];
-                profile->turretSprite.load(parameters[1]);
-            }
-            else if ( parameters[0] == "TURRETSHADOW" )
-            {
-                profile->turretShadow_name = parameters[1];
-                profile->turretShadow.load(parameters[1]);
-            }
-            else if ( parameters[0] == "SOUNDSELECTED" )
-            {
-                profile->soundSelected = parameters[1];
-            }
-            else if ( parameters[0] == "FIRESOUND" )
-            {
-                profile->fireSound = parameters[1];
-            }
-            else if ( parameters[0] == "WEAPON" )
-            {
-                profile->weaponType = parameters[1];
-            }
-            else if ( parameters[0] == "BOUNDBOX" )
-            {
-                sscanf( parameters[1].c_str(), "%d", &temp_int );
-                profile->boundBox = (short) temp_int;
-            }
-            else if ( parameters[0] == "END" || parameters[0] == "END;" )
-            {
-                not_done = false;
-            }
-	} // ** while ( !feof )
-    } catch(std::exception& e) {
-        LOGGER.warning("Error while reading unitprofile '%s': %s",
-                       file_path.c_str(), e.what() );
-        return false;
+            isok = false;
+        }
+
     }
 
-    return true;
+    if ( ! isok )
+    {
+        LOGGER.warning("Can't load unit profile '%s'", unitName.c_str());
+    }
+
+    return isok;
 } // function
 
 vector<UnitProfile *> UnitProfileInterface::profiles;

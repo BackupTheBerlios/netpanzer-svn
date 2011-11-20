@@ -410,6 +410,38 @@ ScriptManager::loadConfigFile(const NPString& filename, const NPString& table)
     }
 }
 
+bool
+ScriptManager::loadSimpleConfig(const NPString& filename)
+{
+    lua_newtable(luavm);
+
+    int r = luaL_loadfile(luavm, filesystem::getRealName(filename.c_str()).c_str());
+    if ( r )
+    {
+        LOGGER.warning("Error in loadSimpleConfig: %s\n",lua_tostring(luavm,-1));
+        lua_pop(luavm,2);
+        return false;
+    }
+
+    lua_pushvalue(luavm, -2);
+    if ( ! lua_setfenv(luavm, -2) )
+    {
+        LOGGER.warning("Error in loadSimpleConfig: can't set environment.");
+        lua_pop(luavm,2);
+        return false;
+    }
+
+    if ( lua_pcall(luavm, 0, 0, 0) )
+    {
+        LOGGER.warning("Error in loadConfigFile: %s\n",lua_tostring(luavm,-1));
+        lua_pop(luavm,2);
+        return false;
+    }
+
+    // the new table is in the stack, do something!!!
+    return true;
+}
+
 void
 ScriptManager::PrepareMetaTable(const NPString& metaName,
                             ScriptVarBindRecord * getters,
@@ -504,4 +536,46 @@ ScriptManager::setDoubleValue(const NPString& variable, double value)
     lua_setfield(luavm, -2, finalName.c_str());
 
     lua_pop(luavm,1);
+}
+
+void
+ScriptManager::popElements(int n)
+{
+    lua_pop(luavm, n);
+}
+
+int
+ScriptManager::getIntField(const char* name, const int default_value)
+{
+    int res;
+    lua_getfield(luavm, -1, name);
+    int n = lua_tonumber(luavm, -1);
+    if ( !n && ! lua_isnumber(luavm, -1) )
+    {
+        res = default_value;
+    }
+    else
+    {
+        res = n;
+    }
+    lua_pop(luavm, 1);
+    return res;
+}
+
+NPString
+ScriptManager::getStringField(const char* name, const NPString& default_value)
+{
+    NPString res;
+    lua_getfield(luavm, -1, name);
+    const char *s = lua_tostring(luavm, -1);
+    if ( !s )
+    {
+        res = default_value;
+    }
+    else
+    {
+        res.assign(s);
+    }
+    lua_pop(luavm, 1);
+    return res;
 }

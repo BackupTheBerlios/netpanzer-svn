@@ -194,8 +194,8 @@ static int npmodule_listProfiles (lua_State *L)
 {
     const char profilesPath[] = "units/profiles/";
 
-    // scan directory for .pfl files
-    std::string suffix = ".pfl";
+    // scan directory for .upf files
+    std::string suffix = ".upf";
     char **list = filesystem::enumerateFiles(profilesPath);
 
     int tindex = 0; // will push ++tindex
