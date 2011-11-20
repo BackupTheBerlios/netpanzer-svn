@@ -42,6 +42,8 @@ enum { _map_cycle_server_state_idle,
        _map_cycle_server_state_cycle_next_map,
        _map_cycle_server_state_load_map,
        _map_cycle_server_state_wait_for_client_map_load,
+       _map_cycle_server_state_load_unit_profiles,
+       _map_cycle_server_state_sync_profiles,
        _map_cycle_server_state_respawn_players
      };
 
@@ -73,6 +75,8 @@ Timer GameControlRulesDaemon::map_cycle_fsm_server_map_load_timer;
 int GameControlRulesDaemon::map_cycle_fsm_client_state = _map_cycle_client_idle;
 bool GameControlRulesDaemon::map_cycle_fsm_client_respawn_ack_flag = false;
 char GameControlRulesDaemon::map_cycle_fsm_client_map_name[256];
+
+static unsigned int sync_profile_index = 0;
 
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::setStateServerInProgress()
@@ -253,7 +257,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 char str_buf[128];
 
                 if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
-                    map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
+                    map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
                 }
 
                 sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
@@ -264,10 +268,38 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         case _map_cycle_server_state_wait_for_client_map_load : {
                 if ( map_cycle_fsm_server_map_load_timer.count() ) {
                     ConsoleInterface::postMessage(Color::white, false, 0, "game started.");
+                    map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
+                }
+            }
+            break;
+
+        case _map_cycle_server_state_load_unit_profiles: {
+                UnitProfileInterface::loadUnitProfiles();
+                Uint8 data[ _MAX_NET_PACKET_SIZE ];
+                NetMessage *pmsg = (NetMessage*)&data;
+                int len = UnitProfileInterface::fillProfileResetMessage(pmsg);
+                SERVER->broadcastMessage(pmsg, len);
+                sync_profile_index = 0;
+                map_cycle_fsm_server_state = _map_cycle_server_state_sync_profiles;
+            }
+            break;
+
+        case _map_cycle_server_state_sync_profiles : {
+                if ( sync_profile_index <= UnitProfileInterface::getNumUnitTypes() )
+                {
+                    Uint8 data[ _MAX_NET_PACKET_SIZE ];
+                    NetMessage *pmsg = (NetMessage*)&data;
+                    int len = UnitProfileInterface::fillProfileSyncMessage(pmsg, sync_profile_index);
+                    SERVER->broadcastMessage(pmsg, len);
+                    sync_profile_index++;
+                }
+                if ( sync_profile_index >= UnitProfileInterface::getNumUnitTypes() )
+                {
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
                 }
             }
             break;
+
 
         case _map_cycle_server_state_respawn_players : {
                 SystemResetGameLogic reset_game_logic_mesg;
@@ -375,6 +407,7 @@ void GameControlRulesDaemon::checkGameRules()
         {
             if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) )
             {
+                PlayerInterface::resetPlayerUnitConfig( player_state->getID() );
                 GameManager::spawnPlayer( player_state->getID() );
             }
         }

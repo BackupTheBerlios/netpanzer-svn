@@ -96,20 +96,28 @@ static int npmodule_kick (lua_State *L)
 
 static int npmodule_listPlayers (lua_State *L)
 {
-    std::stringstream ss("");
+    int tindex = 0; // will push ++tindex
+    lua_newtable(L);
 
     for ( int n = 0; n < PlayerInterface::getMaxPlayers(); n++)
     {
         PlayerState *p = PlayerInterface::getPlayer(n);
         if ( ! p->isFree() )
         {
-            ss << ' ' << n << " - "
-               << (p->isAllocated() ? "<preconnect>" : p->getName())
-               << " |";
+            lua_newtable(L);
+            lua_pushinteger(L, n);
+            lua_setfield(L, -2, "id");
+
+            lua_pushstring(L, p->isAllocated() ? "<preconnect>" : p->getName().c_str());
+            lua_setfield(L, -2, "name");
+
+            lua_pushstring(L, PlayerInterface::isLocalPlayer(n) ? "local" : SERVER->getIP(n).c_str());
+            lua_setfield(L, -2, "ip");
+
+            lua_rawseti(L, -2, ++tindex);
         }
     }
 
-    lua_pushstring( L, ss.str().c_str() );
     return 1;
 }
 
@@ -143,13 +151,14 @@ static int npmodule_map (lua_State *L)
 
 static int npmodule_listMaps (lua_State *L)
 {
-    std::stringstream ss("");
-
     const char mapsPath[] = "maps/";
 
     // scan directory for .npm files
     std::string suffix = ".npm";
     char **list = filesystem::enumerateFiles(mapsPath);
+
+    int tindex = 0; // will push ++tindex
+    lua_newtable(L);
 
     for (char **i = list; *i != NULL; i++)
     {
@@ -171,13 +180,54 @@ static int npmodule_listMaps (lua_State *L)
                     mapname += c;
                 }
 
-                ss << mapname << ',';
+                lua_pushstring( L, mapname.c_str() );
+                lua_rawseti(L, -2, ++tindex);
             }
         }
     }
     filesystem::freeList(list);
 
-    lua_pushstring( L, ss.str().c_str() );
+    return 1;
+}
+
+static int npmodule_listProfiles (lua_State *L)
+{
+    const char profilesPath[] = "units/profiles/";
+
+    // scan directory for .pfl files
+    std::string suffix = ".pfl";
+    char **list = filesystem::enumerateFiles(profilesPath);
+
+    int tindex = 0; // will push ++tindex
+    lua_newtable(L);
+
+    for (char **i = list; *i != NULL; i++)
+    {
+        std::string filename = profilesPath;
+        filename.append(*i);
+
+        if ( !filesystem::isDirectory(filename.c_str()) )
+        {
+            if ( filename.size() >= suffix.size()
+                && (filename.compare( filename.size() - suffix.size(),
+                                      suffix.size(), suffix) == 0) )
+            {
+                std::string profilename;
+                size_t p = 0;
+                char c;
+                while( (c = (*i)[p++]) != 0) {
+                    if(c == '.')
+                        break;
+                    profilename += c;
+                }
+
+                lua_pushstring( L, profilename.c_str() );
+                lua_rawseti(L, -2, ++tindex);
+            }
+        }
+    }
+    filesystem::freeList(list);
+
     return 1;
 }
 
@@ -193,6 +243,7 @@ static const luaL_Reg npmodule[] =
     {"listplayers",   npmodule_listPlayers},
     {"map",           npmodule_map},
     {"listmaps",      npmodule_listMaps},
+    {"listprofiles",  npmodule_listProfiles},
     {NULL, NULL}
 };
 

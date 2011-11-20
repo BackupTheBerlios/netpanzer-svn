@@ -73,8 +73,9 @@ ClientMessageRouter::routeMessage(const NetPacket* packet)
             break;
 
         case _net_message_class_unit_profile:
+            UnitProfileInterface::processNetMessage(message, packet->size);
+            if ( ! ClientConnectDaemon::isIdle() )
             {
-                UnitProfileInterface::processNetMessage(message, packet->size);
                 ConnectMesgClientSendNextUnit msg;
                 CLIENT->sendMessage(&msg, sizeof(msg));
 //                CLIENT->sendRemaining();

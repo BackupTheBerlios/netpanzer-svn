@@ -105,7 +105,7 @@ public:
         return local_player_index;
     }
 
-    static void resetPlayerStats();
+    static void resetPlayerStats(bool keepAdmin = false);
 
     static int getActivePlayerCount();
 
@@ -115,6 +115,14 @@ public:
     static PlayerID countPlayers();
 
     static void spawnPlayer( PlayerID player_id, const iXY &location );
+
+    static void resetPlayerUnitConfig( PlayerID player_id )
+    {
+        if ( player_id < getMaxPlayers() )
+        {
+            player_lists[player_id].unit_config.initialize();
+        }
+    }
 
     static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
 

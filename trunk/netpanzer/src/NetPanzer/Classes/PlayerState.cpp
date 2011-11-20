@@ -182,7 +182,7 @@ void PlayerState::setName(const std::string& newname)
     } while (recheck);
 }
 
-void PlayerState::resetStats()
+void PlayerState::resetStats(bool keepAdmin)
 {
     kills  = 0;
     kill_points = 0;
@@ -191,7 +191,7 @@ void PlayerState::resetStats()
     total = 0;
     objectives_held = 0;
     stats_locked = false;
-    admin_flag = false;
+    if ( ! keepAdmin ) admin_flag = false;
 }
 
 void PlayerState::resetAutokick()

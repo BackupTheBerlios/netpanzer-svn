@@ -1,3 +1,23 @@
+local splitsay = function(player, prefix, tbl)
+    local s = "";
+    local i = 0;
+    while ( i < #tbl )
+    do
+        i = i + 1;
+        if ( #s + #tbl[i] > 80 ) then
+            netpanzer.serversayto(player, prefix .. s);
+            s = tbl[i];
+        else
+            if ( #s > 0 ) then s = s .. ',' end
+            s = s .. tbl[i];
+        end
+    end
+
+    if ( #s > 0 ) then
+        netpanzer.serversayto(player, prefix .. s);
+    end
+end;
+
 ServerCommands =
 {
     say_help = "Says something to all players as server.",
@@ -9,8 +29,14 @@ ServerCommands =
 
     listplayers_help = "List the players with their Id",
     listplayers = function(param, player)
-        if param then
-            netpanzer.serversayto(player, "List of players:" .. netpanzer.listplayers());
+        netpanzer.serversayto(player, 'Listing players:');
+        local players = netpanzer.listplayers();
+        local i = 0;
+        while ( i < #players )
+        do
+            i = i + 1;
+            local p = players[i];
+            netpanzer.serversayto(player, p.id .. " - " .. p.name .. " ip: " .. p.ip);
         end
     end,
 
@@ -28,22 +54,26 @@ ServerCommands =
 
     listmaps_help = "List the available maps in server",
     listmaps = function(param, player)
-        netpanzer.serversayto(player, netpanzer.listmaps());
+        netpanzer.serversayto(player, 'Listing maps:');
+        splitsay(player, '', netpanzer.listmaps());
+    end,
+
+    listprofiles_help = "List the available unit profiles in server",
+    listprofiles = function(param, player)
+        netpanzer.serversayto(player, 'Listing profiles:');
+        splitsay(player, '', netpanzer.listprofiles());
     end,
 
     listcommands_help = "List the server commands",
     listcommands = function(param, player)
-        local out;
+        netpanzer.serversayto(player, 'Listing commands:');
+        local out = {};
         for k,v in pairs(ServerCommands) do
             if type(v) == "function" then
-                if out then
-                    out = out .. ", " .. k;
-                else
-                    out = k;
-                end
+                table.insert(out,k);
             end
         end
-        netpanzer.serversayto(player, out);
+        splitsay(player, '', out);
     end,
 
     _help = "Type /server help <wanted_command> or /server listcommands",

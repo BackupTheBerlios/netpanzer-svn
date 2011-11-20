@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConfigVariable.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 
+#define DEFAULT_UNIT_PROFILES "Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer"
+
 enum { _mini_map_objective_draw_mode_solid_rect,
        _mini_map_objective_draw_mode_outline_rect,
        _mini_map_objective_draw_mode_last

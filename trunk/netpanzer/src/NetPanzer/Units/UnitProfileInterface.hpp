@@ -66,6 +66,8 @@ class UnitProfileInterface
 {
 protected:
     static vector<UnitProfile *> profiles;
+
+    static void doLoadUnitProfiles();
     
 public:
     static void clearProfiles();
@@ -79,6 +81,7 @@ public:
     }
 
     static int fillProfileSyncMessage(NetMessage* message, int profile_id);
+    static int fillProfileResetMessage(NetMessage* message);
     static UnitProfile* loadProfileFromMessage(const NetMessage* message, size_t size);
     static void processNetMessage(const NetMessage* net_message, size_t size);
     static void handleProfileDescMessage(const NetMessage* net_message, size_t size);

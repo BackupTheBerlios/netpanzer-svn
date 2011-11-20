@@ -191,7 +191,7 @@ void PlayerInterface::initialize(const unsigned int _max_players)
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
         player_lists[ player_id ].setID( player_id );
-        player_lists[ player_id ].resetStats();
+        player_lists[ player_id ].resetStats(false);
         player_lists[ player_id ].setStateFree();
         sprintf( temp_str, "Player %u", player_id );
         player_lists[ player_id ].setName( temp_str );
@@ -210,7 +210,7 @@ void PlayerInterface::initialize(const unsigned int _max_players)
 
 void PlayerInterface::reset()
 {
-    resetPlayerStats();
+    resetPlayerStats(countPlayers() > 0);
     resetAllianceMatrix(); // XXX ALLY
 }
 
@@ -269,14 +269,14 @@ void PlayerInterface::unlockPlayerStats()
     SDL_mutexV(mutex);
 }
 
-void PlayerInterface::resetPlayerStats()
+void PlayerInterface::resetPlayerStats(bool keepAdmin)
 {
     PlayerID player_id;
 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
-        player_lists[ player_id ].resetStats();
+        player_lists[ player_id ].resetStats(keepAdmin);
     } // ** for
     SDL_mutexV(mutex);
 }
@@ -328,7 +328,7 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         if ( player_lists[ player_id ].isFree() )
         {
             player_lists[ player_id ].setStateAllocated();
-            player_lists[ player_id ].resetStats();
+            player_lists[ player_id ].resetStats(false);
             player_lists[ player_id ].unit_config.initialize();
             res = &player_lists[ player_id ];
             break;

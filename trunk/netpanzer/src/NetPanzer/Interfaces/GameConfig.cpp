@@ -138,7 +138,7 @@ void GameConfig::registerScript(const NPString& table_name)
 {
     if ( ! game_unit_profiles )
     {
-        game_unit_profiles = new NPString("Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer");
+        game_unit_profiles = new NPString(DEFAULT_UNIT_PROFILES);
     }
 
     if ( ! game_unit_spawnlist )

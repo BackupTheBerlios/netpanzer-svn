@@ -36,7 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum
 {
-    _profile_msg_profile_desc = 0
+    _profile_msg_profile_desc = 0,
+    _profile_msg_reset
 };
 
 class ByteBufferWriter
@@ -328,10 +329,8 @@ UnitProfileInterface::clearProfiles()
     profiles.clear();
 }
 
-void UnitProfileInterface::loadUnitProfiles( void )
+void UnitProfileInterface::doLoadUnitProfiles()
 {
-    clearProfiles();
-
     std::vector<NPString> plist;
     NPString pl = *GameConfig::game_unit_profiles;
 
@@ -341,10 +340,25 @@ void UnitProfileInterface::loadUnitProfiles( void )
     {
         addLocalProfile(plist[n]);
     }
+}
+
+void UnitProfileInterface::loadUnitProfiles( void )
+{
+    clearProfiles();
+
+    doLoadUnitProfiles();
 
     if ( profiles.size() == 0 )
     {
-        LOGGER.warning("Didn't load ANY PROFILE!!! I should die.");
+        LOGGER.warning("Error loading profiles provided by user, trying defaults");
+
+        GameConfig::game_unit_profiles->assign(DEFAULT_UNIT_PROFILES);
+        doLoadUnitProfiles();
+
+        if ( profiles.size() == 0 )
+        {
+            LOGGER.warning("Didn't load ANY PROFILE!!! I should die.");
+        }
     }
 //    addLocalProfile("Manta");
 //    addLocalProfile("Panther1");
@@ -437,6 +451,18 @@ UnitProfileInterface::fillProfileSyncMessage(NetMessage* message, int profile_id
     return bb.writedBytesCount();
 }
 
+int
+UnitProfileInterface::fillProfileResetMessage(NetMessage* message)
+{
+    ByteBufferWriter bb((unsigned char *)message, _MAX_NET_PACKET_SIZE);
+
+    bb.writeInt8( _net_message_class_unit_profile );
+    bb.writeInt8( _profile_msg_reset );
+
+    return bb.writedBytesCount();
+}
+
+
 UnitProfile *
 UnitProfileInterface::loadProfileFromMessage(const NetMessage *message, size_t size)
 {
@@ -487,6 +513,10 @@ UnitProfileInterface::processNetMessage(const NetMessage* net_message, size_t si
     {
         case _profile_msg_profile_desc:
             handleProfileDescMessage(net_message, size);
+            break;
+
+        case _profile_msg_reset:
+            clearProfiles();
             break;
 
         default:

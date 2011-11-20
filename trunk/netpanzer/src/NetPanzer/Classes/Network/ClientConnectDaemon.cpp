@@ -34,12 +34,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Game/LoadingView.hpp"
 
-enum { _connect_state_idle,
+enum { _connect_state_idle = 0,
        _connect_state_waiting_link,
        _connect_state_waiting_connect_start,
        _connect_state_waiting_connect_result,
        _connect_state_wait_for_server_game_setup,
        _connect_state_setup_client_game,
+       _connect_state_sync_profiles,
        _connect_state_connect_failure
      };
 
@@ -182,6 +183,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
     case  _connect_state_sync_complete : {
             LoadingView::append( "Game Synchronized" );
             LoadingView::loadFinish();
+            connection_state = _connect_state_idle;
         }
         break;
     }
@@ -376,7 +378,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     LoadingView::update( str_buf );
 
                     CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
-                    connection_state = _connect_state_idle;
+                    connection_state = _connect_state_sync_profiles;
                 } else {
                     ConnectMesgClientGameSetupPing client_game_setup_ping;
 
@@ -388,6 +390,10 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
             break;
 
 
+        case _connect_state_sync_profiles : {
+                // nothing, will change when sync complete
+            }
+            break;
         case _connect_state_connect_failure : {
                 if ( failure_display_timer.count() == true ) {
                     LoadingView::loadError();

@@ -53,6 +53,8 @@ public:
 
     static void serverConnectionBroken();
 
+    static bool isIdle() { return ! connection_state; }
+
 };
 
 #endif // ** _CLIENTCONNECTDAEMON_HPP

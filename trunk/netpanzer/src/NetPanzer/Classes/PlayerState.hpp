@@ -94,7 +94,7 @@ public:
 
     void resetAutokick();
     bool checkAutokick();
-    void resetStats();
+    void resetStats(bool keepAdmin);
     void lockStats();
     void unlockStats();
     short getKills() const;
