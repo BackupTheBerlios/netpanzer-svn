@@ -99,6 +99,8 @@ ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
     filesystem::freeList(list);
 
     flags.create( FLAG_WIDTH, FLAG_HEIGHT, names.size());
+    Surface tmpflags;
+    tmpflags.create( FLAG_WIDTH, FLAG_HEIGHT, 1);
 
     sort(names.begin(), names.end());
     string path(DEFAULT_FLAGS_PATH);
@@ -106,7 +108,8 @@ ResourceManager::loadAllFlags(Surface& flags, vector<string>& names)
     for (vector<string>::size_type i = 0; i < names.size(); i++)
     {
         flags.setFrame(i);
-        flags.loadBMP((path+names[i]).c_str(), false);
+        tmpflags.loadBMP((path+names[i]).c_str(), false);
+        tmpflags.blt(flags, 0, 0);
     }
     
     return names.size();
