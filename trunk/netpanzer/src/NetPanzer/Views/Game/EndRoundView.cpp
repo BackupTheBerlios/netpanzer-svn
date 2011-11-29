@@ -58,12 +58,17 @@ static const char * stats_format = "%-20s%6i%7i%7i%6i";
 EndRoundView::EndRoundView() : SpecialButtonView()
 {
     setSearchName("EndRoundView");
-//    setTitle("Round is over");
-//    setSubTitle("");
+    setTitle("Round stats");
+    setSubTitle("");
 
     setAllowResize(false);
+    setAllowMove(false);
+    setVisible(false);
+    setBordered(false);
+
     int x = (screen->getWidth() / 2) - 250;
-    moveTo(iXY(x,10));
+    int y = (screen->getHeight() / 2) - 250;
+    moveTo(iXY(x, y));
     resize(iXY(500, 500));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
@@ -74,6 +79,11 @@ EndRoundView::EndRoundView() : SpecialButtonView()
     colorImage.loadBMP("pics/default/playerColor.bmp");
 
     selected_line = -1;
+    RectWinner = getClientRect();
+    RectWinner.min.x = RectWinner.min.y = 0;
+    RectStates = RectWinner;
+    RectWinner.max.y = HEADER_HEIGHT-10;
+    RectStates.min.y = HEADER_HEIGHT;
 
 } // end EndRoundView::EndRoundView
 
@@ -82,21 +92,15 @@ EndRoundView::EndRoundView() : SpecialButtonView()
 void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    RectWinner = getClientRect();
-    RectWinner.min.x = RectWinner.min.y = 0;
-    RectStates = RectWinner;
-    RectWinner.max.y = HEADER_HEIGHT-10;
-    clientArea.BltRoundRect(RectWinner, 15, Palette::green256.getColorArray());
-    clientArea.RoundRect(RectWinner,15, Color::gray);
-
-    RectStates.min.y = HEADER_HEIGHT;
+    clientArea.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
+    clientArea.RoundRect(RectWinner,14, Color::gray);
     
-    clientArea.BltRoundRect(RectStates, 15, Palette::brightness256.getColorArray());
-    clientArea.RoundRect(RectStates, 15, Color::gray);
+    clientArea.BltRoundRect(RectStates, 14, Palette::brightness256.getColorArray());
+    clientArea.RoundRect(RectStates, 14, Color::gray);
     
     drawPlayerStats(clientArea, flagHeight);
 
-    //View::doDraw(viewArea, clientArea);
+    View::doDraw(viewArea, clientArea);
 } // end doDraw
 
 class StatesSortByFrags
@@ -212,10 +216,6 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
 }
 
-void EndRoundView::notifyMoveTo()
-{
-}
-
 void EndRoundView::lMouseDown(const iXY& pos)
 {
     // XXX ALLY
@@ -263,4 +263,11 @@ void EndRoundView::doActivate()
 void EndRoundView::doDeactivate()
 {
     selected_line = -1;
+}
+
+void EndRoundView::checkResolution(iXY oldResolution, iXY newResolution)
+{
+    int x = (screen->getWidth() / 2) - 250;
+    int y = (screen->getHeight() / 2) - 250;
+    moveTo(iXY(x, y));
 }

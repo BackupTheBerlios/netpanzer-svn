@@ -50,7 +50,7 @@ public:
     }
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void notifyMoveTo();
+    void checkResolution(iXY oldResolution, iXY newResolution);
 
 protected:
     virtual void lMouseDown(const iXY &pos);
