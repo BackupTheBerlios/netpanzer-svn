@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseEvent.hpp"
 
 #include <list>
+#include <algorithm>
 
 using namespace std;
 
@@ -164,8 +165,10 @@ protected:
 
     // Input Field Functions
     cInputField* addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected, const int maxCharCount);
+    void removeInputField(cInputField * cif);
     int  findInputFieldContaining(const iXY &pos);
     void drawInputFields(Surface &clientArea);
+
 
     /////////////////////////////////
     void draw(Surface& drawon);
@@ -254,6 +257,15 @@ public:
         }
         components.clear();
         focusComponent      = 0;
+    }
+
+    void removeComponent(Component *c)
+    {
+        components.erase(std::remove(components.begin(), components.end(), c), components.end());
+        if ( focusComponent == c )
+        {
+            focusComponent = 0;
+        }
     }
 
     // Accessor Functions.

@@ -39,6 +39,8 @@ private:
     masterserver::ServerList serverlist;
     masterserver::ServerQueryThread* queryThread;
 
+    Surface lock_image;
+
     static void buttonRefresh();
 };
 

@@ -56,6 +56,7 @@ bool      GameConfig::game_allowmultiip = true;
 NPString* GameConfig::game_unit_profiles = 0;
 NPString* GameConfig::game_unit_spawnlist = 0;
 NPString* GameConfig::game_adminpass = 0;
+NPString* GameConfig::game_gamepass = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -118,6 +119,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "unit_profiles",     GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
     { "unit_spawnlist",    GETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         GETSVTYPE_STRING,  &GameConfig::game_adminpass},
+    { "gamepass",          GETSVTYPE_STRING,  &GameConfig::game_gamepass},
     {0,0}
 };
 
@@ -131,6 +133,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "unit_profiles",     SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
     { "unit_spawnlist",    SETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         SETSVTYPE_STRING,  &GameConfig::game_adminpass},
+    { "gamepass",          SETSVTYPE_STRING,  &GameConfig::game_gamepass},
     {0,0}
 };
 
@@ -149,6 +152,11 @@ void GameConfig::registerScript(const NPString& table_name)
     if ( ! game_adminpass )
     {
         game_adminpass = new NPString("");
+    }
+
+    if ( ! game_gamepass )
+    {
+        game_gamepass = new NPString("");
     }
 
     ScriptManager::bindStaticVariables(table_name + ".video",
@@ -170,6 +178,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     :
       hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       quickConnect("quickconnect", false),
+      needPassword("needpassword", false),
       serverConnect("serverconnect", ""),
     
       playername("name", "Player"),

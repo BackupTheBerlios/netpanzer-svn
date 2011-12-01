@@ -792,18 +792,33 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
     ClientConnectJoinRequestAck join_request_ack;
 
     join_request_ack.setResultCode(_join_request_result_success);
+    bool isbad = false;
+    NPString pass;
+    join_request_mesg->getPassword(pass);
 
     if ( join_request_mesg->getProtocolVersion() != NETPANZER_PROTOCOL_VERSION )
     {
         join_request_ack.setResultCode(_join_request_result_invalid_protocol);
+        isbad = true;
     }
-    else
+
+    if ( !isbad && GameConfig::game_gamepass->size() > 0)
+    {
+        if ( GameConfig::game_gamepass->compare(pass) != 0 )
+        {
+            join_request_ack.setResultCode(_join_request_result_wrong_password);
+            isbad = true;
+        }
+    }
+
+    if ( !isbad )
     {
         if ( !ServerConnectDaemon::inConnectQueue( packet->fromClient ) )
         {
             if (connect_queue.size() > 25)
             {
                 join_request_ack.setResultCode(_join_request_result_server_busy);
+                isbad = true;
             }
             else
             {
@@ -816,6 +831,11 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
     packet->fromClient->sendMessage(&join_request_ack,
                          sizeof(ClientConnectJoinRequestAck));
     packet->fromClient->sendRemaining();
+
+    if ( isbad )
+    {
+        SERVER->dropClient(packet->fromClient);
+    }
 }
 
 void ServerConnectDaemon::processNetPacket(const NetPacket* packet)

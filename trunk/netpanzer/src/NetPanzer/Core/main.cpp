@@ -132,19 +132,19 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> connect_option('c', "connect",
             "Connect to the specified netpanzer server", "");
     commandline.add(&connect_option);
-    bool_option dedicated_option('d', "dedicated",
-            "Run as dedicated server", false);
+    bool_option dedicated_option('d', "dedicated", "Run as dedicated server", false);
     commandline.add(&dedicated_option);
-    option<std::string, true, false> bot_option('b', "bot",
-            "Connect as bot to specific server", "");
+    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server", "");
     commandline.add(&bot_option);
+
+    bool_option need_password(0, "password", "Ask for password when connecting, only usefull on quick connect", false);
+    commandline.add(&need_password);
+
     option<int> port_option('p', "port", "Run server on specific port", 0);
     commandline.add(&port_option);
-    bool_option debug_option('g', "debug",
-            "Enable debug output", false);
+    bool_option debug_option('g', "debug", "Enable debug output", false);
     commandline.add(&debug_option);
-    option<std::string, true, false> master_server_option('\0', "master_server",
-        "Use 'none' if you dont want to use the master server", "");
+    option<std::string, true, false> master_server_option('\0', "master_server", "Use 'none' if you dont want to use the master server", "");
     commandline.add(&master_server_option);
     option<std::string, true, false> game_config_option(0, "game_config",
         "Which config file should be used (only files inside config directory)",
@@ -274,9 +274,19 @@ BaseGameManager *initialise(int argc, char** argv)
                 connecthost = connecthost.substr(12, connecthost.size()-12);
                 std::string::size_type p = connecthost.find("/");
                 if(p != std::string::npos) {
+                    if ( connecthost[p+1] == 'p' )
+                    {
+                        gameconfig->needPassword = true;
+                    }
                     connecthost = connecthost.substr(0, p);
                 }
             }
+
+            if ( need_password.value() )
+            {
+                gameconfig->needPassword = true;
+            }
+
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
         }                                                               

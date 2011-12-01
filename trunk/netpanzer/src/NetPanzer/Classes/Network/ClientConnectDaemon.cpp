@@ -75,7 +75,7 @@ void ClientConnectDaemon::startConnectionProcess( )
     failure_display_timer.changePeriod( 10 );
     time_out_timer.changePeriod( _CLIENT_CONNECT_TIME_OUT_TIME );
     time_out_counter = 0;
-    connection_state = _connect_state_waiting_connect_start;
+    connection_state = _connect_state_waiting_link;
 }
 
 unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
@@ -114,8 +114,33 @@ unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         failure_display_timer.reset();
         break;
 
+    case _join_request_result_already_connected :
+        LoadingView::append( "Link to Server FAILED!" );
+        LoadingView::append( "Your IP is already connected to this server" );
+        LoadingView::append( "The server limits multiple connections from same IP" );
+        rval = _connect_state_connect_failure;
+        failure_display_timer.reset();
+        break;
+
+    case _join_request_result_wrong_password :
+        LoadingView::append( "Link to Server FAILED!" );
+        LoadingView::append( "The password for server was wrong." );
+        rval = _connect_state_connect_failure;
+        failure_display_timer.reset();
+        break;
+
+    case _join_request_result_banned :
+        LoadingView::append( "Link to Server FAILED!" );
+        LoadingView::append( "You are banned in this server" );
+        rval = _connect_state_connect_failure;
+        failure_display_timer.reset();
+        break;
+
     default:
-        LOG ( ("Unknown ACk result?!?") );
+        LoadingView::append( "Link to Server FAILED!" );
+        LoadingView::append( "Unknown result sent from server" );
+        rval = _connect_state_connect_failure;
+        failure_display_timer.reset();
         break;
     }
 

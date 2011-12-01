@@ -72,6 +72,7 @@ static void bPlay()
 
     if(gameconfig->hostorjoin == _game_session_join) {
         gameconfig->serverConnect = IPAddressView::szServer.getString();
+        IPAddressView::szServer.setString("");
     }
     
     serverlistview->endQuery();

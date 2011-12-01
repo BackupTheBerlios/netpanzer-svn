@@ -38,6 +38,26 @@ void ClientConnectJoinRequest::setProtocolVersion(Uint32 version)
     protocol_version = htol32(version);
 }
 
+void ClientConnectJoinRequest::setPassword(const NPString& password)
+{
+    int copylen = std::min(password.size(), sizeof(this->password)-1);
+
+    if ( copylen > 0 )
+    {
+        password.copy(this->password,copylen);
+    }
+
+    this->password[copylen] = 0;
+}
+
+void ClientConnectJoinRequest::getPassword(NPString& password) const
+{
+    char pw[sizeof(this->password)];
+    memcpy(pw, this->password, sizeof(this->password));
+    pw[sizeof(pw)-1] = 0;
+    password.assign(pw);
+}
+
 ClientConnectJoinRequestAck::ClientConnectJoinRequestAck()
 {
     message_class = _net_message_class_connect;

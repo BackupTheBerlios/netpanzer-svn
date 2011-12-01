@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "InputEvent.hpp"
 
+#include <algorithm>
+
 const int RESIZE_WIDTH = 10;
 const int RESIZE_XMIN  = RESIZE_WIDTH;
 const int RESIZE_XMAX  = RESIZE_WIDTH * 3;
@@ -1399,6 +1401,15 @@ cInputField* View::addInputField(
 
     return inputfield;
 } // end addInputField
+
+void View::removeInputField(cInputField *cif)
+{
+    if ( cif )
+    {
+        inputFields.erase(std::remove(inputFields.begin(), inputFields.end(), cif), inputFields.end());
+        delete cif;
+    }
+}
 
 //---------------------------------------------------------------------------
 void View::add(DEFAULT_VIEW_BUTTON button)

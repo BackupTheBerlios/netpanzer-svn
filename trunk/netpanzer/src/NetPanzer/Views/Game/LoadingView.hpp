@@ -34,6 +34,8 @@ using namespace std;
 
 #define LINELIMIT 100
 
+class Label;
+
 //---------------------------------------------------------------------------
 class LoadingView : public View
 {
@@ -109,12 +111,22 @@ public:
     void doDraw(Surface &viewArea, Surface &clientArea);
     void render();
 
+    void setNeedPassword(bool need_password);
+    bool doesNeedPassword() const { return need_password; }
+
+    void onComponentClicked(Component* c);
+
 private:
     static list<string> lines;
     static bool dirty;
 
     Surface backgroundSurface;
     Surface surface;
+    bool need_password;
+    cInputFieldString password_str;
+    cInputField * password_field;
+    Button * okButton;
+    Label * passwordLabel;
 };
 
 #endif // end __LOADINGVIEW_HPP__

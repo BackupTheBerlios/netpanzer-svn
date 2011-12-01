@@ -58,6 +58,7 @@ NetworkClient::onClientConnected(ClientSocket *s)
     connection_status = _connection_status_connected;
 
     join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
+    join_request.setPassword(password);
 
     sendMessage( &join_request, sizeof(ClientConnectJoinRequest));
 }
@@ -75,11 +76,12 @@ NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
     clientsocket=0;
 }
 
-bool NetworkClient::joinServer(const std::string& server_name)
+bool NetworkClient::joinServer(const NPString& server_name, const NPString& password)
 {
     if ( clientsocket )
         delete clientsocket;
     clientsocket = 0;
+    this->password = password;
     
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try

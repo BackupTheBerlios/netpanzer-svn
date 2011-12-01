@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_CLIENT_HPP
 #define _NETWORK_CLIENT_HPP
 
-#include <string>
+#include "Core/CoreTypes.hpp"
 
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
@@ -47,7 +47,7 @@ public:
     NetworkClient ();
     virtual ~NetworkClient ();
 
-    bool joinServer(const std::string& server_name);
+    bool joinServer(const NPString& server_name, const NPString& password);
     void partServer();
 
     void sendMessage(const NetMessage* message, size_t size);
@@ -60,6 +60,7 @@ public:
 
 private:
     ClientSocket* clientsocket;
+    NPString password;
 };
 
 extern NetworkClient *CLIENT;

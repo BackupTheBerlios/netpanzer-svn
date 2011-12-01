@@ -180,7 +180,8 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
 
-    Desktop::add(new LoadingView());
+    LoadingView *lv = new LoadingView();
+    Desktop::add(lv);
 
 
     Desktop::add(new MapSelectionView());
@@ -207,6 +208,11 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::checkResolution(iXY(800,600), iXY(screen->getWidth(),screen->getHeight()));
     Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
 
+
+    if ( gameconfig->quickConnect && gameconfig->needPassword )
+    {
+        lv->setNeedPassword(true);
+    }
 
     //Test for new UI
     //testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
@@ -431,12 +437,16 @@ void PlayerGameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    CLIENT->joinServer(gameconfig->serverConnect);
     LoadingView::show();
-    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
+    LoadingView *lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
+    if ( ! lv->doesNeedPassword() )
+    {
+        CLIENT->joinServer(gameconfig->serverConnect, "");
+        ClientConnectDaemon::startConnectionProcess();
+        sound->playTankIdle();
+    }
 
-    ClientConnectDaemon::startConnectionProcess();
-    sound->playTankIdle();
+    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 }
 
 bool PlayerGameManager::mainLoop()

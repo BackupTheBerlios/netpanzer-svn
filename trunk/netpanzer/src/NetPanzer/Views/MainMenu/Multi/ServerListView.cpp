@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Views/Components/Desktop.hpp"
 
+#include "Views/Game/LoadingView.hpp"
+
 
 ServerListView* serverlistview = 0;
 
@@ -52,6 +54,8 @@ ServerListView::ServerListView()
     
     // XXX ugly
     serverlistview = this;
+
+    lock_image.loadBMP("pics/default/lock.bmp");
 }
 
 ServerListView::~ServerListView()
@@ -165,7 +169,11 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
             char ssn[44];
             SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
-            clientArea.bltString(0,   y, ssn, textcolor);
+            if ( server.needs_password )
+            {
+                lock_image.blt(clientArea, 0, y);
+            }
+            clientArea.bltString(8,   y, ssn, textcolor);
             clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
             clientArea.bltString(400, y, server.map.c_str(), textcolor);
             clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
@@ -195,6 +203,12 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     std::stringstream addr;
     addr << server.address << ':' << server.port;
     IPAddressView::szServer.setString(addr.str());
+
+    LoadingView * lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
+    if ( lv )
+    {
+        lv->setNeedPassword(server.needs_password);
+    }
     
     return View::lMouseUp(down_pos, up_pos);
 }

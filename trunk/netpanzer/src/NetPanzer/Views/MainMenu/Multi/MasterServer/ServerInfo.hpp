@@ -51,6 +51,7 @@ public:
     std::string map;
     int ping;
     int protocol;
+    bool needs_password;
 
     network::Address ipaddress;
     Uint32 querystartticks;

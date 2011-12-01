@@ -24,7 +24,7 @@ namespace masterserver
 
 ServerInfo::ServerInfo()
     : port(0), status(QUERYING), players(0), maxplayers(0), ping(0),
-      querystartticks(0), tryNum(0)
+      needs_password(false), querystartticks(0), tryNum(0)
 {
 }
 

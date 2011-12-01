@@ -140,7 +140,7 @@ void DedicatedGameManager::inputLoop()
                     {
                         //*Console::server
                         std::cout
-                            << std::setw(3) << i << " "
+                            << std::setw(3) << static_cast<int>(i) << " "
                             << std::setw(30) << playerstate->getName() << " "
                             << std::setw(4) << playerstate->getKills() << " "
                             << std::setw(4) << playerstate->getLosses() << " "

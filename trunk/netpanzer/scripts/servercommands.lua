@@ -127,6 +127,20 @@ ServerCommands =
         end
     end,
 
+    gamepass_help = "sets or get the password for connecting to the server",
+    gamepass = function(param, player)
+        if ( param == "" ) then
+            if ( config.game.gamepass == "" ) then
+                netpanzer.serversayto( player, "There is no password set");
+            else
+                netpanzer.serversayto( player, "Current game password: " .. config.game.gamepass);
+            end
+        else
+            config.game.gamepass = param;
+            netpanzer.serversayto( player, "Game password set to: " .. config.game.gamepass);
+        end
+    end,
+
     countdown_help = "Do a countdown, use 'countdown <time> <message>'",
     countdown = function(param, player)
         local counttime, message = string.match(param, "(%d+) *(.*)");

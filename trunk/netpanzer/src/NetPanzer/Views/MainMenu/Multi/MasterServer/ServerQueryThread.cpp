@@ -325,6 +325,8 @@ ServerQueryThread::parseServerData(ServerInfo *server, string &data)
         } else if(token == "protocol") {
             std::stringstream str(tokenizer.getNextToken());
             str >> server->protocol;
+        } else if(token == "password") {
+            server->needs_password = tokenizer.getNextToken().compare("y") == 0 ? true : false;
         } else {
             // handle more tokens...
         }

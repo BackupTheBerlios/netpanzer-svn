@@ -116,6 +116,7 @@ InfoSocket::prepareStatusPacket()
     s << statusHead
       << "\\mapname\\"    << gameconfig->map
       << "\\mapcycle\\"   << gameconfig->mapcycle
+      << "\\password\\" << (gameconfig->game_gamepass->size() == 0 ? 'n' : 'y')
       << "\\numplayers\\" << (int)playingPlayers
       << "\\maxplayers\\" << (int)maxPlayers;
     

@@ -135,12 +135,14 @@ public:
     static NPString* game_unit_profiles; // "," or space separated list of profiles to load
     static NPString* game_unit_spawnlist; // "," or space separated list with the numbers of each unit to spawn with
     static NPString* game_adminpass;     // the secret password for admins
+    static NPString* game_gamepass;      // the secret password for entering game
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;
+    ConfigBool      needPassword;
     ConfigString    serverConnect;      // server to connect to
 
     // player settings

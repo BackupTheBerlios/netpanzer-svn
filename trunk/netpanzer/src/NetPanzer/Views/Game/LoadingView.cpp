@@ -15,6 +15,8 @@
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Label.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
@@ -43,10 +45,16 @@ LoadingView::init()
     setDisplayStatusBar(false);
     setVisible(false);
     setBordered(false);
+    need_password = false;
+    password_str.init("", 31,31);
 
     resize(800, 600);
 
     addButtonCenterText(iXY(340, 15), 100, "Abort", "Cancel the joining of this game.", bAbort);
+
+
+    okButton = Button::createTextButton("OK", "Enter", iXY(340,100), 100);
+    passwordLabel = new Label(340, 68, "Game Password", Color::white);
 
 }
 
@@ -98,4 +106,43 @@ LoadingView::doDeactivate()
 {
     backgroundSurface.free();
     surface.free();
+}
+
+void
+LoadingView::setNeedPassword(bool need_password)
+{
+    if ( this->need_password != need_password )
+    {
+        this->need_password = need_password;
+        if ( need_password )
+        {
+            password_field = addInputField(iXY(175+88, 80), &password_str, "", true, 31);
+            add(okButton);
+            add(passwordLabel);
+        }
+        else
+        {
+            removeInputField(password_field);
+            removeComponent(okButton);
+            removeComponent(passwordLabel);
+            password_field = 0;
+        }
+    }
+}
+
+void
+LoadingView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button.OK") )
+    {
+        CLIENT->joinServer(gameconfig->serverConnect, NPString(password_str.getString()));
+        ClientConnectDaemon::startConnectionProcess();
+        sound->playTankIdle();
+        setNeedPassword(false);
+    }
+    else
+    {
+        View::onComponentClicked(c);
+    }
 }

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include "NetMessage.hpp"
 #include "Classes/PlayerState.hpp"
+#include "Core/CoreTypes.hpp"
 
 enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_join_game_request_ack,
@@ -51,17 +52,22 @@ class ClientConnectJoinRequest : public NetMessage
 {
 private:
     Uint32 protocol_version;
+    char password[32];
     
 public:
     ClientConnectJoinRequest();
     Uint32 getProtocolVersion() const;
     void setProtocolVersion(Uint32 version);
+    void setPassword( const NPString& password );
+    void getPassword(NPString& password) const;
+
 } __attribute__((packed));
 
 enum { _join_request_result_success,
        _join_request_result_invalid_protocol,
        _join_request_result_server_busy,
        _join_request_result_already_connected,
+       _join_request_result_wrong_password,
        _join_request_result_banned // XXX to be done
      };
 
