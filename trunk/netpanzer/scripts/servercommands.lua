@@ -18,6 +18,12 @@ local splitsay = function(player, prefix, tbl)
     end
 end;
 
+local base_modes = {};
+base_modes[0] = "Can't capture";
+base_modes[1] = "Helipad capture";
+base_modes[2] = "Full base capture";
+
+
 ServerCommands =
 {
     say_help = "Says something to all players as server.",
@@ -124,6 +130,21 @@ ServerCommands =
         else
             config.game.base_limit = param;
             netpanzer.serversayto( player, "Base limit set to: " .. config.game.base_limit);
+        end
+    end,
+
+    basemode_help = "sets or get the base capture mode: 0- no capture, 1- helipad capture, 2- all base capture",
+    basemode = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "Base capture mode: " .. config.game.base_capture_mode .. "- " .. base_modes[config.game.base_capture_mode]);
+        else
+            local v = tonumber(param);
+            if ( v ~= nil and v >= 0 and v <= 2 ) then
+                config.game.base_capture_mode = v;
+                netpanzer.serversayto( player, "Base capture mode set to: " .. config.game.base_capture_mode .. "- " .. base_modes[config.game.base_capture_mode]);
+            else
+                netpanzer.serversayto( player, "Capture mode is invalid");
+            end
         end
     end,
 
