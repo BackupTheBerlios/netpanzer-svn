@@ -136,8 +136,14 @@ ServerCommands =
                 netpanzer.serversayto( player, "Current game password: " .. config.game.gamepass);
             end
         else
-            config.game.gamepass = param;
-            netpanzer.serversayto( player, "Game password set to: " .. config.game.gamepass);
+            if ( param == "." ) then
+                config.game.gamepass = "";
+                netpanzer.serversayto( player, "Game password was removed");
+            else
+                config.game.gamepass = param;
+                netpanzer.serversayto( player, "Game password set to: " .. config.game.gamepass);
+            end
+
         end
     end,
 
