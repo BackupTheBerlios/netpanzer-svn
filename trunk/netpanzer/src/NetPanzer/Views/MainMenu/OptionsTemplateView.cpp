@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
+#include "System/SDLSound.hpp"
+#include "System/DummySound.hpp"
 
 class Separator:public Component
 {
@@ -411,6 +413,37 @@ void OptionsTemplateView::stateChanged(Component* source)
         else if (choiceMiniMapUnitSize->getSelectedIndex() == 1)
         {
             gameconfig->radar_unitsize = _mini_map_unit_size_large;
+        }
+    }
+    else if ( source == checkBoxMusicEnabled )
+    {
+        gameconfig->enablemusic = checkBoxMusicEnabled->getState();
+       
+        if ( checkBoxMusicEnabled->getState() ) {
+            sound->playMusic("sound/music/");
+            checkBoxMusicEnabled->setLabel("Enabled");
+        } else {
+            sound->stopMusic();
+            checkBoxMusicEnabled->setLabel("Disabled");
+        }
+    }
+    else if ( source == checkBoxSoundEnabled )
+    {
+        gameconfig->enablesound = checkBoxSoundEnabled->getState();
+
+        delete sound;
+
+        if ( checkBoxSoundEnabled->getState() ) {
+            sound = new SDLSound();
+            checkBoxSoundEnabled->setLabel("Enabled");
+            if ( GameControlRulesDaemon::getGameState() ) {
+                sound->playTankIdle();
+            }
+            if ( checkBoxMusicEnabled->getState() )
+                sound->playMusic("sound/music/");
+        } else {
+            sound = new DummySound();
+            checkBoxSoundEnabled->setLabel("Disabled");
         }
     }
 #ifdef _WIN32

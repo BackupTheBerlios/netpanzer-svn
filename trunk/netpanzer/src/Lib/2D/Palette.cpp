@@ -137,7 +137,7 @@ void Palette::setColorTables()
     // 256 shades of dark gray.
     darkGray256.init(256);
     for (num = 0; num < 256; num++) {
-        int c = color[num].r/2;// dark gray
+        int c = color[num].r/3;// dark gray
         darkGray256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
     }
 

@@ -134,8 +134,10 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  /server countdown [timeout]       Generate a countdown (same 'c')");
     insert("  /server say [your talk]           Server say something in chat");
     insert("  /server listplayers               List players with the assigned number");
+    insert("  /server listprofiles              List available profiles");
     insert("  /server kick [player number]      Kick a given player");
     insert("  /server baselimit [max bases]     Show/set the max bases number per player");
+    insert("  /server gamepass [password]       Show/set game connection password");
     insert(" ");
     insert(" ");
     //insert("  Alt + '-'                        Decrease brightness");

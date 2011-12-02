@@ -288,17 +288,8 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
                                    UnitID id)
 {
     UnitBase* unit = 0;
-    bool color_flag;
-    unsigned char unit_flag;
-
-    if ( player_index == PlayerInterface::getLocalPlayerIndex() ) {
-        color_flag = true;
-    } else {
-        color_flag = false;
-    }
 
     PlayerState* player = PlayerInterface::getPlayer( player_index );
-    unit_flag = player->getFlag();
 
     if ( unit_type < UnitProfileInterface::getNumUnitTypes() )
     {
@@ -421,7 +412,6 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
     if ( ! encoder.isEmpty() )
     {
-        LOGGER.info("UnitInterface sending remaining");
         SERVER->broadcastMessage(encoder.getEncodedMessage(),
                                  encoder.getEncodedLen());
     }
