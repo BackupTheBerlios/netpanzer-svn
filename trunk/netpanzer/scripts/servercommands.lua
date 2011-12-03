@@ -170,13 +170,23 @@ ServerCommands =
 
     countdown_help = "Do a countdown, use 'countdown <time> <message>'",
     countdown = function(param, player)
+        if game.hasTask('countdown') then
+            netpanzer.serversayto( player, "There is already a countdown running");
+            return;
+        end
         local counttime, message = string.match(param, "(%d+) *(.*)");
-        counttime = counttime or 5;
-        message = message or "Countdown...";
+        counttime = tonumber(counttime) or 5;
+
+        if counttime > 20 then
+            netpanzer.serversayto( player, "Time is too big");
+            return;
+        end
+
+        message = (message and message:find("%S") and message) or "Countdown...";
         local count = 0;
         netpanzer.serversay(message .. " " .. counttime);
 
-        game.addTask(function()
+        game.addTask('countdown', function()
                 count = count + game.frametime;
                 if count > 1.0 then
                     count = count - 1.0;

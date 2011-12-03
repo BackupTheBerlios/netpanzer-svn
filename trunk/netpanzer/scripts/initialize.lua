@@ -10,8 +10,16 @@ function pairs(t)
 end
 
 game = { tasks = {} };
-game.addTask = function(task)
-    table.insert(game.tasks, task);
+game.addTask = function(name, task)
+--    if name ~= nil then
+        game.tasks[name] = task;
+--    else
+--        table.insert(game.tasks, task);
+--    end
+end;
+
+game.hasTask = function(name)
+    return game.tasks[name] ~= nil;
 end;
 
 function dump_table(result, t, extra)
@@ -65,8 +73,8 @@ end
 count_time = 0;
 
 function scriptLoop()
-    for i, func in ipairs(game.tasks) do
-        if func() then table.remove(game.tasks,i) end
+    for i, func in pairs(game.tasks) do
+        if func() then game.tasks[i] = nil end
     end
 end
 
