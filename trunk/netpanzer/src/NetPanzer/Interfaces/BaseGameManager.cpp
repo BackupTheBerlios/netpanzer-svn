@@ -122,6 +122,7 @@ void BaseGameManager::initializeGameObjects()
 
     ConsoleInterface::initialize(25);
     PowerUpInterface::initialize();
+    ParticleInterface::initParticleSystems();
 
     GameManager::initializeGameLogic();
 }
