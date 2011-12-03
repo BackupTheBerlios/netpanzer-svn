@@ -201,7 +201,7 @@ void PlayerState::resetAutokick()
 
 bool PlayerState::checkAutokick()
 {
-    return autokick.checkWithTimeOut(GameConfig::game_autokicktime * 60000);
+    return GameConfig::game_autokicktime > 0 && autokick.checkWithTimeOut(GameConfig::game_autokicktime * 60000);
 }
 
 const std::string& PlayerState::getName() const
