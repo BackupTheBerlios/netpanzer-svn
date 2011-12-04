@@ -95,7 +95,7 @@ void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
     clientArea.RoundRect(RectWinner,14, Color::gray);
     
-    clientArea.BltRoundRect(RectStates, 14, Palette::brightness256.getColorArray());
+    clientArea.BltRoundRect(RectStates, 14, Palette::darkGray256.getColorArray());
     clientArea.RoundRect(RectStates, 14, Color::gray);
     
     drawPlayerStats(clientArea, flagHeight);

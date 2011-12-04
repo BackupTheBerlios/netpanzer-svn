@@ -1830,12 +1830,6 @@ void Surface::FillRoundRect(iRect rect, int radius, PIX color)
 
 void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
 {
-    int d, y, x;
-
-    d = 3 - (2 * radius);
-    x = 0;
-    y = radius;
-
     if ( !getWidth() || !getHeight() ) return;
 
     orderCoords(rect);
@@ -1852,25 +1846,31 @@ void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
     if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
     if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
 
-    bltLookup(iRect(rect.min.x,rect.min.y+radius+1,
-                   rect.max.x,rect.max.y-radius), table);
+    bltLookup(iRect(rect.min.x,rect.min.y+radius,
+                   rect.max.x,rect.max.y-radius+1), table);
 
-  while (y >= x)
-  {
-    bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up
-    bltHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, table);//down
+    int d = 3 - (2 * radius);
+    int x = 0;
+    int y = radius;
 
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else
+    while (x < y)
     {
-      bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - (y+1),(rect.max.x-radius)+ x, table);//up
-      bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) +(y+1),(rect.max.x-radius)+ x, table);//down
-      d = d + 4 * (x - y) + 10;
-      y--;
+        if (d < 0)
+        {
+            d = d + (4 * x) + 6;
+        }
+        else
+        {
+            bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, table);//down
+            bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, table);//up
+            d = d + 4 * (x - y) + 10;
+            y--;
+        }
+
+        x++;
+        bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up
+        bltHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, table);//down
     }
-    x++;
-  }
 }
 
 void Surface::bltHLine(int x1, int y, int x2, const PIX table[])

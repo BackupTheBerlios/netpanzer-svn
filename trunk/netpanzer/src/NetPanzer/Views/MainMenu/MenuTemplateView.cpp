@@ -183,7 +183,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     //setWorldRect();
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
-        clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
+        clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
         clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 

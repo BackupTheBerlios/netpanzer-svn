@@ -148,12 +148,16 @@ void Palette::setColorTables()
     
     blue256.init(256);
     for (num = 0; num < 256; num++) {
-        blue256.setColor(num, int(findNearestColor(0,0,color[num].b))); 
+        blue256.setColor(num, int(findNearestColor(0,0,color[num].b)));
     }
 
     green256.init(256);
     for (num = 0; num < 256; num++) {
-        green256.setColor(num, int(findNearestColor(0, color[num].g/1.2, 0))); 
+        // the magic values are for palete color 41
+        int r = abs(color[num].r - 0x1b)/3;
+        int g = abs(color[num].g - 0x3e)/3;
+        int b = abs(color[num].b - 0x21)/3;
+        green256.setColor(num, int(findNearestColor(0x1b + r,0x3e + g,0x21 + b)));
     }
     
     lightorange256.init(256);
