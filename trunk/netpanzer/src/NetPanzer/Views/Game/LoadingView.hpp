@@ -95,6 +95,8 @@ public:
     {
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("LoadingView", true);
+        View *v = Desktop::getView("LoadingView");
+        Desktop::setFocusView(v);
     }
 
     static void hide()
