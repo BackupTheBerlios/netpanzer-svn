@@ -290,11 +290,6 @@ void ColorTable::loadTable(const char *filename)
 	for(size_t i=0; i<PALETTE_LENGTH; i++) {
 	    SDL_Color checkcolor;
 	    file->read(&checkcolor, sizeof(Uint8), 3);
-	    if(    Palette::originalColor[i].r != checkcolor.r
-            || Palette::originalColor[i].g != checkcolor.g
-            || Palette::originalColor[i].b != checkcolor.b )
-	       	throw Exception("couldn't load colortable '%s': "
-	   		"palettes don't match", filename);
 	}
 
 	// put the color table data into the colorArray
@@ -303,6 +298,7 @@ void ColorTable::loadTable(const char *filename)
 	throw Exception("couldn't load colortable '%s': %s",
 		filename, e.what());
     }
+    LOGGER.info("Loading ColorTable '%s'", filename);
 } // end ColorTable::loadTable
 
 // saveTable
