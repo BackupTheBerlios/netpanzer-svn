@@ -157,15 +157,12 @@ crosslinuxenv.BuildDir(crosslinuxenv['FINALBUILDDIR'],'.',duplicate=0)
 luaenv = env.Clone()
 physfsenv = env.Clone()
 networkenv = env.Clone()
-mixerenv = env.Clone()
 
 crossmingwluaenv = crossmingwenv.Clone()
-crossmingwmixerenv = crossmingwenv.Clone()
 crossmingwphysfsenv = crossmingwenv.Clone()
 crossmingwnetworkenv = crossmingwenv.Clone()
 
 crosslinuxluaenv = crosslinuxenv.Clone()
-crosslinuxmixerenv = crosslinuxenv.Clone()
 crosslinuxphysfsenv = crosslinuxenv.Clone()
 crosslinuxnetworkenv = crosslinuxenv.Clone()
 
@@ -208,9 +205,9 @@ print 'Building version ' + NPVERSION + ' in ' + sys.platform
 # Configure Environments
 ################################################################
 
-env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/SDL_mixer-1.2.11'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/SDL_mixer-1.2.11'] )
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua', 'src/SDL_mixer-1.2.11'] )
+env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -220,13 +217,12 @@ if thisplatform == 'darwin':
     if env['universal'] != 'false':
 		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		mixerenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
     else:
         env.Append( CCFLAGS = [ '-arch', 'i386' ] )
-        mixerenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+        luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
@@ -275,14 +271,6 @@ crosslinuxluaenv.Append( CPPPATH = [ 'src/Lib/lua'] )
 MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
 MakeStaticLib(crossmingwluaenv, 'nplua', 'lua', '*.c')
 MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua', '*.c')
-
-# BUILDS SDL_Mixer
-mixerenv.Append(           CPPPATH = [ 'src/SDL_mixer-1.2.11'] )
-crossmingwmixerenv.Append( CPPPATH = [ 'src/SDL_mixer-1.2.11'] )
-crosslinuxmixerenv.Append( CPPPATH = [ 'src/SDL_mixer-1.2.11'] )
-MakeStaticLib(          mixerenv, 'npmixer', 'mixer', '*.c')
-MakeStaticLib(crossmingwmixerenv, 'npmixer', 'mixer', '*.c')
-MakeStaticLib(crosslinuxmixerenv, 'npmixer', 'mixer', '*.c')
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
@@ -334,9 +322,9 @@ if crossmingwenv.has_key('WINICON'):
     
 crosslinuxenv.Append( NPSOURCES = globSources(crosslinuxenv, 'src/NetPanzer', npdirs, "*.cpp") )
 
-env.Append(           NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs', 'npmixer'] )
-crossmingwenv.Append( NPLIBS = ['npmixer','nplua','np2d','npnetwork','nplibs','npphysfs'] )
-crosslinuxenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs', 'npmixer'] )
+env.Append(           NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
+crossmingwenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
+crosslinuxenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
 
 if env.has_key('LIBS'):
     env.Append( NPLIBS = env['LIBS'] )
