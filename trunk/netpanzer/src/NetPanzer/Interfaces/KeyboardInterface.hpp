@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _KEYBOARDINTERFACE_HPP
 
 #include "SDL.h"
+#include "Util/Log.hpp"
 #include <string.h>
 
 #define _CHAR_BUFFER_SIZE 256
@@ -81,6 +82,23 @@ public:
         c = char_buffer[ char_buffer_front ];
 
         return true;
+    }
+   
+   static inline bool isCharPressed(char c)
+    {
+        if ( char_buffer_front == char_buffer_rear )
+            return false;
+
+        int buffer_front;
+    
+        buffer_front = ( char_buffer_front + 1 ) & _CHAR_BUFFER_MOD;
+        if (char_buffer[ buffer_front ] == 0)
+        {
+            buffer_front = ( char_buffer_front + 2 ) & _CHAR_BUFFER_MOD;
+        }
+        char car = toupper(char_buffer[ buffer_front ]);
+        if (c == car) return true;
+        return false;
     }
 
     static inline void putChar(int c)

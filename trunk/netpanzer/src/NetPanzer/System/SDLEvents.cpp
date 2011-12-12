@@ -25,6 +25,7 @@
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Util/Log.hpp"
 
 bool handleSDLEvents()
 {
@@ -54,7 +55,11 @@ bool handleSDLEvents()
                     // it's not a normal char put the 0 into the char buffer to
                     // indicate extended chars...
                     KeyboardInterface::putChar(0);
-                    KeyboardInterface::putChar(event.key.keysym.sym);
+                    c = (event.key.keysym.unicode & 0x7F) + 96;
+                    // if key into a to z then put unicode and 96
+                    if ((event.key.keysym.sym > 96) && (event.key.keysym.sym < 123)) 
+                        KeyboardInterface::putChar(c);
+                    else KeyboardInterface::putChar(event.key.keysym.sym);
                 }
                 break;
             }

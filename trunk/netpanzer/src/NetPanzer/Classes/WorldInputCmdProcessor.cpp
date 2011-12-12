@@ -236,7 +236,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         // XXX ALLY
         if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
         {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            if ( KeyboardInterface::isCharPressed('A') )
             {
                 if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
                 {
@@ -256,7 +256,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         }
         else
         {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            if ( KeyboardInterface::isCharPressed('A') )
             {
                 return _cursor_break_allie;
             }
@@ -329,27 +329,38 @@ WorldInputCmdProcessor::getManualControlStatus()
 void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
-    if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) )
+    if (KeyboardInterface::isCharPressed('B') 
+       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
+    {
+        Desktop::toggleVisibility( "GFlagSelectionView" );
+    }
+    
+    if (KeyboardInterface::isCharPressed('M')) 
+    {
+        Desktop::toggleVisibility( "MiniMapView" );
+    }
+    
+    if ( KeyboardInterface::isCharPressed('O') )
     {
         toggleDisplayOutpostNames();
     }
 
-    if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
+    if ( KeyboardInterface::isCharPressed('F') )
     {
         GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
     }
 
-    if ( (KeyboardInterface::getKeyPressed( SDLK_n ) == true) )
+    if ( KeyboardInterface::isCharPressed('N') )
     {
         GameConfig::interface_show_names = !GameConfig::interface_show_names;
     }
 
-    if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) )
+    if ( KeyboardInterface::isCharPressed('D') )
     {
         GameConfig::interface_show_health = !GameConfig::interface_show_health;
     }
 
-    if ( KeyboardInterface::getKeyPressed( SDLK_c ) == true )
+    if ( KeyboardInterface::isCharPressed('C') )
     {
         static NTimer spamtimer(5000);
         if (spamtimer.isTimeOut())
@@ -357,6 +368,27 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             ScriptManager::runUserCommand("countdown 5 Prepare to fight...");
             spamtimer.reset();
         }
+    }
+
+    if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
+        Desktop::toggleVisibility( "HelpScrollView" );
+    }
+    
+    if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
+        Desktop::toggleVisibility( "RankView" );
+    }
+    
+    if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
+        Desktop::toggleVisibility( "DesktopView" );
+    }
+    
+    if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
+        Desktop::toggleVisibility( "CodeStatsView" );
+    }
+    
+    if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
+        //  DEBUG VIEW
+        Desktop::toggleVisibility( "LibView" );
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
@@ -368,7 +400,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL ) )
-            && (KeyboardInterface::getKeyPressed( SDLK_a ) == true) )
+            && (KeyboardInterface::isCharPressed('A') ))
     {
         setKeyboardInputModeAllieChatMesg();
     }

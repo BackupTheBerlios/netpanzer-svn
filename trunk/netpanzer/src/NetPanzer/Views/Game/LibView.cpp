@@ -135,6 +135,7 @@ void LibView::doDraw(Surface &viewArea, Surface &clientArea)
     int x       =   5;
     int y       = 135;
     //int yOffset =  15;
+    bltViewBackground(viewArea);
 
     switch(displayMode) {
     case LIBVIEW_MODE_SURFACE_INFO: {

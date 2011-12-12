@@ -508,72 +508,40 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView")) {
-        if (KeyboardInterface::getKeyPressed( SDLK_F12 )){
-            showNewPanel = !showNewPanel;
-        }
-        
-        if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
-            //  DEBUG VIEW
-            Desktop::toggleVisibility( "LibView" );
-        }
-    }
-
-    if ( KeyboardInterface::getKeyState(SDLK_F9) )
+    if (Desktop::getVisible("GameView")) 
     {
-        Screen->doScreenshoot();
-    }
 
-    if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
-            KeyboardInterface::getKeyState( SDLK_RALT )) {
-        if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
-            GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
-            GameManager::setVideoMode();
-        }
-    } // ** LFT_ALT or RGT_ALT pressed
+        if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
+                KeyboardInterface::getKeyState( SDLK_RALT )) {
+            if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
+                GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
+                GameManager::setVideoMode();
+            }
+        } // ** LFT_ALT or RGT_ALT pressed
 
-    if (Desktop::getView("GameView")->getVisible()) {
-        if (KeyboardInterface::getKeyPressed(SDLK_m)) {
-            Desktop::toggleVisibility( "MiniMapView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_b)
-           && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) {
-            Desktop::toggleVisibility( "GFlagSelectionView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
-            Desktop::toggleVisibility( "RankView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
-            Desktop::toggleVisibility( "DesktopView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
-            Desktop::toggleVisibility( "CodeStatsView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
-            Desktop::toggleVisibility( "HelpScrollView" );
+        if ( KeyboardInterface::getKeyState(SDLK_F9) )
+        {
+            Screen->doScreenshoot();
         }
 
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
-            if (Desktop::getView("GameView")->getVisible())
+            if (!Desktop::getView("OptionsView")->getVisible())
             {
-                if (!Desktop::getView("OptionsView")->getVisible())
-                {
-                    
-                    View *v = Desktop::getView("OptionsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
+                
+                View *v = Desktop::getView("OptionsView");
+                assert(v != 0);
+                ((OptionsTemplateView *)v)->initButtons();
+                ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
-                    Desktop::setVisibility("OptionsView", true);
-                    Desktop::setActiveView("OptionsView");
-                }
-                else
-                {
-                    View *v = Desktop::getView("OptionsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-                }
+                Desktop::setVisibility("OptionsView", true);
+                Desktop::setActiveView("OptionsView");
+            }
+            else
+            {
+                View *v = Desktop::getView("OptionsView");
+                assert(v != 0);
+                ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+                ((OptionsTemplateView *)v)->setVisible(false);
             }
         }
     }
