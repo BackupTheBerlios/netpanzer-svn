@@ -236,7 +236,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         // XXX ALLY
         if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
         {
-            if ( KeyboardInterface::isCharPressed('A') )
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
             {
                 if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
                 {
@@ -256,7 +256,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         }
         else
         {
-            if ( KeyboardInterface::isCharPressed('A') )
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
             {
                 return _cursor_break_allie;
             }

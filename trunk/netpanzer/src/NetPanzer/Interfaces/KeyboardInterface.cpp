@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "KeyboardInterface.hpp"
 
+int KeyboardInterface::key_table_unicode[SDLK_LAST];
 bool KeyboardInterface::key_table[SDLK_LAST];
 bool KeyboardInterface::previous_key_state[SDLK_LAST];
 bool KeyboardInterface::textmode;
@@ -32,14 +33,15 @@ void KeyboardInterface::sampleKeyboard()
     memcpy(previous_key_state, key_table, sizeof(key_table));
 }
 
-void KeyboardInterface::keyPressed(int scancode)
+void KeyboardInterface::keyPressed(int scancode, int Unicode)
 {
-    key_table[scancode] = true;
+    key_table_unicode[scancode] = Unicode;
+    key_table[key_table_unicode[scancode]] = true;
 }
 
 void KeyboardInterface::keyReleased(int scancode)
 {
-    key_table[scancode] = false;
+    key_table[key_table_unicode[scancode]] = false;
 }
 
 bool KeyboardInterface::getKeyPressed(int scanCode)

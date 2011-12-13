@@ -27,6 +27,18 @@
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
 
+void Translate_Sym(SDL_KeyboardEvent *key)
+{
+    if(((key->keysym.unicode) != 0) && (key->keysym.unicode < 256) )
+    {
+        KeyboardInterface::keyPressed(key->keysym.sym, key->keysym.unicode);
+    }
+    else
+    {
+        KeyboardInterface::keyPressed(key->keysym.sym, key->keysym.sym);
+    }     
+}
+
 bool handleSDLEvents()
 {
     static SDL_Event event;
@@ -47,7 +59,8 @@ bool handleSDLEvents()
             MouseInterface::onMouseMoved(&event.motion);
             break;
         case SDL_KEYDOWN: {
-                KeyboardInterface::keyPressed(event.key.keysym.sym);
+                
+                Translate_Sym(&event.key);
                 char c = event.key.keysym.unicode & 0x7F;
                 if (isprint(c)) {
                     KeyboardInterface::putChar(c);
