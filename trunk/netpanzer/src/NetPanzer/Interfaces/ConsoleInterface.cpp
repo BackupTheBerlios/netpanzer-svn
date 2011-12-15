@@ -27,6 +27,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Console.hpp"
 #include "Resources/ResourceManager.hpp"
 
+#define CommandMax 12
+
+std::string CommandList[CommandMax] = {
+    "/server listcommands", "/server adminlogin", "/server unitspawnlist", "/server unitprofiles",
+    "/server listprofiles", "/server kick", "/server baselimit", "/server gamepass",
+    "/server map ", "/server autokick", "/server say", "/server listplayers"}; 
+
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
@@ -47,7 +54,7 @@ int  ConsoleInterface::maxCharCount;
 char ConsoleInterface::inputString[256];
 char ConsoleInterface::inputPrompt[256];
 int  ConsoleInterface::cursorPos;
-
+int ConsoleInterface::commandPos;
 void ConsoleInterface::initialize( long size )
 {
     assert( size > 0 );
@@ -78,7 +85,7 @@ void ConsoleInterface::initialize( long size )
         line_list[ line_loop ].life_timer.changePeriod( 30 );
         line_list[ line_loop ].visible = false;
     }
-
+    commandPos = 0;
     stdout_pipe = false;
 }
 
@@ -353,7 +360,15 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
                 cursorPos--;
                 inputString[cursorPos + byteCount] = '\0';
             }
+        }
+        break;
 
+    case SDLK_TAB: {
+            cursorPos = 0;
+            strcpy(inputString, CommandList[commandPos].c_str());
+            commandPos++;
+            if (commandPos >= CommandMax) commandPos = 0;
+            cursorPos = strlen(inputString);
         }
         break;
 

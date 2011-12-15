@@ -332,7 +332,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::isCharPressed('B') 
        && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
     {
-        Desktop::toggleVisibility( "GFlagSelectionView" );
+        static NTimer Flagtimer(150000);
+        if (Flagtimer.isTimeOut())
+        {
+            Desktop::toggleVisibility( "GFlagSelectionView" );
+            Flagtimer.reset();
+        }
     }
     
     if (KeyboardInterface::isCharPressed('M')) 
