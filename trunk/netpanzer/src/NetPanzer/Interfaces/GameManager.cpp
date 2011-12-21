@@ -286,6 +286,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "MaxPlayers: " << gameconfig->maxplayers << "\n"
         << "MaxUnits: " << gameconfig->maxunits << "\n"
         << "AutoKick: " << GameConfig::game_autokicktime << "\n"
+        << "FagTimer: " << GameConfig::game_changeflagtime << "\n"
         << "Gametype: " << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
             gameconfig->objectiveoccupationpercentage << "\n"

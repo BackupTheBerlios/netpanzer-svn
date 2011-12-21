@@ -27,12 +27,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Console.hpp"
 #include "Resources/ResourceManager.hpp"
 
-#define CommandMax 12
+#define CommandMax 13
 
 std::string CommandList[CommandMax] = {
     "/server listcommands", "/server adminlogin", "/server unitspawnlist", "/server unitprofiles",
     "/server listprofiles", "/server kick", "/server baselimit", "/server gamepass",
-    "/server map ", "/server autokick", "/server say", "/server listplayers"}; 
+    "/server map ", "/server autokick", "/server say", "/server listplayers", "/server flagtimer"}; 
 
 bool ConsoleInterface::stdout_pipe;
 

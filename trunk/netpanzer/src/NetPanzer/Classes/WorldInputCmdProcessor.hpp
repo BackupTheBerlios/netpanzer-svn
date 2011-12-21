@@ -104,6 +104,8 @@ protected:
     static ObjectiveID selected_objective_id;
 
 public:
+    NTimer Flagtimer;
+
     WorldInputCmdProcessor();
 
     void process();

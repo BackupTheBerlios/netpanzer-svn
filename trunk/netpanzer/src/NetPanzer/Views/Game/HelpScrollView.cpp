@@ -131,6 +131,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  /server help                      Show Help window (same 'F1')");
     insert("  /server map [map name]            Restart game with the given map");
     insert("  /server autokick [timeout]        Show/set autokick for inactive players");
+    insert("  /server flagtimer [timeout]       Show/set flag change timer");
     insert("  /server countdown [timeout]       Generate a countdown (same 'c')");
     insert("  /server say [your talk]           Server say something in chat");
     insert("  /server listplayers               List players with the assigned number");

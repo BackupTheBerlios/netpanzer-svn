@@ -94,7 +94,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     lastSelectTimer.setTimeOut(400);
     actionTimer.setTimeOut(100);
-
+    Flagtimer.reset();
 }
 
 void
@@ -332,8 +332,10 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::isCharPressed('B') 
        && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
     {
-        static NTimer Flagtimer(150000);
-        if (Flagtimer.isTimeOut())
+        if (GameConfig::game_changeflagtime == 0)
+            Desktop::toggleVisibility( "GFlagSelectionView" );
+        else 
+        if (Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)) 
         {
             Desktop::toggleVisibility( "GFlagSelectionView" );
             Flagtimer.reset();
