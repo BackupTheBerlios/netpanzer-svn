@@ -527,14 +527,24 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (!Desktop::getView("OptionsView")->getVisible())
             {
-                
-                View *v = Desktop::getView("OptionsView");
-                assert(v != 0);
-                ((OptionsTemplateView *)v)->initButtons();
-                ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
+                if ( Desktop::getVisible("HelpScrollView") )
+                {
+                    Desktop::toggleVisibility("HelpScrollView");
+                }
+                else if ( Desktop::getVisible("GFlagSelectionView") )
+                {
+                    Desktop::toggleVisibility("GFlagSelectionView");
+                }
+                else
+                {
+                    View *v = Desktop::getView("OptionsView");
+                    assert(v != 0);
+                    ((OptionsTemplateView *)v)->initButtons();
+                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
-                Desktop::setVisibility("OptionsView", true);
-                Desktop::setActiveView("OptionsView");
+                    Desktop::setVisibility("OptionsView", true);
+                    Desktop::setActiveView("OptionsView");
+                }
             }
             else
             {

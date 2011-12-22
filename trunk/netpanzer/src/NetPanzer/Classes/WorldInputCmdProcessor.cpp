@@ -330,7 +330,8 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::isCharPressed('B') 
-       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
+       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag()
+       && ! Desktop::getVisible("HelpScrollView") )
     {
         if ( Desktop::getVisible("GFlagSelectionView")
             || GameConfig::game_changeflagtime == 0
@@ -376,7 +377,8 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
 
-    if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
+    if ( KeyboardInterface::getKeyPressed(SDLK_F1)
+       && ! Desktop::getVisible("GFlagSelectionView") ) {
         Desktop::toggleVisibility( "HelpScrollView" );
     }
     
