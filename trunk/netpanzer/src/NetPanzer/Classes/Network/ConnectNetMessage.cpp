@@ -188,3 +188,13 @@ void ConnectMesgServerGameSettings::setElapsedTime(time_t elapsedTime)
     elapsed_time = (time_t)htol32((Uint32)elapsedTime);
 }
 
+Sint32 ConnectMesgServerGameSettings::getFlagTime() const
+{
+    return ltoh32(flag_time);
+}
+
+void ConnectMesgServerGameSettings::setFlagTime(Sint32 flagtime)
+{
+    flag_time = htol32(flagtime);
+}
+

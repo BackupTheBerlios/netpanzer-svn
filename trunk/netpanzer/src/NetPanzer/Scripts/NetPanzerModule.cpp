@@ -231,6 +231,12 @@ static int npmodule_listProfiles (lua_State *L)
     return 1;
 }
 
+static int npmodule_SyncFlagTimer (lua_State *L)
+{
+    PlayerInterface::SyncFlagTimer();
+    return 0;
+}
+
 static const luaL_Reg npmodule[] =
 {
     {"say",           npmodule_say},
@@ -244,6 +250,7 @@ static const luaL_Reg npmodule[] =
     {"map",           npmodule_map},
     {"listmaps",      npmodule_listMaps},
     {"listprofiles",  npmodule_listProfiles},
+    {"syncflagtimer", npmodule_SyncFlagTimer},
     {NULL, NULL}
 };
 

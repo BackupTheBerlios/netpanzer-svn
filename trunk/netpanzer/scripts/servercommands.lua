@@ -207,6 +207,7 @@ ServerCommands =
             netpanzer.serversayto( player, "flagtimer time is " .. config.game.changeflagtime);
         else
             config.game.changeflagtime = param;
+            netpanzer.syncflagtimer();
             netpanzer.serversayto( player, "flagtimer time was set to " .. config.game.changeflagtime);
         end
     end

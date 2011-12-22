@@ -129,6 +129,8 @@ public:
     static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
 
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
+    
+    static void SyncFlagTimer();
 
 protected:
     static PlayerID respawn_rule_player_index;

@@ -27,7 +27,8 @@ enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_state,
        _net_message_id_player_score_update,
        _net_message_id_player_alliance_request,
-       _net_message_id_player_alliance_update
+       _net_message_id_player_alliance_update,
+       _net_message_id_player_flagtimer_update
      };
 
 #ifdef MSVC
@@ -203,6 +204,25 @@ public:
     Uint16 getAllieWithPlayerIndex() const
     {
         return allie_with_player_index;
+    }
+}
+__attribute__((packed));
+
+class PlayerFlagTimerUpdate : public NetMessage
+{
+public:
+    Uint16 flag_timer;
+
+    PlayerFlagTimerUpdate(Uint16 flagtimer)
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_flagtimer_update;
+        flag_timer = flagtimer;
+    }
+    
+    Uint16 getflagtimer() const
+    {
+        return flag_timer;
     }
 }
 __attribute__((packed));

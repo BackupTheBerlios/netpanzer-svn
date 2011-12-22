@@ -333,7 +333,10 @@ WorldInputCmdProcessor::evaluateKeyCommands()
        && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
     {
         if (GameConfig::game_changeflagtime == 0)
+        {
             Desktop::toggleVisibility( "GFlagSelectionView" );
+            Flagtimer.reset();
+        }
         else 
         if (Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)) 
         {
