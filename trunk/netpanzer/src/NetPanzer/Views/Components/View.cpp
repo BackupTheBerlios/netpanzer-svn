@@ -767,7 +767,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 
     // Check all components for a dragged event.
     ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
     {        
         if ((*i)->contains(newPos) && (*i)->contains(downPos) && newPos!=prevPos) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
@@ -798,7 +798,7 @@ void View::rMouseDown(const iXY &pos)
 
     // Check all components for a pressed event.
     ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
     {        
         if ((*i)->contains(pos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
@@ -821,7 +821,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
 
     // Check all components for a clicked event.
     ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
     {        
         if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
             mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
@@ -839,7 +839,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     if (reportRelease) {
         // Check all components for a release event.
         ComponentsIterator i;
-        for ( i=components.begin(); i != components.end(); i++)
+        for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
         {        
             if ((*i)->contains(upPos)) {
                 mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);

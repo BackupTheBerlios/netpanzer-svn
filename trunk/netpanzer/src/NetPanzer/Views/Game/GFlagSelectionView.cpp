@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 #include "Views/GameViewGlobals.hpp"
 #include "Resources/ResourceManager.hpp"
@@ -70,6 +71,7 @@ public:
             CLIENT->sendMessage(&upf, sizeof(upf));
 
             Desktop::setVisibility("GFlagSelectionView", false);
+            COMMAND_PROCESSOR.Flagtimer.reset();
 //            PlayerInterface::getLocalPlayer()->setStateActive();
         }
         else
@@ -173,4 +175,9 @@ GFlagSelectionView::checkResolution(iXY oldResolution, iXY newResolution)
 {
     resize(iXY(newResolution.x, newResolution.y));
     moveTo(iXY(0,0));
+}
+
+void GFlagSelectionView::processEvents()
+{
+    COMMAND_PROCESSOR.process(false);
 }

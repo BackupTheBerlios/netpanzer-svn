@@ -332,16 +332,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if (KeyboardInterface::isCharPressed('B') 
        && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
     {
-        if (GameConfig::game_changeflagtime == 0)
+        if ( Desktop::getVisible("GFlagSelectionView")
+            || GameConfig::game_changeflagtime == 0
+            || Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)
+           )
         {
             Desktop::toggleVisibility( "GFlagSelectionView" );
-            Flagtimer.reset();
-        }
-        else 
-        if (Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)) 
-        {
-            Desktop::toggleVisibility( "GFlagSelectionView" );
-            Flagtimer.reset();
         }
     }
     
@@ -1117,10 +1113,11 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
 }
 
 void
-WorldInputCmdProcessor::process()
+WorldInputCmdProcessor::process(bool process_mouse)
 {
     evaluateKeyboardEvents();
-    evaluateMouseEvents();
+    if ( process_mouse )
+        evaluateMouseEvents();
 
     working_list.validateList();
 }

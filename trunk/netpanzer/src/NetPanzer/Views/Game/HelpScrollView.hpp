@@ -59,6 +59,8 @@ public:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void actionPerformed(mMouseEvent me);
     virtual void doActivate();
+    virtual void processEvents();
+
 }
 ; // end HelpScrollView
 

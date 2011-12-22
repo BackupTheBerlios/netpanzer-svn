@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 #include "Views/Components/Label.hpp"
 
@@ -112,16 +113,12 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
     View::doDraw(viewArea, clientArea);
 } // end doDraw
 
-class StatesSortByFrags
+class StatesSortByPoints
     : public std::binary_function<const PlayerState*, const PlayerState*, bool>
 {
 public:
     bool operator() (const PlayerState* state1, const PlayerState* state2) {
-        if(state1->getKills() > state2->getKills())
-            return true;
-        if(state1->getLosses() < state2->getLosses())
-            return true;
-        return false;
+        return state1->getTotal() > state2->getTotal();
     }
 };
 
@@ -130,7 +127,9 @@ class StatesSortByObjectives
 {
 public:
     bool operator() (const PlayerState* state1, const PlayerState* state2) {
-        return state1->getObjectivesHeld() > state2->getObjectivesHeld();
+        int p1 = state1->getObjectivesHeld();
+        int p2 = state2->getObjectivesHeld();
+        return p1 > p2 || (p1 == p2 && state1->getTotal() > state2->getTotal() );
     }
 };
 
@@ -160,7 +159,7 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             break;
         case _gametype_timelimit:
         case _gametype_fraglimit:
-            std::sort(states.begin(), states.end(), StatesSortByFrags());
+            std::sort(states.begin(), states.end(), StatesSortByPoints());
             break;
     }
 
@@ -268,4 +267,9 @@ void RankView::doActivate()
 void RankView::doDeactivate()
 {
     selected_line = -1;
+}
+
+void RankView::processEvents()
+{
+    COMMAND_PROCESSOR.process(false);
 }

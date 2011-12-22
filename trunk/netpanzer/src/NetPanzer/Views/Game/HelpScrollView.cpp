@@ -16,12 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "HelpScrollView.hpp"
 #include "GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
-
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 // HelpScrollView
 //---------------------------------------------------------------------------
@@ -248,3 +247,10 @@ void HelpScrollView::doActivate()
 {
     /* empty */
 } // end HelpScrollView::doActivate
+
+void HelpScrollView::processEvents()
+{
+    if ( Desktop::getVisible("GameView") )
+        COMMAND_PROCESSOR.process(false);
+}
+
