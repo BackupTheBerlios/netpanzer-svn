@@ -27,18 +27,6 @@
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
 
-void Translate_Sym(SDL_KeyboardEvent *key)
-{
-    if(((key->keysym.unicode) != 0) && (key->keysym.unicode < 256) )
-    {
-        KeyboardInterface::keyPressed(key->keysym.sym, key->keysym.unicode);
-    }
-    else
-    {
-        KeyboardInterface::keyPressed(key->keysym.sym, key->keysym.sym);
-    }     
-}
-
 bool handleSDLEvents()
 {
     static SDL_Event event;
@@ -59,24 +47,32 @@ bool handleSDLEvents()
             MouseInterface::onMouseMoved(&event.motion);
             break;
         case SDL_KEYDOWN: {
-                
-                Translate_Sym(&event.key);
-                char c = event.key.keysym.unicode & 0x7F;
-                if (isprint(c)) {
-                    KeyboardInterface::putChar(c);
-                } else {
-                    // it's not a normal char put the 0 into the char buffer to
-                    // indicate extended chars...
-                    KeyboardInterface::putChar(0);
-                    c = (event.key.keysym.unicode & 0x7F) + 96;
-                    // if key into a to z then put unicode and 96
-                    if ((event.key.keysym.sym > 96) && (event.key.keysym.sym < 123)) 
-                        KeyboardInterface::putChar(c);
-                    else KeyboardInterface::putChar(event.key.keysym.sym);
+//                LOGGER.debug("Pressed key : scancode[%x] unicode[%x]", event.key.keysym.sym, event.key.keysym.unicode);
+                KeyboardInterface::keyPressed(event.key.keysym.sym);
+
+                if ( (event.key.keysym.unicode & 0xFF80) == 0 )
+                {
+                  char c = event.key.keysym.unicode & 0x7F;
+                  if ( isprint(c) )
+                  {
+                      KeyboardInterface::putChar(c);
+                  }
+                  else
+                  {
+                      // extended chars, first push a 0
+                      KeyboardInterface::putChar(0);
+                      KeyboardInterface::putChar(event.key.keysym.sym);
+                  }
                 }
+                else
+                {
+                    // international character ignored for now
+                }
+
                 break;
             }
         case SDL_KEYUP:
+//            LOGGER.debug("Released key: scancode[%x] unicode[%x]", event.key.keysym.sym, event.key.keysym.unicode);
             KeyboardInterface::keyReleased(event.key.keysym.sym);
             break;
        

@@ -93,6 +93,8 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     lastSelectTimer.setTimeOut(400);
     actionTimer.setTimeOut(100);
     Flagtimer.reset();
+
+    last_selected_group = -1;
 }
 
 void
@@ -100,12 +102,14 @@ WorldInputCmdProcessor::switchSelectionList(unsigned long new_list_index)
 {
     working_list.copyList( selection_group_lists[ new_list_index ] );
     working_list.select();
+    last_selected_group = new_list_index;
 }
 
 void WorldInputCmdProcessor::setSelectionList(unsigned long new_list_index)
 {
     selection_group_lists[new_list_index].copyList(working_list);
     working_list.select();
+    last_selected_group = new_list_index;
 }
 
 void
@@ -321,7 +325,7 @@ WorldInputCmdProcessor::getManualControlStatus()
 void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
-    if (KeyboardInterface::isCharPressed('B') 
+    if (KeyboardInterface::getKeyPressed(SDLK_b)
        && ! PlayerInterface::getLocalPlayer()->isSelectingFlag()
        && ! Desktop::getVisible("HelpScrollView") )
     {
@@ -334,32 +338,32 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
     
-    if (KeyboardInterface::isCharPressed('M')) 
+    if ( KeyboardInterface::getKeyPressed(SDLK_m) )
     {
         Desktop::toggleVisibility( "MiniMapView" );
     }
     
-    if ( KeyboardInterface::isCharPressed('O') )
+    if ( KeyboardInterface::getKeyPressed(SDLK_o) )
     {
         toggleDisplayOutpostNames();
     }
 
-    if ( KeyboardInterface::isCharPressed('F') )
+    if ( KeyboardInterface::getKeyPressed(SDLK_f) )
     {
         GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
     }
 
-    if ( KeyboardInterface::isCharPressed('N') )
+    if ( KeyboardInterface::getKeyPressed(SDLK_n) )
     {
         GameConfig::interface_show_names = !GameConfig::interface_show_names;
     }
 
-    if ( KeyboardInterface::isCharPressed('D') )
+    if ( KeyboardInterface::getKeyPressed(SDLK_d) )
     {
         GameConfig::interface_show_health = !GameConfig::interface_show_health;
     }
 
-    if ( KeyboardInterface::isCharPressed('C') )
+    if ( KeyboardInterface::getKeyPressed(SDLK_c) )
     {
         static NTimer spamtimer(5000);
         if (spamtimer.isTimeOut())
@@ -398,15 +402,14 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         setKeyboardInputModeChatMesg();
     }
 
-    if ( ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
-            KeyboardInterface::getKeyState( SDLK_RCTRL ) )
-            && (KeyboardInterface::isCharPressed('A') ))
+    if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
+        && (KeyboardInterface::getKeyPressed(SDLK_a) ))
     {
         setKeyboardInputModeAllieChatMesg();
     }
 
     //If space is pressed, jump to first currently attacked unit
-    if( KeyboardInterface::getKeyState( SDLK_SPACE ) == true )
+    if( KeyboardInterface::getKeyPressed( SDLK_SPACE ) == true )
     {
         jumpLastAttackedUnit();
     }
@@ -453,77 +456,53 @@ WorldInputCmdProcessor::jumpLastAttackedUnit()
 void
 WorldInputCmdProcessor::evaluateGroupingKeys()
 {
-    static const int KeyAzerty[10] = {38, 233, 34, 39, 40, 45, 232, 95, 231, 224};
-    static const int KeyQwerty[10] = {SDLK_1, SDLK_2, SDLK_3,SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9, SDLK_0};
+    int group = -1;
 
-    bool alt_status = false;
-    bool ctrl_status = false;
-
-    if( (KeyboardInterface::getKeyState(SDLK_LCTRL) == true) ||
-            (KeyboardInterface::getKeyState(SDLK_RCTRL) == true)) {
-        ctrl_status = true;
-    }
-
-    if( (KeyboardInterface::getKeyState( SDLK_LALT ) == true) ||
-            (KeyboardInterface::getKeyState( SDLK_RALT ) == true)
-      ) {
-        alt_status = true;
-    }
-
-    unsigned selected_bits=0;
-    int released=0;
-    for(int key_code= 0;  key_code<=9; key_code++)
+    for (int k = SDLK_0; k <= SDLK_9; ++k )
     {
-        unsigned int b=1 << (key_code-SDLK_0);
-        if ( (KeyboardInterface::getKeyState( KeyAzerty[key_code] ) == true) ||
-                (KeyboardInterface::getKeyState( KeyQwerty[key_code] ) == true) )
+        if ( KeyboardInterface::getKeyPressed(k) )
         {
-            selected_bits|=key_code+1;
-        }
-        else if(current_selection_list_bits&b)
-        {
-            // we've released a key
-            released++;
+            group = k-SDLK_0;
+            break;
         }
     }
 
-    if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
-        // we've pressed down a number key
-        if(ctrl_status != true && alt_status != true &&
-                !KeyboardInterface::getKeyState(SDLK_LSHIFT) &&
-                !KeyboardInterface::getKeyState(SDLK_RSHIFT)) {
-            working_list.unGroup();
-        }
-        for(int key_code=0;  key_code<=9; key_code++)
-        {
-            if ( (KeyboardInterface::getKeyState( KeyAzerty[key_code] ) == true) ||
-                    (KeyboardInterface::getKeyState( KeyQwerty[key_code] ) == true) )
-            {
-                if(ctrl_status == true)
-                {
-                    setSelectionList(key_code);
-                    ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", key_code+1);
-                    continue;
-                }
-                if(alt_status == true)
-                {
-                    cycleSelectedUnits(key_code);
-                    continue;
-                }
-                working_list.addList( selection_group_lists[key_code] );
-            }
-        }
-        if(alt_status != true) {
-            working_list.select();
-            if(ctrl_status != true) {
-                if ( !lastSelectTimer.isTimeOut() ) {
-                    centerSelectedUnits();
-                }
-                lastSelectTimer.reset();
-            }
-        }
+    if ( group == -1 ) return;
+
+    bool alt_status = KeyboardInterface::getKeyState( SDLK_LALT ) || KeyboardInterface::getKeyState( SDLK_RALT);
+    bool ctrl_status = KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL);
+
+    if ( ctrl_status && alt_status ) return; // nothing to do
+
+    if ( ctrl_status )
+    {
+        setSelectionList(group);
+        ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", group ? group : 10);
+        return;
     }
-    current_selection_list_bits=selected_bits;
+
+    if ( alt_status )
+    {
+        cycleSelectedUnits(group);
+        return;
+    }
+
+    // if shift pressed will keep the selected units.
+    if ( !KeyboardInterface::getKeyState(SDLK_LSHIFT) && !KeyboardInterface::getKeyState(SDLK_RSHIFT) )
+    {
+        working_list.unGroup();
+    }
+
+    working_list.addList( selection_group_lists[group] );
+    working_list.select();
+
+    if ( last_selected_group == group && !lastSelectTimer.isTimeOut() )
+    {
+        centerSelectedUnits();
+    }
+    lastSelectTimer.reset();
+    last_selected_group = group;
+
 }
 
 void
@@ -645,7 +624,6 @@ WorldInputCmdProcessor::selectBoundBoxUnits()
         return( select_success );
     } else {
         current_selection_list_index = 0xFFFF;
-        current_selection_list_bits=0;
         return( select_success );
     }
 }
@@ -806,7 +784,6 @@ void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
                 working_list.selectUnit(world_pos );
             }
 
-            current_selection_list_bits=0;
             current_selection_list_index = 0xFFFF;
             if (working_list.unit_list.size() > 0)
             {

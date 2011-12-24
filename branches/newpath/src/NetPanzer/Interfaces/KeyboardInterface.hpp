@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class KeyboardInterface
 {
 protected:
-    static int key_table_unicode[SDLK_LAST];
     static bool key_table[SDLK_LAST];
     static bool previous_key_state[SDLK_LAST];
     static bool textmode;
@@ -41,14 +40,29 @@ public:
     {
         memset(key_table, 0, sizeof(key_table));
         memset(previous_key_state, 0, sizeof(previous_key_state));
-        memset(key_table_unicode, 0, sizeof(key_table_unicode));
     }
 
-    static void sampleKeyboard();
-    static void keyPressed(int scancode, int Unicode);
-    static void keyReleased(int scancode);
+    static void sampleKeyboard()
+    {
+        memcpy(previous_key_state, key_table, sizeof(key_table));
+    }
 
-    static bool getKeyPressed(int scanCode);
+    static void keyPressed(int scancode) { key_table[scancode] = true; }
+    static void keyReleased(int scancode){ key_table[scancode] = false;}
+
+    static bool getKeyPressed(int scanCode)
+    {
+        return ! textmode
+               && KeyboardInterface::getKeyState(scanCode)
+               && ! KeyboardInterface::getPrevKeyState(scanCode);
+    }
+
+    static bool getKeyReleased(int scanCode)
+    {
+        return ! textmode
+                && ! KeyboardInterface::getKeyState(scanCode)
+                && KeyboardInterface::getPrevKeyState(scanCode);
+    }
 
     static inline bool getKeyState(int scan_code)
     {
@@ -86,23 +100,6 @@ public:
         return true;
     }
    
-   static inline bool isCharPressed(char c)
-    {
-        if ( char_buffer_front == char_buffer_rear )
-            return false;
-
-        int buffer_front;
-    
-        buffer_front = ( char_buffer_front + 1 ) & _CHAR_BUFFER_MOD;
-        if (char_buffer[ buffer_front ] == 0)
-        {
-            buffer_front = ( char_buffer_front + 2 ) & _CHAR_BUFFER_MOD;
-        }
-        char car = toupper(char_buffer[ buffer_front ]);
-        if (c == car) return true;
-        return false;
-    }
-
     static inline void putChar(int c)
     {
         char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
