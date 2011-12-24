@@ -57,8 +57,8 @@ def MakeStaticLib(localenv, libname, libdirs, pattern):
 # Add options
 ################################################################
 
-opts = Options()
-opts.AddOptions(
+opts = Variables()
+opts.AddVariables(
     ('mode','set compile mode to debug or release','release'),
     ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
     ('sdlconfig','sets the sdl-config full path', 'sdl-config'),
@@ -150,9 +150,9 @@ else:
 
 env.Append(CCFLAGS = ['-Wall'])
 
-env.BuildDir(env['FINALBUILDDIR'],'.',duplicate=0)
-crossmingwenv.BuildDir(crossmingwenv['FINALBUILDDIR'],'.',duplicate=0)
-crosslinuxenv.BuildDir(crosslinuxenv['FINALBUILDDIR'],'.',duplicate=0)
+env.VariantDir(env['FINALBUILDDIR'],'.',duplicate=0)
+crossmingwenv.VariantDir(crossmingwenv['FINALBUILDDIR'],'.',duplicate=0)
+crosslinuxenv.VariantDir(crosslinuxenv['FINALBUILDDIR'],'.',duplicate=0)
 
 luaenv = env.Clone()
 physfsenv = env.Clone()
