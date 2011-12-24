@@ -78,6 +78,7 @@ Objective::changeOwner( PlayerState * new_owner )
                                       name, new_owner->getName().c_str() );
     }
     
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
     unit_generation_on_flag = false;
 }
 
@@ -141,23 +142,11 @@ Objective::attemptOccupationChange(PlayerState* player)
         return; // cannot capture more bases.
     }
 
-    if ( occupying_player )
-    {
-        occupying_player->decObjectivesHeld();
-    }
-
-    occupying_player = player;
-    player->incObjectivesHeld();
-    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+    changeOwner(player);
 
     ObjectiveOccupationUpdate msg;
     msg.set(id, player->getID());
     SERVER->broadcastMessage(&msg, sizeof(msg));
-
-    ConsoleInterface::postMessage(Color::cyan, false, 0,
-                                  "'%s' has been occupied by '%s'",
-                                  name, player->getName().c_str() );
-
 }
 
 void
