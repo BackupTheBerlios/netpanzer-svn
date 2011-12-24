@@ -35,8 +35,7 @@ game...
 The game depends on some tools and libraries to be present, before you can start
 building it. Here's a list of them:
 
-* normal gnu compiler and additional tools (g++ version 3.2 or later is
-  required at the moment)
+* normal gnu compiler and additional tools
 
 * SCons build tool
   http://www.scons.org/
@@ -56,8 +55,8 @@ easy and straightforward.
 To download the code use the subversion client to download from
   svn://svn.berlios.de/netpanzer/tags/netpanzer/<wanted_version>
 
-An explample for version 0.8.3 would be:
-  svn export svn://svn.berlios.de/netpanzer/tags/netpanzer/0.8.3 netpanzer
+An explample for version 0.8.4 would be:
+  svn export svn://svn.berlios.de/netpanzer/tags/netpanzer/0.8.4 netpanzer
 
 Note that I use "export" instead of "checkout" to avoid having all the ".svn"
 folders spread over the source. This is interesting for Linux distributions.
@@ -174,7 +173,7 @@ keys and in general trust your intuition :)
 
 4. Dedicated Server and Configuration Files
 
-Note: This has to be reviewed.
+Note: This has to be reviewed, so much is unwritten.
 
 You can start a dedicated netpanzer server (a pure server, without any video
 output). By starting netpanzer with the -d commandline option.
@@ -248,19 +247,16 @@ the server section of the file:
 
 5. Bot Players
 
-Bot players can be spawn only on the dedicated server. To do that enter the 
-server console and type:
-> addbot
-
-A new bot will appear on the game. Type help on the server console for more
-info and commands.
+*This has to be revised*
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 6. Contact
 
-Bugs should be reported to the netPanzer forum:
+Bugs can be reported to the netPanzer forum:
     http://www.netpanzer.org/forum
 
-or you might be able to catch someone in irc at irc.freenode.net #netpanzer.
+or you *might* be able to catch someone in irc at irc.freenode.net #netpanzer.
 
+... But most likely you will find some important players in the servers and
+they will get in contact with us ...
