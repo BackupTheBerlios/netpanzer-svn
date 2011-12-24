@@ -95,104 +95,39 @@ public:
         return main_map.getValue(offset);
     }
 
-    static void offsetToPointXY(size_t offset, size_t* point_x, size_t *point_y )
-    {
-        *point_y = ( offset  /  main_map.getWidth() );
-
-        *point_x = ( offset - ( (*point_y) * main_map.getWidth() ) ) * TILE_WIDTH
-                   + (TILE_WIDTH / 2);
-
-        *point_y = (*point_y) * TILE_HEIGHT + (TILE_HEIGHT / 2);
-    }
-
-    static void offsetToMapXY(size_t offset, size_t& x, size_t& y)
-    {
-        y = offset / main_map.getWidth();
-        x = offset - y * main_map.getWidth();
-    }
-
-    static void offsetToMapXY(size_t offset, iXY *map_loc)
-    {
-        size_t map_x, map_y;
-        offsetToMapXY(offset, map_x, map_y);
-        map_loc->x = map_x;
-        map_loc->y = map_y;
-    }
-
-    static void mapXYtoPointXY(unsigned short map_x, unsigned short map_y,
-                               size_t *point_x, size_t *point_y )
-    {
-        iXY loc = mapXYtoPointXY(iXY(map_x, map_y));
-        *point_x = loc.x;
-        *point_y = loc.y;
-    }
-
-    static void mapXYtoPointXY(iXY map_loc, iXY *loc)
-    {
-        *loc = mapXYtoPointXY(map_loc);
-    }
-
-    static iXY mapXYtoPointXY(iXY map_loc)
-    {
-#ifdef DEBUG
-        assert(inside(map_loc));
-#endif
-        return iXY((map_loc.x * TILE_WIDTH) + (TILE_WIDTH / 2),
-                (map_loc.y * TILE_HEIGHT) + (TILE_HEIGHT / 2));
-    }
-
-    static void pointXYtoMapXY(size_t point_x, size_t point_y,
-            unsigned short *map_x, unsigned short *map_y )
-    {
-        iXY mapxy = pointXYtoMapXY(iXY(point_x, point_y));
-        *map_x = mapxy.x;
-        *map_y = mapxy.y;
-    }
-
-    static void pointXYtoMapXY(const iXY& point, iXY *map_loc)
-    {
-        *map_loc = pointXYtoMapXY(point);
-    }
-
-    static iXY pointXYtoMapXY(const iXY& point)
-    {
-#ifdef DEBUG
-        assert(point.x >= 0 && point.x >= 0 
-                && point.x < (int) (getWidth() * TILE_WIDTH)
-                && point.y < (int) (getHeight() * TILE_HEIGHT));
-#endif
-        return iXY(point.x / TILE_WIDTH, point.y / TILE_HEIGHT);
-    }
-
-    static int pointXtoMapX(const int x) { return x/TILE_WIDTH; }
-    static int pointYtoMapY(const int y) { return y/TILE_HEIGHT; }
-
-    static size_t mapXYtoOffset(size_t map_x, size_t map_y)
-    {
-        return mapXYtoOffset(iXY(map_x, map_y));
-    }
-
     static size_t mapXYtoOffset(const iXY& map_loc)
     {
         return map_loc.y * main_map.getWidth() + map_loc.x;
     }
 
-    static void markLocHack(const iXY& loc)
+    static void offsetToMapXY(size_t offset, iXY& map_loc)
     {
-        main_map.setMapValue(loc.x, loc.y, 27);
+        map_loc.y = offset/main_map.getWidth();
+        map_loc.x = offset%main_map.getWidth();
     }
 
-    static void unmarkLocHack(const iXY& loc)
+    static int mapXtoPointX(const int x) { return (x*TILE_WIDTH) + (TILE_WIDTH/2); }
+    static int mapYtoPointY(const int y) { return (y*TILE_HEIGHT)+ (TILE_HEIGHT/2); }
+
+    static void mapXYtoPointXY(const iXY& map_loc, iXY& loc)
     {
-        main_map.setMapValue(loc.x, loc.y, 28);
+        loc.x = mapXtoPointX(map_loc.x);
+        loc.y = mapXtoPointX(map_loc.y);
     }
 
-    static void normalizePointXY(size_t point_x, size_t point_y, size_t *norm_x, size_t *norm_y)
+    static void mapXYtoTopPointXY(const iXY &map_loc, iXY& loc)
     {
-        unsigned short map_x, map_y;
+        loc.x = map_loc.x * TILE_WIDTH;
+        loc.y = map_loc.y * TILE_HEIGHT;
+    }
 
-        pointXYtoMapXY( point_x, point_y, &map_x, &map_y );
-        mapXYtoPointXY( map_x, map_y, norm_x, norm_y );
+    static int pointXtoMapX(const int x) { return x/TILE_WIDTH; }
+    static int pointYtoMapY(const int y) { return y/TILE_HEIGHT; }
+
+    static void pointXYtoMapXY(const iXY& point, iXY& map_loc)
+    {
+        map_loc.x = pointXtoMapX(point.x);
+        map_loc.y = pointYtoMapY(point.y);
     }
 
     static WorldMap* getMap()
@@ -222,11 +157,9 @@ public:
         return( main_map.isMapLoaded() );
     }
 
-    static unsigned char getMovementValue( iXY map_loc );
+    static unsigned char getMovementValue( const iXY& map_loc );
 
-    static unsigned char getAverageColorPointXY( iXY &point_loc );
-
-    static unsigned char getAverageColorMapXY( iXY &map_loc );
+    static unsigned char getAverageColorMapXY( const iXY& map_loc );
 
     static iXY getFreeSpawnPoint()
     {

@@ -86,13 +86,13 @@ void ViewCamera::scrollPlusY( long scroll_increment )
 
 void ViewCamera::getViewStart(unsigned long view_size_x,
 			      unsigned long view_size_y,
-                              unsigned long *view_start_x,
-			      unsigned long *view_start_y)
+                              int *view_start_x,
+                              int *view_start_y)
 {
     iXY map_size;
     unsigned long view_offset_x;
     unsigned long view_offset_y;
-    long start_x, start_y;
+    int start_x, start_y;
 
     view_offset_x = view_size_x >> 1;
     view_offset_y = view_size_y >> 1;

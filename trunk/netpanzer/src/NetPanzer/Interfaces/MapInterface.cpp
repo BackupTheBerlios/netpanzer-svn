@@ -157,7 +157,7 @@ void MapInterface::generateMappingTable()
 
 }
 
-unsigned char MapInterface::getMovementValue( iXY map_loc )
+unsigned char MapInterface::getMovementValue( const iXY& map_loc )
 {
     unsigned short tile_val;
     char move_val;
@@ -195,15 +195,7 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
 
 }
 
-unsigned char MapInterface::getAverageColorPointXY( iXY &point_loc )
-{
-    WorldMap::MapElementType map_value =
-        main_map.getValue(point_loc.x/32, point_loc.y/32);
-
-    return( tile_set.getAverageTileColor( map_value ) );
-}
-
-unsigned char MapInterface::getAverageColorMapXY( iXY &map_loc )
+unsigned char MapInterface::getAverageColorMapXY( const iXY& map_loc )
 {
     unsigned short map_value;
 

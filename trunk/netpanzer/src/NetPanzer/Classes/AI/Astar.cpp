@@ -161,7 +161,7 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
        )
         return 0xFFFFFFFF;
 
-    abs = MapInterface::mapXYtoOffset(map_loc.x, map_loc.y);
+    abs = MapInterface::mapXYtoOffset(map_loc);
 
     return abs;
 }

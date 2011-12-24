@@ -595,7 +595,7 @@ private:
             }
 
             unit = i->second;
-            MapInterface::pointXYtoMapXY(unit->unit_state.location, &unit_map_loc);
+            MapInterface::pointXYtoMapXY(unit->unit_state.location, unit_map_loc);
             UnitRemoteCreate urc(unit->player->getID(),
                                  unit->id,
                                  unit_map_loc.x,

@@ -38,15 +38,5 @@ void UnitBlackBoard::resetBlackBoard()
 
 void UnitBlackBoard::updateUnitLocs( void )
 {
-    unsigned long i,k,x_limit,y_limit;
-
-    x_limit = unit_loc_map.x_size;
-    y_limit = unit_loc_map.y_size;
-
-    for( i = 0; i < y_limit; i++ )
-        for ( k = 0; k < x_limit; k++ ) {
-            if ( unit_loc_map.getBit( k, i ) == true )
-                MapInterface::markLocHack( iXY( k, i ) );
-        }
 
 }

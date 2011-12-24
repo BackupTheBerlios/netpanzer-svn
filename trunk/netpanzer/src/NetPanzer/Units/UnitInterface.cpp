@@ -658,7 +658,7 @@ bool UnitInterface::queryUnitAtMapLoc(iXY map_loc, UnitID *queary_unit_id)
         UnitBase* unit = i->second;
         UnitState* unit_state = & unit->unit_state;
             
-        MapInterface::pointXYtoMapXY( unit_state->location, &unit_map_loc );
+        MapInterface::pointXYtoMapXY( unit_state->location, unit_map_loc );
         if( map_loc == unit_map_loc ) {
             *queary_unit_id = unit->id;
             return true;

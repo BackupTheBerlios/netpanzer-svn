@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitBase.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
-#include "Units/Vehicle.hpp"
 #include "Util/Log.hpp"
 
 //-----------------------------------------------------------------
@@ -222,7 +221,7 @@ BotPlayer::unitOccupyOupost(UnitBase *unit)
         iXY map_loc;
         MapInterface::pointXYtoMapXY(
                 outpost->location + occupation_pad_offset,
-                &map_loc);
+                map_loc);
         moveUnit(unit, map_loc);
     }
 }

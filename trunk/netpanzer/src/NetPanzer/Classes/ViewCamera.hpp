@@ -46,11 +46,11 @@ public:
     }
 
     void getViewStart( unsigned long view_size_x, unsigned long view_size_y,
-                       unsigned long *view_start_x, unsigned long *view_start_y );
+                       int *view_start_x, int *view_start_y );
 
     inline void getViewWindow( iRect *view_win )
     {
-        unsigned long view_start_x, view_start_y;
+        int view_start_x, view_start_y;
         getViewStart( view_size.x, view_size.y, &view_start_x, &view_start_y );
         view_win->min.x = view_start_x;
         view_win->min.y = view_start_y;

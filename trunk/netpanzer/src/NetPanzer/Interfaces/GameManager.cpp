@@ -59,7 +59,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Vehicle.hpp"
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
@@ -322,7 +321,7 @@ void GameManager::spawnPlayer( PlayerID player )
 
     //** Change the location of the view camera to the spawn point **
     iXY world_loc;
-    MapInterface::mapXYtoPointXY( spawn_point, &world_loc );
+    MapInterface::mapXYtoPointXY( spawn_point, world_loc );
     if ( PlayerInterface::getLocalPlayerIndex() == player )
     {
         WorldViewInterface::setCameraPosition( world_loc );

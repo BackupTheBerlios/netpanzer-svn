@@ -195,21 +195,15 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         unsigned long id_list_index;
         size_t id_list_size;
         UnitBase *unit_ptr;
-        iXY range_vector;
 
         id_list_size = working_list.unit_list.size();
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
         {
             unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
-            if ( unit_ptr != 0 )
+            if ( unit_ptr && unit_ptr->isWeaponInRange(loc) )
             {
-                range_vector = loc - unit_ptr->unit_state.location;
-                if ( range_vector.mag2() < unit_ptr->unit_state.weapon_range )
-                {
-                    fielddraws = true;
-                    return  _cursor_enemy_unit;
-                    break;
-                }
+                fielddraws = true;
+                return  _cursor_enemy_unit;
             }
         }
     }
@@ -218,7 +212,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     {
         return _cursor_blocked_target;
     }
-    MapInterface::pointXYtoMapXY( loc, &map_loc );
+    MapInterface::pointXYtoMapXY( loc, map_loc );
 
     if (MapInterface::getMovementValue(map_loc) >= 0xFF)
     {
@@ -889,7 +883,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     if ( id_list_size == 0 )
         return;
 
-    MapInterface::pointXYtoMapXY( world_pos, &map_pos );
+    MapInterface::pointXYtoMapXY( world_pos, map_pos );
     matrix.reset( map_pos );
 
     NetMessageEncoder encoder;
@@ -1226,15 +1220,15 @@ WorldInputCmdProcessor::draw()
 //    iXY mappos;
 
 //    WorldViewInterface::clientXYtoWorldXY(world_win, mpos, &wpos);
-//    MapInterface::pointXYtoMapXY( wpos, &mappos );
+//    MapInterface::pointXYtoMapXY( wpos, mappos );
 
 //    iXY mappos2(mappos.x+1, mappos.y+1);
 
 //    iXY wp1, wp2;
 //    iXY r1, r2;
 
-//    MapInterface::mapXYtoPointXY(mappos,  &wp1);
-//    MapInterface::mapXYtoPointXY(mappos2, &wp2);
+//    MapInterface::mapXYtoPointXY(mappos,  wp1);
+//    MapInterface::mapXYtoPointXY(mappos2, wp2);
 
 //    wp1.x -= 16;
 //    wp1.y -= 16;

@@ -148,8 +148,8 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             num_objectives = 0;
         }
 
-        size_t loc_x, loc_y;
-        size_t world_x, world_y;
+        iXY loc;
+        iXY world;
         std::string name;
 
         for (ObjectiveID objective_index = 0; objective_index < objective_count; objective_index++ )
@@ -159,11 +159,11 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             name = readToken(in, "Name:");
             std::string location = readToken(in, "Location:");
             std::stringstream ss(location);
-            ss >> loc_x >> loc_y;
+            ss >> loc.x >> loc.y;
             
-            MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
+            MapInterface::mapXYtoPointXY( loc, world );
 
-            objective_obj = new Objective(objective_index, iXY(world_x, world_y),
+            objective_obj = new Objective(objective_index, world,
                     BoundBox( -48, -32, 48, 32 )
                     );
             

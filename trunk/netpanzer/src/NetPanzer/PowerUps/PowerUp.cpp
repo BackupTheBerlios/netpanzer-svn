@@ -37,7 +37,7 @@ PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
     this->ID = ID;
     this->type = type;
 
-    MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    MapInterface::mapXYtoPointXY( map_loc, this->world_loc );
     
     this->life_cycle_state = _power_up_lifecycle_state_active;
     
@@ -55,7 +55,7 @@ PowerUp::PowerUp(iXY map_loc, int type)
     this->ID = -1;
     this->type = type;
 
-    MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    MapInterface::mapXYtoPointXY( map_loc, this->world_loc );
     
     this->life_cycle_state = _power_up_lifecycle_state_active;
 

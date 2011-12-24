@@ -210,7 +210,7 @@ void PathGenerator::pathingFsmUpdatePath()
                         path_request.path->popFirst( &abs_new_goal );
                     }
 
-                    MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                    MapInterface::offsetToMapXY( abs_new_goal, new_goal);
                     path_request.goal = new_goal;
                 }
 
@@ -260,7 +260,7 @@ void PathGenerator::pathingFsmCachePath()
                     path_request.path->popFirst( &abs_new_goal );
                 }
 
-                MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                MapInterface::offsetToMapXY( abs_new_goal, new_goal);
                 path_request.goal = new_goal;
 
                 pathing_fsm_state = _pathing_fsm_state_generate_path_part_a;
@@ -290,7 +290,7 @@ void PathGenerator::pathingFsmCachePath()
                     path_request.path->popLast( &abs_new_goal );
                 }
 
-                MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                MapInterface::offsetToMapXY( abs_new_goal, new_goal);
                 path_request.goal = new_goal;
                 path_request.start = working_goal;
 

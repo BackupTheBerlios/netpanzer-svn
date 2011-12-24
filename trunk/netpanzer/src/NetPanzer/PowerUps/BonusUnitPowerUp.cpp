@@ -43,15 +43,12 @@ BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
 void BonusUnitPowerUp::onHit( UnitID unit_id )
 {
     PlacementMatrix placement_matrix;
-    iXY map_pos;
 
     sound->playPowerUpSound();
 
-    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    PlayerID own_player = UnitInterface::getUnit(unit_id)->player->getID();
 
-    MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_pos );
-
-    placement_matrix.reset( map_pos );
+    placement_matrix.reset( map_loc );
 
 
     for( int i = 0; i < 9; i++ )
@@ -63,7 +60,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
         new_unit = UnitInterface::createUnit(bonus_unit_type,
                                              spawn_loc,
-                                             unit->player->getID() );
+                                             own_player );
 
         if ( new_unit != 0 )
         {
@@ -75,12 +72,12 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( ID, unit->player->getID() );
+    hit_mesg.set( ID, own_player );
     SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    if(unit->player == PlayerInterface::getLocalPlayer())
+    if( PlayerInterface::isLocalPlayer(own_player) )
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
     }

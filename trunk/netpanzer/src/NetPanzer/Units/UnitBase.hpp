@@ -47,6 +47,13 @@ public:
     virtual void offloadGraphics(SpriteSorter& ) = 0;
     virtual void soundSelected() = 0;
 
+    bool isWeaponInRange(const iXY& loc) const
+    {
+        int x = loc.x - unit_state.location.x;
+        int y = loc.y - unit_state.location.y;
+        return (x*x + y*y) < unit_state.weapon_range;
+    }
+
 private:
     friend class UnitInterface;
     void setID(UnitID id)

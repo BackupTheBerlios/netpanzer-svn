@@ -216,25 +216,23 @@ void
 GameView::drawMap(Surface &window)
 {
     TileSet * ts = TileInterface::getTileSet();
-    unsigned long world_x;
-    unsigned long world_y;
-    unsigned short map_x;
-    unsigned short map_y;
+    iXY world;
+    iXY map;
     
     WorldViewInterface::getMainCamera()->getViewStart(window.getWidth(), window.getHeight(),
-                              &world_x, &world_y);
-    MapInterface::pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
+                              &world.x, &world.y);
+    MapInterface::pointXYtoMapXY( world, map );
         
     unsigned short tile_size = ts->getTileXsize();
     
-    long partial_y = world_y % tile_size;
+    long partial_y = world.y % tile_size;
     int y = 0;
     if ( partial_y )
     {
         y -= partial_y;
     }
     
-    long partial_x = world_x % tile_size;
+    long partial_x = world.x % tile_size;
     int start_x = 0;
     if ( partial_x )
     {
@@ -243,18 +241,18 @@ GameView::drawMap(Surface &window)
     
     unsigned int tile = 0;
     
-    WorldMap * map = MapInterface::getMap();
+    WorldMap * worldmap = MapInterface::getMap();
     
     unsigned short tmx;
     
     for ( ; y < (int)window.getHeight(); y += tile_size )
     {
-        tmx = map_x;
+        tmx = map.x;
         for ( int x = start_x; x < (int)window.getWidth(); x += tile_size )
         {
-            tile = map->getValue(tmx++, map_y);
+            tile = worldmap->getValue(tmx++, map.y);
             blitTile(window, tile, x, y);
         }
-        map_y ++;
+        map.y ++;
     }
 }

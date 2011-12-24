@@ -42,7 +42,7 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     capture_area = area;
     occupying_player = 0;
 
-    MapInterface::pointXYtoMapXY( location, &outpost_map_loc );
+    MapInterface::pointXYtoMapXY( location, outpost_map_loc );
     selection_box.max = location + iXY( 64, 32 );
     selection_box.min = location + iXY( -224, -128 );
     this->area.min = iXY( -400, -144 );

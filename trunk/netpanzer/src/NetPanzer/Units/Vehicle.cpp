@@ -81,7 +81,8 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     if(!MapInterface::inside(initial_loc))
         throw std::runtime_error("Invalid position");
 
-    iXY loc = MapInterface::mapXYtoPointXY(initial_loc);
+    iXY loc;
+    MapInterface::mapXYtoPointXY(initial_loc, loc);
     unit_state.location = loc;
     UnitBlackBoard::markUnitLoc( initial_loc );
     fsm_timer.changeRate( 10 );
@@ -256,8 +257,8 @@ unsigned short Vehicle::mapXYtoOrientation( unsigned long square, long *goal_ang
 {
     iXY current_loc, next_loc;
 
-    MapInterface::pointXYtoMapXY( unit_state.location, &current_loc );
-    MapInterface::offsetToMapXY( square, &next_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, current_loc );
+    MapInterface::offsetToMapXY( square, next_loc );
 
     // so many magic numbers
     if ( (next_loc.x > current_loc.x)  &&  (next_loc.y == current_loc.y) )
@@ -344,8 +345,8 @@ void Vehicle::locationOffset( unsigned long square, iXY &offset )
     iXY square_map_loc;
     iXY unit_map_loc;
 
-    MapInterface::offsetToMapXY( square, &square_map_loc );
-    MapInterface::pointXYtoMapXY( unit_state.location, &unit_map_loc );
+    MapInterface::offsetToMapXY( square, square_map_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, unit_map_loc );
 
     offset = unit_map_loc - square_map_loc ;
 }
@@ -831,7 +832,7 @@ void Vehicle::aiFsmIdle()
 bool Vehicle::ruleMoveToLoc_GoalReached()
 {
     iXY map_loc;
-    MapInterface::pointXYtoMapXY( unit_state.location, &map_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, map_loc );
     if ( map_loc == aiFsmMoveToLoc_goal )
         return true;
 
@@ -862,7 +863,7 @@ void Vehicle::aiFsmMoveToLoc()
                     aiFsmMoveToLoc_OnExitCleanUp();
 
                     iXY current_map_loc;
-                    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
+                    MapInterface::pointXYtoMapXY( unit_state.location, current_map_loc );
                     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 
                     external_ai_event = _external_event_null;
@@ -903,7 +904,7 @@ void Vehicle::aiFsmMoveToLoc()
                     // Rule GoalReached : is true
                     // Action : Exit fsm
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
+                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
                     aiFsmMoveToLoc_OnExitCleanUp();
@@ -922,7 +923,7 @@ void Vehicle::aiFsmMoveToLoc()
                         PathRequest path_request;
 
                         //LOG( ("Incomplete Path -- Regenerating Path") );
-                        MapInterface::pointXYtoMapXY( unit_state.location, &start );
+                        MapInterface::pointXYtoMapXY( unit_state.location, start );
                         path_request.set(id, start, aiFsmMoveToLoc_goal, 0,  &path, _path_request_full );
                         PathScheduler::requestPath( path_request );
                         aiFsmMoveToLoc_path_not_finished = true;
@@ -944,7 +945,7 @@ void Vehicle::aiFsmMoveToLoc()
             {
                 // CurrentPathComplete: is Unit at the end of the current path
                 aiFsmMoveToLoc_path_not_finished = path.popFirst( &aiFsmMoveToLoc_next_square );
-                MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, &aiFsmMoveToLoc_next_loc );
+                MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, aiFsmMoveToLoc_next_loc );
 
                 if ( !aiFsmMoveToLoc_path_not_finished )
                 {
@@ -957,7 +958,7 @@ void Vehicle::aiFsmMoveToLoc()
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
+                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
                     //aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
@@ -1163,7 +1164,7 @@ void Vehicle::aiFsmAttackUnit()
                     aiFsmAttackUnit_OnExitCleanUp();
 
                     iXY current_map_loc;
-                    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
+                    MapInterface::pointXYtoMapXY( unit_state.location, current_map_loc );
                     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 
                     external_ai_event = _external_event_null;
@@ -1205,7 +1206,7 @@ void Vehicle::aiFsmAttackUnit()
                     // Rule: RangeVector < WeaponRange, unit is in range
                     // Action: Remain in position
                     aiFsmAttackUnit_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
+                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, aiFsmAttackUnit_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_idle;
                     end_cycle = true;
@@ -1216,7 +1217,7 @@ void Vehicle::aiFsmAttackUnit()
                     if ( aiFsmAttackUnit_path_not_finished == false )
                     {
                         iXY start;
-                        MapInterface::pointXYtoMapXY( unit_state.location, &start );
+                        MapInterface::pointXYtoMapXY( unit_state.location, start );
 
                         PathRequest path_request;
                         path_request.set(id, start, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
@@ -1282,7 +1283,7 @@ void Vehicle::aiFsmAttackUnit()
             {
                 // CurrentPathComplete: is Unit at the end of the current path
                 aiFsmAttackUnit_path_not_finished = path.popFirst( &aiFsmAttackUnit_next_square );
-                MapInterface::offsetToMapXY( aiFsmAttackUnit_next_square, &aiFsmAttackUnit_next_loc );
+                MapInterface::offsetToMapXY( aiFsmAttackUnit_next_square, aiFsmAttackUnit_next_loc );
 
                 if ( !aiFsmAttackUnit_path_not_finished )
                 {
@@ -1295,7 +1296,7 @@ void Vehicle::aiFsmAttackUnit()
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmAttackUnit_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
+                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, aiFsmAttackUnit_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_wait_timer.changePeriod( 0.8f );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_wait_clear_loc;
@@ -1419,12 +1420,12 @@ void Vehicle::aiFsmAttackUnit()
                 iXY deviation_vector;
                 iXY goal_point_loc;
 
-                MapInterface::mapXYtoPointXY( aiFsmAttackUnit_target_goal_loc, &goal_point_loc );
+                MapInterface::mapXYtoPointXY( aiFsmAttackUnit_target_goal_loc, goal_point_loc );
                 deviation_vector = target_unit_state->location - goal_point_loc;
 
                 if ( deviation_vector.mag2() > unit_state.weapon_range )
                 {
-                    MapInterface::pointXYtoMapXY( target_unit_state->location, &aiFsmAttackUnit_target_goal_loc );
+                    MapInterface::pointXYtoMapXY( target_unit_state->location, aiFsmAttackUnit_target_goal_loc );
 
                     PathRequest path_request;
                     path_request.set( id, aiFsmAttackUnit_next_loc, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
@@ -1839,7 +1840,7 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     move_opcode_sent = false;
     //move_opcode_sent = true;
 
-    MapInterface::pointXYtoMapXY( unit_state.location, &start );
+    MapInterface::pointXYtoMapXY( unit_state.location, start );
 
     //LOG( ("UnitID %d, %d : Start %d, %d : Goal %d, %d", id.getPlayer(), id.getIndex(),
     //                                                    start.x, start.y,
@@ -1850,7 +1851,7 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     PathScheduler::requestPath( path_request );
 
     iXY target;
-    MapInterface::mapXYtoPointXY( aiFsmMoveToLoc_goal, &target);
+    MapInterface::mapXYtoPointXY( aiFsmMoveToLoc_goal, target);
     setFsmTurretTrackPoint( target );
 }
 
@@ -1874,8 +1875,8 @@ void Vehicle::setCommandAttackUnit(const UMesgAICommand* message)
     aiFsmAttackUnit_path_not_finished = true;
     aiFsmAttackUnit_target_destroyed = false;
 
-    MapInterface::pointXYtoMapXY( unit_state.location, &start );
-    MapInterface::pointXYtoMapXY( target_unit_state->location, &aiFsmAttackUnit_target_goal_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, start );
+    MapInterface::pointXYtoMapXY( target_unit_state->location, aiFsmAttackUnit_target_goal_loc );
 
     PathRequest path_request;
     path_request.set( id, start, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
@@ -1893,7 +1894,7 @@ void Vehicle::setCommandManualMove(const UMesgAICommand* message)
     if ( message->command == _command_start_manual_move )
     {
         aiFsmManualMove_move_orientation = message->manual_move_orientation;
-        MapInterface::pointXYtoMapXY( unit_state.location, &aiFsmManualMove_next_loc );
+        MapInterface::pointXYtoMapXY( unit_state.location, aiFsmManualMove_next_loc );
         aiFsmManualMove_state = _aiFsmManualMove_next_move;
         ai_command_state = _ai_command_manual_move;
     }
@@ -1957,7 +1958,7 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
 
         // ** Note: Temp
         iXY current_map_loc;
-        MapInterface::pointXYtoMapXY(unit_state.location, &current_map_loc);
+        MapInterface::pointXYtoMapXY(unit_state.location, current_map_loc);
         UnitBlackBoard::unmarkUnitLoc(current_map_loc);
     }
 }
@@ -1997,7 +1998,7 @@ void Vehicle::messageSelfDestruct(const UnitMessage* )
 
     // ** Note: Temp
     iXY current_map_loc;
-    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, current_map_loc );
     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 }
 
@@ -2043,15 +2044,15 @@ void Vehicle::unitOpcodeMove(const UnitOpcode* opcode)
     iXY sync_loc;
     iXY current_loc;
 
-    MapInterface::offsetToMapXY(move_opcode->getSquare(), &sync_loc );
+    MapInterface::offsetToMapXY(move_opcode->getSquare(), sync_loc );
     sync_loc.x = sync_loc.x + move_opcode->loc_x_offset;
     sync_loc.y = sync_loc.y + move_opcode->loc_y_offset;
 
-    MapInterface::pointXYtoMapXY( unit_state.location, &current_loc );
+    MapInterface::pointXYtoMapXY( unit_state.location, current_loc );
 
     if ( current_loc != sync_loc )
     {
-        MapInterface::mapXYtoPointXY( sync_loc, &(unit_state.location) );
+        MapInterface::mapXYtoPointXY( sync_loc, unit_state.location );
     }
 
     setFsmMoveMapSquare(move_opcode->getSquare());
