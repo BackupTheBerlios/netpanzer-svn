@@ -60,7 +60,7 @@ protected:
     virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
     virtual void doActivate();
     virtual void doDeactivate();
-//    virtual void processEvents();
+    virtual void processEvents();
 }
 ; // end _WIN
 

@@ -53,7 +53,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Vehicle.hpp"
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
@@ -527,14 +526,24 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (!Desktop::getView("OptionsView")->getVisible())
             {
-                
-                View *v = Desktop::getView("OptionsView");
-                assert(v != 0);
-                ((OptionsTemplateView *)v)->initButtons();
-                ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
+                if ( Desktop::getVisible("HelpScrollView") )
+                {
+                    Desktop::toggleVisibility("HelpScrollView");
+                }
+                else if ( Desktop::getVisible("GFlagSelectionView") )
+                {
+                    Desktop::toggleVisibility("GFlagSelectionView");
+                }
+                else
+                {
+                    View *v = Desktop::getView("OptionsView");
+                    assert(v != 0);
+                    ((OptionsTemplateView *)v)->initButtons();
+                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
-                Desktop::setVisibility("OptionsView", true);
-                Desktop::setActiveView("OptionsView");
+                    Desktop::setVisibility("OptionsView", true);
+                    Desktop::setActiveView("OptionsView");
+                }
             }
             else
             {

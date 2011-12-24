@@ -56,8 +56,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 
-#include "Units/Vehicle.hpp"
-
 #include "Scripts/ScriptManager.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
@@ -94,7 +92,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     lastSelectTimer.setTimeOut(400);
     actionTimer.setTimeOut(100);
-
+    Flagtimer.reset();
 }
 
 void
@@ -324,13 +322,15 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::isCharPressed('B') 
-       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag() ) 
+       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag()
+       && ! Desktop::getVisible("HelpScrollView") )
     {
-        static NTimer Flagtimer(150000);
-        if (Flagtimer.isTimeOut())
+        if ( Desktop::getVisible("GFlagSelectionView")
+            || GameConfig::game_changeflagtime == 0
+            || Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)
+           )
         {
             Desktop::toggleVisibility( "GFlagSelectionView" );
-            Flagtimer.reset();
         }
     }
     
@@ -369,7 +369,8 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
 
-    if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
+    if ( KeyboardInterface::getKeyPressed(SDLK_F1)
+       && ! Desktop::getVisible("GFlagSelectionView") ) {
         Desktop::toggleVisibility( "HelpScrollView" );
     }
     
@@ -1056,10 +1057,11 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
 }
 
 void
-WorldInputCmdProcessor::process()
+WorldInputCmdProcessor::process(bool process_mouse)
 {
     evaluateKeyboardEvents();
-    evaluateMouseEvents();
+    if ( process_mouse )
+        evaluateMouseEvents();
 
     working_list.validateList();
 }

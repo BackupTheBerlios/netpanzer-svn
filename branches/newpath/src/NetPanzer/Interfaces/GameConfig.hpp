@@ -136,6 +136,7 @@ public:
     static NPString* game_unit_spawnlist; // "," or space separated list with the numbers of each unit to spawn with
     static NPString* game_adminpass;     // the secret password for admins
     static NPString* game_gamepass;      // the secret password for entering game
+    static int       game_changeflagtime; // in minutes
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 

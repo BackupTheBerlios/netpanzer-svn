@@ -626,6 +626,11 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
         case _net_message_id_player_alliance_update :
             netMessageAllianceUpdate(message);
             break;
+
+        case _net_message_id_player_flagtimer_update :
+                const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
+                gameconfig->game_changeflagtime = pftu->getflagtimer();
+            break;
     }
 }
 
@@ -648,4 +653,11 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID player_id )
 
         SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
     }
+}
+
+void PlayerInterface::SyncFlagTimer()
+{
+    PlayerFlagTimerUpdate player_flagtimer_update(gameconfig->game_changeflagtime);
+    
+    SERVER->broadcastMessage(&player_flagtimer_update, sizeof(PlayerFlagTimerUpdate));
 }

@@ -185,6 +185,7 @@ private:
     Sint32  frag_limit;
     Sint32  time_limit;
     time_t   elapsed_time;
+    Sint32  flag_time;
 
 public:
     ConnectMesgServerGameSettings();
@@ -206,6 +207,8 @@ public:
     void setTimeLimit(Sint32 timeLimit);
     time_t getElapsedTime() const;
     void setElapsedTime(time_t elapsedTime);
+    Sint32 getFlagTime() const;
+    void setFlagTime(Sint32 flagtime);
 } __attribute__((packed));
 
 class ConnectMesgClientGameSetupAck : public NetMessage

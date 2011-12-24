@@ -28,6 +28,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Sprite.hpp"
 #include "Classes/SelectionBoxSprite.hpp"
 
+class TimesCounter
+{
+public:
+    TimesCounter() : times(0), timeout(0) { }
+    TimesCounter(unsigned int timeout) : times(0), timeout(timeout) { }
+    ~TimesCounter() {}
+
+    bool isTimeOut() { return ++times >= timeout; }
+    void reset() { times = 0; }
+
+    void setTimeOut( unsigned int timeout) { this->timeout = timeout; }
+
+
+private:
+    unsigned int times;
+    unsigned int timeout;
+};
+
 enum { _control_move_map_square,
        _control_turret_track_point,
        _control_turret_track_target,

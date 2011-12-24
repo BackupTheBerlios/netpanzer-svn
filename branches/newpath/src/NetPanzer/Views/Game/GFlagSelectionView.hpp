@@ -43,6 +43,8 @@ public:
     virtual void doDeactivate();
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
+    virtual void processEvents();
+
     //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     //virtual void drawBorder(Surface& )
     //{}

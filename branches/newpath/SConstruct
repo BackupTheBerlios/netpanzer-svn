@@ -124,7 +124,7 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
     #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
     #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
     
-
+env.Append( LINKFLAGS = [ '-static-libgcc' ] )
 env['FINALBUILDDIR'] = 'build/' + env['mode'] + '/'
 env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
 crossmingwenv['FINALBUILDDIR'] = 'build/crossmingw/' + env['mode'] + '/'
@@ -245,7 +245,8 @@ else:
 # for crossmingw platform
 if 'crossmingw' in COMMAND_LINE_TARGETS:
     crossmingwenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
-    crossmingwenv.Append( NPLIBS = [ 'SDL_mixer' ] )
+    crossmingwenv.Prepend( _LIBFLAGS = [ '-L/usr/local/lib', '/usr/local/lib/SDL_mixer.lib' ] )
+#    crossmingwenv.Append( NPLIBS = [ '/usr/local/lib/SDL_mixer.lib' ] )
 
 # for crosslinux platform
 if 'crosslinux' in COMMAND_LINE_TARGETS:

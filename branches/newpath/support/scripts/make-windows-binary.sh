@@ -14,10 +14,10 @@ EXENAME="build/crossmingw/release/netpanzer.exe"
 echo "Making netPanzer windows version ${VERSION}"
 
 scons crossmingw \
-      crossmingwcompilerprefix=i686-mingw32-\
-      crossmingwsdlconfig=/usr/local/gcc/mingw-3.4.5/bin/sdl-config
+      crossmingwcompilerprefix=i586-mingw32msvc-\
+      crossmingwsdlconfig=/usr/local/bin/sdl-config-mingw
 
-i686-mingw32-strip "${EXENAME}"
+i586-mingw32msvc-strip "${EXENAME}"
 
 [ -d "${NPDEST}" ] && rm -rf "${NPDEST}"
 
@@ -27,8 +27,10 @@ cp "${EXENAME}" "${NPDEST}"
 support/scripts/copy_datafiles.sh "${NPDEST}"
 support/scripts/copy_docfiles.sh "${NPDEST}"
 
-cp /usr/local/gcc/mingw-3.4.5/usr/bin/SDL.dll "${NPDEST}"
-cp /usr/local/gcc/mingw-3.4.5/usr/lib/*.dll "${NPDEST}"
+cp /usr/local/bin/SDL.dll "${NPDEST}"
+cp /usr/local/lib/*.dll "${NPDEST}"
+cp /usr/local/bin/README-SDL.txt "${NPDEST}"
+cp /usr/local/bin/README-SDL_mixer.txt "${NPDEST}"
 
 [ ! -d "${RELEASEDIR}" ] && mkdir "${RELEASEDIR}"
 

@@ -57,6 +57,7 @@ NPString* GameConfig::game_unit_profiles = 0;
 NPString* GameConfig::game_unit_spawnlist = 0;
 NPString* GameConfig::game_adminpass = 0;
 NPString* GameConfig::game_gamepass = 0;
+int       GameConfig::game_changeflagtime = 15; // minutes
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -120,6 +121,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "unit_spawnlist",    GETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         GETSVTYPE_STRING,  &GameConfig::game_adminpass},
     { "gamepass",          GETSVTYPE_STRING,  &GameConfig::game_gamepass},
+    { "changeflagtime",    GETSVTYPE_INT,     &GameConfig::game_changeflagtime},
     {0,0}
 };
 
@@ -134,6 +136,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "unit_spawnlist",    SETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
     { "adminpass",         SETSVTYPE_STRING,  &GameConfig::game_adminpass},
     { "gamepass",          SETSVTYPE_STRING,  &GameConfig::game_gamepass},
+    { "changeflagtime",    SETSVTYPE_INT,     &GameConfig::game_changeflagtime },
     {0,0}
 };
 

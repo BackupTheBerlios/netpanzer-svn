@@ -102,9 +102,11 @@ protected:
     static ObjectiveID selected_objective_id;
 
 public:
+    NTimer Flagtimer;
+
     WorldInputCmdProcessor();
 
-    void process();
+    void process(bool process_mouse = true);
 
     void inFocus();
 

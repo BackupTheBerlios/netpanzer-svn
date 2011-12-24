@@ -16,12 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "HelpScrollView.hpp"
 #include "GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
-
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 // HelpScrollView
 //---------------------------------------------------------------------------
@@ -131,6 +130,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  /server help                      Show Help window (same 'F1')");
     insert("  /server map [map name]            Restart game with the given map");
     insert("  /server autokick [timeout]        Show/set autokick for inactive players");
+    insert("  /server flagtimer [timeout]       Show/set flag change timer");
     insert("  /server countdown [timeout]       Generate a countdown (same 'c')");
     insert("  /server say [your talk]           Server say something in chat");
     insert("  /server listplayers               List players with the assigned number");
@@ -247,3 +247,10 @@ void HelpScrollView::doActivate()
 {
     /* empty */
 } // end HelpScrollView::doActivate
+
+void HelpScrollView::processEvents()
+{
+    if ( Desktop::getVisible("GameView") )
+        COMMAND_PROCESSOR.process(false);
+}
+

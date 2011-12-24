@@ -199,5 +199,16 @@ ServerCommands =
                 end
                 return counttime == 0;
             end);
+    end,
+
+    flagtimer_help = "sets the time for changing flag",
+    flagtimer = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "flagtimer time is " .. config.game.changeflagtime);
+        else
+            config.game.changeflagtime = param;
+            netpanzer.syncflagtimer();
+            netpanzer.serversayto( player, "flagtimer time was set to " .. config.game.changeflagtime);
+        end
     end
 };

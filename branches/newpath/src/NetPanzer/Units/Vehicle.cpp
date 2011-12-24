@@ -135,7 +135,6 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     body_anim_shadow.attachSprite( &turret_anim, zero );
     body_anim_shadow.attachSprite( &select_info_box, zero );
 
-    aiFsmMoveToLoc_wait_count = 0;
 }
 
 void Vehicle::setUnitProperties( unsigned char utype )
@@ -896,7 +895,6 @@ void Vehicle::aiFsmMoveToLoc()
                 setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
 
                 aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
-                aiFsmMoveToLoc_wait_count = 0;
             }
             else
             {
@@ -913,7 +911,6 @@ void Vehicle::aiFsmMoveToLoc()
                         PathRequest path_request;
                         path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
                         PathScheduler::requestPath( path_request );
-                        aiFsmMoveToLoc_wait_count = 0;
                     }
                     else
                     {
@@ -923,8 +920,6 @@ void Vehicle::aiFsmMoveToLoc()
                         PathRequest path_request;
                         path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
                         PathScheduler::requestPath( path_request );
-                        // XXX the more times timeout the longer will take next time --> bad idea
-                        aiFsmMoveToLoc_wait_count = 0;
                     }
 
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
@@ -1561,7 +1556,6 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     aiFsmMoveToLoc_next_marked = false;
     ai_command_state = _ai_command_move_to_loc;
     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
-    aiFsmMoveToLoc_wait_count = 0;
 
     opcode_move_timer.changePeriod( 0.10f );
     move_opcode_sent = false;

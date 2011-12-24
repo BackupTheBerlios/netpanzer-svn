@@ -59,7 +59,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Vehicle.hpp"
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
@@ -286,6 +285,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "MaxPlayers: " << gameconfig->maxplayers << "\n"
         << "MaxUnits: " << gameconfig->maxunits << "\n"
         << "AutoKick: " << GameConfig::game_autokicktime << "\n"
+        << "FlagTimer: " << GameConfig::game_changeflagtime << "\n"
         << "Gametype: " << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
             gameconfig->objectiveoccupationpercentage << "\n"
@@ -436,6 +436,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setFragLimit(gameconfig->fraglimit);
     game_setup->setTimeLimit(gameconfig->timelimit);
     game_setup->setElapsedTime(getGameTime());
+    game_setup->setFlagTime(gameconfig->game_changeflagtime);
 
     return game_setup;
 }
@@ -488,7 +489,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     gameconfig->gametype = game_setup->getGameType();
     gameconfig->fraglimit = game_setup->getFragLimit();
     gameconfig->timelimit = game_setup->getTimeLimit();
-
+    gameconfig->game_changeflagtime = game_setup->getFlagTime();
     startGameTimer();
     game_elapsed_time_offset = game_setup->getElapsedTime();
 
