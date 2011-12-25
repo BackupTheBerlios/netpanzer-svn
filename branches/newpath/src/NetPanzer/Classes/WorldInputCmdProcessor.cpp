@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include <sstream>
+#include <algorithm>
 #include "WorldInputCmdProcessor.hpp"
 
 #include "Interfaces/MouseInterface.hpp"
@@ -1217,6 +1218,27 @@ WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
 void
 WorldInputCmdProcessor::centerSelectedUnits()
 {
+    iXY min(0x7fffffff, 0x7ffffff);
+    iXY max;
+
+    for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
+        UnitBase* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
+
+        if(unit_ptr == 0)
+            continue;
+
+        min.x = std::min(min.x, unit_ptr->unit_state.location.x);
+        min.y = std::min(min.y, unit_ptr->unit_state.location.y);
+        max.x = std::max(max.x, unit_ptr->unit_state.location.x);
+        max.y = std::max(max.y, unit_ptr->unit_state.location.y);
+
+    }
+
+    WorldViewInterface::setCameraPosition( min+((max-min)/2) );
+
+
+    // the nice center algorithm unused for now
+
     /** When you want to center the camera on a group of units you have the
      * problem of where to center the camera. The following nice idea+patch is
      * from Christian Hausknecht <christian.hausknecht@gmx.de>.
@@ -1227,100 +1249,100 @@ WorldInputCmdProcessor::centerSelectedUnits()
      * group (if that group is in a very long queue passing the map).
      */
 
-    UnitBase *maxyunit = 0;
-    UnitBase *maxxunit = 0;
-    UnitBase *minyunit = 0;
-    UnitBase *minxunit = 0;
+//    UnitBase *maxyunit = 0;
+//    UnitBase *maxxunit = 0;
+//    UnitBase *minyunit = 0;
+//    UnitBase *minxunit = 0;
 
     // Direction initialize
-    int direction[8];
-    for(int i=0;i<8;++i)
-        direction[i]=0;
+//    int direction[8];
+//    for(int i=0;i<8;++i)
+//        direction[i]=0;
 
     // Vote direction
-    bool firstunit = true;
-    for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
-        UnitBase* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
+//    bool firstunit = true;
+//    for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
+//        UnitBase* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
 
-        if(unit_ptr == 0)
-            continue;
+//        if(unit_ptr == 0)
+//            continue;
 
-            // increment one direction
-        direction[unit_ptr->unit_state.orientation]+=1;
-            // initialize some pointers, get them from first unit
-        if(firstunit) {
-            maxyunit = unit_ptr;
-            maxxunit = unit_ptr;
-            minyunit = unit_ptr;
-            minxunit = unit_ptr;
-            firstunit = false;
-        } // choose extremest in each direction
-        else {
-            if(maxyunit->unit_state.location.y < unit_ptr->unit_state.location.y)
-                maxyunit=unit_ptr;
-            if(maxxunit->unit_state.location.x < unit_ptr->unit_state.location.x)
-                maxxunit=unit_ptr;
-            if(minyunit->unit_state.location.y > unit_ptr->unit_state.location.y)
-                minyunit=unit_ptr;
-            if(minxunit->unit_state.location.x > unit_ptr->unit_state.location.x)
-                minxunit=unit_ptr;
-        }
-    }
+//            // increment one direction
+//        direction[unit_ptr->unit_state.orientation]+=1;
+//            // initialize some pointers, get them from first unit
+//        if(firstunit) {
+//            maxyunit = unit_ptr;
+//            maxxunit = unit_ptr;
+//            minyunit = unit_ptr;
+//            minxunit = unit_ptr;
+//            firstunit = false;
+//        } // choose extremest in each direction
+//        else {
+//            if(maxyunit->unit_state.location.y < unit_ptr->unit_state.location.y)
+//                maxyunit=unit_ptr;
+//            if(maxxunit->unit_state.location.x < unit_ptr->unit_state.location.x)
+//                maxxunit=unit_ptr;
+//            if(minyunit->unit_state.location.y > unit_ptr->unit_state.location.y)
+//                minyunit=unit_ptr;
+//            if(minxunit->unit_state.location.x > unit_ptr->unit_state.location.x)
+//                minxunit=unit_ptr;
+//        }
+//    }
 
-    // Index of chosen direction (which is most used by all units of a group)
-    int preferred_direction = 0;
-    int max = -1;
-    for(int i=0;i<8;++i) {
-        if(direction[i] > max) {
-            max=direction[i];
-            preferred_direction = i;
-        }
-    }
+//    // Index of chosen direction (which is most used by all units of a group)
+//    int preferred_direction = 0;
+//    int max = -1;
+//    for(int i=0;i<8;++i) {
+//        if(direction[i] > max) {
+//            max=direction[i];
+//            preferred_direction = i;
+//        }
+//    }
 
-    // Chose Best unit correspondig to chosen direction
-    UnitBase* unit = 0;
-    switch(preferred_direction) {
-      case 0:
-          unit = maxxunit;
-          break;
-      case 1:
-          if(direction[0]>direction[2])
-              unit = maxxunit;
-          else
-              unit = minyunit;
-          break;
-      case 2:
-          unit = minyunit;
-          break;
-      case 3:
-          if(direction[4]>direction[2])
-              unit = minxunit;
-          else
-              unit = minyunit;
-          break;
-      case 4:
-          unit = minxunit;
-          break;
-      case 5:
-          if(direction[4]>direction[6])
-              unit = minxunit;
-          else
-              unit = maxyunit;
-          break;
-      case 6:
-          unit = maxyunit;
-          break;
-      case 7:
-          if(direction[6]>direction[0])
-              unit = maxyunit;
-          else
-              unit = maxxunit;
-          break;
-      default:
-          assert(false);
-          break;
-    }
+//    // Chose Best unit correspondig to chosen direction
+//    UnitBase* unit = 0;
+//    switch(preferred_direction) {
+//      case 0:
+//          unit = maxxunit;
+//          break;
+//      case 1:
+//          if(direction[0]>direction[2])
+//              unit = maxxunit;
+//          else
+//              unit = minyunit;
+//          break;
+//      case 2:
+//          unit = minyunit;
+//          break;
+//      case 3:
+//          if(direction[4]>direction[2])
+//              unit = minxunit;
+//          else
+//              unit = minyunit;
+//          break;
+//      case 4:
+//          unit = minxunit;
+//          break;
+//      case 5:
+//          if(direction[4]>direction[6])
+//              unit = minxunit;
+//          else
+//              unit = maxyunit;
+//          break;
+//      case 6:
+//          unit = maxyunit;
+//          break;
+//      case 7:
+//          if(direction[6]>direction[0])
+//              unit = maxyunit;
+//          else
+//              unit = maxxunit;
+//          break;
+//      default:
+//          assert(false);
+//          break;
+//    }
 
-    if(unit != 0)
-        WorldViewInterface::setCameraPosition(unit->unit_state.location);
+//    if(unit != 0)
+//        WorldViewInterface::setCameraPosition(unit->unit_state.location);
 }

@@ -673,14 +673,14 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 
 bool UnitInterface::queryUnitAtMapLoc(iXY map_loc, UnitID *queary_unit_id)
 {
-    iXY unit_map_loc;
+//    iXY unit_map_loc;
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
         UnitState* unit_state = & unit->unit_state;
             
-        MapInterface::pointXYtoMapXY( unit_state->location, unit_map_loc );
-        if( map_loc == unit_map_loc ) {
+//        MapInterface::pointXYtoMapXY( unit_state->location, unit_map_loc );
+        if( map_loc == unit_state->map_location ) {
             *queary_unit_id = unit->id;
             return true;
         }

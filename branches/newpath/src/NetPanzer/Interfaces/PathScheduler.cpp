@@ -128,6 +128,7 @@ void PathGenerator::initializePathGeneration( PathRequest &path_request )
         }
     } else
         if ( path_request.request_type == _path_request_update ) {
+
             path_generation_status = _path_generator_status_busy;
             pathing_fsm = _pathing_fsm_update_path;
             pathing_fsm_state = _pathing_fsm_state_initialize;
@@ -252,9 +253,12 @@ void PathGenerator::pathingFsmCachePath()
         case _pathing_fsm_state_initialize_part_a : {
                 unsigned long abs_new_goal = 0;
                 iXY new_goal;
-
                 working_start = path_request.start;
                 working_goal  = path_request.goal;
+
+                // XXX next 2 temp for test
+                path_splice_length = path_request.path->listCount()/2;
+                if ( path_splice_length < 15 ) path_splice_length = 15;
 
                 for ( unsigned long i = 0; i < path_splice_length; i++ ) {
                     path_request.path->popFirst( &abs_new_goal );
@@ -272,9 +276,19 @@ void PathGenerator::pathingFsmCachePath()
                 int path_result_code;
 
                 if ( astar.generatePath( &path_request, _path_merge_front, false, &path_result_code ) ) {
-                    pathing_fsm_state = _pathing_fsm_state_initialize_part_b;
+
+                    // XXX temporal for test
+//                    pathing_fsm_state = _pathing_fsm_state_initialize_part_b;
+
+//                    PathingState::update_gen_count++;
+
+                    path_request.goal = working_goal;
+                    path_request.start = working_start;
+                    path_generation_status = _path_generator_status_waiting;
+                    pathing_fsm_state = _pathing_fsm_state_complete;
 
                     PathingState::update_gen_count++;
+
                 } else {
                     end_cycle = true;
                 }
@@ -285,7 +299,6 @@ void PathGenerator::pathingFsmCachePath()
         case _pathing_fsm_state_initialize_part_b : {
                 unsigned long abs_new_goal = 0;
                 iXY new_goal;
-
                 for ( unsigned long i = 0; i < path_splice_length; i++ ) {
                     path_request.path->popLast( &abs_new_goal );
                 }
@@ -300,7 +313,6 @@ void PathGenerator::pathingFsmCachePath()
 
         case _pathing_fsm_state_generate_path_part_b : {
                 int path_result_code;
-
                 if ( astar.generatePath( &path_request, _path_merge_rear, false, &path_result_code ) ) {
                     path_request.goal = working_goal;
                     path_request.start = working_start;
@@ -315,7 +327,7 @@ void PathGenerator::pathingFsmCachePath()
             break;
 
         case _pathing_fsm_state_complete : {
-                end_cycle = true;
+            end_cycle = true;
             }
             break;
 

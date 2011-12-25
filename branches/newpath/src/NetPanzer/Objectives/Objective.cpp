@@ -46,7 +46,7 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     selection_box.max = location + iXY( 64, 32 );
     selection_box.min = location + iXY( -224, -128 );
     this->area.min = iXY( -400, -144 );
-    this->area.max = iXY(  400,  240 );
+    this->area.max = iXY(  304,  240 );
     outpost_type = 0;
 
     unit_generation_type = 0;
@@ -78,6 +78,7 @@ Objective::changeOwner( PlayerState * new_owner )
                                       name, new_owner->getName().c_str() );
     }
     
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
     unit_generation_on_flag = false;
 }
 
@@ -141,23 +142,11 @@ Objective::attemptOccupationChange(PlayerState* player)
         return; // cannot capture more bases.
     }
 
-    if ( occupying_player )
-    {
-        occupying_player->decObjectivesHeld();
-    }
-
-    occupying_player = player;
-    player->incObjectivesHeld();
-    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+    changeOwner(player);
 
     ObjectiveOccupationUpdate msg;
     msg.set(id, player->getID());
     SERVER->broadcastMessage(&msg, sizeof(msg));
-
-    ConsoleInterface::postMessage(Color::cyan, false, 0,
-                                  "'%s' has been occupied by '%s'",
-                                  name, player->getName().c_str() );
-
 }
 
 void

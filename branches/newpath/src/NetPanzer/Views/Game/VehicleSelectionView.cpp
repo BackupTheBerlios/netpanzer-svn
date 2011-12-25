@@ -624,6 +624,17 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             }
             dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
         }
+
+        iRect ar = obj->area.getAbsRect(obj->location);
+
+//        ar.translate(ar.min - gameViewRect.min);
+
+        iRect ar2;
+
+        ar2.min = ar.min - gameViewRect.min;
+        ar2.max = ar2.min + ar.getSize();
+
+        dest.drawRect(ar2, Color::yellow);
     }
 
 } // end VehicleSelectionView::drawMiniProductionStatus

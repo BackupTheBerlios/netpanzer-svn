@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "Util/Log.hpp"
+#include "Util/Math.hpp"
 #include "Units/UnitBlackBoard.hpp"
 #include "Units/Vehicle.hpp"
 #include "Units/UnitGlobals.hpp"
@@ -71,6 +72,7 @@ UnitState timer ticks 10 times per second, so reload times are:
 // the number is the count out of 16, so
 // 13/16 = 0.8125 seconds
 // 14/16 = 0.875 seconds
+// 20 = little more than 1 seccond
 
 #define MOVEWAIT_TIME 13
 
@@ -88,6 +90,8 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     unit_state.setInitialLocation(initial_loc);
 
     UnitBlackBoard::markUnitLoc( initial_loc );
+//    if ( id == 1 )
+//        LOGGER.warning("INK: %5u,%-5u", initial_loc.x, initial_loc.y );
     setAiFsmDefendHold();
     pending_AI_comm = false;
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_ACTIVE;
@@ -112,10 +116,10 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
 
     fsmMove_offset_x = fsmMove_offset_y = 0;
 
-    move_opcode_sent = false;
     fsmMoveMapSquare_movement_type = 0;
 
     aiFsmDefendHold_state = 0;
+    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_idle;
 
     // from unit profiles
     setUnitProperties(utype);
@@ -128,7 +132,13 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
 
     select_info_box.setBoxState( false );
     select_info_box.setFlag( player->getFlag() );
-    select_info_box.setName( player->getName() );
+
+    char num[50];
+    memset(num,0,sizeof*(num));
+    sprintf(num,"%u", id);
+
+//    select_info_box.setName( player->getName() );
+    select_info_box.setName(num);
 
     body_anim_shadow.attachSprite( &body_anim, zero );
     body_anim_shadow.attachSprite( &turret_anim_shadow, zero );
@@ -149,7 +159,8 @@ void Vehicle::setUnitProperties( unsigned char utype )
     unit_state.defend_range = profile->defend_range;
     unit_state.speed_factor = profile->speed_factor;
     unit_state.speed_rate = profile->speed_rate;
-    unit_state.tilespeed = (unit_state.speed_factor * unit_state.speed_rate) / 2;
+//    unit_state.tilespeed = (unit_state.speed_factor * unit_state.speed_rate) / 2;
+    setMaxSpeed( (unit_state.speed_factor * unit_state.speed_rate) / 2 );
     unit_state.reload_time = profile->reload_time;
     unit_state.weapon_range = profile->attack_range;
     unit_state.unit_type = utype;
@@ -184,6 +195,19 @@ void Vehicle::setUnitProperties( unsigned char utype )
     select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
 }
 
+
+void Vehicle::setMaxSpeed(unsigned int speed)
+{
+    unit_state.tilespeed = (unit_state.speed_factor * unit_state.speed_rate) / 2;
+    angle_speeds[0].x = unit_state.tilespeed;
+    angle_speeds[0].y = 0;
+
+    for ( int n = 1; n <= 35; n++ )
+    {
+        angle_speeds[n].x = round( (angle_speeds[0].x * Math::getCos(n*10)) - (angle_speeds[0].y * Math::getSin(n*10)) );
+        angle_speeds[n].y = -round( (angle_speeds[0].x * Math::getSin(n*10)) + (angle_speeds[0].y * Math::getCos(n*10)) );
+    }
+}
 
 void Vehicle::updateUnitStateProperties()
 {
@@ -363,9 +387,37 @@ void Vehicle::setFsmBodyRotate( long goal_angle, unsigned short rotation )
 
 bool Vehicle::fsmBodyRotate()
 {
-    if( unit_state.body_angle.angle_int != fsmBodyRotate_goal_angle )
+//    LOGGER.debug("[ROT] dest=%6u,%-6u pos=%6u,%-6u cur_ang=%2u[%5d,%-5d]",
+//                 fsmMove_destination.x, fsmMove_destination.y,
+//                 unit_state.subtile_location.x,unit_state.subtile_location.y,
+//                 unit_state.body_angle.angle_int,
+//                 angle_speeds[unit_state.body_angle.angle_int].x,
+//                 angle_speeds[unit_state.body_angle.angle_int].y
+//                 );
+
+    long goal_angle;
+    long delta;
+    unsigned short rotation;
+    iXY direction_vector;
+
+    direction_vector = fsmMove_destination - unit_state.subtile_location;
+    Angle target_angle;
+    target_angle.set( direction_vector );
+
+    goal_angle = target_angle.DegreesInt( 10 );
+    rotation = shortestRotation( unit_state.body_angle, goal_angle, &delta );
+    if ( delta <= 5 ) // was 9
+        fsmMoveMapSquare_movement_type = _rotate_and_move;
+    else
+        fsmMoveMapSquare_movement_type = _rotate_stop_move;
+//    setFsmTurretRotate( goal_angle, rotation );
+
+//    int to_move_x = angle_speeds[unit_state.body_angle.angle_int].x;
+//    int to_move_y = angle_speeds[unit_state.body_angle.angle_int].y;
+
+    if( unit_state.body_angle.angle_int != goal_angle )
     {
-        if ( fsmBodyRotate_rotation == _rotate_pos )
+        if ( rotation == _rotate_pos )
         {
             ++unit_state.body_angle;
         }
@@ -379,7 +431,7 @@ bool Vehicle::fsmBodyRotate()
         return( true );   // goal direction achieved
     }
 
-    return( false );
+    return delta <= 5;
 }
 
 void Vehicle::setFsmTurretRotate( long goal_angle, unsigned short rotation )
@@ -411,40 +463,48 @@ bool Vehicle::fsmTurretRotate()
 
 void Vehicle::setFsmMove( unsigned short orientation )
 {
-    orientationToOffset( orientation, &fsmMove_offset_x, &fsmMove_offset_y );
 
-    fsmMove_to_move.x = abs(256 * fsmMove_offset_x);
-    fsmMove_to_move.y = abs(256 * fsmMove_offset_y);
-    fsmMove_moved.zero();
 
 }
 
 bool Vehicle::fsmMove()
 {
-    int to_move_x = unit_state.tilespeed * fsmMove_offset_x;
-    int to_move_y = unit_state.tilespeed * fsmMove_offset_y;
+//    int to_move_x = unit_state.tilespeed * fsmMove_offset_x;
+//    int to_move_y = unit_state.tilespeed * fsmMove_offset_y;
 
-    fsmMove_moved.x += abs(to_move_x);
-    fsmMove_moved.y += abs(to_move_y);
+    int to_move_x = angle_speeds[unit_state.body_angle.angle_int].x;
+    int to_move_y = angle_speeds[unit_state.body_angle.angle_int].y;
 
-    if ( fsmMove_moved >= fsmMove_to_move )
+    int to_move_distance_sq = (to_move_x * to_move_x) + (to_move_y * to_move_y);
+
+    int remain_x = fsmMove_destination.x - unit_state.subtile_location.x;
+    int remain_y = fsmMove_destination.y - unit_state.subtile_location.y;
+
+    int remain_distance_sq = (remain_x * remain_x) + (remain_y * remain_y);
+
+    if ( remain_distance_sq <= to_move_distance_sq )
     {
-        int adj_x = fsmMove_moved.x - fsmMove_to_move.x;
-        int adj_y = fsmMove_moved.y - fsmMove_to_move.y;
-
-        to_move_x += adj_x * fsmMove_offset_x;
-        to_move_y += adj_y * fsmMove_offset_y;
-
-        fsmMove_moved.x -= adj_x;
-        fsmMove_moved.y -= adj_y;
+        unit_state.subtileMove(remain_x, remain_y);
+        aiFsmMoveToLoc_about_to_arrive = true;
+        return true;
     }
 
-    unit_state.subtileMove( unit_state.tilespeed * fsmMove_offset_x
-                           ,unit_state.tilespeed * fsmMove_offset_y);
+    unit_state.subtileMove(to_move_x, to_move_y);
+
+    // if we arrive in 2 steps (now and the next) say we are about to arrive.
+    // 2*2 is next 2 moves;
+    // 3*3 is next 3 moves
+    // 4*4 is next 4 moves
+    aiFsmMoveToLoc_about_to_arrive = remain_distance_sq <= (to_move_distance_sq*(2*2))
+            || (
+                (fsmMove_destination.x>>8) == unit_state.map_location.x
+                &&(fsmMove_destination.y>>8) == unit_state.map_location.y
+                );
+
 
     ParticleInterface::addMoveDirtPuff(unit_state);
 
-    return fsmMove_moved == fsmMove_to_move;
+    return false;
 }
 
 void Vehicle::setFsmMoveMapSquare( unsigned long square )
@@ -457,14 +517,24 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
     rotation = shortestRotation( unit_state.body_angle, goal_angle, &delta );
 
     setFsmBodyRotate( goal_angle, rotation );
-    setFsmMove( unit_state.orientation );
+    // setFsmMove( unit_state.orientation );
 
-    if ( delta <= 9 )
+    orientationToOffset( unit_state.orientation, &fsmMove_offset_x, &fsmMove_offset_y );
+
+    MapInterface::offsetToMapXY(square, fsmMove_destination);
+    fsmMove_destination.x <<= 8;
+    fsmMove_destination.x += 128;
+
+    fsmMove_destination.y <<= 8;
+    fsmMove_destination.y += 128;
+
+    if ( delta <= 5 ) // was 9
         fsmMoveMapSquare_movement_type = _rotate_and_move;
     else
         fsmMoveMapSquare_movement_type = _rotate_stop_move;
 
     fsm_active_list[ _control_move_map_square ] = true;
+    aiFsmMoveToLoc_about_to_arrive = false;
 
     if ( NetworkState::status == _network_state_server )
     {
@@ -476,10 +546,7 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
         locationOffset( square, loc_offset );
         move_opcode.loc_x_offset = (signed char) loc_offset.x;
         move_opcode.loc_y_offset = (signed char) loc_offset.y;
-        if ( move_opcode_sent == true )
-        {
-            UnitInterface::sendOpcode(&move_opcode);
-        }
+        UnitInterface::sendOpcode(&move_opcode);
     }
 
 }
@@ -489,33 +556,15 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
 
 bool Vehicle::fsmMoveMapSquare()
 {
-    if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
-    {
-        if ( opcode_move_timer.count() )
-        {
-            UnitInterface::sendOpcode(&move_opcode);
-            move_opcode_sent = true;
-        }
-    }
-
     switch( fsmMoveMapSquare_movement_type )
     {
         case  _rotate_stop_move :
         {
             if ( fsmBodyRotate() )
             {
-                if ( fsmMove() )
-                {
-                    fsm_active_list[ _control_move_map_square ] = false;
-
-                    if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
-                    {
-                        UnitInterface::sendOpcode(&move_opcode);
-                        move_opcode_sent = true;
-                    }
-
-                    return( true );
-                }
+                bool result = !fsmMove();
+                fsm_active_list[ _control_move_map_square ] = result;
+                return result;
             }
         }
         break;
@@ -523,23 +572,15 @@ bool Vehicle::fsmMoveMapSquare()
         case _rotate_and_move :
         {
             fsmBodyRotate();
-            if ( fsmMove() )
-            {
-                fsm_active_list[ _control_move_map_square ] = false;
 
-                if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
-                {
-                    UnitInterface::sendOpcode(&move_opcode);
-                    move_opcode_sent = true;
-                }
-
-                return( true );
-            }
+            bool result = !fsmMove();
+            fsm_active_list[ _control_move_map_square ] = result;
+            return result;
         }
         break;
     } // ** switch
 
-    return( false );
+    return false;
 }
 
 
@@ -842,6 +883,7 @@ void Vehicle::aiFsmMoveToLoc()
 
     switch ( aiFsmMoveToLoc_state )
     {
+        case _aiFsmMoveToLoc_idle: break;
         // *************************************************************
         case _aiFsmMoveToLoc_path_generate :
             if ( ! PathScheduler::queryPath(id) )
@@ -850,6 +892,8 @@ void Vehicle::aiFsmMoveToLoc()
                 break;
             }
             aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
+//if ( id==9)
+//    path.logPath(id);
             // fall through, no break
 
         // *************************************************************
@@ -869,6 +913,12 @@ void Vehicle::aiFsmMoveToLoc()
                 //  Action : Request path generation to goal
                 PathRequest path_request;
 
+
+//                if ( id == 9)
+                LOGGER.warning("Path end requst new %5u from %6u,%-6u to %6u,%-6u", id,
+                               unit_state.map_location.x, unit_state.map_location.y,
+                               aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
+
                 //LOG( ("Incomplete Path -- Regenerating Path") );
                 path_request.set(id, unit_state.map_location, aiFsmMoveToLoc_goal, 0,  &path, _path_request_full );
                 PathScheduler::requestPath( path_request );
@@ -877,6 +927,13 @@ void Vehicle::aiFsmMoveToLoc()
             }
 
             MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, aiFsmMoveToLoc_next_loc );
+//            if ( id == 9 )
+//            {
+//                LOGGER.warning("NEX[%5u]: %5u,%-5u current is: %5u,%-5u", id,
+//                               aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y,
+//                               unit_state.map_location.x, unit_state.map_location.y
+//                               );
+//            }
             aiFsmMoveToLoc_wait_count = 0;
             aiFsmMoveToLoc_state = _aiFsmMoveToLoc_wait_clear_loc;
 
@@ -890,15 +947,54 @@ void Vehicle::aiFsmMoveToLoc()
             {
                 // Rule: NextSquareOccupied is false
                 // Action: Begin move to next square
+//if ( id == 9 )
+//                    LOGGER.warning("LCK[%5u]: %5u,%-5u", id, aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y );
                 UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_next_loc );
                 aiFsmMoveToLoc_next_marked = true;
+//                LOGGER.debug("Seeting unit %u to square %u = %u,%u", id,
+//                             aiFsmMoveToLoc_next_square,
+//                             aiFsmMoveToLoc_next_loc.x,
+//                             aiFsmMoveToLoc_next_loc.y);
                 setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
 
-                aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
+//                if ( path.listCount() == 1 && MapInterface::mapXYtoOffset(aiFsmMoveToLoc_goal) != path.peekLast() )
+//                {
+//                    LOGGER.warning("Pre     Update Path %5u from %6u,%-6u to %6u,%-6u", id,
+//                                   aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
+//                                   aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
+//                    PathRequest path_request;
+//                    path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
+//    //                        path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
+//                    PathScheduler::requestPath( path_request );
+//                }
+
+                    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
             }
             else
             {
-                if ( ++aiFsmMoveToLoc_wait_count >= MOVEWAIT_TIME)
+                UnitID other_id = 0xffff;
+                UnitInterface::queryUnitAtMapLoc(aiFsmMoveToLoc_next_loc, &other_id);
+                Vehicle *other = other_id == 0xffff ? 0 : (Vehicle*)UnitInterface::getUnit(other_id);
+
+//                if ( other_id == 0xffff)
+//                {
+//                    LOGGER.warning("[%5u]Other unit reserved the square", id);
+//                }
+
+//                if ( other == this )
+//                {
+//                    LOGGER.warning("I colide with myself: %5u my loc: %5u,%-5u next %5u,%-5u", id,
+//                                   unit_state.map_location.x, unit_state.map_location.y,
+//                                   aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y
+//                                   );
+//                    setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
+//                    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
+////                    aiFsmMoveToLoc_next_marked = true;
+//                    goto skipbreak;
+//                }
+
+                if ( (other && other->aiFsmMoveToLoc_state == _aiFsmMoveToLoc_idle) || ++aiFsmMoveToLoc_wait_count >= MOVEWAIT_TIME)
+//                if ( other->aiFsmMoveToLoc_state == _aiFsmMoveToLoc_idle )
                 {
                     // Rule: NextSquareOccupied is true AND WaitTimer is finished
                     // Action: Preform path update
@@ -907,6 +1003,10 @@ void Vehicle::aiFsmMoveToLoc()
 
                         UnitInterface::unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
                         UnitInterface::unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
+//if ( id == 9)
+                        LOGGER.warning("Request New Path to %5u from %6u,%-6u to %6u,%-6u", id,
+                                       aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
+                                       aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
 
                         PathRequest path_request;
                         path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
@@ -914,11 +1014,13 @@ void Vehicle::aiFsmMoveToLoc()
                     }
                     else
                     {
-//                            LOGGER.warning("Requesting updated path for unit %d from %d,%d to %d,%d", id,
-//                                           aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
-//                                           aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
+//if ( id == 9)
+                        LOGGER.warning("Request Update Path %c %5u from %6u,%-6u to %6u,%-6u", (other&&other->aiFsmMoveToLoc_state == _aiFsmMoveToLoc_idle)?'*':'-', id,
+                                       aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
+                                       aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
                         PathRequest path_request;
                         path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
+//                        path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
                         PathScheduler::requestPath( path_request );
                     }
 
@@ -926,7 +1028,6 @@ void Vehicle::aiFsmMoveToLoc()
                 }
                 break;
             }
-
         }
         // fall through, no break
 
@@ -935,9 +1036,11 @@ void Vehicle::aiFsmMoveToLoc()
         case _aiFsmMoveToLoc_move_wait :
         {
             // MoveFinished : has the low level fsm finshed
-            if ( fsm_active_list[ _control_move_map_square ] == false )
+            if ( aiFsmMoveToLoc_about_to_arrive )
             {
                 UnitBlackBoard::unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
+//if ( id == 9 )
+//                    LOGGER.warning("UNK[%5u]: %5u,%-5u", id, aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y );
                 aiFsmMoveToLoc_prev_loc = aiFsmMoveToLoc_next_loc;
                 aiFsmMoveToLoc_next_marked = false;
                 aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
@@ -950,6 +1053,7 @@ void Vehicle::aiFsmMoveToLoc()
 
 void Vehicle::aiFsmMoveToLoc_OnExitCleanUp()
 {
+    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_idle;
     PathScheduler::killRequest(id);
     clearFsmTurretTrackPoint();
 }
@@ -1199,7 +1303,7 @@ void Vehicle::aiFsmAttackUnit()
 
             case _aiFsmAttackUnit_move_wait :
             {
-                if ( fsm_active_list[ _control_move_map_square ] == false )
+                if ( aiFsmMoveToLoc_about_to_arrive )
                 {
                     UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_check_fsm_transition;
@@ -1454,7 +1558,7 @@ void Vehicle::accessThreatLevels()
 {
     if ( unit_state.threat_level == _threat_level_under_attack )
     {
-        if( threat_level_under_attack_timer.count() )
+        if( ++threat_level_under_attack_counter >= 30*16 ) // 30 secconds
         {
             unit_state.threat_level = _threat_level_all_clear;
         }
@@ -1557,10 +1661,6 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     ai_command_state = _ai_command_move_to_loc;
     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
 
-    opcode_move_timer.changePeriod( 0.10f );
-    move_opcode_sent = false;
-    //move_opcode_sent = true;
-
     //LOG( ("UnitID %d, %d : Start %d, %d : Goal %d, %d", id.getPlayer(), id.getIndex(),
     //                                                    start.x, start.y,
     //                                                    aiFsmMoveToLoc_goal.x, aiFsmMoveToLoc_goal.y ) );
@@ -1600,10 +1700,6 @@ void Vehicle::setCommandAttackUnit(const UMesgAICommand* message)
     path_request.set( id, unit_state.map_location, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
     PathScheduler::requestPath( path_request );
 
-    opcode_move_timer.changePeriod( 0.10f );
-    move_opcode_sent = false;
-    //move_opcode_sent = true;
-
     setFsmGunneryTarget( aiFsmAttackUnit_target_ID );
 }
 
@@ -1640,8 +1736,7 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
 
     unit_state.hit_points -= weapon_hit->getDamageFactor();
     unit_state.threat_level = _threat_level_under_attack;
-    threat_level_under_attack_timer.changePeriod(
-            gameconfig->attacknotificationtime);
+    threat_level_under_attack_counter = 0;
 
     UpdateStateUnitOpcode update_state_opcode;
 
@@ -1766,7 +1861,7 @@ void Vehicle::unitOpcodeUpdateState(const UnitOpcode* opcode )
     unit_state.hit_points = update_state_opcode->getHitPoints();
 
     unit_state.threat_level = _threat_level_under_attack;
-    threat_level_under_attack_timer.changePeriod( 30 );
+    threat_level_under_attack_counter = 0;
 }
 
 void Vehicle::unitOpcodeDestruct(const UnitOpcode* )
@@ -1786,7 +1881,7 @@ void Vehicle::processMoveOpcodeQueue()
                 {
                     move_opcode_queue.pop();
                 }
-                //ConsoleInterface::postMessage( "Move Opcode Queue Adjusted" );
+                LOGGER.debug("Move Opcode Queue Adjusted" );
             }
             UnitOpcodeStruct opcodedata = move_opcode_queue.front();
             move_opcode_queue.pop();

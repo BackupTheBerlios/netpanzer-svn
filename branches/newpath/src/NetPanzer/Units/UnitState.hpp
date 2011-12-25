@@ -82,10 +82,13 @@ public:
 
     void setInitialLocation(const iXY& map_loc)
     {
-        subtile_location.x = 128;
-        subtile_location.y = 128;
         map_location = map_loc;
+
+        subtile_location.x = (map_loc.x << 8 ) + 128;
+        subtile_location.y = (map_loc.y << 8 ) + 128;
+
         MapInterface::mapXYtoTopPointXY(map_loc, location);
+
         location.x += 128>>3;
         location.y += 128>>3;
     }
@@ -93,39 +96,19 @@ public:
     void subtileMove(const int x, const int y)
     {
         subtile_location.x += x;
+        location.x = subtile_location.x >> 3;
+        map_location.x = location.x >> 5;
+
         subtile_location.y += y;
+        location.y = subtile_location.y >> 3;
+        map_location.y = location.y >> 5;
 
-        location.x &= ~0x1f; // clear the tile bits
-        location.y &= ~0x1f; // clear the tile bits
 
-        if ( subtile_location.x >= 256 )
-        {
-            subtile_location.x &= 0xff;
-            ++map_location.x;
-            location.x += 32; // XXX tile size
-        }
-        else if ( subtile_location.x < 0 )
-        {
-            subtile_location.x &= 0xff;
-            --map_location.x;
-            location.x -= 32; // XXX tile size
-        }
+//        MapInterface::mapXYtoTopPointXY(map_location, location);
 
-        if ( subtile_location.y >= 256 )
-        {
-            subtile_location.y &= 0xff;
-            ++map_location.y;
-            location.y += 32; // XXX tile size
-        }
-        else if ( subtile_location.y < 0 )
-        {
-            subtile_location.y &= 0xff;
-            --map_location.y;
-            location.y -= 32; // XXX tile size
-        }
+//        location.x += (subtile_location.x & 0xff) >> 3;
+//        location.y += (subtile_location.y & 0xff) >> 3;
 
-        location.x += subtile_location.x >> 3;
-        location.y += subtile_location.y >> 3;
     }
 
 };

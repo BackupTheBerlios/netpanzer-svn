@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 
+#include "Util/Log.hpp"
+
 class PathList
 {
 protected:
@@ -95,9 +97,9 @@ public:
         if ( first == last )
             return( false );
 
-        last = (last + 1) % size;
-
         *tile = list[ last ];
+
+        last = (last + 1) % size;
 
         return( true );
     }
@@ -144,6 +146,21 @@ public:
             PathList::size = rhs.size;
         }
     }
+
+    void logPath(int id)
+    {
+        int save_first = first;
+        unsigned long val = 0;
+        int step = 0;
+        while ( popFirst(&val) )
+        {
+            LOGGER.warning("Path for %5u[%3u]: %10lu", id, step, val);
+            ++step;
+        }
+
+        first = save_first;
+    }
+
 };
 
 #endif // ** _PATHLIST_HPP

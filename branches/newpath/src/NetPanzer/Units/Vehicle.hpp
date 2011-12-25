@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 
 #include "Units/UnitBase.hpp"
-#include "Util/Timer.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitOpcodes.hpp"
 #include "Classes/AI/PathList.hpp"
@@ -57,7 +56,8 @@ enum { _ai_command_idle,
        _ai_command_attack_unit,
        _ai_command_defend_hold };
 
-enum { _aiFsmMoveToLoc_path_generate,
+enum { _aiFsmMoveToLoc_idle,
+       _aiFsmMoveToLoc_path_generate,
        _aiFsmMoveToLoc_check_goal,
        _aiFsmMoveToLoc_wait_clear_loc,
        _aiFsmMoveToLoc_move_wait };
@@ -126,14 +126,11 @@ protected:
 
     signed char fsmMove_offset_x;
     signed char fsmMove_offset_y;
-    iXY         fsmMove_to_move;
-    iXY         fsmMove_moved;
+    iXY         fsmMove_destination;
     void setFsmMove( unsigned short orientation );
     bool fsmMove();
 
     MoveOpcode move_opcode;
-    Timer opcode_move_timer;
-    bool move_opcode_sent;
     unsigned char fsmMoveMapSquare_movement_type;
     void setFsmMoveMapSquare( unsigned long square );
     bool fsmMoveMapSquare();
@@ -171,6 +168,7 @@ protected:
     void setAiFsmDefendHold();
     void aiFsmDefendHold();
 
+    bool            aiFsmMoveToLoc_about_to_arrive;
     iXY             aiFsmMoveToLoc_goal;
     unsigned char   aiFsmMoveToLoc_state;
     unsigned long   aiFsmMoveToLoc_next_square;
@@ -197,7 +195,7 @@ protected:
     virtual unsigned short launchProjectile();
     virtual void soundSelected();
 
-    TimerFrameBase threat_level_under_attack_timer;
+    int             threat_level_under_attack_counter;
     void accessThreatLevels();
 
     void updateFsmState();
@@ -230,6 +228,9 @@ protected:
     void messageSelfDestruct(const UnitMessage* message);
     
     void setUnitProperties( unsigned char utype );
+
+    void setMaxSpeed( unsigned int speed );
+    iXY angle_speeds[36];
 
 public:
     Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc);

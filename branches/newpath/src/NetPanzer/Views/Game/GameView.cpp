@@ -48,6 +48,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/InfoBar.hpp"
 #include "Views/Components/MiniMap.hpp"
 
+#include "Units/UnitBlackBoard.hpp"
+
 int GameView::gDrawSolidBackground = 0;
 
 // GameView
@@ -273,6 +275,15 @@ GameView::drawMap(Surface &window)
                     window.drawVLine(x+31,y,y+31,Color::red);
                     window.drawLine(x, y, x+31, y+31, Color::red);
                     window.drawLine(x, y+31, x+31, y, Color::red);
+            }
+
+            iXY maploc(tmx-1, map.y);
+            if ( UnitBlackBoard::unitOccupiesLoc( maploc) )
+            {
+                window.drawHLine(x+5,y+5,x+26,Color::yellow);
+                window.drawHLine(x+5,y+26,x+26,Color::yellow);
+                window.drawVLine(x+5,y+5,y+26,Color::yellow);
+                window.drawVLine(x+26,y+5,y+26,Color::yellow);
             }
         }
         map.y ++;
