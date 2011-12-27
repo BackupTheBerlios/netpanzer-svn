@@ -41,6 +41,7 @@ static SDLKey translate_key(SDLKey original)
         case SDLK_EXCLAIM:   return SDLK_8;
         case SDLK_WORLD_2:   return SDLK_9;
         case SDLK_WORLD_4:   return SDLK_0;
+        default:;
     }
     return original;
 }
