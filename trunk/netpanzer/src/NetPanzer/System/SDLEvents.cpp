@@ -27,6 +27,24 @@
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
 
+static SDLKey translate_key(SDLKey original)
+{
+    switch( original )
+    {
+        case SDLK_AMPERSAND: return SDLK_1;
+        case SDLK_WORLD_0:   return SDLK_2;
+        case SDLK_QUOTEDBL:  return SDLK_3;
+        case SDLK_QUOTE:     return SDLK_4;
+        case SDLK_LEFTPAREN: return SDLK_5;
+        case SDLK_WORLD_1:   return SDLK_6;
+        case SDLK_WORLD_3:   return SDLK_7;
+        case SDLK_EXCLAIM:   return SDLK_8;
+        case SDLK_WORLD_2:   return SDLK_9;
+        case SDLK_WORLD_4:   return SDLK_0;
+    }
+    return original;
+}
+
 bool handleSDLEvents()
 {
     static SDL_Event event;
@@ -48,7 +66,7 @@ bool handleSDLEvents()
             break;
         case SDL_KEYDOWN: {
 //                LOGGER.debug("Pressed key : scancode[%x] unicode[%x]", event.key.keysym.sym, event.key.keysym.unicode);
-                KeyboardInterface::keyPressed(event.key.keysym.sym);
+                KeyboardInterface::keyPressed(translate_key(event.key.keysym.sym));
 
                 if ( (event.key.keysym.unicode & 0xFF80) == 0 )
                 {
@@ -73,7 +91,7 @@ bool handleSDLEvents()
             }
         case SDL_KEYUP:
 //            LOGGER.debug("Released key: scancode[%x] unicode[%x]", event.key.keysym.sym, event.key.keysym.unicode);
-            KeyboardInterface::keyReleased(event.key.keysym.sym);
+            KeyboardInterface::keyReleased(translate_key(event.key.keysym.sym));
             break;
        
         case SDL_ACTIVEEVENT:
