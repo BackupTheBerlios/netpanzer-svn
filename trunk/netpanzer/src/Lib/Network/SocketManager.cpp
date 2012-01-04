@@ -36,13 +36,20 @@ SocketManager::handleEvents()
 {
     SocketsIterator i;
 
-    if (!deletedSockets.empty()) {
-        for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-            socketList.erase(*i);
-            delete *i;
+    if (!deletedSockets.empty())
+    {
+        for (i = deletedSockets.begin(); i!=deletedSockets.end(); )
+        {
+            SocketsIterator current = i++;
+            socketList.erase(*current);
+            if ( (*current)->disconnectTimer.isTimeOut() )
+            {
+                LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*current)->sockfd, (unsigned long)(*current));
+                delete *current;
+                deletedSockets.erase(current);
+            }
         }
-        deletedSockets.clear();
+
     }
 
     if (!newSockets.empty()) {

@@ -36,24 +36,6 @@ enum{ _display_mode_network_stats,
 int gPacketSize = 0;
 int display_mode;
 
-
-/*
-static void bPlusPacketSize( void )
- {
-  gPacketSize++ 
- }
- 
-static void bMinusPacketSize( void )
- {
-  gPacketSize--;
- }
- 
-static void bSend( void )
- {
- 
- }
-*/
-
 static void buttonNetwork( void )
 {
     display_mode = _display_mode_network_stats;
@@ -68,27 +50,6 @@ static void buttonSorter( void )
 static void buttonPathing( void )
 {
     display_mode = _display_mode_pathing_stats;
-}
-
-static void buttonDebug( void )
-{
-    static bool previous_flag = false;
-
-    if ( previous_flag == false ) {
-        PathScheduler::setLongPatherDebug( true );
-        // XXX if needed change for new MiniMap.hpp
-        //MiniMapInterface::setPathingDebugMode( true );
-        previous_flag = true;
-    } else {
-        PathScheduler::setLongPatherDebug( false );
-        //MiniMapInterface::setPathingDebugMode( false );
-        previous_flag = false;
-    }
-}
-
-static void buttonSample( void )
-{
-    PathScheduler::sampleLongPather( );
 }
 
 static void buttonUnit( void )
@@ -132,22 +93,9 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Debug", "", buttonDebug);
-    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sample", "", buttonSample);
     addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
 
     INFO_AREA_Y_OFFSET += 18;
-    /*
-       addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), 20, "+", "", bPlusPacketSize );
-    addButtonCenterText(iXY(25, INFO_AREA_Y_OFFSET), 20, "-", "", bMinusPacketSize );
-    addButtonCenterText(iXY(50, INFO_AREA_Y_OFFSET), 20, "0", "", bMinusPacketSize );
-    addButtonCenterText(iXY(65, INFO_AREA_Y_OFFSET), 20, "1", "", bMinusPacketSize );
-
-    addButtonCenterText(iXY(45, INFO_AREA_Y_OFFSET), 40, "Send", "", bSend );
-
-       INFO_AREA_Y_OFFSET += 18;
-       INFO_AREA_Y_OFFSET += 18;
-       */
 
     display_mode = _display_mode_network_stats;
 
@@ -177,15 +125,7 @@ void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
         break;
     }
 
-    /*
-    char strBuf[256];
-
-    sprintf(strBuf, "Packet Size : %d", gPacketSize );
-
-    clientArea.bltString(2, INFO_AREA_Y_OFFSET - 18, strBuf, Color::white);
-    */
     View::doDraw(viewArea, clientArea);
-
 } // end CodeStatsView::doDraw
 
 //---------------------------------------------------------------------------
@@ -202,36 +142,40 @@ void CodeStatsView::drawNetworkStats(Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
-            NetworkState::packets_sent_per_sec,
-            ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
+    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",
+                    NetworkState::packets_sent,
+                    NetworkState::packets_sent_per_sec,
+                    ((float)NetworkState::packets_sent) / ((float)NetworkState::packets_sent_time) );
+
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
-            NetworkState::packets_received_per_sec,
-            ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
+    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",
+                    NetworkState::packets_received,
+                    NetworkState::packets_received_per_sec,
+                    ((float)NetworkState::packets_received) / ((float)NetworkState::packets_received_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Bytes" );
-
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
-            NetworkState::bytes_sent_per_sec,
-            ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
+    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",
+                    NetworkState::bytes_sent,
+                    NetworkState::bytes_sent_per_sec,
+                    ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
-            NetworkState::bytes_received_per_sec,
-            ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
+    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",
+                    NetworkState::bytes_received,
+                    NetworkState::bytes_received_per_sec,
+                    ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
@@ -241,14 +185,16 @@ void CodeStatsView::drawNetworkStats(Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent : %ld, %.4f 1/s ", NetworkState::opcodes_sent,
-            NetworkState::opcodes_sent_per_sec );
+    sprintf(strBuf, "Sent : %ld, %.4f 1/s ",
+                    NetworkState::opcodes_sent,
+                    NetworkState::opcodes_sent_per_sec );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv : %ld, %.4f 1/s", NetworkState::opcodes_received,
-            NetworkState::opcodes_received_per_sec );
+    sprintf(strBuf, "Recv : %ld, %.4f 1/s",
+                    NetworkState::opcodes_received,
+                    NetworkState::opcodes_received_per_sec );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;

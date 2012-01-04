@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class Sprite
 {
+protected:
+    Sprite *next;
+
 public:
     iXY world_pos;
     iXY attach_offset;
@@ -102,19 +105,16 @@ public:
 
     inline void blitAll( Surface *surface, const iRect &world_win )
     {
-        Sprite *iterator;
+        blit( surface, world_win );
 
-        iterator = this;
+        Sprite *iterator = next;
 
-        while(iterator != 0) {
+        while( iterator )
+        {
             iterator->blit( surface, world_win );
             iterator = iterator->next;
         }
     }
-
-protected:
-    Sprite *next;
-
 };
 
 class SpritePacked : public PackedSurface, public Sprite

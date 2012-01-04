@@ -24,15 +24,15 @@ template< class TYPE >
 class QueueTemplate : public ArrayTemplate< TYPE >
 {
 public:
-    unsigned long front;
-    unsigned long rear;
+    size_t front;
+    size_t rear;
 
     QueueTemplate( )
     { }
 
-    QueueTemplate( unsigned long size );
+    QueueTemplate( size_t size );
 
-    void initialize( unsigned long size );
+    void initialize( size_t size );
 
     void reset()
     {
@@ -107,7 +107,7 @@ public:
 
 
 template< class TYPE >
-QueueTemplate< TYPE >::QueueTemplate( unsigned long size )
+QueueTemplate< TYPE >::QueueTemplate( size_t size )
         : ArrayTemplate<TYPE>( size )
 {
     front = 0;
@@ -115,7 +115,7 @@ QueueTemplate< TYPE >::QueueTemplate( unsigned long size )
 }
 
 template< class TYPE >
-void QueueTemplate< TYPE >::initialize( unsigned long size )
+void QueueTemplate< TYPE >::initialize( size_t size )
 {
     ArrayTemplate< TYPE >::initialize( size );
     front = 0;

@@ -239,6 +239,7 @@ elif thisplatform == 'win32':
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
+    networkenv.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     env.Append( NPLIBS = [ 'SDL_mixer' ] )
 

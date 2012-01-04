@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "NetworkInterface.hpp"
 
+NetPacketQueue NetworkInterface::receive_queue;
+
 void EnqueueIncomingPacket( const void *data, Uint16 size,
                             PlayerID fromPlayer, ClientSocket *fromClient)
 {
@@ -35,7 +37,6 @@ void EnqueueIncomingPacket( const void *data, Uint16 size,
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );
 }
 
-NetPacketQueue NetworkInterface::receive_queue;
 
 NetworkInterface::NetworkInterface()
 {

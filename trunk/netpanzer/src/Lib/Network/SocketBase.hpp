@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketHeaders.hpp"
 #include "Address.hpp"
 #include "Util/NoCopy.hpp"
+#include "Util/NTimer.hpp"
 
 namespace network
 {
@@ -82,6 +83,8 @@ private:
     SOCKET sockfd;
     Address addr;
     int lastError;
+
+    NTimer disconnectTimer;
 };
 
 }

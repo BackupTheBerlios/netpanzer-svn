@@ -219,6 +219,22 @@ NetworkServer::dropClient(ClientSocket * client)
 }
 
 void
+NetworkServer::niceDisconnect(ClientSocket * client)
+{
+    ClientList::iterator i = client_list.begin();
+    while( i != client_list.end() && (*i)->client_socket != client )
+    {
+        ++i;
+    }
+
+    if ( i != client_list.end() )
+    {
+        // XXX hack
+        onClientDisconected(client, 0);
+    }
+}
+
+void
 NetworkServer::kickClient(ClientSocket * client)
 {
     ClientList::iterator i = client_list.begin();
@@ -317,7 +333,7 @@ NetworkServer::onClientConnected(ClientSocket *s)
 void
 NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 {
-    LOGGER.debug("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
+    LOGGER.debug("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg ? msg : "nice");
     
     bool cleandisconnect = false;
     bool sendalert = true;
@@ -390,21 +406,21 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 
         if ( sendalert )
         {
-            SystemConnectAlert msg;
-            if ( cleandisconnect )
+            SystemConnectAlert scmsg;
+            if ( cleandisconnect || ! msg )
             {
-                msg.set( player_index, _connect_alert_mesg_disconnect);
+                scmsg.set( player_index, _connect_alert_mesg_disconnect);
             }
             else if ( kicked )
             {
-                msg.set( player_index, _connect_alert_mesg_client_kicked);
+                scmsg.set( player_index, _connect_alert_mesg_client_kicked);
             }
             else
             {
-                msg.set( player_index, _connect_alert_mesg_client_drop );
+                scmsg.set( player_index, _connect_alert_mesg_client_drop );
             }
 
-            SERVER->broadcastMessage(&msg, sizeof(msg));
+            SERVER->broadcastMessage(&scmsg, sizeof(scmsg));
         }
     }
     

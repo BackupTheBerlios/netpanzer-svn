@@ -21,6 +21,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 
+#define SHUTDOWN_BOTH SD_BOTH
 #define GET_NET_ERROR() WSAGetLastError()
 #define NETSTRERROR(x) "Winsock error: " << x
 
@@ -53,6 +54,7 @@ typedef int SOCKET;
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #define closesocket(s) ::close(s)
+#define SHUTDOWN_BOTH SHUT_RDWR
 #define GET_NET_ERROR() errno
 #define NETSTRERROR(x) strerror(x)
 

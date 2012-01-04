@@ -79,6 +79,7 @@ public:
     bool getPacket(NetPacket* packet);
 
     void dropClient(ClientSocket * client);
+    void niceDisconnect(ClientSocket * client);
     void kickClient(ClientSocket * client);
 
     ClientSocket * getClientSocketByPlayerIndex ( const PlayerID index );

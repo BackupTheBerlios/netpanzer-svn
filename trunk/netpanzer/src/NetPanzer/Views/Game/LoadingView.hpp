@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 
+#include "Interfaces/GameConfig.hpp"
+
 #include <list>
 #include <string>
 
@@ -86,9 +88,15 @@ public:
 
     static void loadError()
     {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MainView", true);
-
+        if ( gameconfig->quickConnect )
+        {
+            GameManager::exitNetPanzer();
+        }
+        else
+        {
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("MainView", true);
+        }
     }
 
     static void show()

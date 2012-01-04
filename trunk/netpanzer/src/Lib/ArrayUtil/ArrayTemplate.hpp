@@ -19,13 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ARRAYTEMPLATE_HPP
 
 #include <assert.h>
-#include <string.h>
-
-#include "Util/NoCopy.hpp"
+#include <cstddef>
 
 template< class TYPE >
-class ArrayTemplate : public NoCopy
+class ArrayTemplate
 {
+private:
+    ArrayTemplate(const ArrayTemplate& );
+    void operator=(const ArrayTemplate& );
+
 protected:
     size_t size;
     TYPE *array;
@@ -36,11 +38,13 @@ public:
         size = 0;
         array = 0;
     }
+
     ArrayTemplate(size_t newsize)
         : size(newsize)
     {
         array = new TYPE[size];
     }
+
     ~ArrayTemplate()
     {
         delete[] array;

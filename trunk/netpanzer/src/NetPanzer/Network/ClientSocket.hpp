@@ -58,6 +58,14 @@ public:
     {
         return player_id;
     }
+
+    void hardClose()
+    {
+        if ( socket )
+        {
+            socket->destroy();
+        }
+    }
     
 protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);

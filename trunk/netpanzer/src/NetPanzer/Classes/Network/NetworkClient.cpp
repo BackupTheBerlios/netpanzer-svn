@@ -67,10 +67,13 @@ void
 NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
 {
     (void)s;
-    DisconectedView *dv = (DisconectedView *)Desktop::getView("DisconectedView");
-    dv->setMsg(msg);
-    
-    Desktop::setVisibility("DisconectedView", true);
+    if ( ! Desktop::getVisible("LoadingView") )
+    {
+        DisconectedView *dv = (DisconectedView *)Desktop::getView("DisconectedView");
+        dv->setMsg(msg);
+
+        Desktop::setVisibility("DisconectedView", true);
+    }
     
     delete clientsocket;
     clientsocket=0;

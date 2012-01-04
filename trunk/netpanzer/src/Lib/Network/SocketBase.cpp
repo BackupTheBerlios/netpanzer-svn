@@ -55,7 +55,11 @@ WinSockInit _WinSockInit;
 
 SocketBase::~SocketBase()
 {
-
+    // XXX this might be needed if sockets doesn't close nicely
+//    int tmp;
+//    while ( recv(sockfd, (char*)&tmp, sizeof(tmp), RECV_FLAGS) > 0 ) ; // read until there is no more.
+    shutdown(sockfd, SHUTDOWN_BOTH);
+    closesocket(sockfd);
 }
 
 SocketBase::SocketBase(const Address &a, bool isTcp)
@@ -66,6 +70,7 @@ SocketBase::SocketBase(const Address &a, bool isTcp)
     SocketManager::addSocket(this);
     setNonBlocking();
     _isConnecting=false;
+    disconnectTimer.setTimeOut(500);
 }
 
 SocketBase::SocketBase(SOCKET fd, const Address &a)
@@ -75,6 +80,7 @@ SocketBase::SocketBase(SOCKET fd, const Address &a)
     SocketManager::addSocket(this);
     setNonBlocking();
     _isConnecting=false;
+    disconnectTimer.setTimeOut(500);
 }
 
 void
@@ -299,7 +305,6 @@ SocketBase::doClose()
 {
     LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
     SocketManager::removeSocket(this);
-    closesocket(sockfd);
 }
 
 }

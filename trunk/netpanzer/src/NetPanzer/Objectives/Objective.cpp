@@ -46,7 +46,7 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     selection_box.max = location + iXY( 64, 32 );
     selection_box.min = location + iXY( -224, -128 );
     this->area.min = iXY( -400, -144 );
-    this->area.max = iXY(  400,  240 );
+    this->area.max = iXY(  304,  240 );
     outpost_type = 0;
 
     unit_generation_type = 0;

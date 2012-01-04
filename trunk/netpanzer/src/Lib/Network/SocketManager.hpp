@@ -55,6 +55,7 @@ protected:
             newSockets.erase(i);
         } else {
             deletedSockets.insert(s);
+            s->disconnectTimer.reset();
         }
     }
     

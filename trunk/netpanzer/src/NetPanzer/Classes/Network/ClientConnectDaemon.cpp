@@ -68,6 +68,8 @@ void ClientConnectDaemon::shutdownConnectDaemon()
 
     CLIENT->sendMessage(&client_disconnect,
             sizeof(ConnectMesgNetPanzerClientDisconnect));
+
+    CLIENT->sendRemaining();
 }
 
 void ClientConnectDaemon::startConnectionProcess( )
