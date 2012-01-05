@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
 
+#include "Units/UnitProfileInterface.hpp"
+
 #include "Views/Components/Desktop.hpp"
 #include "Views/Game/LoadingView.hpp"
 

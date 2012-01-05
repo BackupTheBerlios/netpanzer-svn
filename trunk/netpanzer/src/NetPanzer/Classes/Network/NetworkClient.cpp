@@ -74,6 +74,10 @@ NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
 
         Desktop::setVisibility("DisconectedView", true);
     }
+    else
+    {
+        ClientConnectDaemon::serverConnectionBroken();
+    }
     
     delete clientsocket;
     clientsocket=0;

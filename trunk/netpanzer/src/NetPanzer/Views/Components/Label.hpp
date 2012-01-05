@@ -20,14 +20,12 @@
 #define _LABEL_HPP_
 
 #include "Component.hpp"
-#include <string>
-
-using namespace std;
+#include "Core/CoreTypes.hpp"
 
 class Label:public Component
 {
 public:
-    Label(int x, int y, string t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
+    Label(int x, int y, const NPString& t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
     {
         text = t;
         background = bgcolor;
@@ -50,7 +48,7 @@ public:
     }
     
 private:
-    string text;
+    NPString text;
     bool shadowed;
 };
 

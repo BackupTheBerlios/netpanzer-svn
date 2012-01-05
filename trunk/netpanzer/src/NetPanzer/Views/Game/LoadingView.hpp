@@ -18,21 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LOADINGVIEW_HPP__
 #define __LOADINGVIEW_HPP__
 
+#include "Core/CoreTypes.hpp"
 #include "Views/Components/View.hpp"
-#include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "2D/Surface.hpp"
-#include "Util/Log.hpp"
-#include "Interfaces/GameManager.hpp"
-
-#include "Particles/ParticleInterface.hpp"
-#include "Views/Game/VehicleSelectionView.hpp"
-
-#include "Interfaces/GameConfig.hpp"
-
 #include <list>
-#include <string>
-
-using namespace std;
 
 #define LINELIMIT 100
 
@@ -42,77 +32,19 @@ class Label;
 class LoadingView : public View
 {
 public:
-    static void update(const string text)
-    {
-        LOGGER.info("Loading: %s", text.c_str());
-        lines.pop_back();
-        lines.push_back(text);
-        dirty=true;
-    }
-
-    static void append(const string text)
-    {
-        LOGGER.info("Loading: %s", text.c_str());
-        if ( lines.size() >= LINELIMIT )
-        {
-            lines.pop_front();
-        }
-        lines.push_back(text);
-        dirty=true;
-    }
-
     LoadingView()
     {
         init();
     }
 
-    static void loadFinish()
-    {
-        Desktop::setVisibilityAllWindows(false);
-
-        // XXX rebuild the particle stuff here for units...
-        ParticleInterface::rebuildUnitParticleData();
-
-        // XXX this needed because has to create the special buttons for the
-        // defined units, has to be here because it has to be the "netp" palette
-        // and after loading the unit profiles
-        Desktop::remove(Desktop::getView("VehicleSelectionView"));
-        Desktop::add(new VehicleSelectionView());
-
-        GameManager::setNetPanzerGameOptions();
-        Desktop::setVisibility("MiniMapView", true);
-        Desktop::setVisibility("GameView", true);
-        Desktop::setVisibility("GFlagSelectionView", true);
-        Desktop::setActiveView("GFlagSelectionView");
-    }
-
-    static void loadError()
-    {
-        if ( gameconfig->quickConnect )
-        {
-            GameManager::exitNetPanzer();
-        }
-        else
-        {
-            Desktop::setVisibilityAllWindows(false);
-            Desktop::setVisibility("MainView", true);
-        }
-    }
-
-    static void show()
-    {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("LoadingView", true);
-        View *v = Desktop::getView("LoadingView");
-        Desktop::setFocusView(v);
-    }
-
-    static void hide()
-    {
-        Desktop::setVisibility("LoadingView", false);
-    }
-
     virtual ~LoadingView() {}
+
+    static void update(const NPString& text);
+    static void append(const NPString& text);
+    static void loadFinish();
+    static void loadError();
+    static void show();
+    static void hide();
 
     virtual void init();
     virtual void doActivate();
@@ -127,7 +59,7 @@ public:
     void onComponentClicked(Component* c);
 
 private:
-    static list<string> lines;
+    static std::list<NPString> lines;
     static bool dirty;
 
     Surface backgroundSurface;

@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Game/LoadingView.hpp"
 
-
 ServerListView* serverlistview = 0;
 
 ServerListView::ServerListView()
@@ -142,12 +141,9 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
             clientArea.bltString(140, y, "timeout", Color::gray);
-        } else if(server.protocol < NETPANZER_PROTOCOL_VERSION) {
+        } else if(server.protocol != NETPANZER_PROTOCOL_VERSION) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "server protocol too old", Color::gray);
-        } else if(server.protocol > NETPANZER_PROTOCOL_VERSION) {
-            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "server protocol too new", Color::gray);
+            clientArea.bltString(140, y, getNetpanzerProtocolMessage(server.protocol), Color::gray);
         } else {
             std::stringstream playerstr;
             playerstr << server.players << "/" << server.maxplayers;

@@ -328,10 +328,9 @@ void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if (KeyboardInterface::getKeyPressed(SDLK_b)
-       && ! PlayerInterface::getLocalPlayer()->isSelectingFlag()
        && ! Desktop::getVisible("HelpScrollView") )
     {
-        if ( Desktop::getVisible("GFlagSelectionView")
+        if ( PlayerInterface::getLocalPlayer()->isSelectingFlag()
             || GameConfig::game_changeflagtime == 0
             || Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)
            )

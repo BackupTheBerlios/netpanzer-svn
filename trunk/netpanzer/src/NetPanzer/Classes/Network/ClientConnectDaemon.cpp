@@ -34,6 +34,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Game/LoadingView.hpp"
 
+#include "Core/NetworkGlobals.hpp"
+
+#include "System/Sound.hpp"
+
 enum { _connect_state_idle = 0,
        _connect_state_waiting_link,
        _connect_state_waiting_connect_start,
@@ -78,6 +82,8 @@ void ClientConnectDaemon::startConnectionProcess( )
     time_out_timer.changePeriod( _CLIENT_CONNECT_TIME_OUT_TIME );
     time_out_counter = 0;
     connection_state = _connect_state_waiting_link;
+    LoadingView::append("");
+    LoadingView::append(NPString("Conecting to server ") + gameconfig->serverConnect.c_str());
 }
 
 unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
@@ -99,11 +105,11 @@ unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
 
     case _join_request_result_invalid_protocol :
         LoadingView::append( "Link to Server FAILED!" );
-        LoadingView::append( "Incorrect Network Protocol Revision" );
-        LoadingView::append( "Please get a newer netPanzer version." );
-        sprintf( buf, "Server Protocol Version: %u",
-                join_request_ack_mesg->getServerProtocolVersion());
-        LoadingView::append( buf );
+        LoadingView::append( "Incompatible game:" );
+        LoadingView::append( getNetpanzerProtocolMessage(join_request_ack_mesg->getServerProtocolVersion()));
+//        sprintf( buf, "Server Protocol Version: %u",
+//                join_request_ack_mesg->getServerProtocolVersion());
+//        LoadingView::append( buf );
         rval = _connect_state_connect_failure;
         failure_display_timer.reset();
         break;
@@ -244,7 +250,10 @@ void ClientConnectDaemon::processNetMessage(const NetMessage* message)
 
 void ClientConnectDaemon::serverConnectionBroken()
 {
-    ConsoleInterface::postMessage(Color::unitRed, false, 0, "CONNECTION TO SERVER HAS BEEN UNEXPECTEDLY BROKEN." );
+    LoadingView::show();
+    LoadingView::append("Error in server connection");
+    failure_display_timer.reset();
+    connection_state = _connect_state_connect_failure;
 }
 
 void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
@@ -280,7 +289,27 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
         case _connect_state_waiting_link:
             if ( message_id == _net_message_id_connect_join_game_request_ack )
             {
+                time_out_timer.changePeriod( _CLIENT_CONNECT_TIME_OUT_TIME );
+                time_out_counter = 0;
                 connection_state = netMessageLinkAck( message );
+            }
+            else
+            {
+                if ( time_out_timer.count() )
+                {
+                    if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT )
+                    {
+                        LoadingView::append( "Server is not responding..." );
+                        time_out_counter++;
+                    }
+                    else
+                    {
+                        LoadingView::append( "Connection to server failed...");
+                        LoadingView::append( "it might be older netpanzer or server is down" );
+                        connection_state = _connect_state_connect_failure;
+                        failure_display_timer.reset();
+                    }
+                }
             }
             break;
 
@@ -296,7 +325,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
 
                 ClientConnectRequest connect_request;
                 CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
-
+                sound->playTankIdle();
                 connection_state = _connect_state_waiting_connect_result;
             }
             else if ( message_id == _net_message_id_connect_server_full )

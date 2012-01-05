@@ -9,29 +9,33 @@
 
 #include "LoadingView.hpp"
 
-#include "Interfaces/GameConfig.hpp"
-#include "System/Sound.hpp"
-#include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+
+#include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
-#include "Classes/Network/NetworkClient.hpp"
+#include "Views/Game/VehicleSelectionView.hpp"
+
+#include "Particles/ParticleInterface.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
 static void bAbort()
 {
-    if(gameconfig->quickConnect) {
+    if(gameconfig->quickConnect)
+    {
         GameManager::exitNetPanzer();
         return;
     }
-    sound->stopTankIdle();
+    GameManager::quitNetPanzerGame();
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 }
-
 
 void
 LoadingView::init()
@@ -138,11 +142,91 @@ LoadingView::onComponentClicked(Component* c)
     {
         CLIENT->joinServer(gameconfig->serverConnect, NPString(password_str.getString()));
         ClientConnectDaemon::startConnectionProcess();
-        sound->playTankIdle();
         setNeedPassword(false);
     }
     else
     {
         View::onComponentClicked(c);
     }
+}
+
+void
+LoadingView::update(const NPString& text)
+{
+    LOGGER.info("Loading: %s", text.c_str());
+    lines.pop_back();
+    lines.push_back(text);
+    dirty=true;
+}
+
+void
+LoadingView::append(const NPString& text)
+{
+    LOGGER.info("Loading: %s", text.c_str());
+    if ( lines.size() >= LINELIMIT )
+    {
+        lines.pop_front();
+    }
+    lines.push_back(text);
+    dirty=true;
+}
+
+void
+LoadingView::loadFinish()
+{
+    Desktop::setVisibilityAllWindows(false);
+
+    // XXX rebuild the particle stuff here for units...
+    ParticleInterface::rebuildUnitParticleData();
+
+    // XXX this needed because has to create the special buttons for the
+    // defined units, has to be here because it has to be the "netp" palette
+    // and after loading the unit profiles
+    View * v = Desktop::getView("VehicleSelectionView");
+    if ( v )
+    {
+        Desktop::remove(v);
+        delete v;
+    }
+
+    Desktop::add(new VehicleSelectionView());
+
+    GameManager::setNetPanzerGameOptions();
+    Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("GameView", true);
+    if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
+    {
+        Desktop::setVisibility("GFlagSelectionView", true);
+        Desktop::setActiveView("GFlagSelectionView");
+    }
+}
+
+void
+LoadingView::loadError()
+{
+    if ( gameconfig->quickConnect )
+    {
+        GameManager::exitNetPanzer();
+    }
+    else if ( Desktop::getVisible("LoadingView") )
+    {
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MainView", true);
+        GameManager::quitNetPanzerGame();
+    }
+}
+
+void
+LoadingView::show()
+{
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("LoadingView", true);
+    View *v = Desktop::getView("LoadingView");
+    Desktop::setFocusView(v);
+}
+
+void
+LoadingView::hide()
+{
+    Desktop::setVisibility("LoadingView", false);
 }
