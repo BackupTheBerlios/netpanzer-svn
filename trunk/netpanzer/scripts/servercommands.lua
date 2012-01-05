@@ -18,6 +18,10 @@ local splitsay = function(player, prefix, tbl)
     end
 end;
 
+local boolToString = function(b)
+    return b and 'true' or 'false';
+end;
+
 local base_modes = {};
 base_modes[0] = "Can't capture";
 base_modes[1] = "Helipad capture";
@@ -101,6 +105,46 @@ ServerCommands =
             config.game.autokicktime = param;
             netpanzer.serversayto( player, "autokick time was set to " .. config.game.autokicktime);
         end
+    end,
+
+    bases_help = "Shows if the bases are enabled on map loading",
+    bases = function(param, player)
+        netpanzer.serversayto( player, "#Bases are " .. ((config.game.enable_bases == true) and 'enabled' or 'disabled'));
+    end,
+
+    enablebases_help = "Enables the bases on next map loading",
+    enablebases = function(param, player)
+        netpanzer.serversayto( player, (config.game.enable_bases == true)
+                                       and "#Bases are already enabled"
+                                       or  "#Bases enabled and will be loaded at next map change");
+
+        config.game.enable_bases = true;
+    end,
+
+    disablebases_help = "Disables the bases on next map loading",
+    disablebases = function(param, player)
+        netpanzer.serversayto( player, (config.game.enable_bases == false)
+                                       and "#Bases are already disabled"
+                                       or  "#Bases disabled and won't be loaded at next map change");
+
+        config.game.enable_bases = false;
+    end,
+
+    multiip_help = "Shows if is allowed to connect multiple times from same IP address",
+    multiip = function(param, player)
+        netpanzer.serversayto( player, "#Multiple connections from same IP are " .. ((config.game.allowmultiip == true) and 'allowed' or 'forbidden'));
+    end,
+
+    allowmultiip_help = "Allows multiple connections from the same IP address",
+    allowmultiip = function(param, player)
+        netpanzer.serversayto( player, "Allowing multiple connections from the same IP address");
+        config.game.allowmultiip = true;
+    end,
+
+    forbidemultiip_help = "Forbides multiple connections from the same IP address",
+    forbidemultiip = function(param, player)
+        netpanzer.serversayto( player, "Forbidding multiple connections from the same IP address");
+        config.game.allowmultiip = false;
     end,
 
     unitprofiles_help = "sets or get list of unit profiles loaded",
