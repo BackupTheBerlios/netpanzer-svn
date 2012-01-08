@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketBase.hpp"
 #include "Address.hpp"
 
+#include <string>
+
 namespace network
 {
 
@@ -45,6 +47,7 @@ public:
 
 
     TCPSocket(const Address& address, TCPSocketObserver *o) throw(NetworkException);
+    TCPSocket(const std::string& host,const std::string& port, TCPSocketObserver *o) throw(NetworkException);
 
     void destroy();
 
@@ -56,6 +59,7 @@ protected:
     void onConnected();
     void onDisconected();
     void onSocketError();
+    void onResolved();
     
 private:
     friend class TCPListenSocket;

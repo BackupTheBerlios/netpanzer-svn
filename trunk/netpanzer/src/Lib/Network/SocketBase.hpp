@@ -38,22 +38,24 @@ public:
         return addr;
     }
 
-    bool isConnecting() { return _isConnecting; };
 protected:
     friend class SocketSet;
     friend class SocketManager;
 
     virtual ~SocketBase();
     
+    SocketBase();
     SocketBase(const Address &a, bool isTcp) throw(NetworkException);
     SocketBase(SOCKET fd, const Address &a) throw(NetworkException);
         
     virtual void onDataReady() = 0;
-    virtual void onDisconected() {};
-    virtual void onConnected() {};
+    virtual void onDisconected() {}
+    virtual void onConnected() { state = CONNECTED; }
+    virtual void onResolved() { state = RESOLVED; }
     virtual void onSocketError() = 0;
     virtual void destroy() = 0;
     
+    void setAddress(const Address &a);
 
     void setReuseAddr() throw(NetworkException);
     void setNoDelay() throw(NetworkException);
@@ -69,20 +71,41 @@ protected:
     size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException);
     SOCKET doAccept(Address& fromaddr) throw(NetworkException);
     
-private:
-    void create(bool tcp) throw(NetworkException);
+    void setConfigured() { state = CONFIGURED; }
+
+    void create() throw(NetworkException);
     void setNonBlocking() throw(NetworkException);
+private:
+
+    enum {
+        ST_ERROR,
+        UNINITIALIZED,
+        RESOLVING,
+        RESOLVED,
+        CREATED,
+        CONFIGURED,
+        BOUND,
+        LISTENING,
+        CONNECTING,
+        CONNECTED,
+        DESTROYING
+    };
+
+    static const char *state_str[];
+    const char * getStateString() { return state_str[state]; }
+
     
-    void connectionFinished() 
+    void connectionFinished()
     {
-        _isConnecting = false;
         onConnected();
     };
     
-    bool _isConnecting;
+    int state;
     SOCKET sockfd;
     Address addr;
     int lastError;
+
+
 
     NTimer disconnectTimer;
 };

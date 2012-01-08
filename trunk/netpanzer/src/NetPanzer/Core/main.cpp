@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 //#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Network/NetworkManager.hpp"
 
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -311,6 +312,7 @@ BaseGameManager *initialise(int argc, char** argv)
 //-----------------------------------------------------------------
 int netpanzer_main(int argc, char** argv)
 {
+    network::NetworkManager::initialize();
     ScriptManager::initialize();
     
     //ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
@@ -351,7 +353,7 @@ int netpanzer_main(int argc, char** argv)
 #endif
     
     ScriptManager::close();
-    
+    network::NetworkManager::cleanUp();
     return 0;
 }
 

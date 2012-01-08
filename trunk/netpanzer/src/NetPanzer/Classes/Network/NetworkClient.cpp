@@ -147,11 +147,6 @@ bool NetworkClient::getPacket(NetPacket *packet)
     return false;
 }
 
-void NetworkClient::checkIncoming()
-{
-   // nothing
-}
-
 void
 NetworkClient::sendRemaining()
 {

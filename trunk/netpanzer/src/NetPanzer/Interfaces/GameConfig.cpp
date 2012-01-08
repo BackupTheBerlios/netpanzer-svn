@@ -176,7 +176,7 @@ void GameConfig::registerScript(const NPString& table_name)
 
 }
 
-GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
+GameConfig::GameConfig(const std::string& configfile, const std::string& luaconfigfile,bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
     :
       hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
@@ -188,9 +188,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       masterservers("masterservers", "masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info"),
       
       serverport("serverport", NETPANZER_DEFAULT_PORT_TCP,0,65535),
-      proxyserver("proxyserver",""),
-      proxyserveruser("proxyserveruser",""),
-      proxyserverpass("proxyserverpass",""),
       bindaddress("bindaddress", ""),
       gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
@@ -216,35 +213,24 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       enableeffects("effects", true),
       effectsvolume("effectsvolume", 100, 0, 100),
       
-      unitcolor("unitcolor", 0, 0, _color_last-1),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
       unitinfodrawlayer("unitinfodrawlayer", 0, 0, 1),
-      drawunitreload("drawunitreload", false),
-      consoletextdelay("consoletextdelay", 3, 1, 20),
-      consoletextusage("consoletextusage", 25, 1, 100),
       scrollrate("scrollrate", 1000, 100, 10000),
-      minimapposition("minimapposition", iXY(0,0)),
-      minimapsize("minimapsize", iXY(194,194)),
-      minimapdrawtype("minimapdrawtype", 0),
-      gameinfoposition("gameinfoposition", iXY(0,0)),
-      toolbarposition("toolbarposition", iXY(0,0)),
       rankposition("rankposition", iXY(0,0)),
       viewdrawbackgroundmode("viewdrawbackgroundmode",(int)VIEW_BACKGROUND_DARK_GRAY_BLEND),
                   
-      radar_displayclouds("displayclouds", false),
       radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
       radar_selectedunitcolor("selectedunitcolor", _color_white, 0, _color_last-1),
       radar_alliedunitcolor("alliedunitcolor", _color_orange, 0, _color_last-1),
       radar_playeroutpostcolor("playeroutpostcolor", _color_blue, 0, _color_last-1),
       radar_alliedoutpostcolor("alliedoutpostcolor", _color_orange, 0, _color_last),
       radar_enemyoutpostcolor("enemyoutpostcolor", _color_red, 0, _color_last-1),
-      radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1),
-      radar_objectivedrawmode("objectivedrawmode", _mini_map_objective_draw_mode_outline_rect, 0, _mini_map_objective_draw_mode_last-1),
-      radar_resizerate("resizerate", 400, 10, 1000)
+      radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1)
 {
     this->configfile = configfile;
+    this->luaconfigfile = luaconfigfile;
     this->usePhysFS = usePhysFS;
 
     std::stringstream default_player;
@@ -252,9 +238,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     playername=default_player.str();
     playersettings.push_back(&playername);
     playersettings.push_back(&masterservers);
-    playersettings.push_back(&proxyserver);
-    playersettings.push_back(&proxyserveruser);
-    playersettings.push_back(&proxyserverpass);
 
     serversettings.push_back(&serverport);
     serversettings.push_back(&bindaddress);
@@ -269,7 +252,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     serversettings.push_back(&cloudcoverage);
     serversettings.push_back(&respawntype);
     serversettings.push_back(&windspeed);
-    //serversettings.push_back(&map);
     serversettings.push_back(&mapcycle);
     serversettings.push_back(&motd);
     serversettings.push_back(&logging);
@@ -281,32 +263,20 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     soundsettings.push_back(&enableeffects);
     soundsettings.push_back(&effectsvolume);
 
-    interfacesettings.push_back(&unitcolor);
     interfacesettings.push_back(&attacknotificationtime);
     interfacesettings.push_back(&vehicleselectioncolor);
     interfacesettings.push_back(&unitselectionmode);
     interfacesettings.push_back(&unitinfodrawlayer);
-    interfacesettings.push_back(&drawunitreload);
-    interfacesettings.push_back(&consoletextdelay);
-    interfacesettings.push_back(&consoletextusage);
     interfacesettings.push_back(&scrollrate);
-    interfacesettings.push_back(&minimapposition);
-    interfacesettings.push_back(&minimapsize);
-    interfacesettings.push_back(&minimapdrawtype);
-    interfacesettings.push_back(&gameinfoposition);
-    interfacesettings.push_back(&toolbarposition);
     interfacesettings.push_back(&rankposition);
     interfacesettings.push_back(&viewdrawbackgroundmode);
 
-    radarsettings.push_back(&radar_displayclouds);
     radarsettings.push_back(&radar_playerunitcolor);
     radarsettings.push_back(&radar_alliedunitcolor);
     radarsettings.push_back(&radar_playeroutpostcolor);
     radarsettings.push_back(&radar_alliedoutpostcolor);
     radarsettings.push_back(&radar_enemyoutpostcolor);
     radarsettings.push_back(&radar_unitsize);
-    radarsettings.push_back(&radar_objectivedrawmode);
-    radarsettings.push_back(&radar_resizerate);
     
     try {
         loadConfig();
@@ -327,7 +297,7 @@ GameConfig::~GameConfig()
 
 void GameConfig::loadConfig()
 {
-    ScriptManager::loadConfigFile("config/config.cfg", "config");
+    ScriptManager::loadConfigFile(luaconfigfile.c_str(), "config");
 
     INI::Store inifile;
     if(usePhysFS) {
@@ -466,7 +436,7 @@ void GameConfig::saveConfig()
         return;
     }
 
-    OFileStream out("config/config.cfg");
+    OFileStream out(luaconfigfile.c_str());
     out << lua_tostring(L, -1) << std::endl;
     lua_pop(L, 1);
 

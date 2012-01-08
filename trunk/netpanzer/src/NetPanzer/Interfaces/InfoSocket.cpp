@@ -39,7 +39,7 @@ using namespace std;
 
 InfoSocket::InfoSocket(int p) : socket(0)
 {
-    Address addr = Address::resolve( gameconfig->bindaddress, p);
+    Address addr = Address::resolve( gameconfig->bindaddress, p, false, true);
     socket = new network::UDPSocket(addr,this);
     
     // This parameters are fixed always

@@ -98,7 +98,8 @@ if 'crossmingw' in COMMAND_LINE_TARGETS:
     crossmingwenv.Replace( AR = env['crossmingwcompilerprefix'] + crossmingwenv['AR'] )
     crossmingwenv.Replace( RANLIB = env['crossmingwcompilerprefix'] + crossmingwenv['RANLIB'] )
     crossmingwenv.Replace( RC = env['crossmingwcompilerprefix'] + crossmingwenv['RC'] )
-    crossmingwenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
+    crossmingwenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
+#    crossmingwenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
     crossmingwenv.Append( LDFLAGS = [ '-mwindows' ] )
     crossmingwenv.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
     crossmingwenv['WINICON'] = crossmingwenv.RES( 'support/icon/npicon.rc' )
@@ -143,7 +144,9 @@ if env['mode'] == 'debug':
 else:
     env.Append(CCFLAGS = ['-O2','-s'])
     env['FINALEXENAME'] = 'netpanzer'
-    crossmingwenv.Append(CCFLAGS = ['-O2','-s'])
+    crossmingwenv.Append(CCFLAGS = ['-O1', '-s'])
+# -O2 causes the dedicated server to crash on windows
+#    crossmingwenv.Append(CCFLAGS = ['-O2','-s'])
     crossmingwenv['FINALEXENAME'] = crossmingwenv['FINALBUILDDIR'] + 'netpanzer'
     crosslinuxenv.Append(CCFLAGS = ['-O2','-s'])
     crosslinuxenv['FINALEXENAME'] = crosslinuxenv['FINALBUILDDIR'] + 'netpanzer'
@@ -245,6 +248,7 @@ else:
 
 # for crossmingw platform
 if 'crossmingw' in COMMAND_LINE_TARGETS:
+    crossmingwnetworkenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
     crossmingwenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
     crossmingwenv.Prepend( _LIBFLAGS = [ '-L/usr/local/lib', '/usr/local/lib/SDL_mixer.lib' ] )
 #    crossmingwenv.Append( NPLIBS = [ '/usr/local/lib/SDL_mixer.lib' ] )

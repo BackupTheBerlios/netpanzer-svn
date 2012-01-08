@@ -225,6 +225,8 @@ void PlayerGameManager::inputLoop()
                MouseInterface::getMouseY(), MouseInterface::getButtonMask());
 
     COMMAND_PROCESSOR.updateScrollStatus( MouseInterface::getMousePosition() );
+
+    BaseGameManager::inputLoop();
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::graphicsLoop()

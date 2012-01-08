@@ -33,7 +33,16 @@ TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o)
     throw(NetworkException)
     : SocketBase(fd,newaddr), observer(o)
 {
+    // nothing, socket is added to SocketManager because is already connected.
+}
 
+TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocketObserver *o)
+    throw(NetworkException)
+    : SocketBase(), observer(o)
+{
+    Address a(true, false);
+    a.setParams(host, port);
+    setAddress(a);
 }
 
 TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
@@ -46,6 +55,17 @@ TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
 
 TCPSocket::~TCPSocket()
 { }
+
+void
+TCPSocket::onResolved()
+{
+    SocketBase::onResolved();
+    create();
+    setNonBlocking();
+    setConfigured();
+    doConnect();
+    setNoDelay();
+}
 
 void
 TCPSocket::destroy()
@@ -66,6 +86,7 @@ TCPSocket::send(const void* data, size_t size) throw(NetworkException)
 void
 TCPSocket::onConnected()
 {
+    SocketBase::onConnected();
     if (observer)
         observer->onConnected(this);
 }

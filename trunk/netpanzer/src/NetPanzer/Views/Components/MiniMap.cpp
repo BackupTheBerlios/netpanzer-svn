@@ -190,17 +190,8 @@ MiniMap::drawObjectives(Surface &dest)
         map_rect.max.x = int(float(objective_rect.max.x/32) / xratio)+position.x;
         map_rect.max.y = int(float(objective_rect.max.y/32) / yratio)+position.y;
 
-        // Removed black borders to the text.
-//        if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_solid_rect) {
-//            map_surface.fillRect( map_rect, color);
-//        } else if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_outline_rect) {
-            dest.drawRect( map_rect, color);
-            dest.drawRect( iRect(map_rect.min.x + 1, map_rect.min.y + 1, map_rect.max.x - 1, map_rect.max.y - 1), color );
-            //}
-            //else if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_player_flag)
-            //{
-            //map_surface.fillRect( map_rect, color );
-//        }
+        dest.drawRect( map_rect, color);
+        dest.drawRect( iRect(map_rect.min.x + 1, map_rect.min.y + 1, map_rect.max.x - 1, map_rect.max.y - 1), color );
 
         //LOG(("%d", obj_state.outpost_type));
         if ( obj->occupying_player == PlayerInterface::getLocalPlayer() )

@@ -106,7 +106,8 @@ NetworkServer::hostSession()
     try
     {
         Address addr = Address::resolve(gameconfig->bindaddress,
-                                        gameconfig->serverport);
+                                        gameconfig->serverport,
+                                        true, true ); // tcp for binding
         
         socket = new TCPListenSocket(addr, this);
 
@@ -397,11 +398,8 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
                                       player->getName().c_str());
         }
 
-
         ObjectiveInterface::disownPlayerObjectives( player_index );
-
         UnitInterface::destroyPlayerUnits( player_index );
-
         PlayerInterface::disconnectPlayerCleanup( player_index );    
 
         if ( sendalert )
@@ -419,13 +417,9 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
             {
                 scmsg.set( player_index, _connect_alert_mesg_client_drop );
             }
-
             SERVER->broadcastMessage(&scmsg, sizeof(scmsg));
         }
     }
-    
-
-//    LOGGER.warning("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
 }
 
 ClientSocket *

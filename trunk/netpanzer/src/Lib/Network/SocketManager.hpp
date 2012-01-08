@@ -40,23 +40,12 @@ protected:
     friend class SocketBase; // the only allowed to add/remove
     static void addSocket(SocketBase *s)
     {
-        SocketsIterator i = deletedSockets.find(s);
-        if ( i != deletedSockets.end() ) {
-            deletedSockets.erase(i);
-        } else {
-            newSockets.insert(s);
-        }
+        newSockets.insert(s);
     }
     
     static void removeSocket(SocketBase *s)
     {
-        SocketsIterator i = newSockets.find(s);
-        if ( i != newSockets.end() ) {
-            newSockets.erase(i);
-        } else {
-            deletedSockets.insert(s);
-            s->disconnectTimer.reset();
-        }
+        s->state = SocketBase::DESTROYING;
     }
     
     static void removeInvalidSockets();
@@ -68,7 +57,6 @@ private:
     static SocketSet sset;
     static Sockets socketList;
     static Sockets newSockets;
-    static Sockets deletedSockets;
 };
 
 } // namespace

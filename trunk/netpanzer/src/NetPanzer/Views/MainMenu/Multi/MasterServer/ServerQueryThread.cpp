@@ -31,8 +31,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/StringUtil.hpp"
 
-static const size_t MAX_QUERIES = 3;
-static const Uint32 QUERY_TIMEOUT = 5 * 1000;
+static const size_t MAX_QUERIES = 4;
+static const Uint32 QUERY_TIMEOUT = 3 * 1000;
+static const Uint32 MS_TIMEOUT = 12 * 1000;
 
 namespace masterserver
 {
@@ -102,10 +103,11 @@ ServerQueryThread::queryMasterServer()
             std::string masterserverip = masterservers.back();
             masterservers.pop_back();
             
-            network::Address ip
-                = network::Address::resolve(masterserverip, 28900);
+//            network::Address ip
+//                = network::Address::resolve(masterserverip, 28900);
 
-            network::TCPSocket *s = new network::TCPSocket(ip, this);
+//            network::TCPSocket *s = new network::TCPSocket(ip, this);
+            network::TCPSocket *s = new network::TCPSocket(masterserverip, "28900", this);
             MSInfo * msi = new MSInfo();
             querying_msdata[s]=msi;
             running = true;
@@ -353,7 +355,7 @@ ServerQueryThread::checkTimeOuts()
     
     map<network::TCPSocket *,MSInfo *>::iterator msiter;
     for (msiter=querying_msdata.begin(); msiter!=querying_msdata.end(); msiter++) {
-        if ( now - msiter->second->lastTicks > QUERY_TIMEOUT ) {
+        if ( now - msiter->second->lastTicks > MS_TIMEOUT ) {
             LOGGER.warning("Masterserver [%s] timeout", msiter->first->getAddress().getIP().c_str());
             delete msiter->second;
             msiter->first->destroy();

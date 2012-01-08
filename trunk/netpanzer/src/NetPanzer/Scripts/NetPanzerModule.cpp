@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapsManager.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/FileSystem.hpp"
 
@@ -237,6 +238,23 @@ static int npmodule_SyncFlagTimer (lua_State *L)
     return 0;
 }
 
+static int npmodule_destroyPlayerUnits(lua_State *L)
+{
+    int n = lua_tonumber(L, 1);
+    if ( !n && ! lua_isnumber(L, 1) )
+    {
+        // TODO it is missing a parameter or it is not a number, do something
+    }
+    else
+    {
+        if ( n >= 0 && n < PlayerInterface::getMaxPlayers() )
+        {
+            UnitInterface::destroyPlayerUnits( n );
+        }
+    }
+    return 0;
+}
+
 static const luaL_Reg npmodule[] =
 {
     {"say",           npmodule_say},
@@ -251,6 +269,7 @@ static const luaL_Reg npmodule[] =
     {"listmaps",      npmodule_listMaps},
     {"listprofiles",  npmodule_listProfiles},
     {"syncflagtimer", npmodule_SyncFlagTimer},
+    {"destroyplayerunits", npmodule_destroyPlayerUnits},
     {NULL, NULL}
 };
 

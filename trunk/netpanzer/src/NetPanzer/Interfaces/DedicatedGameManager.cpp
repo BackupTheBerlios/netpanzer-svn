@@ -90,9 +90,9 @@ void DedicatedGameManager::shutdownVideoSubSystem()
 void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("/config/netpanzer-dedicated.ini");
+        gameconfig = new GameConfig("/config/netpanzer-dedicated.ini", "/config/server.cfg");
     else
-        gameconfig = new GameConfig(configfile, false);
+        gameconfig = new GameConfig(configfile, "/config/server.cfg", false);
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices()
@@ -172,12 +172,13 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                SERVER->dropClient(SERVER->getClientSocketByPlayerIndex(id));
+                SERVER->kickClient(SERVER->getClientSocketByPlayerIndex(id));
                 break;
         }
         commandqueue.pop();
     }
     SDL_mutexV(commandqueue_mutex);
+    BaseGameManager::inputLoop();
 }
 
 bool

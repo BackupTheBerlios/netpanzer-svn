@@ -58,7 +58,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Physics.hpp"
 #include "Util/TimerInterface.hpp"
 
-#include "Network/SocketManager.hpp"
+#include "Network/NetworkManager.hpp"
 
 #include "Scripts/ScriptManager.hpp"
 
@@ -95,9 +95,9 @@ void BaseGameManager::shutdownSoundSubSystem()
 void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("config/netpanzer.ini");
+        gameconfig = new GameConfig("config/netpanzer.ini", "/config/client.cfg");
     else
-        gameconfig = new GameConfig(configfile, false);
+        gameconfig = new GameConfig(configfile, "/config/client.cfg", false);
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameConfig()
@@ -205,7 +205,6 @@ void BaseGameManager::shutdownSubSystems()
 bool BaseGameManager::mainLoop()
 {
     TimerInterface::start();
-
     inputLoop();
     graphicsLoop();
     simLoop();
@@ -236,14 +235,13 @@ void BaseGameManager::simLoop()
 {
     if ( SERVER )
         SERVER->cleanUpClientList();
-    network::SocketManager::handleEvents();
+
 
     if ( NetworkState::status == _network_state_server ) {
         ServerMessageRouter::routeMessages();
     } else {
         ClientMessageRouter::routeMessages();
     }
-
     NetworkState::updateNetworkStats();
 
     UnitInterface::updateUnitStatus();
@@ -269,6 +267,7 @@ void BaseGameManager::simLoop()
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()
 {
+    network::NetworkManager::run();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::graphicsLoop()

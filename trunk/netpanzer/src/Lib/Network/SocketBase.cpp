@@ -27,31 +27,53 @@ using namespace std;
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
 #include "SocketManager.hpp"
+#include "NetworkManager.hpp"
 #include "Util/Log.hpp"
 
 namespace network
 {
 
-#ifdef _WIN32
-
-class WinSockInit {
-public:
-    WinSockInit() {
-        WSADATA wsaData;
-        WORD wVers = MAKEWORD(2, 0);
-        int rc = WSAStartup(wVers, &wsaData);
-        if(rc != 0) {
-	    fprintf(stderr, "Failed to initialize winsock: %d\n", rc);
-	    exit(1);
-        }
-    }
-
-    ~WinSockInit() {
-	WSACleanup();
-    }
+const char * SocketBase::state_str[] =
+{
+    "ST_ERROR",
+    "UNINITIALIZED",
+    "RESOLVING",
+    "RESOLVED",
+    "CREATED",
+    "CONFIGURED",
+    "BOUND",
+    "LISTENING",
+    "CONNECTING",
+    "CONNECTED",
+    "DESTROYING"
 };
-WinSockInit _WinSockInit;
-#endif
+
+SocketBase::SocketBase()
+{
+    state = UNINITIALIZED;
+    disconnectTimer.setTimeOut(500);
+}
+
+SocketBase::SocketBase(const Address &a, bool isTcp)
+    throw(NetworkException)
+    : addr(a)
+{
+    state = RESOLVED;
+    create();
+    setNonBlocking();
+    disconnectTimer.setTimeOut(500);
+    state = CONFIGURED;
+}
+
+SocketBase::SocketBase(SOCKET fd, const Address &a)
+    throw(NetworkException)
+    : sockfd(fd), addr(a)
+{
+    state = CONNECTED;
+    SocketManager::addSocket(this);
+    setNonBlocking();
+    disconnectTimer.setTimeOut(500);
+}
 
 SocketBase::~SocketBase()
 {
@@ -62,242 +84,320 @@ SocketBase::~SocketBase()
     closesocket(sockfd);
 }
 
-SocketBase::SocketBase(const Address &a, bool isTcp)
-    throw(NetworkException)
-    : addr(a)
+void
+SocketBase::setAddress(const Address &a)
 {
-    create(isTcp);
+    addr = a;
+    state = RESOLVING;
     SocketManager::addSocket(this);
-    setNonBlocking();
-    _isConnecting=false;
-    disconnectTimer.setTimeOut(500);
-}
-
-SocketBase::SocketBase(SOCKET fd, const Address &a)
-    throw(NetworkException)
-    : sockfd(fd), addr(a)
-{
-    SocketManager::addSocket(this);
-    setNonBlocking();
-    _isConnecting=false;
-    disconnectTimer.setTimeOut(500);
 }
 
 void
-SocketBase::create (bool tcp) throw(NetworkException)
+SocketBase::create () throw(NetworkException)
 {
-    if(tcp) {
-        sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    } else {
-        sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    }
+    if ( state == RESOLVED )
+    {
+        sockfd = socket(PF_INET, addr.socktype, addr.protocol);
 
-    LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
-    
-    if(sockfd == INVALID_SOCKET) {
-        lastError = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Couldn't create socket: " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());
+        LOGGER.debug("SocketBase:: Create [%s:%d] socket", (addr.socktype == SOCK_STREAM)?"tcp":"udp",sockfd);
+
+        if(sockfd == INVALID_SOCKET)
+        {
+            lastError = GET_NET_ERROR();
+            std::stringstream msg;
+            msg << "Couldn't create socket: " << NETSTRERROR(lastError);
+            throw NetworkException(msg.str());
+        }
+        state = CREATED;
+    }
+    else
+    {
+        LOGGER.warning("Trying to recreate a socket [%s]", getStateString());
     }
 }
 
 void
 SocketBase::setNonBlocking() throw(NetworkException)
 {
-    int res;
+    if ( state >= CREATED )
+    {
+        int res;
 #ifdef _WIN32
-    unsigned long mode = 1;
-    res = ioctlsocket(sockfd, FIONBIO, &mode);
+        unsigned long mode = 1;
+        res = ioctlsocket(sockfd, FIONBIO, &mode);
 #else
-    res = fcntl(sockfd, F_SETFL, O_NONBLOCK);
+        res = fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
-    if ( res == SOCKET_ERROR ) {
-        lastError = GET_NET_ERROR();
-//        doClose();
-        std::stringstream msg;
-        msg << "Couldn't set socket to nonblocking mode: " << NETSTRERROR(lastError);
-        LOGGER.warning("%s", msg.str().c_str());
+        if ( res == SOCKET_ERROR ) {
+            lastError = GET_NET_ERROR();
+    //        doClose();
+            std::stringstream msg;
+            msg << "Couldn't set socket to nonblocking mode: " << NETSTRERROR(lastError);
+            LOGGER.warning("%s", msg.str().c_str());
+        }
+    }
+    else
+    {
+        LOGGER.warning("Trying to configure uncreated socket [%s]", getStateString());
     }
 }
 
 void
 SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
 {
-    int res = bind(sockfd, toaddr.getSockaddr(), toaddr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        doClose();
-        std::stringstream msg;
-        msg << "Couldn't bind socket to address '"
-            << toaddr.getIP() << "' port " << toaddr.getPort()
-            << ": " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());
+    if ( state == CONFIGURED )
+    {
+        int res = bind(sockfd, toaddr.getSockaddr(), toaddr.getSockaddrLen());
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+            doClose();
+            std::stringstream msg;
+            msg << "Couldn't bind socket to address '"
+                << toaddr.getIP() << "' port " << toaddr.getPort()
+                << ": " << NETSTRERROR(lastError);
+            throw NetworkException(msg.str());
+        }
+        SocketManager::addSocket(this);
+        state = BOUND;
+    }
+    else
+    {
+        LOGGER.warning("Trying to bind to a socket != CONFIGURED [%s]", getStateString());
     }
 }
 
 void
 SocketBase::setReuseAddr() throw(NetworkException)
 {
-    SETSOCKOPT_PARAMTYPE val = 1;
-    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-//        doClose();
-        std::stringstream msg;
-        msg << "Couldn't set SO_REUSEADDR: " << NETSTRERROR(lastError);
-        LOGGER.warning("%s", msg.str().c_str());
+    if ( state == CONFIGURED )
+    {
+        SETSOCKOPT_PARAMTYPE val = 1;
+        int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+    //        doClose();
+            std::stringstream msg;
+            msg << "Couldn't set SO_REUSEADDR: " << NETSTRERROR(lastError);
+            LOGGER.warning("%s", msg.str().c_str());
+        }
+    }
+    else
+    {
+        LOGGER.warning("Trying to set reuse addr on an unconfigured socket [%s]", getStateString());
     }
 }
 
 void
 SocketBase::setNoDelay() throw(NetworkException)
 {
-    SETSOCKOPT_PARAMTYPE val = 1;
-    int res = setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-//        doClose();
-        std::stringstream msg;
-        msg << "Couldn't set TCP_NODELAY: " << NETSTRERROR(lastError);
-        LOGGER.warning("%s", msg.str().c_str());
+    if ( state >= CONFIGURED )
+    {
+        SETSOCKOPT_PARAMTYPE val = 1;
+        int res = setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+    //        doClose();
+            std::stringstream msg;
+            msg << "Couldn't set TCP_NODELAY: " << NETSTRERROR(lastError);
+            LOGGER.warning("%s", msg.str().c_str());
+        }
+    }
+    else
+    {
+        LOGGER.warning("Trying to set nodelay on an unconfigured socket [%s]", getStateString());
     }
 }
-
 
 void
 SocketBase::doListen() throw(NetworkException)
 {
-    int res = listen(sockfd, 20);
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        doClose();
-        std::stringstream msg;
-        msg << "Couldn't listen on socket: " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());
+    if ( state == BOUND )
+    {
+        int res = listen(sockfd, 20);
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+            doClose();
+            std::stringstream msg;
+            msg << "Couldn't listen on socket: " << NETSTRERROR(lastError);
+            throw NetworkException(msg.str());
+        }
+        state = LISTENING;
+    }
+    else
+    {
+        LOGGER.warning("Trying to listen on an unbound socket [%s]", getStateString());
     }
 }
 
 void
 SocketBase::doConnect() throw(NetworkException)
 {
-    int res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        if (IS_CONNECT_INPROGRESS(lastError)) {
-            _isConnecting = true;
-            return;
+    if ( state == CONFIGURED )
+    {
+        int res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
+        if(res == SOCKET_ERROR)
+        {
+            lastError = GET_NET_ERROR();
+            if ( !IS_CONNECT_INPROGRESS(lastError) )
+            {
+                doClose();
+                std::stringstream msg;
+                msg << "Couldn't connect to '" << addr.getIP() << "' port "
+                    << addr.getPort() << ": " << NETSTRERROR(lastError);
+                throw NetworkException(msg.str());
+            }
         }
-        doClose();
-        std::stringstream msg;
-        msg << "Couldn't connect to '" << addr.getIP() << "' port "
-            << addr.getPort() << ": " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());
+        state = CONNECTING;
+        SocketManager::addSocket(this);
+    }
+    else
+    {
+        LOGGER.warning("Trying to connect to an unconfigured socket [%s]", getStateString());
     }
 }
 
 int
 SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
 {
-    int res = send(sockfd, (const char*) data, len, SEND_FLAGS);
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        if ( IS_IGNORABLE_ERROR(lastError) )
-            return 0;
+    if ( state == CONNECTED )
+    {
+        int res = send(sockfd, (const char*) data, len, SEND_FLAGS);
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+            if ( IS_IGNORABLE_ERROR(lastError) )
+                return 0;
 
-        if ( ! IS_DISCONECTED(lastError) ) {
-            std::stringstream msg;
-            msg << "Send error: " << NETSTRERROR(lastError);
-            LOGGER.warning("%s", msg.str().c_str());
+            if ( ! IS_DISCONECTED(lastError) ) {
+                std::stringstream msg;
+                msg << "Send error: " << NETSTRERROR(lastError);
+                LOGGER.warning("%s", msg.str().c_str());
+            }
+
+            onDisconected();
+            return 0;
         }
-        
-        onDisconected();
-        return 0;
+        return res;
     }
-    return res;
+    else
+    {
+        LOGGER.warning("Trying to send to unconected socket [%s]", getStateString());
+    }
+    return 0;
 }
 
 int
 SocketBase::doReceive(void* buffer, size_t len) throw(NetworkException)
 {
-    int res = recv(sockfd, (char*) buffer, len, RECV_FLAGS);
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        if ( IS_IGNORABLE_ERROR(lastError) )
-            return 0;
+    if ( state == CONNECTED )
+    {
+        int res = recv(sockfd, (char*) buffer, len, RECV_FLAGS);
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+            if ( IS_IGNORABLE_ERROR(lastError) )
+                return 0;
 
-        if ( ! IS_DISCONECTED(lastError) ) {
-            std::stringstream msg;
-            msg << "Read error: " << NETSTRERROR(lastError);
-            LOGGER.warning("%s", msg.str().c_str());
+            if ( ! IS_DISCONECTED(lastError) ) {
+                std::stringstream msg;
+                msg << "Read error: " << NETSTRERROR(lastError);
+                LOGGER.warning("%s", msg.str().c_str());
+            }
+
+            onDisconected();
+            return 0;
         }
 
-        onDisconected();
-        return 0;
+        if (!res) {
+            LOGGER.debug("SocketBase::doReceive Disconected from server");
+            onDisconected();
+        }
+
+        return res;
     }
-    
-    if (!res) {
-        LOGGER.debug("SocketBase::doReceive Disconected from server");
-        onDisconected();
+    else
+    {
+        LOGGER.warning("Trying to receive on unconected socket [%s]", getStateString());
     }
-    
-    return res;
+    return 0;
 }
 
 int
 SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException)
 {
-    int res = sendto(sockfd, (const char*) data, len, SEND_FLAGS,
-                toaddr.getSockaddr(), toaddr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        lastError = GET_NET_ERROR();
-        if ( ! IS_SENDTO_IGNORABLE(lastError) )
-        {
-            std::stringstream msg;
-            msg << "Send error: " << NETSTRERROR(lastError);
-            LOGGER.warning("%s", msg.str().c_str());
+    if ( state == BOUND )
+    {
+        int res = sendto(sockfd, (const char*) data, len, SEND_FLAGS,
+                    toaddr.getSockaddr(), toaddr.getSockaddrLen());
+        if(res == SOCKET_ERROR) {
+            lastError = GET_NET_ERROR();
+            if ( ! IS_SENDTO_IGNORABLE(lastError) )
+            {
+                std::stringstream msg;
+                msg << "Send error: " << NETSTRERROR(lastError);
+                LOGGER.warning("%s", msg.str().c_str());
+            }
+            return 0;
         }
-        return 0;
+        return res;
     }
-    return res;
+    else
+    {
+        LOGGER.warning("Trying to sendto in an unbound socket [%s]", getStateString());
+    }
+    return 0;
 }
 
 size_t
 SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException)
 {
-    int res = recvfrom(sockfd, (char*) buffer, len, RECV_FLAGS,
-            fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
-    if ( res == SOCKET_ERROR )
+    if ( state == BOUND || state == CONNECTED )
     {
-        lastError = GET_NET_ERROR();
-        if ( ! IS_RECVFROM_IGNORABLE(lastError) )
+        int res = recvfrom(sockfd, (char*) buffer, len, RECV_FLAGS,
+                fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
+        if ( res == SOCKET_ERROR )
         {
-            std::stringstream msg;
-            msg << "Receive error: " << NETSTRERROR(lastError);
-            LOGGER.warning("%s", msg.str().c_str());
-        }
+            lastError = GET_NET_ERROR();
+            if ( ! IS_RECVFROM_IGNORABLE(lastError) )
+            {
+                std::stringstream msg;
+                msg << "ReceiveFrom error: " << NETSTRERROR(lastError);
+                LOGGER.warning("%s", msg.str().c_str());
+            }
 
-        return 0;
+            return 0;
+        }
+        return res;
     }
-    return res;
+    else
+    {
+        LOGGER.warning("Trying to receivefrom on an not bound or conected socket [%s]", getStateString());
+    }
+    return 0;
 }
 
 SOCKET
 SocketBase::doAccept(Address& fromaddr) throw(NetworkException)
 {
-    SOCKET newsock;
-    newsock= accept(sockfd, fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
-    if ( newsock == INVALID_SOCKET )
+    if ( state == LISTENING )
     {
-        lastError = GET_NET_ERROR();
-        if ( ! IS_ACCEPT_IGNORABLE(lastError) )
+        SOCKET newsock;
+        newsock= accept(sockfd, fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
+        if ( newsock == INVALID_SOCKET )
         {
-            std::stringstream msg;
-            msg << "Accept error: " << NETSTRERROR(lastError);
-            LOGGER.warning("%s", msg.str().c_str());
+            lastError = GET_NET_ERROR();
+            if ( ! IS_ACCEPT_IGNORABLE(lastError) )
+            {
+                std::stringstream msg;
+                msg << "Accept error: " << NETSTRERROR(lastError);
+                LOGGER.warning("%s", msg.str().c_str());
+            }
         }
+        return newsock;
     }
-    return newsock;
+    else
+    {
+        LOGGER.warning("Trying to accept on an unlistening socket [%s]", getStateString());
+    }
+    return SOCKET_ERROR;
 }
 
 void

@@ -19,7 +19,8 @@
 #define __SOCKETHEADERS_HPP__
 
 #ifdef _WIN32
-#include <winsock2.h>
+//#//include <winsock2.h>
+#include <ws2tcpip.h>
 
 #define SHUTDOWN_BOTH SD_BOTH
 #define GET_NET_ERROR() WSAGetLastError()

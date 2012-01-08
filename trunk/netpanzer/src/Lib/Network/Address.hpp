@@ -28,21 +28,36 @@ namespace network
 class Address
 {
 public:
-    Address();
-    Address(const Address& other);
-    
-    /** resolves a hostname or IP-Number together with a port and returns a
-     * new Address object.
-     */
-    static Address resolve(const std::string& name, unsigned short port) throw(NetworkException);
 
-    /** returns the ip address of this Address as string */
+    enum A_STATUS
+    {
+        ST_ERROR,
+        ST_UNRESOLVED,
+        ST_WAITING,
+        ST_RESOLVING,
+        ST_OK
+    };
+
+    Address(bool isTcp = true, bool forBinding = true);
+    Address(const Address& other);
+
+    void setParams(const std::string& host, const std::string& port);
+
+    static Address resolve(const std::string& name, unsigned short port, bool isTcp = true, bool forBinding = false) throw(NetworkException);
+
     std::string getIP() const;
+
     /** returns the port of this address */
     unsigned short getPort() const;
+    void setPort(unsigned short port);
 
     void operator=(const Address& other);
     bool operator==(const Address& other) const;
+
+    bool compareDest(const Address& other) const
+    {
+        return str_host == other.str_host && str_port == other.str_port;
+    }
 
     struct sockaddr * getSockaddr() const { return (struct sockaddr *)&ss; };
     socklen_t getSockaddrLen() const
@@ -58,6 +73,16 @@ public:
     static Address ANY;
 
 private:
+    friend class NetworkManager;
+    friend class SocketBase;
+    friend class SocketManager;
+
+    enum A_STATUS status;
+    std::string str_host;
+    std::string str_port;
+    int socktype;
+    int protocol;
+    bool forBinding;
     socklen_t ss_len;
     struct sockaddr_storage ss;
 };

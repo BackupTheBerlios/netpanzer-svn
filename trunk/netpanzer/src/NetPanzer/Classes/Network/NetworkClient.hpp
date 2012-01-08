@@ -55,9 +55,6 @@ public:
 
     bool getPacket(NetPacket *packet);
 
-
-    void checkIncoming();
-
 private:
     ClientSocket* clientsocket;
     NPString password;

@@ -38,16 +38,16 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
     : observer(0), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {
     try {
-        proxy.setProxy(gameconfig->proxyserver,
-                gameconfig->proxyserveruser,
-                gameconfig->proxyserverpass);
+//        proxy.setProxy(gameconfig->proxyserver,
+//                gameconfig->proxyserveruser,
+//                gameconfig->proxyserverpass);
     
         // resolve server name
         int port = NETPANZER_DEFAULT_PORT_TCP;
         std::string servername;
-        const char *server= proxy.proxyserver != ""
-                ? proxy.proxyserver.c_str() : whole_servername.c_str();
-        UtilInterface::splitServerPort(server, servername, &port);
+//        const char *server= proxy.proxyserver != ""
+//                ? proxy.proxyserver.c_str() : whole_servername.c_str();
+        UtilInterface::splitServerPort(whole_servername, servername, &port);
 
         network::Address serveraddr 
             = network::Address::resolve(servername, port);

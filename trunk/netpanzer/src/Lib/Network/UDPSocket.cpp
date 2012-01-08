@@ -27,7 +27,7 @@ namespace network
 
 UDPSocket::UDPSocket(UDPSocketObserver *o)
     throw(NetworkException) 
-    : SocketBase(Address::ANY,false), observer(o)
+    : SocketBase(Address::ANY, false), observer(o)
 {
     bindSocket();
 }

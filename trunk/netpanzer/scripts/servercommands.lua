@@ -27,7 +27,6 @@ base_modes[0] = "Can't capture";
 base_modes[1] = "Helipad capture";
 base_modes[2] = "Full base capture";
 
-
 ServerCommands =
 {
     say_help = "Says something to all players as server.",
@@ -254,5 +253,17 @@ ServerCommands =
             netpanzer.syncflagtimer();
             netpanzer.serversayto( player, "flagtimer time was set to " .. config.game.changeflagtime);
         end
+    end,
+
+    destroyunits_help = "destroy some player units",
+    destroyunits = function(param, player)
+        if ( param == "" ) then
+            netpanzer.serversayto( player, "You need to specify the player number to destroy units");
+        else
+            netpanzer.destroyplayerunits(param);
+            netpanzer.serversayto( player, "The units should be history");
+        end
     end
+
+
 };

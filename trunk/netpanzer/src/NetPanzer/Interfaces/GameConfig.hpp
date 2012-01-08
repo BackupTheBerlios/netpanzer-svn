@@ -106,7 +106,7 @@ namespace INI {
 class GameConfig : public NoCopy
 {
 public:
-    GameConfig(const std::string& configfile, bool usePhysFS = true);
+    GameConfig(const std::string& configfile, const std::string& luaconfigfile, bool usePhysFS = true);
     ~GameConfig();
 
     void loadConfig();
@@ -152,9 +152,6 @@ public:
 
     // server settings
     ConfigInt    serverport;
-    ConfigString proxyserver;
-    ConfigString proxyserveruser;
-    ConfigString proxyserverpass;
     ConfigString bindaddress;
     ConfigInt    gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt    maxplayers;
@@ -181,25 +178,15 @@ public:
     ConfigInt   effectsvolume;
    
     // interface settings
-    ConfigInt   unitcolor;
     ConfigInt   attacknotificationtime;
     ConfigInt   vehicleselectioncolor;
     ConfigInt   unitselectionmode;
     ConfigInt   unitinfodrawlayer;
-    ConfigBool  drawunitreload;
-    ConfigInt   consoletextdelay;
-    ConfigInt   consoletextusage;
     ConfigInt   scrollrate;
-    ConfigXY    minimapposition;
-    ConfigXY    minimapsize;
-    ConfigInt   minimapdrawtype;
-    ConfigXY    gameinfoposition;
-    ConfigXY    toolbarposition;
     ConfigXY    rankposition;
     ConfigInt   viewdrawbackgroundmode;
 
     // radar settings
-    ConfigBool  radar_displayclouds;
     ConfigInt   radar_playerunitcolor;
     ConfigInt   radar_selectedunitcolor;
     ConfigInt   radar_alliedunitcolor;
@@ -207,8 +194,6 @@ public:
     ConfigInt   radar_alliedoutpostcolor;
     ConfigInt   radar_enemyoutpostcolor;
     ConfigInt   radar_unitsize;
-    ConfigInt   radar_objectivedrawmode;
-    ConfigInt   radar_resizerate;
     
 public:
     const char* getGameTypeString() const
@@ -249,11 +234,6 @@ public:
 
         assert(false);
         return( "Unknown" );
-    }
-
-    PIX getUnitColor() const
-    {
-        return colorEnumToPix(unitcolor);
     }
 
     PIX getPlayerRadarUnitColor() const
@@ -306,6 +286,7 @@ private:
     static void registerScript(const NPString& table_name);
 
     std::string configfile;
+    std::string luaconfigfile;
     bool usePhysFS;
 
     PIX colorEnumToPix(int color_enum) const

@@ -49,7 +49,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
     string servname;
     while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
         try {
-            Address addr = Address::resolve(servname, MASTERSERVER_PORT);
+            Address addr = Address::resolve(servname, MASTERSERVER_PORT, true, false);
             mslist.push_back(addr);
         } catch (runtime_error e) {
             LOGGER.warning("Bad masterserver address: %s", e.what());
