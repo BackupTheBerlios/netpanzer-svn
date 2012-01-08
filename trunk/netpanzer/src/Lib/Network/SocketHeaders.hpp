@@ -22,6 +22,11 @@
 //#//include <winsock2.h>
 #include <ws2tcpip.h>
 
+// little fix for mingw
+#ifndef AI_NUMERICSERV
+ #define AI_NUMERICSERV 0x00000008
+#endif
+
 #define SHUTDOWN_BOTH SD_BOTH
 #define GET_NET_ERROR() WSAGetLastError()
 #define NETSTRERROR(x) "Winsock error: " << x
