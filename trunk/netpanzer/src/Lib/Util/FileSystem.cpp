@@ -61,7 +61,7 @@ void initialize(const char* argv0, const char* ,
     PHYSFS_addToSearchPath(writedir, 0);
     PHYSFS_addToSearchPath(basedir, 1);
 
-    delete[] writedir;
+
 
     /* Root out archives, and add them to search path... */
     const char* archiveExt = "zip";
@@ -76,10 +76,11 @@ void initialize(const char* argv0, const char* ,
             if ((l > extlen) && ((*i)[l - extlen - 1] == '.')) {
                 ext = (*i) + (l - extlen);
                 if (strcasecmp(ext, archiveExt) == 0) {
+                    LOGGER.warning("==== Adding zip: '%s'", *i);
                     const char *d = PHYSFS_getRealDir(*i);
                     char* str = new char[strlen(d) + strlen(dirsep) + l + 1];
                     sprintf(str, "%s%s%s", d, dirsep, *i);
-                    PHYSFS_addToSearchPath(str, 1);
+                    PHYSFS_addToSearchPath(str, 0);
                     delete[] str;
                 } /* if */
             } /* if */
@@ -87,6 +88,11 @@ void initialize(const char* argv0, const char* ,
 
         PHYSFS_freeList(rc);
     } /* if */
+
+
+    PHYSFS_removeFromSearchPath(writedir);
+    PHYSFS_addToSearchPath(writedir, 0);
+    delete[] writedir;
 }
 
 void shutdown()

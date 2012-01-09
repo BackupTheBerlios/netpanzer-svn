@@ -287,7 +287,7 @@ void SDLSound::nextSong()
     do {
         const char* toplay = currentsong->c_str();
         currentsong++;
-#ifdef HAS_LOADMUS_RW
+//#ifdef HAS_LOADMUS_RW
         /*
          * use LoadMUS_RW from newer SDL_mixers
          */
@@ -310,7 +310,7 @@ void SDLSound::nextSong()
             LOG (("Failed to load song '%s': %s",
                   toplay, e.what()));
         }
-#else
+#if 0
         music = Mix_LoadMUS(filesystem::getRealName(toplay).c_str());
         if (music) {
             if (Mix_PlayMusic(music, 1) == 0) {
