@@ -85,33 +85,18 @@ int ScriptHelper::set_byte(lua_State *L, void *v)
 
 int main ( int argc, char** argv )
 {
-    printf("pak2bmp for NetPanzer V 1.1\n");
+    printf("bmp2pak for NetPanzer V 1.0\n");
     if (argc < 3 )
     {
-        printf("use: %s <filename> <output_folder> [palette_file_optional]\n", argv[0]);
-        printf("note: if using palette file, use only the name without extension or path\n");
-        printf("note2: even on windows the path must be separated by '/'\n");
-        printf("note3: YOU have to create the output directory\n");
-        printf("example for using palete (default is netp):\n");
-        printf("%s units/pics/pak/TitaHNSD.pak titan_body netp\n", argv[0]);
+        printf("use: %s <filename.def> <outfile.pak>\n", argv[0]);
+        printf("note: even on windows the path must be separated by '/'\n");
+        printf("note2: the .bmp files has to be in same folder as .def file\n");
         return 1;
     }
 
     string filename = argv[1];
-
-    string::size_type last_slash = filename.find_last_of('/');
-
-    string filename_noext = filename.substr(last_slash != string::npos ? last_slash : 0);
-    filename_noext = filename_noext.substr(0,filename_noext.size()-4);
-    string palettefile = "netp";
-    if ( argc >= 4 )
-    {
-        palettefile = argv[3];
-    }
-    string outdir = argv[2];
-
-
-    printf("out dir is '%s'\n", outdir.c_str());
+    string filename_noext = filename.substr(0,filename.size()-4);
+    string outfile = argv[2];
 
     if ( ! PHYSFS_init(argv[0]) )
     {
@@ -122,62 +107,69 @@ int main ( int argc, char** argv )
     PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1);
     PHYSFS_setWriteDir(PHYSFS_getBaseDir());
 
-    PackedSurface pak;
-    pak.load(filename);
-
-
-    std::stringstream deffile;
-    deffile << "/" << outdir << "/" << filename_noext << ".def";
-
-    FILE *f = fopen(filesystem::getRealWriteName(deffile.str().c_str()).c_str(), "w");
+    FILE *f = fopen(filesystem::getRealWriteName(filename.c_str()).c_str(), "r");
     if ( !f )
     {
-        printf("Error: cannot write files in %s\n", outdir.c_str());
+        printf("Error: cannot open def file %s\n", filename.c_str());
         PHYSFS_deinit();
         return 1;
     }
 
-    fprintf(f,"size=%d,%d\n", pak.getWidth(), pak.getHeight());
-    fprintf(f,"frames=%d\n", pak.getFrameCount());
-    fprintf(f,"fps=%f\n", pak.getFPS());
-    fprintf(f,"offset=%d,%d\n", pak.getOffsetX(), pak.getOffsetY());
+    int width = -1, height = -1;
+    int frames = -1;
+    float fps = -1;
+    int offset_x = -1, offset_y = -1;
+
+    bool isError = false;
+
+    isError = fscanf(f,"size=%d,%d\n", &width, &height) != 2;
+    isError |= fscanf(f,"frames=%d\n", &frames) != 1;
+    isError |= fscanf(f,"fps=%f\n", &fps) != 1;
+    isError |= fscanf(f,"offset=%d,%d\n", &offset_x, &offset_y) != 2;
 
     fclose(f);
 
-    printf("def file=%s\n",filesystem::getRealWriteName(deffile.str().c_str()).c_str());
-
-    Surface unpacked(pak.getWidth(), pak.getHeight(), 1);
-
-    SDL_Surface *surf = SDL_CreateRGBSurfaceFrom( unpacked.getFrame0(),
-                                                  unpacked.getWidth(),
-                                                 unpacked.getHeight(),
-                                                 8,
-                                                 unpacked.getPitch(),
-                                                 0,0,0,0);
-
-
-    if ( ! surf )
+    if ( isError )
     {
-        printf("surface is null! we will die.");
+        printf("Error loading def file, check it\n");
+        PHYSFS_deinit();
+        return 1;
     }
 
-    Palette::loadACT(palettefile);
-    SDL_SetColors(surf, Palette::color, 0, 256);
+    printf("size=%d,%d\n", width, height);
+    printf("frames=%d\n", frames);
+    printf("fps=%f\n", fps);
+    printf("offset=%d,%d\n", offset_x, offset_y);
 
-    printf("There are %d frames\n", pak.getFrameCount());
+    Surface unpacked(width, height, frames);
 
-    for ( int n = 0; n < pak.getFrameCount(); n++ )
+    unpacked.setFPS(fps);
+    unpacked.setOffsetX(offset_x);
+    unpacked.setOffsetY(offset_y);
+
+    Surface bmp;
+
+    for ( int n = 0; n < frames; n++ )
     {
+        std::stringstream bfile;
+        bfile << filename_noext << "_" << n << ".bmp";
+
+        bmp.loadBMP(bfile.str().c_str());
+
+        printf("Loaded: %s\n", bfile.str().c_str());
+
+        unpacked.setFrame(n);
         unpacked.fill(0);
-        pak.setFrame(n);
-        pak.blt(unpacked, 0, 0);
-        std::stringstream ofile;
-        ofile << "/" << outdir << "/" << filename_noext << "_" << n << ".bmp";
-        SDL_SaveBMP(surf, filesystem::getRealWriteName(ofile.str().c_str()).c_str());
-        printf("Wrote to: %s\n", filesystem::getRealWriteName(ofile.str().c_str()).c_str());
+        bmp.blt(unpacked, 0, 0);
     }
 
-    SDL_FreeSurface(surf);
+
+    PackedSurface pak;
+    pak.pack(unpacked);
+    pak.setFPS(fps);
+    pak.save(outfile);
+
+    printf("Wrote to: %s\n", filesystem::getRealWriteName(outfile.c_str()).c_str());
 
     PHYSFS_deinit();
     printf("Exited cleanly\n");

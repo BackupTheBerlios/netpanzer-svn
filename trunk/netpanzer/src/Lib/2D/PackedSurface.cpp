@@ -168,6 +168,9 @@ void PackedSurface::pack(const Surface &source)
                 SpanHead *span = (SpanHead *)(packedDataChunk + curByteOffset);
                 span->x1 = htol16(spanX1);
                 span->len = htol16(spanLen);
+
+                // to make same files as old pak files, has to memset to 'cd'
+                memset(span+1,0xcd, newSize-curByteOffset-sizeof(SpanHead));
                 memcpy(span + 1, &rowPtr[spanX1], spanLen * sizeof(PIX));
                 curByteOffset = newSize;
             }
@@ -258,6 +261,8 @@ void PackedSurface::save(const std::string& filename) const
 	file->writeSLE32(pix.x);
 	file->writeSLE32(pix.y);
     
+        file->writeSLE32(frameCount);
+
 	// is this correct?!?
 	file->writeSLE32( *((Uint32*) (void*) (&fps)) );
 

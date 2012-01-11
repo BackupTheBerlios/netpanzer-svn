@@ -249,7 +249,9 @@ env.Prepend( LIBPATH = libpath )
 netpanzer = env.Program( binpath+'netpanzer'+exeappend, env['NPSOURCES'])
 
 pak2bmp = env.Program( binpath+'pak2bmp'+exeappend, 'support/tools/pak2bmp.cpp')
-
 Alias('pak2bmp',pak2bmp)
+
+bmp2pak = env.Program( binpath+'bmp2pak'+exeappend, 'support/tools/bmp2pak.cpp')
+Alias('bmp2pak',bmp2pak)
 
 Default(netpanzer)
