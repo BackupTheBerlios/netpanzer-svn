@@ -51,7 +51,7 @@ public:
     {
         int x = loc.x - unit_state.location.x;
         int y = loc.y - unit_state.location.y;
-        return (x*x + y*y) < unit_state.weapon_range;
+        return (unsigned)(x*x + y*y) < unit_state.weapon_range;
     }
 
 private:

@@ -5,6 +5,34 @@ import string
 import subprocess
 
 ################################################################
+# Set NetPanzer Version
+################################################################
+
+NPVERSION = ''
+SVERSION = ''
+
+try:
+    FILE = open('RELEASE_VERSION', 'r')
+    NPVERSION = FILE.readline().strip(' \n\r')
+    FILE.close()
+except:
+    pass
+
+try:
+    SVERSION = os.popen('svnversion').read()[:-1]
+    SVERSION = SVERSION.split(':')[-1]
+except:
+    pass
+
+print "NPVERSION = " + NPVERSION
+print "SVERSION = " + SVERSION
+if NPVERSION == '' and SVERSION != '':
+    NPVERSION = 'svn-' + SVERSION;
+
+thisplatform = sys.platform;
+print 'Building version ' + NPVERSION + ' in ' + thisplatform
+
+################################################################
 # Fix compiling with long lines in windows
 ################################################################
 class ourSpawn:
@@ -41,7 +69,7 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     sources = Flatten(sources)
     targetsources = []
     for s in sources:
-        targetsources.append(localenv['FINALBUILDDIR'] + s)
+        targetsources.append(buildpath + s)
 
     return targetsources
 
@@ -51,7 +79,7 @@ def globSources(localenv, sourcePrefix, sourceDirs, pattern):
 
 def MakeStaticLib(localenv, libname, libdirs, pattern):
     sources = globSources(localenv, 'src/Lib', libdirs, pattern)
-    localenv.StaticLibrary( localenv['FINALLIBSDIR'] + libname, sources)
+    localenv.StaticLibrary( libpath + libname, sources)
 
 ################################################################
 # Add options
@@ -59,158 +87,85 @@ def MakeStaticLib(localenv, libname, libdirs, pattern):
 
 opts = Variables()
 opts.AddVariables(
-    ('mode','set compile mode to debug or release','release'),
+    EnumVariable('mode', 'set compile mode', 'release', allowed_values=('debug', 'release')),
+    EnumVariable('cross','do a cross compilation','', allowed_values=('','mingw','linux')),
     ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
-    ('sdlconfig','sets the sdl-config full path', 'sdl-config'),
+    ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl-config'),
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
-    ('crosslinuxcompilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
-    ('crossmingwcompilerprefix', 'sets the prefix for the cross mingw compiler, example: i686-mingw32-', ''),
-    ('crosslinuxsdlconfig','sets the sdl-config full path for linux cross compiler', 'sdl-config'),
-    ('crossmingwsdlconfig','sets the sdl-config full path for mingw cross compiler', 'sdl-config')
+    ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
 )
 
 env = Environment(ENV = os.environ, options = opts)
 Help(opts.GenerateHelpText(env))
 
-################################################################
-# Create Environments
-################################################################
+env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 
-if not (env['mode'] in ['debug', 'release']):
-    print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
-    Exit(1)
+if env['datadir'] != '':
+    env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
 
-crossmingwenv = env.Clone();
-crosslinuxenv = env.Clone();
+buildpath = 'build/'
+if env['cross'] != '':
+    buildpath += env['cross'] + '/'
 
-if 'crossmingw' in COMMAND_LINE_TARGETS:
-    if env['crossmingwcompilerprefix'] == '':
-        print 'You need to set a compiler prefix for mingw cross compilation'
-        Exit(1)
+buildpath += env['mode'] + '/'
 
-    if env['crossmingwsdlconfig'] == 'sdl-config':
-        print 'You need to set the full path of sdl-config for mingw cross compilation'
-        Exit(1)
+libpath = buildpath + 'libs/'
 
-    crossmingwenv = Environment( ENV = {'PATH' : os.environ['PATH']}, tools = ['mingw'], options=opts )
-    crossmingwenv.Replace( CXX = env['crossmingwcompilerprefix'] + crossmingwenv['CXX'] )
-    crossmingwenv.Replace( CC = env['crossmingwcompilerprefix'] + crossmingwenv['CC'] )
-    crossmingwenv.Replace( AR = env['crossmingwcompilerprefix'] + crossmingwenv['AR'] )
-    crossmingwenv.Replace( RANLIB = env['crossmingwcompilerprefix'] + crossmingwenv['RANLIB'] )
-    crossmingwenv.Replace( RC = env['crossmingwcompilerprefix'] + crossmingwenv['RC'] )
-    crossmingwenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-#    crossmingwenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
-    crossmingwenv.Append( LDFLAGS = [ '-mwindows' ] )
-    crossmingwenv.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
-    crossmingwenv['WINICON'] = crossmingwenv.RES( 'support/icon/npicon.rc' )
-    crossmingwenv['PROGSUFFIX'] = '.exe'
+if env['cross'] != '':
+    binpath = buildpath
+else:
+    binpath = './'
 
-if 'crosslinux' in COMMAND_LINE_TARGETS:
-    if env['crosslinuxcompilerprefix'] == '':
-        print 'You need to set a compiler prefix for linux cross compilation'
-        Exit(1)
+exeappend = ''
 
-    if env['crosslinuxsdlconfig'] == 'sdl-config':
-        print 'You need to set the full path of sdl-config for linux cross compilation'
-        Exit(1)
+if env['cross'] == 'mingw':
+    print 'configuring for mingw cross compilation'
+    env.Tool('crossmingw', toolpath = ['.'])
+    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
+    env.Append( LDFLAGS = [ '-mwindows' ] )
+    env.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
+    env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
 
-    crosslinuxenv= Environment(ENV = {'PATH' : os.environ['PATH']},tools = ['gcc','g++','ar','gnulink'], options=opts )
-    crosslinuxenv.Replace( CXX = env['crosslinuxcompilerprefix'] + env['CXX'] )
-    crosslinuxenv.Replace( CC = env['crosslinuxcompilerprefix'] + env['CC'] )
-    crosslinuxenv.Replace( AR = env['crosslinuxcompilerprefix'] + env['AR'] )
-    crosslinuxenv.Replace( RANLIB = env['crosslinuxcompilerprefix'] + env['RANLIB'] )
-    crosslinuxenv.Append( LINKFLAGS = [ '-static-libgcc' ] )
-    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-static-libgcc' ] )
-    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-lstdc++' ] )
-    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
-    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
-    
+
 env.Append( LINKFLAGS = [ '-static-libgcc' ] )
-env['FINALBUILDDIR'] = 'build/' + env['mode'] + '/'
-env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
-crossmingwenv['FINALBUILDDIR'] = 'build/crossmingw/' + env['mode'] + '/'
-crossmingwenv['FINALLIBSDIR'] = crossmingwenv['FINALBUILDDIR'] + 'libs/'
-crosslinuxenv['FINALBUILDDIR'] = 'build/crosslinux/' + env['mode'] + '/'
-crosslinuxenv['FINALLIBSDIR'] = crosslinuxenv['FINALBUILDDIR'] + 'libs/'
 
-# HANDLE 'mode' flags
 if env['mode'] == 'debug':
     env.Append(CCFLAGS = ['-g', '-O0'])
-    env['FINALEXENAME'] = 'netpanzer-debug'
-    crossmingwenv.Append(CCFLAGS = ['-g', '-O0'])
-    crossmingwenv['FINALEXENAME'] = crossmingwenv['FINALBUILDDIR'] + 'netpanzer-debug'
-    crosslinuxenv.Append(CCFLAGS = ['-g', '-O0'])
-    crosslinuxenv['FINALEXENAME'] = crosslinuxenv['FINALBUILDDIR'] + 'netpanzer-debug'
+    exeappend = '-debug'
 else:
-    env.Append(CCFLAGS = ['-O2','-s'])
-    env['FINALEXENAME'] = 'netpanzer'
-    crossmingwenv.Append(CCFLAGS = ['-O1', '-s'])
-# -O2 causes the dedicated server to crash on windows
-#    crossmingwenv.Append(CCFLAGS = ['-O2','-s'])
-    crossmingwenv['FINALEXENAME'] = crossmingwenv['FINALBUILDDIR'] + 'netpanzer'
-    crosslinuxenv.Append(CCFLAGS = ['-O2','-s'])
-    crosslinuxenv['FINALEXENAME'] = crosslinuxenv['FINALBUILDDIR'] + 'netpanzer'
+    if env['cross'] == 'mingw':
+        # it seems -O2 makes the mingw port to crash, use -O1
+        env.Append(CCFLAGS = '-O1')
+    else:
+        env.Append(CCFLAGS = '-O2')
+    env.Append(CCFLAGS = '-s')
 
 env.Append(CCFLAGS = ['-Wall'])
 
-env.VariantDir(env['FINALBUILDDIR'],'.',duplicate=0)
-crossmingwenv.VariantDir(crossmingwenv['FINALBUILDDIR'],'.',duplicate=0)
-crosslinuxenv.VariantDir(crosslinuxenv['FINALBUILDDIR'],'.',duplicate=0)
+# keep for reference for when redoing the linux cross compilation
+#    crosslinuxenv= Environment(ENV = {'PATH' : os.environ['PATH']},tools = ['gcc','g++','ar','gnulink'], options=opts )
+#    crosslinuxenv.Replace( CXX = env['crosslinuxcompilerprefix'] + env['CXX'] )
+#    crosslinuxenv.Replace( CC = env['crosslinuxcompilerprefix'] + env['CC'] )
+#    crosslinuxenv.Replace( AR = env['crosslinuxcompilerprefix'] + env['AR'] )
+#    crosslinuxenv.Replace( RANLIB = env['crosslinuxcompilerprefix'] + env['RANLIB'] )
+#    crosslinuxenv.Append( LINKFLAGS = [ '-static-libgcc' ] )
+#    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-static-libgcc' ] )
+#    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-lstdc++' ] )
+#    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
+#    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
+    
+
+env.VariantDir(buildpath,'.',duplicate=0)
 
 luaenv = env.Clone()
 physfsenv = env.Clone()
-networkenv = env.Clone()
-
-crossmingwluaenv = crossmingwenv.Clone()
-crossmingwphysfsenv = crossmingwenv.Clone()
-crossmingwnetworkenv = crossmingwenv.Clone()
-
-crosslinuxluaenv = crosslinuxenv.Clone()
-crosslinuxphysfsenv = crosslinuxenv.Clone()
-crosslinuxnetworkenv = crosslinuxenv.Clone()
-
-################################################################
-# Set NetPanzer Version
-################################################################
-
-NPVERSION = ''
-SVERSION = ''
-
-try:
-    FILE = open('RELEASE_VERSION', 'r')
-    NPVERSION = FILE.readline().strip(' \n\r')
-    FILE.close()
-except:
-    pass
-
-try:
-    SVERSION = os.popen('svnversion').read()[:-1]
-    SVERSION = SVERSION.split(':')[-1]
-except:
-    pass
-
-print "NPVERSION = " + NPVERSION
-print "SVERSION = " + SVERSION
-if NPVERSION == '' and SVERSION != '':
-    NPVERSION = 'svn-' + SVERSION;
-
-env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
-if env['datadir'] != '':
-    env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
-    
-crossmingwenv.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
-crosslinuxenv.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
-
-thisplatform = sys.platform;
-print 'Building version ' + NPVERSION + ' in ' + sys.platform
+networkenv = env.Clone()    
 
 ################################################################
 # Configure Environments
 ################################################################
 
-env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -235,8 +190,8 @@ if thisplatform == 'darwin':
 elif thisplatform == 'win32':
     env.Append( CPPPATH = [ 'C:/mingw/include/SDL' ] )
     env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
-    env.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
-    networkenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
+    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
+    networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
     env.Prepend( _LIBFLAGS = [ 'c:/mingw/lib/SDL_mixer.lib' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
@@ -244,19 +199,9 @@ elif thisplatform == 'win32':
 else:
     networkenv.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
-    env.Append( NPLIBS = [ 'SDL_mixer' ] )
-
-# for crossmingw platform
-if 'crossmingw' in COMMAND_LINE_TARGETS:
-    crossmingwnetworkenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
-    crossmingwenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
-    crossmingwenv.Prepend( _LIBFLAGS = [ '-L/usr/local/lib', '/usr/local/lib/SDL_mixer.lib' ] )
-#    crossmingwenv.Append( NPLIBS = [ '/usr/local/lib/SDL_mixer.lib' ] )
-
-# for crosslinux platform
-if 'crosslinux' in COMMAND_LINE_TARGETS:
-    crosslinuxenv.ParseConfig(env['crosslinuxsdlconfig'] + ' --cflags --libs')
-    crosslinuxenv.Append( NPLIBS = [ 'SDL_mixer' ] )
+    # note: for some magic reason, now doesn't need to put the full path for
+    # SDL_mixer when using mingw crosscompilation
+    env.Append( LIBS = ['SDL_mixer' ] )
 
 ################################################################
 # Makes libs
@@ -264,48 +209,24 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
 
 # BUILDS NETWORK
 networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
-crossmingwnetworkenv.Append( CPPPATH = [ 'src/Lib' ] )
-crosslinuxnetworkenv.Append( CPPPATH = [ 'src/Lib' ] )
 MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
-MakeStaticLib(crossmingwnetworkenv, 'npnetwork', 'Network', '*.cpp')
-MakeStaticLib(crosslinuxnetworkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
 luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
-crossmingwluaenv.Append( CPPPATH = [ 'src/Lib/lua'] )
-crosslinuxluaenv.Append( CPPPATH = [ 'src/Lib/lua'] )
 MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
-MakeStaticLib(crossmingwluaenv, 'nplua', 'lua', '*.c')
-MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua', '*.c')
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
 physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
 MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
-crossmingwphysfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
-crossmingwphysfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
-MakeStaticLib(crossmingwphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
-
-crosslinuxphysfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
-crosslinuxphysfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
-MakeStaticLib(crosslinuxphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
-
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
 env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
-crossmingwenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
-crossmingwenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
-MakeStaticLib(crossmingwenv, 'np2d', '2D 2D/libpng', '*.c*')
-crosslinuxenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
-crosslinuxenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
-MakeStaticLib(crosslinuxenv, 'np2d', '2D 2D/libpng', '*.c*')
 
 # BUILDS REST OF LIBRARIES
 MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
-MakeStaticLib(crossmingwenv, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
-MakeStaticLib(crosslinuxenv, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
 
 ################################################################
 # NetPanzer source dirs
@@ -322,40 +243,13 @@ env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
 if env.has_key('WINICON'):
     env.Append( NPSOURCES = env['WINICON'] )
 
-crossmingwenv.Append( NPSOURCES = globSources(crossmingwenv, 'src/NetPanzer', npdirs, "*.cpp") )
-if crossmingwenv.has_key('WINICON'):
-    crossmingwenv.Append( NPSOURCES = crossmingwenv['WINICON'] )
-    
-crosslinuxenv.Append( NPSOURCES = globSources(crosslinuxenv, 'src/NetPanzer', npdirs, "*.cpp") )
+env.Prepend( LIBS = ['np2d','nplua','npnetwork','nplibs','npphysfs'] )
+env.Prepend( LIBPATH = libpath )
 
-env.Append(           NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
-crossmingwenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
-crosslinuxenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
+netpanzer = env.Program( binpath+'netpanzer'+exeappend, env['NPSOURCES'])
 
-if env.has_key('LIBS'):
-    env.Append( NPLIBS = env['LIBS'] )
+pak2bmp = env.Program( binpath+'pak2bmp'+exeappend, 'support/tools/pak2bmp.cpp')
 
-if crossmingwenv.has_key('LIBS'):
-    crossmingwenv.Append( NPLIBS = crossmingwenv['LIBS'] )
-
-if crosslinuxenv.has_key('LIBS'):
-    crosslinuxenv.Append( NPLIBS = crosslinuxenv['LIBS'] )
-
-env.Append(           NPLIBPATH =           env['FINALLIBSDIR'] )
-crossmingwenv.Append( NPLIBPATH = crossmingwenv['FINALLIBSDIR'] )
-crosslinuxenv.Append( NPLIBPATH = crosslinuxenv['FINALLIBSDIR'] )
-
-netpanzer = env.Program( env['FINALEXENAME'], env['NPSOURCES'],
-             LIBS=env['NPLIBS'], LIBPATH=env['NPLIBPATH'] )
-
-crossmingw = crossmingwenv.Program( crossmingwenv['FINALEXENAME'], crossmingwenv['NPSOURCES'],
-             LIBS=crossmingwenv['NPLIBS'], LIBPATH=crossmingwenv['NPLIBPATH'] )
-
-Alias('crossmingw', crossmingw);
-
-crosslinux = crosslinuxenv.Program( crosslinuxenv['FINALEXENAME'], crosslinuxenv['NPSOURCES'],
-             LIBS=crosslinuxenv['NPLIBS'], LIBPATH=crosslinuxenv['NPLIBPATH'] )
-
-Alias('crosslinux', crosslinux);
+Alias('pak2bmp',pak2bmp)
 
 Default(netpanzer)
