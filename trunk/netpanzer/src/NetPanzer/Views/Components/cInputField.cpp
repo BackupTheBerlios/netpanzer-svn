@@ -41,6 +41,7 @@ void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
     assert(maxWidth > 0);
 
     cInputFieldString::string = new char [maxCharCount + 1];
+    memset(cInputFieldString::string, 0, maxCharCount+1);
 
     if (strlen(string) > 0 && strlen(string) < (size_t) maxCharCount) {
         strcpy(cInputFieldString::string, string);
@@ -54,6 +55,7 @@ void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
 void cInputFieldString::setString(const std::string& string)
 {
     // XXX notify cinputfield to resetString positions
+    memset(cInputFieldString::string, 0, maxCharCount+1);
     strncpy(this->string, string.c_str(), maxCharCount);
 } // end setString
 

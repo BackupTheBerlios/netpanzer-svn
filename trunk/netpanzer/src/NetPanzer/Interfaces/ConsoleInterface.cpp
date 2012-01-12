@@ -140,6 +140,7 @@ void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, cons
             else
                 line_index = (line_index - 1) % console_size;
 
+            memset(line_list[ line_index ].string, 0, sizeof(ConsoleLine::string));
             strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
             line_list[ line_index ].string[ max_char_per_line ] = 0;
 

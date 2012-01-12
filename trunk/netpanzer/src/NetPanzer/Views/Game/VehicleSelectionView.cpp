@@ -512,14 +512,12 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 {
-
     char strBuf[256];
     char outpostNameBuf[256];
     char outpostUserNameBuf[256];
     char productionUnitBuf[256];
     char timeLeftBuf[256];
 
-    iRect         objectiveBounds;
     iRect         gameViewRect;
 
     WorldViewInterface::getViewWindow(&gameViewRect);
@@ -550,6 +548,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             if (length > 13)
             {
                 strncpy(strBuf, obj->occupying_player->getName().c_str() , 10);
+                strBuf[10] = 0; // fix runners
                 sprintf(outpostUserNameBuf, "Owner:  %s...", strBuf);
             }
             else
@@ -566,6 +565,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         if (length > 10)
         {
             strncpy(strBuf, (const char *) obj->name , 7);
+            strBuf[7] = 0; // fix runners
             sprintf(outpostNameBuf, "Outpost:  %s...",  strBuf);
         }
         else
