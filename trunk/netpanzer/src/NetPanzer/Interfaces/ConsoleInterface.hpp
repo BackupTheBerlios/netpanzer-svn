@@ -32,7 +32,7 @@ public:
     PIX     color;
     bool    hasFlag;
     FlagID  flag;
-    char    string[256];
+    char    str[256];
     Timer   life_timer;
 };
 
@@ -83,7 +83,7 @@ public:
     static void resetInputString( const char *prompt );
     static void addChar(int newChar);
     static void addExtendedChar(int newExtendedChar);
-    static void getInputString( char *string );
+    static void getInputString( char *str );
 };
 
 #endif // ** _CONSOLEINTERFACE_HPP

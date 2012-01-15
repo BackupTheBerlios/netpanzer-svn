@@ -171,7 +171,7 @@ env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/l
 if thisplatform == 'darwin':
     env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
- 
+    networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
     if env['universal'] != 'false':
 		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
@@ -184,7 +184,6 @@ if thisplatform == 'darwin':
         physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
-	
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':

@@ -81,7 +81,7 @@ void ConsoleInterface::initialize( long size )
     for ( line_loop = 0; line_loop < console_size; line_loop++ )
     {
         line_list[ line_loop ].color = Color::white;
-        line_list[ line_loop ].string[0] = 0;
+        line_list[ line_loop ].str[0] = 0;
         line_list[ line_loop ].life_timer.changePeriod( 30 );
         line_list[ line_loop ].visible = false;
     }
@@ -140,9 +140,9 @@ void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, cons
             else
                 line_index = (line_index - 1) % console_size;
 
-            memset(line_list[ line_index ].string, 0, sizeof(ConsoleLine::string));
-            strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
-            line_list[ line_index ].string[ max_char_per_line ] = 0;
+            memset(line_list[ line_index ].str, 0, 256);
+            strncpy( line_list[ line_index ].str, temp_str_ptr, max_char_per_line);
+            line_list[ line_index ].str[ max_char_per_line ] = 0;
 
             line_list[ line_index ].color = msgcolor;
             line_list[ line_index ].visible = true;
@@ -160,7 +160,7 @@ void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, cons
     else
         line_index = (line_index - 1) % console_size;
 
-    strcpy( line_list[ line_index ].string, temp_str_ptr );
+    strcpy( line_list[ line_index ].str, temp_str_ptr );
 
     line_list[ line_index ].color = msgcolor;
     line_list[ line_index ].visible = true;
@@ -216,7 +216,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
                 flagextrax = 0;
             }
             // XXX some values by hand
-            surface.bltStringShadowed(current_line.x + flagextrax, current_line.y+4, line_list[ index ].string, line_list[ index ].color, Color::black );
+            surface.bltStringShadowed(current_line.x + flagextrax, current_line.y+4, line_list[ index ].str, line_list[ index ].color, Color::black );
 
             current_line.y = current_line.y - line_offset.y;
         }
@@ -272,9 +272,9 @@ void ConsoleInterface::resetInputString( const char *prompt )
     strcpy( inputPrompt, prompt );
 }
 
-void ConsoleInterface::getInputString( char *string )
+void ConsoleInterface::getInputString( char *str )
 {
-    strcpy( string, inputString );
+    strcpy( str, inputString );
 }
 
 void ConsoleInterface::addChar(int newChar)
