@@ -33,7 +33,7 @@ PlayerUnitConfig::PlayerUnitConfig()
 
 void PlayerUnitConfig::initialize()
 {
-    max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
+    max_allowed_units = GameConfig::game_maxunits / GameConfig::game_maxplayers;
 
     int num_types = UnitProfileInterface::getNumUnitTypes();
     unit_spawn_list.resize(num_types, 0);

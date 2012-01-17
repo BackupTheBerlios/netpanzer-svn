@@ -106,7 +106,7 @@ namespace INI {
 class GameConfig : public NoCopy
 {
 public:
-    GameConfig(const std::string& configfile, const std::string& luaconfigfile, bool usePhysFS = true);
+    GameConfig(const std::string& luaconfigfile, bool usePhysFS = true);
     ~GameConfig();
 
     void loadConfig();
@@ -123,9 +123,9 @@ public:
     static bool         video_usedirectx;
 #endif
 
-    static bool interface_show_health;
-    static bool interface_show_flags;
-    static bool interface_show_names;
+    static bool      interface_show_health;
+    static bool      interface_show_flags;
+    static bool      interface_show_names;
 
     static bool      game_enable_bases;
     static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
@@ -137,6 +137,19 @@ public:
     static NPString* game_adminpass;     // the secret password for admins
     static NPString* game_gamepass;      // the secret password for entering game
     static int       game_changeflagtime; // in minutes
+    static int       game_gametype;
+    static int       game_maxplayers;
+    static int       game_maxunits;
+    static int       game_timelimit;
+    static int       game_fraglimit;
+    static bool      game_powerups;
+    static int       game_occupationpercentage;
+    static bool      game_allowallies;
+    static int       game_cloudcoverage;
+    static int       game_respawntype;
+    static int       game_windspeed;
+    static NPString* game_map;
+    static NPString* game_mapcycle;
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
@@ -146,65 +159,54 @@ public:
     ConfigBool      needPassword;
     ConfigString    serverConnect;      // server to connect to
 
-    // player settings
-    ConfigStringSpecialChars playername;
-    ConfigString masterservers;
+    static NPString* player_name;
+
 
     // server settings
-    ConfigInt    serverport;
-    ConfigString bindaddress;
-    ConfigInt    gametype;             //Objectives, FragLimit, TimeLimit
-    ConfigInt    maxplayers;
-    ConfigInt    maxunits;
-    ConfigInt    timelimit;
-    ConfigInt    fraglimit;
-    ConfigBool   powerups;
-    ConfigInt    objectiveoccupationpercentage;
-    ConfigBool   allowallies;
-    ConfigInt    cloudcoverage;
-    ConfigInt    respawntype;
-    ConfigInt    windspeed;
-    ConfigString map;
-    ConfigString mapcycle;
-    ConfigString motd;
-    ConfigBool   logging;
-    ConfigBool   publicServer;
+    static int       server_port;
+    static NPString* server_bindaddress;
+    static NPString* server_motd;
+    static bool      server_logging;
+    static bool      server_public;
+    static NPString* server_masterservers;
+    static NPString* server_name;
 
-    // sound settings
-    ConfigBool  enablesound;
-    ConfigBool  enablemusic;
-    ConfigInt   musicvolume;
-    ConfigBool  enableeffects;
-    ConfigInt   effectsvolume;
-   
-    // interface settings
-    ConfigInt   attacknotificationtime;
-    ConfigInt   vehicleselectioncolor;
-    ConfigInt   unitselectionmode;
-    ConfigInt   unitinfodrawlayer;
-    ConfigInt   scrollrate;
-    ConfigXY    rankposition;
-    ConfigInt   viewdrawbackgroundmode;
+
+    static bool      sound_enable;
+    static bool      sound_music;
+    static int       sound_musicvol;
+    static bool      sound_effects;
+    static int       sound_effectsvol;
+
+    static int       interface_attacknotificationtime;
+    static int       interface_vehicleselectioncolor;
+    static int       interface_unitselectionmode;
+    static int       interface_unitinfodrawlayer;
+    static int       interface_scrollrate;
+    static int       interface_rankposition_x;
+    static int       interface_rankposition_y;
+    static int       interface_viewdrawbackgroundmode;
 
     // radar settings
-    ConfigInt   radar_playerunitcolor;
-    ConfigInt   radar_selectedunitcolor;
-    ConfigInt   radar_alliedunitcolor;
-    ConfigInt   radar_playeroutpostcolor;
-    ConfigInt   radar_alliedoutpostcolor;
-    ConfigInt   radar_enemyoutpostcolor;
-    ConfigInt   radar_unitsize;
+    static int       radar_playerunitcolor;
+    static int       radar_selectedunitcolor;
+    static int       radar_alliedunitcolor;
+    static int       radar_playeroutpostcolor;
+    static int       radar_alliedoutpostcolor;
+    static int       radar_enemyoutpostcolor;
+    static int       radar_unitsize;
     
 public:
     const char* getGameTypeString() const
     {
-        switch(gametype) {
-        case _gametype_objective :
-            return( "Objective" );
-        case _gametype_fraglimit :
-            return( "Frag Limit" );
-        case _gametype_timelimit :
-            return( "Time Limit" );
+        switch ( game_gametype )
+        {
+            case _gametype_objective :
+                return( "Objective" );
+            case _gametype_fraglimit :
+                return( "Frag Limit" );
+            case _gametype_timelimit :
+                return( "Time Limit" );
         }
         return( "Unknown" );
     }
@@ -212,24 +214,25 @@ public:
 
     int GetUnitsPerPlayer() const
     {
-        return maxunits / maxplayers;
+        return game_maxunits / game_maxplayers;
     }
 
     int GetTimeLimitSeconds() const
     {
-        return timelimit * 60;
+        return game_timelimit * 60;
     }
 
     const char * getRespawnTypeString() const
     {
-        switch( respawntype ) {
-        case _game_config_respawn_type_round_robin :
-            return( "Round Robin" );
-            break;
+        switch( game_respawntype )
+        {
+            case _game_config_respawn_type_round_robin :
+                return( "Round Robin" );
+                break;
 
-        case _game_config_respawn_type_random :
-            return( "Random" );
-            break;
+            case _game_config_respawn_type_random :
+                return( "Random" );
+                break;
         } // ** switch
 
         assert(false);
@@ -268,7 +271,7 @@ public:
     
     PIX getVehicleSelectionBoxColor() const
     {
-        return( colorEnumToPix( vehicleselectioncolor ) );
+        return( colorEnumToPix( interface_vehicleselectioncolor ) );
     }
 
     const char *getMiniMapUnitSizeString() const
@@ -285,7 +288,6 @@ private:
     friend class ScriptManager;
     static void registerScript(const NPString& table_name);
 
-    std::string configfile;
     std::string luaconfigfile;
     bool usePhysFS;
 
@@ -313,17 +315,6 @@ private:
         assert(false);
         return( Color::white );
     }
-
-    void loadSettings(const INI::Section&,
-            std::vector<ConfigVariable*>& settings);
-    void saveSettings(INI::Section&, std::vector<ConfigVariable*>& settings);
-
-    std::vector<ConfigVariable*> gamesettings;
-    std::vector<ConfigVariable*> playersettings;
-    std::vector<ConfigVariable*> serversettings;
-    std::vector<ConfigVariable*> soundsettings;
-    std::vector<ConfigVariable*> interfacesettings;
-    std::vector<ConfigVariable*> radarsettings;
 };
 
 extern GameConfig* gameconfig;

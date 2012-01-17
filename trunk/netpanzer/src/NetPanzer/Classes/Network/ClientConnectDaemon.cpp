@@ -359,7 +359,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 {
                     ConnectClientSettings client_setting;
 
-                    client_setting.set(gameconfig->playername.c_str());
+                    client_setting.set(GameConfig::player_name->c_str());
                     memcpy(&client_setting.player_flag, GameConfig::player_flag_data, sizeof(client_setting.player_flag));
 
                     CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));

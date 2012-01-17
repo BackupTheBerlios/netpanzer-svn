@@ -68,11 +68,11 @@ void bltViewBackground(Surface &dest)
 //--------------------------------------------------------------------------
 void bltBlendRect(Surface &dest, const iRect &r)
 {
-    if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
+    if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
         dest.BltRoundRect(r, 10, Palette::darkGray256.getColorArray());
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
+    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
         dest.BltRoundRect(r, 10, Palette::gray256.getColorArray());
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK) {
+    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK) {
         dest.fillRect(r, Color::black);
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT) {}
+    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT) {}
 }

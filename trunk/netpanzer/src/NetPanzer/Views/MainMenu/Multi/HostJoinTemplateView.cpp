@@ -53,7 +53,7 @@ int cOrange;
 
 static void bPlay()
 {
-    if ((const std::string&) gameconfig->playername == "")
+    if ( GameConfig::player_name->length() == 0 )
         return;
 
     // Check a few things which should be ok.

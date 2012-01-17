@@ -44,7 +44,7 @@ static void bNextMap()
         MapSelectionView::curMap = 0;
     }
 
-    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
+    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[MapSelectionView::curMap]->name );
     HostOptionsView::updateGameConfigCloudCoverage();
 }
 
@@ -59,7 +59,7 @@ static void bPreviousMap()
         MapSelectionView::curMap = MapSelectionView::mapList.size() - 1;
     }
 
-    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
+    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[MapSelectionView::curMap]->name );
     HostOptionsView::updateGameConfigCloudCoverage();
 }
 
@@ -245,7 +245,7 @@ int MapSelectionView::loadMaps()
     }
 
     curMap = 0;
-    gameconfig->mapcycle = MapSelectionView::mapList[curMap]->name;
+    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[curMap]->name );
 
     // Success
     return -1;

@@ -55,18 +55,18 @@ InfoBar::draw(Surface &dest)
              gameconfig->getGameTypeString(),
              
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
-             gameconfig->maxunits / gameconfig->maxplayers,
+             GameConfig::game_maxunits / GameConfig::game_maxplayers,
              
              PlayerInterface::getLocalPlayer()->getKills(),
-             (gameconfig->gametype == _gametype_fraglimit)?(int)gameconfig->fraglimit:0,
+             (GameConfig::game_gametype == _gametype_fraglimit)?(int)GameConfig::game_fraglimit:0,
              
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
-             (gameconfig->gametype == _gametype_objective)?ObjectiveInterface::getObjectiveLimit():0,
+             (GameConfig::game_gametype == _gametype_objective)?ObjectiveInterface::getObjectiveLimit():0,
              
              (int)GameManager::getGameTime() / 3600,
              (int)(GameManager::getGameTime() / 60) % 60,
-             (gameconfig->gametype == _gametype_timelimit)?gameconfig->timelimit / 60:0,
-             (gameconfig->gametype == _gametype_timelimit)?gameconfig->timelimit % 60:0,
+             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit / 60:0,
+             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit % 60:0,
              
              TimerInterface::getFPSAvg()
              );

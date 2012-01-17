@@ -54,7 +54,7 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
 {
     // parse masterserverlist
     std::string server;
-    StringTokenizer tokenizer(gameconfig->masterservers, ',');
+    StringTokenizer tokenizer(*GameConfig::server_masterservers, ',');
     while( (server = tokenizer.getNextToken()) != "") {
         masterservers.push_back(removeSurroundingSpaces(server));
     }

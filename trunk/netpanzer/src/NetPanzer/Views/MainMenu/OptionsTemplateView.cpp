@@ -69,69 +69,69 @@ void Separator::draw(Surface &dest)
 
 static void bIncreaseScrollRate()
 {
-    if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
-        gameconfig->scrollrate = gameconfig->scrollrate + 100;
+    if(GameConfig::interface_scrollrate + 100 <= 10000)
+        GameConfig::interface_scrollrate = GameConfig::interface_scrollrate + 100;
 }
 
 static void bDecreaseScrollRate()
 {
-    if(gameconfig->scrollrate - 100 >= gameconfig->scrollrate.getMin())
-        gameconfig->scrollrate = gameconfig->scrollrate - 100;
+    if(GameConfig::interface_scrollrate - 100 >= 500 )
+        GameConfig::interface_scrollrate = GameConfig::interface_scrollrate - 100;
 }
 
 static int getScrollRate()
 {
-    return (int) gameconfig->scrollrate;
+    return (int) GameConfig::interface_scrollrate;
 }
 
 static void bDecreaseSoundVolume()
 {
-    unsigned int v = gameconfig->effectsvolume;
+    unsigned int v = GameConfig::sound_effectsvol;
     if (v) {
         --v;
-        gameconfig->effectsvolume = v;
+        GameConfig::sound_effectsvol = v;
         sound->setSoundVolume(v);
     }
 }
 
 static void bIncreaseSoundVolume()
 {
-    unsigned int v = gameconfig->effectsvolume;
+    unsigned int v = GameConfig::sound_effectsvol;
     if (v<100) {
         ++v;
-        gameconfig->effectsvolume = v;
+        GameConfig::sound_effectsvol = v;
         sound->setSoundVolume(v);
     }
 }
 
 static int getSoundVolume()
 {
-    return gameconfig->effectsvolume;
+    return GameConfig::sound_effectsvol;
 }
 
 static void bDecreaseMusicVolume()
 {
-    unsigned int v = gameconfig->musicvolume;
+    unsigned int v = GameConfig::sound_musicvol;
     if (v) {
         --v;
-        gameconfig->musicvolume = v;
+        GameConfig::sound_musicvol = v;
         sound->setMusicVolume(v);
     }
 }
 
 static void bIncreaseMusicVolume()
 {
-    unsigned int v = gameconfig->musicvolume;
+    unsigned int v = GameConfig::sound_musicvol;
     if (v<100) {
         ++v;
-        gameconfig->musicvolume = v;
+        GameConfig::sound_musicvol = v;
         sound->setMusicVolume(v);
     }
 }
 
 static int getMusicVolume()
 {
-    return gameconfig->musicvolume;
+    return GameConfig::sound_musicvol;
 }
 
 
@@ -265,8 +265,8 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y, "Sound Status:", windowTextColor) );
     checkBoxSoundEnabled = new CheckBox();
-    checkBoxSoundEnabled->setLabel(gameconfig->enablesound?"Enabled":"Disabled");
-    checkBoxSoundEnabled->setState(gameconfig->enablesound);
+    checkBoxSoundEnabled->setLabel(GameConfig::sound_enable?"Enabled":"Disabled");
+    checkBoxSoundEnabled->setState(GameConfig::sound_enable);
     x += optionsMeterStartX;
     checkBoxSoundEnabled->setLocation(x, y-2);
     checkBoxSoundEnabled->setStateChangedCallback(this);
@@ -285,8 +285,8 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y, "Music Status:", windowTextColor) );
     checkBoxMusicEnabled = new CheckBox();
-    checkBoxMusicEnabled->setLabel(gameconfig->enablemusic?"Enabled":"Disabled");
-    checkBoxMusicEnabled->setState(gameconfig->enablemusic);
+    checkBoxMusicEnabled->setLabel(GameConfig::sound_music?"Enabled":"Disabled");
+    checkBoxMusicEnabled->setState(GameConfig::sound_music);
     x += optionsMeterStartX;
     checkBoxMusicEnabled->setLocation(x, y-2);
     checkBoxMusicEnabled->setStateChangedCallback(this);
@@ -326,8 +326,7 @@ void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 
     y += yOffset*7;
 
-    sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 
-                    float(gameconfig->scrollrate.getMax())) * 100.0f));
+    sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 10000.0f * 100.0f)));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(clientArea, x, y);
     y += yOffset*2;
@@ -417,7 +416,7 @@ void OptionsTemplateView::stateChanged(Component* source)
     }
     else if ( source == checkBoxMusicEnabled )
     {
-        gameconfig->enablemusic = checkBoxMusicEnabled->getState();
+        GameConfig::sound_music = checkBoxMusicEnabled->getState();
        
         if ( checkBoxMusicEnabled->getState() ) {
             sound->playMusic("sound/music/");
@@ -429,7 +428,7 @@ void OptionsTemplateView::stateChanged(Component* source)
     }
     else if ( source == checkBoxSoundEnabled )
     {
-        gameconfig->enablesound = checkBoxSoundEnabled->getState();
+        GameConfig::sound_enable = checkBoxSoundEnabled->getState();
 
         delete sound;
 

@@ -500,7 +500,7 @@ int
 ObjectiveInterface::getObjectiveLimit()
 {
     float percentage
-        = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+        = (float) GameConfig::game_occupationpercentage / 100.0;
     int wincount = (int) ( ((float) getObjectiveCount()) * percentage + 0.999);
     if(wincount == 0)
         wincount = 1;

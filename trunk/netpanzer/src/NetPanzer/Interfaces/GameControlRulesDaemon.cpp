@@ -109,16 +109,16 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 GameManager::shutdownParticleSystems();
                 ObjectiveInterface::resetLogic();
 
-                gameconfig->map = map_cycle_fsm_client_map_name;
+                GameConfig::game_map->assign( map_cycle_fsm_client_map_name );
 
                 char buf[256];
                 snprintf(buf, sizeof(buf), "Next Map '%s'.",
-                        gameconfig->map.c_str());
+                        GameConfig::game_map->c_str());
                 LoadingView::append( buf);
                 LoadingView::append( "Loading Game Map ..." );
 
                 try {
-                    GameManager::startGameMapLoad(gameconfig->map.c_str(), 16);
+                    GameManager::startGameMapLoad(GameConfig::game_map->c_str(), 16);
                 } catch(std::exception& e) {
                     LoadingView::append("Error while loading map:");
                     LoadingView::append(e.what());
@@ -202,18 +202,17 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     GameManager::shutdownParticleSystems();
 
                     if(nextmap != "") {
-                        gameconfig->map = nextmap;
+                        GameConfig::game_map->assign( nextmap );
                         nextmap = "";
                     } else {
-                        gameconfig->map 
-                            = MapsManager::getNextMap(gameconfig->map);
+                        GameConfig::game_map->assign( MapsManager::getNextMap( *GameConfig::game_map ) );
                     }
                     
                     ConsoleInterface::postMessage(Color::white, false, 0, "loading map '%s'.",
-                            gameconfig->map.c_str());
+                            GameConfig::game_map->c_str());
 
                     GameControlCycleMap cycle_map_mesg;
-                    cycle_map_mesg.set( gameconfig->map.c_str() );
+                    cycle_map_mesg.set( GameConfig::game_map->c_str() );
 
                     SERVER->broadcastMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
 
@@ -221,7 +220,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                         ObjectiveInterface::resetLogic();
 
                         GameManager::dedicatedLoadGameMap(
-                                gameconfig->map.c_str());
+                                GameConfig::game_map->c_str());
 
                         GameManager::resetGameLogic();
 
@@ -236,7 +235,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
                         try {
                             GameManager::startGameMapLoad
-                                (gameconfig->map.c_str(), 16);
+                                (GameConfig::game_map->c_str(), 16);
                         } catch(std::exception& e) {
                             LoadingView::append(
                                     "Error while loading map:");
@@ -369,21 +368,21 @@ void GameControlRulesDaemon::checkGameRules()
        )
     {
         unsigned char game_type;
-        game_type = gameconfig->gametype;
+        game_type = GameConfig::game_gametype;
 
         switch( game_type )
         {
             case  _gametype_timelimit:
             {
                 int game_minutes = GameManager::getGameTime() / 60;
-                if( game_minutes >= gameconfig->timelimit )
+                if( game_minutes >= GameConfig::game_timelimit )
                 {
                     onTimelimitGameCompleted();
                 }
                 break;
             }   
             case _gametype_fraglimit:
-                if ( PlayerInterface::testRuleScoreLimit( gameconfig->fraglimit, &player_state ) == true )
+                if ( PlayerInterface::testRuleScoreLimit( GameConfig::game_fraglimit, &player_state ) == true )
                 {
                     onFraglimitGameCompleted();
                 }
@@ -391,7 +390,7 @@ void GameControlRulesDaemon::checkGameRules()
 
             case _gametype_objective:
             {
-                float ratio = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+                float ratio = (float) GameConfig::game_occupationpercentage / 100.0;
                 if (PlayerInterface::testRuleObjectiveRatio( ratio, &player_state))
                 {
                     onObjectiveGameCompleted( );

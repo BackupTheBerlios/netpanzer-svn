@@ -133,7 +133,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
     float scroll_rate;
 
     time_slice = TimerInterface::getTimeSlice();
-    scroll_rate = gameconfig->scrollrate;
+    scroll_rate = GameConfig::interface_scrollrate;
 
     scroll_increment = (long) (scroll_rate * time_slice);
 

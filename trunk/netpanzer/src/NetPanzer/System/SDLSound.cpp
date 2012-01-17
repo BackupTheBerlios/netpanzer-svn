@@ -197,7 +197,7 @@ void SDLSound::loadSound(const char* directory)
         }
     }
     filesystem::freeList(list);
-    setSoundVolume(gameconfig->effectsvolume);
+    setSoundVolume(GameConfig::sound_effectsvol);
 }
 //-----------------------------------------------------------------
 /**
@@ -231,7 +231,7 @@ void SDLSound::playMusic(const char* directory)
 {
     // Part1: scan directory for music files
     char **list = filesystem::enumerateFiles(directory);
-    setMusicVolume(gameconfig->musicvolume);
+    setMusicVolume(GameConfig::sound_musicvol);
 
     musicfiles.clear();
     for (char **i = list; *i != NULL; i++) {

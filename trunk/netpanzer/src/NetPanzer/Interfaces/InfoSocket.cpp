@@ -39,14 +39,14 @@ using namespace std;
 
 InfoSocket::InfoSocket(int p) : socket(0)
 {
-    Address addr = Address::resolve( gameconfig->bindaddress, p, false, true);
+    Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
     socket = new network::UDPSocket(addr,this);
     
     // This parameters are fixed always
     // others I plan to be modificable while game is running.
     stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
-      << "\\hostname\\" << gameconfig->playername
+      << "\\hostname\\" << *GameConfig::player_name
       << "\\gameversion\\" << PACKAGE_VERSION;
     statusHead = s.str();
 }
@@ -114,9 +114,9 @@ InfoSocket::prepareStatusPacket()
     PlayerID maxPlayers = PlayerInterface::getMaxPlayers();
     
     s << statusHead
-      << "\\mapname\\"    << gameconfig->map
-      << "\\mapcycle\\"   << gameconfig->mapcycle
-      << "\\password\\" << (gameconfig->game_gamepass->size() == 0 ? 'n' : 'y')
+      << "\\mapname\\"    << *GameConfig::game_map
+      << "\\mapcycle\\"   << *GameConfig::game_mapcycle
+      << "\\password\\"   << (GameConfig::game_gamepass->size() == 0 ? 'n' : 'y')
       << "\\numplayers\\" << (int)playingPlayers
       << "\\maxplayers\\" << (int)maxPlayers;
     
@@ -128,8 +128,8 @@ InfoSocket::prepareStatusPacket()
     s << "\\gamestyle\\" << gameconfig->getGameTypeString()
       << "\\units_per_player\\" << gameconfig->GetUnitsPerPlayer()
       << "\\time\\" << GameManager::getGameTime()/60
-      << "\\timelimit\\" << gameconfig->timelimit
-      << "\\fraglimit\\" << gameconfig->fraglimit
+      << "\\timelimit\\" << GameConfig::game_timelimit
+      << "\\fraglimit\\" << GameConfig::game_fraglimit
       << "\\objectivelimit\\" << ObjectiveInterface::getObjectiveLimit();
 
     int n = 0;

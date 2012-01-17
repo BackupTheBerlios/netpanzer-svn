@@ -143,7 +143,8 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         }
     }
 
-    switch(gameconfig->gametype) {
+    switch(GameConfig::game_gametype)
+    {
         case _gametype_objective:
             std::sort(states.begin(), states.end(), StatesSortByObjectives());
             break;

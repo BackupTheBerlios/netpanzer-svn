@@ -90,9 +90,9 @@ void DedicatedGameManager::shutdownVideoSubSystem()
 void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("/config/netpanzer-dedicated.ini", "/config/server.cfg");
+        gameconfig = new GameConfig("/config/server.cfg");
     else
-        gameconfig = new GameConfig(configfile, "/config/server.cfg", false);
+        gameconfig = new GameConfig(configfile, false);
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices()
@@ -122,10 +122,10 @@ void DedicatedGameManager::inputLoop()
             {
                 //*Console::server
                 std::cout
-                    << "Server " << gameconfig->playername
+                    << "Server " << *GameConfig::server_name
                     << " version " << PACKAGE_VERSION << " port "
-                    << gameconfig->serverport << "\n"
-                    << "Map: " << gameconfig-> map << "\n"
+                    << GameConfig::server_port << "\n"
+                    << "Map: " << *GameConfig::game_map << "\n"
                     << std::setw(3) << "ID" << " "
                     << std::setw(30) << "Name" << " "
                     << std::setw(4) << "Kill" << " "
@@ -232,9 +232,9 @@ bool DedicatedGameManager::launchNetPanzerGame()
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
-    gameconfig->map = MapsManager::getNextMap("");
+    GameConfig::game_map->assign(MapsManager::getNextMap(""));
 
-    GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
+    GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str());
 
     UnitProfileInterface::loadUnitProfiles();
     ParticleInterface::rebuildUnitParticleData();
@@ -255,14 +255,14 @@ bool DedicatedGameManager::launchNetPanzerGame()
     Particle2D::setCreateParticles(false);
 
     *Console::server << "contacting masterserver." << std::endl;
-    if((bool) gameconfig->publicServer &&
-        (const std::string&) gameconfig->masterservers != "") {
+    if( GameConfig::server_public
+        && *GameConfig::server_masterservers != "") {
         try {
             if ( infosocket ) {
                 delete infosocket;
                 infosocket = 0;
             }
-            infosocket = new InfoSocket(gameconfig->serverport);
+            infosocket = new InfoSocket(GameConfig::server_port);
             if ( heartbeat ) {
                 delete heartbeat;
                 heartbeat = 0;

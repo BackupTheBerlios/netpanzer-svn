@@ -65,7 +65,8 @@ iXY SpawnList::getFreeSpawnPoint()
 {
     size_t spawn_index;
 
-    switch(gameconfig->respawntype) {
+    switch ( GameConfig::game_respawntype )
+    {
         case _game_config_respawn_type_round_robin :
             spawn_index = (last_spawn_index + 1) % size();
             last_spawn_index = spawn_index;

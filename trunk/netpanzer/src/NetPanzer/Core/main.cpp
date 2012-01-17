@@ -293,13 +293,16 @@ BaseGameManager *initialise(int argc, char** argv)
         }                                                               
         if (master_server_option.value().size() > 0) {
             if (master_server_option.value() == "none") {
-                gameconfig->masterservers = "";
+                *GameConfig::server_masterservers = "";
             }
             else {
-                gameconfig->masterservers = master_server_option.value();
+                *GameConfig::server_masterservers = master_server_option.value();
             }
         }
-        if(port_option.value()) { gameconfig->serverport=port_option.value(); }
+        if ( port_option.value() )
+        {
+            GameConfig::server_port=port_option.value();
+        }
 
         return manager;
     } catch(std::exception& e) {

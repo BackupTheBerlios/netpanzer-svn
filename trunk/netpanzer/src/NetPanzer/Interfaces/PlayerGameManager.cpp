@@ -144,7 +144,7 @@ void PlayerGameManager::initializeSoundSubSystem()
     
     LOGGER.info("Initializing sound system.");
     try {
-        if(gameconfig->enablesound)
+        if ( GameConfig::sound_enable )
             sound = new SDLSound();
     } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
@@ -153,12 +153,13 @@ void PlayerGameManager::initializeSoundSubSystem()
     if(sound == 0)
         sound = new DummySound();
 
-    sound->setSoundVolume(gameconfig->effectsvolume);
+    sound->setSoundVolume(GameConfig::sound_effectsvol);
 
     // start some music
-    if(gameconfig->enablemusic) {
+    if ( GameConfig::sound_music )
+    {
         sound->playMusic("sound/music/");
-        sound->setMusicVolume(gameconfig->musicvolume);
+        sound->setMusicVolume(GameConfig::sound_musicvol);
     }
 }
 //-----------------------------------------------------------------
@@ -291,14 +292,15 @@ void PlayerGameManager::hostMultiPlayerGame()
 	CLIENT = new NetworkClient();
         SERVER->hostSession();
 
-        if((bool) gameconfig->publicServer &&
-                (const std::string&) gameconfig->masterservers != "") {
+        if ( GameConfig::server_public
+             && GameConfig::server_masterservers->size() != 0 )
+        {
             try {
                 if ( infosocket ) {
                     delete infosocket;
                     infosocket = 0;
                 }
-                infosocket = new InfoSocket(gameconfig->serverport);
+                infosocket = new InfoSocket(GameConfig::server_port);
                 if ( heartbeat ) {
                     delete heartbeat;
                     heartbeat = 0;
@@ -336,8 +338,8 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::append( "Loading Game Data ..." );
     graphicsLoop();
     
-    gameconfig->map = MapsManager::getNextMap("");
-    const char* mapname = gameconfig->map.c_str();
+    GameConfig::game_map->assign( MapsManager::getNextMap("") );
+    const char* mapname = GameConfig::game_map->c_str();
 
     try {
         GameManager::startGameMapLoad(mapname, 20);
@@ -404,7 +406,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     graphicsLoop();
     
     player_state = PlayerInterface::allocateLoopBackPlayer();
-    const char* playername = gameconfig->playername.c_str();
+    const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
     
     LoadingView::update( "Spawning Player ... (100%)" );

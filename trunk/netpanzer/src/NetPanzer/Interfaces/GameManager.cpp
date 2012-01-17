@@ -198,7 +198,7 @@ void GameManager::setVideoMode()
 // ******************************************************************
 void GameManager::initializeGameLogic()
 {
-    PlayerInterface::initialize(gameconfig->maxplayers);
+    PlayerInterface::initialize(GameConfig::game_maxplayers);
     UnitBlackBoard::initializeBlackBoard();
     UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
     PathScheduler::initialize();
@@ -271,8 +271,8 @@ void GameManager::finishGameMapLoad()
     temp_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
 
-    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
-    Physics::wind.setVelocity(gameconfig->windspeed, 107);
+    ParticleInterface::addCloudParticle(GameConfig::game_cloudcoverage);
+    Physics::wind.setVelocity(GameConfig::game_windspeed, 107);
 }
 
 // ******************************************************************
@@ -280,23 +280,22 @@ void GameManager::finishGameMapLoad()
 void GameManager::dedicatedLoadGameMap(const char *map_name )
 {
     Console::mapSwitch(map_name);
-    *Console::server << "Server Settings:\n"
-        << "Map: " << gameconfig->map << "\n"
-        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
-        << "MaxUnits: " << gameconfig->maxunits << "\n"
-        << "AutoKick: " << GameConfig::game_autokicktime << "\n"
-        << "FlagTimer: " << GameConfig::game_changeflagtime << "\n"
-        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
+    *Console::server        << "Server Settings:\n"
+        << "Map: "          << *GameConfig::game_map << "\n"
+        << "MaxPlayers: "   << GameConfig::game_maxplayers << "\n"
+        << "MaxUnits: "     << GameConfig::game_maxunits << "\n"
+        << "AutoKick: "     << GameConfig::game_autokicktime << "\n"
+        << "FlagTimer: "    << GameConfig::game_changeflagtime << "\n"
+        << "Gametype: "     << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
-            gameconfig->objectiveoccupationpercentage << "\n"
-        << "TimeLimit: " << gameconfig->timelimit << "\n"
-        << "FragLimit: " << gameconfig->fraglimit << "\n"
-        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
-        << "Mapcycle: " << gameconfig->mapcycle << "\n"
-        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
-        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
-        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
-           << gameconfig->windspeed << ")" << std::endl;
+            GameConfig::game_occupationpercentage << "\n"
+        << "TimeLimit: "    << GameConfig::game_timelimit << "\n"
+        << "FragLimit: "    << GameConfig::game_fraglimit << "\n"
+        << "RespawnType: "  << gameconfig->getRespawnTypeString() << "\n"
+        << "Mapcycle: "     << *GameConfig::game_mapcycle << "\n"
+        << "Powerups: "     << (GameConfig::game_powerups ? "yes" : "no") << "\n"
+        << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
+        << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
     
     map_path = "maps/";
     map_path.append(map_name);
@@ -426,17 +425,17 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     ConnectMesgServerGameSettings* game_setup 
         = new ConnectMesgServerGameSettings();
 
-    game_setup->setMaxPlayers(gameconfig->maxplayers);
-    game_setup->setMaxUnits(gameconfig->maxunits);
-    snprintf(game_setup->map_name, 32, "%s", gameconfig->map.c_str());
-    game_setup->setCloudCoverage(gameconfig->cloudcoverage);
-    game_setup->setWindSpeed(gameconfig->windspeed);
-    game_setup->setGameType(gameconfig->gametype);
-    game_setup->powerup_state = gameconfig->powerups;
-    game_setup->setFragLimit(gameconfig->fraglimit);
-    game_setup->setTimeLimit(gameconfig->timelimit);
+    game_setup->setMaxPlayers(GameConfig::game_maxplayers);
+    game_setup->setMaxUnits(GameConfig::game_maxunits);
+    snprintf(game_setup->map_name, 32, "%s", GameConfig::game_map->c_str());
+    game_setup->setCloudCoverage(GameConfig::game_cloudcoverage);
+    game_setup->setWindSpeed(GameConfig::game_windspeed);
+    game_setup->setGameType(GameConfig::game_gametype);
+    game_setup->powerup_state = GameConfig::game_powerups;
+    game_setup->setFragLimit(GameConfig::game_fraglimit);
+    game_setup->setTimeLimit(GameConfig::game_timelimit);
     game_setup->setElapsedTime(getGameTime());
-    game_setup->setFlagTime(gameconfig->game_changeflagtime);
+    game_setup->setFlagTime(GameConfig::game_changeflagtime);
 
     return game_setup;
 }
@@ -481,15 +480,15 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     const ConnectMesgServerGameSettings* game_setup
         = (const ConnectMesgServerGameSettings*) message;
 
-    gameconfig->maxplayers = game_setup->getMaxPlayers();
-    gameconfig->maxunits = game_setup->getMaxUnits();
-    gameconfig->cloudcoverage = game_setup->getCloudCoverage();
-    gameconfig->windspeed = (int) game_setup->getWindSpeed();
-    gameconfig->powerups = game_setup->powerup_state;
-    gameconfig->gametype = game_setup->getGameType();
-    gameconfig->fraglimit = game_setup->getFragLimit();
-    gameconfig->timelimit = game_setup->getTimeLimit();
-    gameconfig->game_changeflagtime = game_setup->getFlagTime();
+    GameConfig::game_maxplayers = game_setup->getMaxPlayers();
+    GameConfig::game_maxunits = game_setup->getMaxUnits();
+    GameConfig::game_cloudcoverage = game_setup->getCloudCoverage();
+    GameConfig::game_windspeed = (int) game_setup->getWindSpeed();
+    GameConfig::game_powerups = game_setup->powerup_state;
+    GameConfig::game_gametype = game_setup->getGameType();
+    GameConfig::game_fraglimit = game_setup->getFragLimit();
+    GameConfig::game_timelimit = game_setup->getTimeLimit();
+    GameConfig::game_changeflagtime = game_setup->getFlagTime();
     startGameTimer();
     game_elapsed_time_offset = game_setup->getElapsedTime();
 

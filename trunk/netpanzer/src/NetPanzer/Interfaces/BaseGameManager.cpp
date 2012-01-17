@@ -95,9 +95,9 @@ void BaseGameManager::shutdownSoundSubSystem()
 void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("config/netpanzer.ini", "/config/client.cfg");
+        gameconfig = new GameConfig("/config/client.cfg");
     else
-        gameconfig = new GameConfig(configfile, "/config/client.cfg", false);
+        gameconfig = new GameConfig(configfile, false);
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameConfig()
@@ -143,7 +143,7 @@ void BaseGameManager::initializeNetworkSubSystem()
     ServerMessageRouter::initialize();
     ClientMessageRouter::initialize();
 
-    ServerConnectDaemon::initialize( gameconfig->maxplayers );
+    ServerConnectDaemon::initialize( GameConfig::game_maxplayers );
 
     NetworkState::setNetworkStatus( _network_state_server );
     NetworkState::resetNetworkStats();

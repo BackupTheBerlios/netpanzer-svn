@@ -93,9 +93,9 @@ static void sendConnectionAlert(ClientSocket * client)
 
     player_state->resetAutokick();
 
-    if ( ((std::string)gameconfig->motd).length() > 0 )
+    if ( GameConfig::server_motd->length() > 0 )
     {
-        ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->motd.c_str());
+        ChatInterface::serversayTo(client->getPlayerIndex(), GameConfig::server_motd->c_str());
     }
 
     SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));

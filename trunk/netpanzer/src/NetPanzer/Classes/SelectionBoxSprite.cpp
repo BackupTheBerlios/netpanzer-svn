@@ -88,7 +88,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         assert(max_hit_points > 0);
 
         // Draw the selection box.
-        if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect)
+        if (GameConfig::interface_unitselectionmode == _unit_selection_box_draw_mode_rect)
         {
             // Draw the rectangle selection box.
             surface->drawRect(iRect(min_abs, max_abs), selectionBoxColor);

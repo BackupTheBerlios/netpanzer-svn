@@ -42,13 +42,13 @@ void GameTemplateView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &new
 {
     // Check for view blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
+        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
     } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
+        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
     } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_SOLID_BLACK;
+        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_SOLID_BLACK;
     } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_TRANSPARENT;
+        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_TRANSPARENT;
     }
 
     if (getAllowMove())

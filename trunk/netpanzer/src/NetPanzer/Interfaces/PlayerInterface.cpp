@@ -519,7 +519,7 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 
 void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
 {
-    if ( gameconfig->allowallies == false )
+    if ( GameConfig::game_allowallies == false )
     {
         return;
     }

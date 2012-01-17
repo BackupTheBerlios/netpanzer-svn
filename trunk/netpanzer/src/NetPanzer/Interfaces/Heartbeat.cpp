@@ -45,7 +45,7 @@ public:
 
 Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
-    StringTokenizer mstokenizer(gameconfig->masterservers, ',');
+    StringTokenizer mstokenizer(*GameConfig::server_masterservers, ',');
     string servname;
     while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
         try {
@@ -57,7 +57,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
     }
     
     stringstream msg;
-    msg << "\\heartbeat\\gamename\\netpanzer\\port\\" << gameconfig->serverport                     
+    msg << "\\heartbeat\\gamename\\netpanzer\\port\\" << GameConfig::server_port
         << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
         << "\\final\\";
     

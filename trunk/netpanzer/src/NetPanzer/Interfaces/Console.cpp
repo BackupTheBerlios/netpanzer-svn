@@ -160,7 +160,8 @@ Console::shutdown()
 void
 Console::mapSwitch(const std::string& mapname)
 {
-    if(gameconfig->logging) {
+    if ( GameConfig::server_logging )
+    {
         if(!filesystem::exists("logs")) {
             filesystem::mkdir("logs");
         }

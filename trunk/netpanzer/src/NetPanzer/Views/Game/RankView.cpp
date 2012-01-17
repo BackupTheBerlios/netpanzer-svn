@@ -64,7 +64,7 @@ RankView::RankView() : GameTemplateView()
     setSubTitle(" - TAB");
 
     setAllowResize(false);
-    moveTo(gameconfig->rankposition);
+    moveTo(GameConfig::interface_rankposition_x, GameConfig::interface_rankposition_y);
     resize(iXY(WINDOW_WIDTH, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
@@ -153,7 +153,8 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         }
     }
 
-    switch(gameconfig->gametype) {
+    switch(GameConfig::game_gametype)
+    {
         case _gametype_objective:
             std::sort(states.begin(), states.end(), StatesSortByObjectives());
             break;
@@ -215,7 +216,8 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
 void RankView::notifyMoveTo()
 {
-    gameconfig->rankposition=min;
+    GameConfig::interface_rankposition_x = min.x;
+    GameConfig::interface_rankposition_y = min.y;
 }
 
 void RankView::lMouseDown(const iXY& pos)

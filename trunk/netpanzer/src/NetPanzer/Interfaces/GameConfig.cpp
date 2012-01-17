@@ -58,6 +58,52 @@ NPString* GameConfig::game_unit_spawnlist = 0;
 NPString* GameConfig::game_adminpass = 0;
 NPString* GameConfig::game_gamepass = 0;
 int       GameConfig::game_changeflagtime = 15; // minutes
+int       GameConfig::game_gametype = 0;
+int       GameConfig::game_maxplayers = 8;
+int       GameConfig::game_maxunits = 8*40;
+int       GameConfig::game_timelimit = 30;
+int       GameConfig::game_fraglimit = 300;
+bool      GameConfig::game_powerups = true;
+int       GameConfig::game_occupationpercentage = 75;
+bool      GameConfig::game_allowallies = true;
+int       GameConfig::game_cloudcoverage = 0;
+int       GameConfig::game_respawntype = 0;
+int       GameConfig::game_windspeed = 30;
+NPString* GameConfig::game_map = 0;
+NPString* GameConfig::game_mapcycle = 0;
+
+bool      GameConfig::sound_enable = true;
+bool      GameConfig::sound_music = true;
+int       GameConfig::sound_musicvol = 100;
+bool      GameConfig::sound_effects = true;
+int       GameConfig::sound_effectsvol = 100;
+
+int       GameConfig::radar_playerunitcolor = _color_aqua;
+int       GameConfig::radar_selectedunitcolor = _color_white;
+int       GameConfig::radar_alliedunitcolor = _color_orange;
+int       GameConfig::radar_playeroutpostcolor = _color_blue;
+int       GameConfig::radar_alliedoutpostcolor = _color_orange;
+int       GameConfig::radar_enemyoutpostcolor = _color_red;
+int       GameConfig::radar_unitsize = _mini_map_unit_size_small;
+
+int       GameConfig::interface_attacknotificationtime = 5;
+int       GameConfig::interface_vehicleselectioncolor = _color_blue;
+int       GameConfig::interface_unitselectionmode = _unit_selection_box_draw_mode_rect_edges;
+int       GameConfig::interface_unitinfodrawlayer = 0;
+int       GameConfig::interface_scrollrate = 1000;
+int       GameConfig::interface_rankposition_x = 100;
+int       GameConfig::interface_rankposition_y = 100;
+int       GameConfig::interface_viewdrawbackgroundmode = (int)VIEW_BACKGROUND_DARK_GRAY_BLEND;
+
+int       GameConfig::server_port = NETPANZER_DEFAULT_PORT_TCP;
+NPString* GameConfig::server_bindaddress = 0;
+NPString* GameConfig::server_motd = 0;
+bool      GameConfig::server_logging = false;
+bool      GameConfig::server_public = true;
+NPString* GameConfig::server_masterservers = 0;
+NPString* GameConfig::server_name = 0;
+
+NPString* GameConfig::player_name = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
 
@@ -94,51 +140,163 @@ static const ScriptVarBindRecord video_setters[] =
     {0,0}
 };
 
+
 static const ScriptVarBindRecord interface_getters[] =
 {
-    { "show_health",   GETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
-    { "show_flags",    GETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
-    { "show_names",    GETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    { "show_health",            GETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
+    { "show_flags",             GETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
+    { "show_names",             GETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    { "attacknotificationime",  GETSVTYPE_INT,     &GameConfig::interface_attacknotificationtime},
+    { "vehicleselectioncolor",  GETSVTYPE_INT,     &GameConfig::interface_vehicleselectioncolor},
+    { "unitselectionmode",      GETSVTYPE_INT,     &GameConfig::interface_unitselectionmode},
+    { "unitinfodrawlayer",      GETSVTYPE_INT,     &GameConfig::interface_unitinfodrawlayer},
+    { "scrollrate",             GETSVTYPE_INT,     &GameConfig::interface_scrollrate},
+    { "rankposition_x",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
+    { "rankposition_y",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
+    { "viewdrawbackgroundmode", GETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
     {0,0}
 };
 
 static const ScriptVarBindRecord interface_setters[] =
 {
-    { "show_health",   SETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
-    { "show_flags",    SETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
-    { "show_names",    SETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    { "show_health",            SETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
+    { "show_flags",             SETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
+    { "show_names",             SETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    { "attacknotificationime",  SETSVTYPE_INT,     &GameConfig::interface_attacknotificationtime},
+    { "vehicleselectioncolor",  SETSVTYPE_INT,     &GameConfig::interface_vehicleselectioncolor},
+    { "unitselectionmode",      SETSVTYPE_INT,     &GameConfig::interface_unitselectionmode},
+    { "unitinfodrawlayer",      SETSVTYPE_INT,     &GameConfig::interface_unitinfodrawlayer},
+    { "scrollrate",             SETSVTYPE_INT,     &GameConfig::interface_scrollrate},
+    { "rankposition_x",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
+    { "rankposition_y",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
+    { "viewdrawbackgroundmode", SETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
     {0,0}
 };
 
 static const ScriptVarBindRecord game_getters[] =
 {
-    { "enable_bases",      GETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
-    { "base_capture_mode", GETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
-    { "base_limit",        GETSVTYPE_INT,     &GameConfig::game_base_limit },
-    { "autokicktime",      GETSVTYPE_INT,     &GameConfig::game_autokicktime },
-    { "allowmultiip",      GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
-    { "unit_profiles",     GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
-    { "unit_spawnlist",    GETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
-    { "adminpass",         GETSVTYPE_STRING,  &GameConfig::game_adminpass},
-    { "gamepass",          GETSVTYPE_STRING,  &GameConfig::game_gamepass},
-    { "changeflagtime",    GETSVTYPE_INT,     &GameConfig::game_changeflagtime},
+    { "enable_bases",       GETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
+    { "base_capture_mode",  GETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    { "base_limit",         GETSVTYPE_INT,     &GameConfig::game_base_limit },
+    { "autokicktime",       GETSVTYPE_INT,     &GameConfig::game_autokicktime },
+    { "allowmultiip",       GETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
+    { "unit_profiles",      GETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "unit_spawnlist",     GETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
+    { "adminpass",          GETSVTYPE_STRING,  &GameConfig::game_adminpass},
+    { "gamepass",           GETSVTYPE_STRING,  &GameConfig::game_gamepass},
+    { "changeflagtime",     GETSVTYPE_INT,     &GameConfig::game_changeflagtime},
+    { "gametype",           GETSVTYPE_INT,     &GameConfig::game_gametype },
+    { "maxplayers",         GETSVTYPE_INT,     &GameConfig::game_maxplayers },
+    { "maxunits",           GETSVTYPE_INT,     &GameConfig::game_maxunits },
+    { "timelimit",          GETSVTYPE_INT,     &GameConfig::game_timelimit },
+    { "fraglimit",          GETSVTYPE_INT,     &GameConfig::game_fraglimit },
+    { "powerups",           GETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
+    { "occupationpercentage",GETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
+    { "allowallies",        GETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
+    { "cloudcoverage",      GETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
+    { "respawntype",        GETSVTYPE_INT,     &GameConfig::game_respawntype },
+    { "windspeed",          GETSVTYPE_INT,     &GameConfig::game_windspeed },
+    { "map",                GETSVTYPE_STRING,  &GameConfig::game_map },
+    { "mapcycle",           GETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     {0,0}
 };
 
 static const ScriptVarBindRecord game_setters[] =
 {
-    { "enable_bases",      SETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
-    { "base_capture_mode", SETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
-    { "base_limit",        SETSVTYPE_INT,     &GameConfig::game_base_limit },
-    { "autokicktime",      SETSVTYPE_INT,     &GameConfig::game_autokicktime },
-    { "allowmultiip",      SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
-    { "unit_profiles",     SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
-    { "unit_spawnlist",    SETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
-    { "adminpass",         SETSVTYPE_STRING,  &GameConfig::game_adminpass},
-    { "gamepass",          SETSVTYPE_STRING,  &GameConfig::game_gamepass},
-    { "changeflagtime",    SETSVTYPE_INT,     &GameConfig::game_changeflagtime },
+    { "enable_bases",       SETSVTYPE_BOOLEAN, &GameConfig::game_enable_bases },
+    { "base_capture_mode",  SETSVTYPE_INT,     &GameConfig::game_base_capture_mode },
+    { "base_limit",         SETSVTYPE_INT,     &GameConfig::game_base_limit },
+    { "autokicktime",       SETSVTYPE_INT,     &GameConfig::game_autokicktime },
+    { "allowmultiip",       SETSVTYPE_BOOLEAN, &GameConfig::game_allowmultiip },
+    { "unit_profiles",      SETSVTYPE_STRING,  &GameConfig::game_unit_profiles},
+    { "unit_spawnlist",     SETSVTYPE_STRING,  &GameConfig::game_unit_spawnlist},
+    { "adminpass",          SETSVTYPE_STRING,  &GameConfig::game_adminpass},
+    { "gamepass",           SETSVTYPE_STRING,  &GameConfig::game_gamepass},
+    { "changeflagtime",     SETSVTYPE_INT,     &GameConfig::game_changeflagtime},
+    { "gametype",           SETSVTYPE_INT,     &GameConfig::game_gametype },
+    { "maxplayers",         SETSVTYPE_INT,     &GameConfig::game_maxplayers },
+    { "maxunits",           SETSVTYPE_INT,     &GameConfig::game_maxunits },
+    { "timelimit",          SETSVTYPE_INT,     &GameConfig::game_timelimit },
+    { "fraglimit",          SETSVTYPE_INT,     &GameConfig::game_fraglimit },
+    { "powerups",           SETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
+    { "occupationpercentage",SETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
+    { "allowallies",        SETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
+    { "cloudcoverage",      SETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
+    { "respawntype",        SETSVTYPE_INT,     &GameConfig::game_respawntype },
+    { "windspeed",          SETSVTYPE_INT,     &GameConfig::game_windspeed },
+    { "map",                SETSVTYPE_STRING,  &GameConfig::game_map },
+    { "mapcycle",           SETSVTYPE_STRING,  &GameConfig::game_mapcycle },
     {0,0}
 };
+
+static const ScriptVarBindRecord sound_getters[] =
+{
+    { "enable",             GETSVTYPE_BOOLEAN, &GameConfig::sound_enable},
+    { "music",              GETSVTYPE_BOOLEAN, &GameConfig::sound_music},
+    { "musicvol",           GETSVTYPE_INT,     &GameConfig::sound_musicvol},
+    { "effects",            GETSVTYPE_BOOLEAN, &GameConfig::sound_effects},
+    { "effectsvol",         GETSVTYPE_INT,     &GameConfig::sound_effectsvol},
+    {0,0}
+};
+
+static const ScriptVarBindRecord sound_setters[] =
+{
+    { "enable",             SETSVTYPE_BOOLEAN, &GameConfig::sound_enable},
+    { "music",              SETSVTYPE_BOOLEAN, &GameConfig::sound_music},
+    { "musicvol",           SETSVTYPE_INT,     &GameConfig::sound_musicvol},
+    { "effects",            SETSVTYPE_BOOLEAN, &GameConfig::sound_effects},
+    { "effectsvol",         SETSVTYPE_INT,     &GameConfig::sound_effectsvol},
+    {0,0}
+};
+
+static const ScriptVarBindRecord radar_getters[] =
+{
+    { "playerunitcolor",    GETSVTYPE_INT,     &GameConfig::radar_playerunitcolor},
+    { "selectedunitcolor",  GETSVTYPE_INT,     &GameConfig::radar_selectedunitcolor},
+    { "alliedunitcolor",    GETSVTYPE_INT,     &GameConfig::radar_alliedunitcolor},
+    { "playeroutpostcolor", GETSVTYPE_INT,     &GameConfig::radar_playeroutpostcolor},
+    { "alliedoutpostcolor", GETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
+    { "enemyoutpostcolor",  GETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
+    { "unitsize",           GETSVTYPE_INT,     &GameConfig::radar_unitsize},
+    {0,0}
+};
+
+static const ScriptVarBindRecord radar_setters[] =
+{
+    { "playerunitcolor",    SETSVTYPE_INT,     &GameConfig::radar_playerunitcolor},
+    { "selectedunitcolor",  SETSVTYPE_INT,     &GameConfig::radar_selectedunitcolor},
+    { "alliedunitcolor",    SETSVTYPE_INT,     &GameConfig::radar_alliedunitcolor},
+    { "playeroutpostcolor", SETSVTYPE_INT,     &GameConfig::radar_playeroutpostcolor},
+    { "alliedoutpostcolor", SETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
+    { "enemyoutpostcolor",  SETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
+    { "unitsize",           SETSVTYPE_INT,     &GameConfig::radar_unitsize},
+    {0,0}
+};
+
+static const ScriptVarBindRecord server_getters[] =
+{
+    { "port",           GETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",    GETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",           GETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",        GETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",         GETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",  GETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",           GETSVTYPE_STRING,  &GameConfig::server_name },
+    {0,0}
+};
+
+static const ScriptVarBindRecord server_setters[] =
+{
+    { "port",           SETSVTYPE_INT,     &GameConfig::server_port },
+    { "bindaddress",    SETSVTYPE_STRING,  &GameConfig::server_bindaddress },
+    { "motd",           SETSVTYPE_STRING,  &GameConfig::server_motd },
+    { "logging",        SETSVTYPE_BOOLEAN, &GameConfig::server_logging },
+    { "public",         SETSVTYPE_BOOLEAN, &GameConfig::server_public },
+    { "masterservers",  SETSVTYPE_STRING,  &GameConfig::server_masterservers },
+    { "name",           SETSVTYPE_STRING,  &GameConfig::server_name },
+    {0,0}
+};
+
 
 void GameConfig::registerScript(const NPString& table_name)
 {
@@ -162,6 +320,41 @@ void GameConfig::registerScript(const NPString& table_name)
         game_gamepass = new NPString("");
     }
 
+    if ( ! game_map )
+    {
+        game_map = new NPString("");
+    }
+
+    if ( ! game_mapcycle )
+    {
+        game_mapcycle = new NPString("");
+    }
+
+    if ( ! server_bindaddress )
+    {
+        server_bindaddress = new NPString("");
+    }
+
+    if ( ! server_motd )
+    {
+        server_motd = new NPString("Welcome to NetPanzer Server");
+    }
+
+    if ( ! server_masterservers )
+    {
+        server_masterservers = new NPString("masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info");
+    }
+
+    if ( ! server_name )
+    {
+        server_name = new NPString("NetPanzer Server");
+    }
+
+    if ( ! player_name )
+    {
+        player_name = new NPString("Player");
+    }
+
     ScriptManager::bindStaticVariables(table_name + ".video",
                                        "ConfigVideoMetaTable",
                                        video_getters, video_setters);
@@ -174,123 +367,64 @@ void GameConfig::registerScript(const NPString& table_name)
                                        "ConfigGameMetaTable",
                                        game_getters, game_setters);
 
+    ScriptManager::bindStaticVariables(table_name + ".sound",
+                                       "ConfigSoundMetaTable",
+                                       sound_getters, sound_setters);
+
+    ScriptManager::bindStaticVariables(table_name + ".radar",
+                                       "ConfigRadarMetaTable",
+                                       radar_getters, radar_setters);
+
+    ScriptManager::bindStaticVariables(table_name + ".interface",
+                                       "ConfigInterfaceMetaTable",
+                                       interface_getters, interface_setters);
+
+    ScriptManager::bindStaticVariables(table_name + ".server",
+                                       "ConfigServerMetaTable",
+                                       server_getters, server_setters);
+
 }
 
-GameConfig::GameConfig(const std::string& configfile, const std::string& luaconfigfile,bool usePhysFS)
+GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
     :
       hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       quickConnect("quickconnect", false),
       needPassword("needpassword", false),
-      serverConnect("serverconnect", ""),
+      serverConnect("serverconnect", "")
     
-      playername("name", "Player"),
-      masterservers("masterservers", "masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info"),
-      
-      serverport("serverport", NETPANZER_DEFAULT_PORT_TCP,0,65535),
-      bindaddress("bindaddress", ""),
-      gametype("gametype", _gametype_objective, 0, _gametype_last-1),
-      maxplayers("maxplayers", 8, 1, 25),
-      maxunits("maxunits", 500, 25, 10000),
-      timelimit("timelimit", 50, 1),
-      fraglimit("fraglimit", 500, 50),
-      powerups("powerups", true),
-      objectiveoccupationpercentage("objectivepercentage", 75, 1, 100),
-      allowallies("allowallies", true),
-      cloudcoverage("cloudcoverage", 0),
-      respawntype("respawntype", _game_config_respawn_type_round_robin, 0,
-                _game_config_respawn_type_last-1),
-      windspeed("windspeed", 30),
-      map("map", "Bad Neuburg"),
-      mapcycle("mapcycle", "Cramped, Tight Quarters, Two Villages"),
-      motd("motd",""),
-      logging("logging", false),
-      publicServer("public", true),
-      
-      enablesound("enable", true),
-      enablemusic("music", true),
-      musicvolume("musicvolume", 80, 0, 100),
-      enableeffects("effects", true),
-      effectsvolume("effectsvolume", 100, 0, 100),
-      
-      attacknotificationtime("attacknotificationtime", 5, 0, 100),
-      vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
-      unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
-      unitinfodrawlayer("unitinfodrawlayer", 0, 0, 1),
-      scrollrate("scrollrate", 1000, 100, 10000),
-      rankposition("rankposition", iXY(0,0)),
-      viewdrawbackgroundmode("viewdrawbackgroundmode",(int)VIEW_BACKGROUND_DARK_GRAY_BLEND),
-                  
-      radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
-      radar_selectedunitcolor("selectedunitcolor", _color_white, 0, _color_last-1),
-      radar_alliedunitcolor("alliedunitcolor", _color_orange, 0, _color_last-1),
-      radar_playeroutpostcolor("playeroutpostcolor", _color_blue, 0, _color_last-1),
-      radar_alliedoutpostcolor("alliedoutpostcolor", _color_orange, 0, _color_last),
-      radar_enemyoutpostcolor("enemyoutpostcolor", _color_red, 0, _color_last-1),
-      radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1)
 {
-    this->configfile = configfile;
     this->luaconfigfile = luaconfigfile;
     this->usePhysFS = usePhysFS;
 
     std::stringstream default_player;
     default_player << "Player" << (rand()%1000);
-    playername=default_player.str();
-    playersettings.push_back(&playername);
-    playersettings.push_back(&masterservers);
+    if ( ! player_name )
+    {
+        player_name = new NPString();
+    }
 
-    serversettings.push_back(&serverport);
-    serversettings.push_back(&bindaddress);
-    serversettings.push_back(&gametype);
-    serversettings.push_back(&maxplayers);
-    serversettings.push_back(&maxunits);
-    serversettings.push_back(&timelimit);
-    serversettings.push_back(&fraglimit);
-    serversettings.push_back(&powerups);
-    serversettings.push_back(&objectiveoccupationpercentage);
-    serversettings.push_back(&allowallies);
-    serversettings.push_back(&cloudcoverage);
-    serversettings.push_back(&respawntype);
-    serversettings.push_back(&windspeed);
-    serversettings.push_back(&mapcycle);
-    serversettings.push_back(&motd);
-    serversettings.push_back(&logging);
-    serversettings.push_back(&publicServer);
-   
-    soundsettings.push_back(&enablesound);
-    soundsettings.push_back(&enablemusic);
-    soundsettings.push_back(&musicvolume);
-    soundsettings.push_back(&enableeffects);
-    soundsettings.push_back(&effectsvolume);
-
-    interfacesettings.push_back(&attacknotificationtime);
-    interfacesettings.push_back(&vehicleselectioncolor);
-    interfacesettings.push_back(&unitselectionmode);
-    interfacesettings.push_back(&unitinfodrawlayer);
-    interfacesettings.push_back(&scrollrate);
-    interfacesettings.push_back(&rankposition);
-    interfacesettings.push_back(&viewdrawbackgroundmode);
-
-    radarsettings.push_back(&radar_playerunitcolor);
-    radarsettings.push_back(&radar_alliedunitcolor);
-    radarsettings.push_back(&radar_playeroutpostcolor);
-    radarsettings.push_back(&radar_alliedoutpostcolor);
-    radarsettings.push_back(&radar_enemyoutpostcolor);
-    radarsettings.push_back(&radar_unitsize);
+    player_name->assign(default_player.str());
     
-    try {
+    try
+    {
         loadConfig();
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LOG(("couldn't read game configuration: %s", e.what()));
-	LOG(("Using default config. (this is normal on first startup)"));
+        LOG(("Using default config. (this is normal on first startup)"));
     }
 }
 
 GameConfig::~GameConfig()
 {
-    try {
+    try
+    {
         saveConfig();
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LOG(("couldn't save game configuration: %s", e.what()));
     }
 }
@@ -299,108 +433,26 @@ void GameConfig::loadConfig()
 {
     ScriptManager::loadConfigFile(luaconfigfile.c_str(), "config");
 
-    INI::Store inifile;
-    if(usePhysFS) {
-        IFileStream in(configfile);
-        inifile.load(in);
-    } else {
-        std::ifstream in(configfile.c_str());
-        inifile.load(in);
-    }
+// these lines might be usefull infuture? 2012-01-18
+//    if(usePhysFS)
+//    {
+//        IFileStream in(configfile);
+//        inifile.load(in);
+//    } else {
+//        std::ifstream in(configfile.c_str());
+//        inifile.load(in);
+//    }
 
-    loadSettings(inifile.getSection("game"), gamesettings);
-    loadSettings(inifile.getSection("player"), playersettings);
-    if (playername.c_str()[0]==0) {
+    if ( player_name->length() == 0 )
+    {
         std::stringstream default_player;
         default_player << "Player" << (rand()%1000);
-        playername=default_player.str();
-    }
-    loadSettings(inifile.getSection("sound"), soundsettings);
-    loadSettings(inifile.getSection("interface"), interfacesettings);
-    loadSettings(inifile.getSection("radar"), radarsettings);
-    loadSettings(inifile.getSection("server"), serversettings);
-}
-
-void GameConfig::loadSettings(const INI::Section& section,
-        std::vector<ConfigVariable*>& settings)
-{
-    try {
-        std::vector<ConfigVariable*>::iterator i;
-        for(i = settings.begin(); i != settings.end(); i++) {
-            ConfigVariable* var = *i;
-
-            try {
-                ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
-                if(confint) {
-                    *confint = section.getIntValue(confint->getName());
-                    continue;
-                }
-
-                ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
-                if(confxy) {
-                    confxy->set(section.getIntValue(confxy->getName() + "_x"),
-                            section.getIntValue(confxy->getName() + "_y"));
-                    continue;
-                }
-
-                ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
-                if(confbool) {
-                    std::string str =
-                        section.getValue(confbool->getName());
-                    if(str == "yes" || str == "1" || str == "on")
-                        *confbool = true;
-                    else if(str == "no" || str == "0" || str == "off")
-                        *confbool = false;
-                    else
-                        throw Exception("No boolean value for setting '%s'.",
-                                        confbool->getName().c_str());
-                    continue;
-                }
-
-                ConfigStringSpecialChars* confstringspecial = dynamic_cast<ConfigStringSpecialChars*> (var);
-                if(confstringspecial) {
-                    *confstringspecial = section.getValue(confstringspecial->getName());
-                    continue;
-                }
-                
-                ConfigString* confstring = dynamic_cast<ConfigString*> (var);
-                if(confstring)
-                    *confstring = section.getValue(confstring->getName());
-
-
-                // we have a value from config file in the variable now
-                //var->setNonDefaultValue();
-                // now each subclass changethis if the value has been changed
-            } catch(std::exception& e) {
-                LOG(("Skipping config '%s': %s", var->getName().c_str(),
-                            e.what()));
-            }
-        }
-    } catch(std::exception& e) {
-        LOG(("Couldn't find config section '%s', skipping...",
-                    section.getName().c_str()));
+        player_name->assign(default_player.str());
     }
 }
 
 void GameConfig::saveConfig()
 {
-    INI::Store inifile;
-
-    saveSettings(inifile.getSection("game"), gamesettings);
-    saveSettings(inifile.getSection("player"), playersettings);
-    saveSettings(inifile.getSection("sound"), soundsettings);
-    saveSettings(inifile.getSection("interface"), interfacesettings);
-    saveSettings(inifile.getSection("radar"), radarsettings);
-    saveSettings(inifile.getSection("server"), serversettings);
-
-    if(usePhysFS) {
-        OFileStream out (configfile);
-        inifile.save(out);
-    } else {
-        std::ofstream out(configfile.c_str());
-        inifile.save(out);
-    }
-
     lua_State *L = ScriptManager::getLuavm();
 
     lua_getglobal(L,"config");
@@ -440,37 +492,6 @@ void GameConfig::saveConfig()
     out << lua_tostring(L, -1) << std::endl;
     lua_pop(L, 1);
 
-}
-
-void GameConfig::saveSettings(INI::Section& section,
-    std::vector<ConfigVariable*>& settings)
-{
-    std::vector<ConfigVariable*>::iterator i;
-    for(i = settings.begin(); i != settings.end(); i++) {
-        ConfigVariable* var = *i;
-
-        ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
-        if(confint)
-            section.setIntValue(confint->getName(), *confint);
-            
-        ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
-        if(confbool)
-            section.setValue(confbool->getName(), *confbool ? "yes" : "no");
-
-        ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
-        if(confxy) {
-            section.setIntValue(confxy->getName() + "_x",
-                    ((const iXY&)(*confxy)).x);
-            section.setIntValue(confxy->getName() + "_y",
-                    ((const iXY&)(*confxy)).y);
-        }
-
-        ConfigString* confstring = dynamic_cast<ConfigString*> (var);
-        if(confstring) {
-            section.setValue(confstring->getName(),
-                    (const std::string&) *confstring);
-        }
-    }
 }
 
 GameConfig* gameconfig = 0;

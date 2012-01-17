@@ -41,7 +41,7 @@ std::string MapsManager::getNextMap(const std::string& map)
     using std::string;
 
     // parse the mapcycle in the config
-    const string& mapcycle = gameconfig->mapcycle;
+    const string& mapcycle = *GameConfig::game_mapcycle;
     string::size_type i = mapcycle.find(',', 0);
     string::size_type lasti = 0;
     if(i == string::npos)
