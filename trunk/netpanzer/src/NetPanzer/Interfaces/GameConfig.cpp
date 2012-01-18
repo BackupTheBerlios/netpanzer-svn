@@ -327,7 +327,7 @@ void GameConfig::registerScript(const NPString& table_name)
 
     if ( ! game_mapcycle )
     {
-        game_mapcycle = new NPString("");
+        game_mapcycle = new NPString("Two clans, Bullet Hole");
     }
 
     if ( ! server_bindaddress )
@@ -448,6 +448,11 @@ void GameConfig::loadConfig()
         std::stringstream default_player;
         default_player << "Player" << (rand()%1000);
         player_name->assign(default_player.str());
+    }
+
+    if ( game_mapcycle->length() == 0 )
+    {
+        game_mapcycle->assign("Two clans");
     }
 }
 
