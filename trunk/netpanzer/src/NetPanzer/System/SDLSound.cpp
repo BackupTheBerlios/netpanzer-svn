@@ -29,6 +29,7 @@
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/NTimer.hpp"
 #include "SDLSound.hpp"
 #include "Interfaces/GameConfig.hpp"
 
@@ -36,6 +37,30 @@
     ((SDL_MIXER_MINOR_VERSION == 2) && (SDL_MIXER_PATCHLEVEL >= 6))
 #define HAS_LOADMUS_RW
 #endif
+
+#define SOUND_REPLAY_PROTECTION_TIME 50
+
+class SoundData
+{
+private:
+    Mix_Chunk* chunk;
+public:
+    NTimer last_played;
+
+    SoundData() : chunk(0), last_played(SOUND_REPLAY_PROTECTION_TIME) {}
+    SoundData(Mix_Chunk* c) : chunk(c), last_played(SOUND_REPLAY_PROTECTION_TIME) {}
+    ~SoundData()
+    {
+        if ( chunk )
+        {
+            Mix_FreeChunk(chunk);
+            chunk = 0;
+        }
+    }
+
+    Mix_Chunk* getData() const { return chunk; }
+};
+
 
 musics_t SDLSound::musicfiles;
 musics_t::iterator SDLSound::currentsong;
@@ -58,8 +83,9 @@ SDLSound::~SDLSound()
 {
     stopMusic();
     Mix_CloseAudio();
-    for (chunks_t::iterator i = m_chunks.begin(); i != m_chunks.end(); i++) {
-        Mix_FreeChunk(i->second);
+    for (chunks_t::iterator i = m_chunks.begin(); i != m_chunks.end(); i++)
+    {
+        delete i->second;
     }
 
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
@@ -70,18 +96,21 @@ SDLSound::~SDLSound()
  * @param name sound name
  * @return the chunk or NULL
  */
-Mix_Chunk *SDLSound::findChunk(const char *name)
+SoundData *SDLSound::findChunk(const char *name)
 {
     chunks_t::size_type count = m_chunks.count(name);
-    if (count == 0) {
+    if (count == 0)
+    {
         LOG (("Silent sound '%s'", name));
         return 0;
     }
 
     chunks_t::iterator it = m_chunks.find(name);
-    for (int i = rand() % count; i > 0; i--) {
+    for (int i = rand() % count; i > 0; i--)
+    {
         it++;
     }
+    
     return it->second;
 }
 //-----------------------------------------------------------------
@@ -91,11 +120,22 @@ Mix_Chunk *SDLSound::findChunk(const char *name)
  */
 void SDLSound::playSound(const char* name)
 {
-    Mix_Chunk *chunk = findChunk(name);
-    if (chunk) {
-        if (Mix_PlayChannel(-1, chunk, 0) == -1) {
-            //LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
+    SoundData *sdata = findChunk(name);
+    if (sdata)
+    {
+        if ( sdata->last_played.isTimeOut() )
+        {
+            if (Mix_PlayChannel(-1, sdata->getData(), 0) == -1)
+            {
+                //LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
+            }
+            sdata->last_played.reset();
         }
+        else
+        {
+//            LOGGER.debug("Skipped sound '%s' due to timeout", name);
+        }
+        
     }
 }
 //-----------------------------------------------------------------
@@ -106,13 +146,23 @@ void SDLSound::playSound(const char* name)
  */
 void SDLSound::playAmbientSound(const char* name, long distance)
 {
-    Mix_Chunk *chunk = findChunk(name);
-    if (chunk) {
-        int oldVolume = Mix_VolumeChunk(chunk, getSoundVolume(distance));
-        if (Mix_PlayChannel(-1, chunk, 0) == -1) {
-            //LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
+    SoundData *sdata = findChunk(name);
+    if (sdata)
+    {
+        if ( sdata->last_played.isTimeOut() )
+        {
+            int oldVolume = Mix_VolumeChunk(sdata->getData(), getSoundVolume(distance));
+            if (Mix_PlayChannel(-1, sdata->getData(), 0) == -1)
+            {
+                //LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
+            }
+            Mix_VolumeChunk(sdata->getData(), oldVolume);
+            sdata->last_played.reset();
         }
-        Mix_VolumeChunk(chunk, oldVolume);
+        else
+        {
+//            LOGGER.debug("Skipped ambient sound '%s' due to timeout", name);
+        }
     }
 }
 //-----------------------------------------------------------------
@@ -124,9 +174,9 @@ void SDLSound::playAmbientSound(const char* name, long distance)
 int SDLSound::playSoundRepeatedly(const char* name)
 {
     int channel = -1;
-    Mix_Chunk *chunk = findChunk(name);
-    if (chunk) {
-        if ((channel = Mix_PlayChannel(-1, chunk, -1)) == -1) {
+    SoundData *sdata = findChunk(name);
+    if (sdata) {
+        if ((channel = Mix_PlayChannel(-1, sdata->getData(), -1)) == -1) {
             LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
         }
     }
@@ -174,25 +224,31 @@ void SDLSound::loadSound(const char* directory)
 {
     char **list = filesystem::enumerateFiles(directory);
 
-    for (char **i = list; *i != NULL; i++) {
+    for (char **i = list; *i != NULL; i++)
+    {
         std::string filename = directory;
         filename.append(*i);
-        if (!filesystem::isDirectory(filename.c_str())) {
-            try {
+        if (!filesystem::isDirectory(filename.c_str()))
+        {
+            try
+            {
                 filesystem::ReadFile *file 
                     = filesystem::openRead(filename.c_str());
                 Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
-                if (chunk) {
+                if (chunk)
+                {
                     std::string idName = getIdName(*i);
-                    m_chunks.insert(
-                        std::pair<std::string,Mix_Chunk*>(idName, chunk));
-                } else {
-                    LOG (("Couldn't load wav_rw '%s': %s",
-                          filename.c_str(), Mix_GetError()));
+                    m_chunks.insert( std::pair<std::string,SoundData*>(idName, new SoundData(chunk)) );
                 }
-            } catch (Exception &e) {
-                LOG (("Couldn't load wav '%s': %s",
-                      filename.c_str(), e.what()));
+                else
+                {
+                    LOGGER.info("Couldn't load wav_rw '%s': %s",
+                          filename.c_str(), Mix_GetError());
+                }
+            }
+            catch (Exception &e)
+            {
+                LOGGER.info("Couldn't load wav '%s': %s", filename.c_str(), e.what());
             }
         }
     }
@@ -218,7 +274,7 @@ void SDLSound::setSoundVolume(unsigned int volume)
     unsigned int sdlvol = (volume*100)/MIX_MAX_VOLUME;
     chunks_t::iterator i = m_chunks.begin();
     while ( i != m_chunks.end() ) {
-        Mix_VolumeChunk(i->second, sdlvol);
+        Mix_VolumeChunk(i->second->getData(), sdlvol);
         ++i;
     }
 }

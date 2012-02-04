@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_mixer.h>
 #include "System/Sound.hpp"
 
-typedef std::multimap<std::string,Mix_Chunk*> chunks_t;
+class SoundData;
+
+typedef std::multimap<std::string,SoundData*> chunks_t;
 typedef std::vector<std::string> musics_t;
 
 class SDLSound : public Sound
@@ -46,7 +48,7 @@ public:
 private:
     chunks_t m_chunks;
 
-    Mix_Chunk *findChunk(const char *name);
+    SoundData* findChunk(const char *name);
     int getSoundVolume(long distance);
     void loadSound(const char* directory);
     std::string getIdName(const char* filename);

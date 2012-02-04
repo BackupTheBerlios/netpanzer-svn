@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NTimer
 {
 public:
-    NTimer() : starttime(0), timeout(0) {};
-    NTimer(Uint32 t) : starttime(0), timeout(t) {};
+    NTimer() : starttime(0), timeout(0) {}
+    NTimer(Uint32 t) : starttime(0), timeout(t) {}
     
     inline void reset()              { starttime = SDL_GetTicks(); }
     inline void reset(Uint32 t)      { starttime = t; }
