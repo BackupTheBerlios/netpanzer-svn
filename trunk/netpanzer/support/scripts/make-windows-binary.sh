@@ -9,15 +9,15 @@ RELEASEDIR="releases"
 VERSION="`<RELEASE_VERSION`"
 NPDEST=/tmp/netpanzer
 ZIPNAME="netpanzer-windows-${VERSION}.zip"
-EXENAME="build/crossmingw/release/netpanzer.exe"
+EXENAME="build/mingw/release/netpanzer.exe"
 
 echo "Making netPanzer windows version ${VERSION}"
 
-scons crossmingw \
-      crossmingwcompilerprefix=i586-mingw32msvc-\
-      crossmingwsdlconfig=/usr/local/bin/sdl-config-mingw
+scons cross=mingw \
+      sdlconfig=~/program/tools/crossmingw/bin/sdl-config
 
-i586-mingw32msvc-strip "${EXENAME}"
+# with newer gcc seems stripping works as it should, doesn't need to strip again
+# i586-mingw32msvc-strip "${EXENAME}"
 
 [ -d "${NPDEST}" ] && rm -rf "${NPDEST}"
 
@@ -27,10 +27,8 @@ cp "${EXENAME}" "${NPDEST}"
 support/scripts/copy_datafiles.sh "${NPDEST}"
 support/scripts/copy_docfiles.sh "${NPDEST}"
 
-cp /usr/local/bin/SDL.dll "${NPDEST}"
-cp /usr/local/lib/*.dll "${NPDEST}"
-cp /usr/local/bin/README-SDL.txt "${NPDEST}"
-cp /usr/local/bin/README-SDL_mixer.txt "${NPDEST}"
+cp ~/program/tools/crossmingw/dll/SDL/* "${NPDEST}"
+cp ~/program/tools/crossmingw/dll/SDL_mixer/* "${NPDEST}"
 
 [ ! -d "${RELEASEDIR}" ] && mkdir "${RELEASEDIR}"
 
