@@ -297,6 +297,17 @@ static const ScriptVarBindRecord server_setters[] =
     {0,0}
 };
 
+static const ScriptVarBindRecord player_getters[] =
+{
+    { "name",           GETSVTYPE_STRING,  &GameConfig::player_name },
+    {0,0}
+};
+
+static const ScriptVarBindRecord player_setters[] =
+{
+    { "name",           SETSVTYPE_STRING,  &GameConfig::player_name },
+    {0,0}
+};
 
 void GameConfig::registerScript(const NPString& table_name)
 {
@@ -383,6 +394,9 @@ void GameConfig::registerScript(const NPString& table_name)
                                        "ConfigServerMetaTable",
                                        server_getters, server_setters);
 
+    ScriptManager::bindStaticVariables(table_name + ".player",
+                                       "ConfigPlayerMetaTable",
+                                       player_getters, player_setters);
 }
 
 GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
