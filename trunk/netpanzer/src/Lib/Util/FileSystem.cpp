@@ -598,7 +598,7 @@ void WriteFile::writeLine(const std::string& buffer)
 
 FileReadException::FileReadException(size_t newobjread, size_t newobjrequested,
 	const std::string& msg) throw()
-    : std::range_error(msg), objread(newobjread),
+    : Exception(msg.c_str()), objread(newobjread),
 	objrequested(newobjrequested)
 {
 }

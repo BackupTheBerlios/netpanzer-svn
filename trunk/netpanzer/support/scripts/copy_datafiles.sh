@@ -18,4 +18,6 @@ find cache maps pics powerups scripts sound units wads ! -type d  ! -path '*/.sv
 		echo -n "."
 	done
 
+cp support/icon/netpanzer.ico "${DESTDIR}"
+
 echo "."

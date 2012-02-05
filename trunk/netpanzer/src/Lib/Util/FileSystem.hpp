@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
-#include <stdexcept>
+#include "Exception.hpp"
 #include "SDL.h"
 #include <string>
 #include <stdlib.h>
@@ -181,7 +181,7 @@ static inline int64_t getLastModTime(const std::string& filename)
 
 //---------------------------------------------------------------------------
 
-class FileReadException : public std::range_error
+class FileReadException : public Exception
 {
 public:
     FileReadException(size_t objread, size_t objrequested,

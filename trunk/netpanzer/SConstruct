@@ -5,34 +5,6 @@ import string
 import subprocess
 
 ################################################################
-# Set NetPanzer Version
-################################################################
-
-NPVERSION = ''
-SVERSION = ''
-
-try:
-    FILE = open('RELEASE_VERSION', 'r')
-    NPVERSION = FILE.readline().strip(' \n\r')
-    FILE.close()
-except:
-    pass
-
-try:
-    SVERSION = os.popen('svnversion').read()[:-1]
-    SVERSION = SVERSION.split(':')[-1]
-except:
-    pass
-
-print "NPVERSION = " + NPVERSION
-print "SVERSION = " + SVERSION
-if NPVERSION == '' and SVERSION != '':
-    NPVERSION = 'svn-' + SVERSION;
-
-thisplatform = sys.platform;
-print 'Building version ' + NPVERSION + ' in ' + thisplatform
-
-################################################################
 # Fix compiling with long lines in windows
 ################################################################
 class ourSpawn:
@@ -93,12 +65,50 @@ opts.AddVariables(
     ('sdlconfig','sets the sdl-config full path, cross compilation sure needs this', 'sdl-config'),
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
+    ('version', 'sets the version name to build, use "auto" for using the RELEASE_VERSION file or the default svn code', 'auto'),
 )
 
 env = Environment(ENV = os.environ, options = opts)
 Help(opts.GenerateHelpText(env))
 
+
+################################################################
+# Set NetPanzer Version
+################################################################
+
+NPVERSION = ''
+
+if env['version'] != 'auto':
+    NPVERSION = env['version']
+
+if NPVERSION == '':
+    try:
+        FILE = open('RELEASE_VERSION', 'r')
+        NPVERSION = FILE.readline().strip(' \n\r')
+        FILE.close()
+    except:
+        pass
+
+if NPVERSION == '':
+    try:
+        SVERSION = os.popen('svnversion').read()[:-1]
+        NPVERSION = SVERSION.split(':')[-1]
+    except:
+        pass
+
+if NPVERSION == '':
+    NPVERSION = 'testing';
+
+thisplatform = sys.platform;
+print 'Building version ' + NPVERSION + ' on ' + thisplatform
+
+#
+# 
+#
+
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
+env.Append( CCFLAGS = [ '-fno-stack-protector' ] )
+env.Append( CFLAGS = [  '-fno-stack-protector' ] )
 
 if env['datadir'] != '':
     env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
@@ -126,7 +136,7 @@ if env['cross'] == 'mingw':
     env.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
 
-
+env.Append( LINKFLAGS = [ '-static-libstdc++' ] )
 env.Append( LINKFLAGS = [ '-static-libgcc' ] )
 
 if env['mode'] == 'debug':
@@ -212,6 +222,8 @@ MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
 luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
+# _GNU_SOURCE to avoid requiring glibc 2.7 (lua uses fscanf)
+luaenv.Append(           CFLAGS = [ '-D_GNU_SOURCE=1'] )
 MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
 
 # BUILDS PHYSFS

@@ -1,12 +1,24 @@
 #! /bin/bash
 
-if [ ! -f RELEASE_VERSION ]; then
-    echo "ERROR: RELEASE_VERSION file missing, cannot create"
-    exit 1
+VERSION=''
+
+if [ ! -z "$1" ]; then
+    VERSION="$1"
+fi
+
+if [ -z "${VERSION}" ]; then
+    if [ ! -f RELEASE_VERSION ]; then
+        echo "ERROR: RELEASE_VERSION file missing, cannot create"
+        exit 1
+    fi
+    VERSION="`<RELEASE_VERSION`"
+fi
+
+if [ -z "${VERSION}" ]; then
+    VERSION="testing"
 fi
 
 RELEASEDIR="releases"
-VERSION="`<RELEASE_VERSION`"
 NPDEST=/tmp/netpanzer
 ZIPNAME="netpanzer-windows-${VERSION}.zip"
 EXENAME="build/mingw/release/netpanzer.exe"
@@ -14,10 +26,10 @@ EXENAME="build/mingw/release/netpanzer.exe"
 echo "Making netPanzer windows version ${VERSION}"
 
 scons cross=mingw \
-      sdlconfig=~/program/tools/crossmingw/bin/sdl-config
+      sdlconfig=~/program/tools/crossmingw/bin/sdl-config \
+      "version=${VERSION}"
 
-# with newer gcc seems stripping works as it should, doesn't need to strip again
-# i586-mingw32msvc-strip "${EXENAME}"
+i486-mingw32-strip "${EXENAME}"
 
 [ -d "${NPDEST}" ] && rm -rf "${NPDEST}"
 
