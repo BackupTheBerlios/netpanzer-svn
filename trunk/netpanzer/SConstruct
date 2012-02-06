@@ -53,12 +53,21 @@ def MakeStaticLib(localenv, libname, libdirs, pattern):
     sources = globSources(localenv, 'src/Lib', libdirs, pattern)
     localenv.StaticLibrary( libpath + libname, sources)
 
+
+def PrependPaths( base, str ):
+    r = []
+    for e in str.split(','):
+        r.append(base + e.strip())
+    return r
+    
 ################################################################
 # Add options
 ################################################################
 
-opts = Variables()
-opts.AddVariables(
+
+
+vars = Variables()
+vars.AddVariables(
     EnumVariable('mode', 'set compile mode', 'release', allowed_values=('debug', 'release')),
     EnumVariable('cross','do a cross compilation','', allowed_values=('','mingw','linux')),
     ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
@@ -66,11 +75,12 @@ opts.AddVariables(
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
     ('version', 'sets the version name to build, use "auto" for using the RELEASE_VERSION file or the default svn code', 'auto'),
+    ('with_lua', 'use internal lua or link with provided parameter, with_lua=lua5.1 will add -llua5.1 in the link stage, default is internal', 'internal'),
 )
 
-env = Environment(ENV = os.environ, options = opts)
-Help(opts.GenerateHelpText(env))
+env = Environment(ENV = os.environ, variables = vars)
 
+Help(vars.GenerateHelpText(env))
 
 ################################################################
 # Set NetPanzer Version
@@ -107,7 +117,7 @@ print 'Building version ' + NPVERSION + ' on ' + thisplatform
 #
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
-env.Append( CCFLAGS = [ '-fno-stack-protector' ] )
+#env.Append( CCFLAGS = [ '-fno-stack-protector' ] )
 env.Append( CFLAGS = [  '-fno-stack-protector' ] )
 
 if env['datadir'] != '':
@@ -167,7 +177,9 @@ env.Append(CCFLAGS = ['-Wall'])
 
 env.VariantDir(buildpath,'.',duplicate=0)
 
-luaenv = env.Clone()
+if env['with_lua'] == 'internal':
+    luaenv = env.Clone()
+    
 physfsenv = env.Clone()
 networkenv = env.Clone()    
 
@@ -175,7 +187,10 @@ networkenv = env.Clone()
 # Configure Environments
 ################################################################
 
-env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs', 'src/Lib/lua'] )
+env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs' ] )
+
+if env['with_lua'] == 'internal':
+    env.Append( CPPPATH = [ 'src/Lib/lua/etc', 'src/Lib/lua/src' ] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -220,11 +235,18 @@ else:
 networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
 MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 
-# BUILDS LUA
-luaenv.Append(           CPPPATH = [ 'src/Lib/lua'] )
-# _GNU_SOURCE to avoid requiring glibc 2.7 (lua uses fscanf)
-luaenv.Append(           CFLAGS = [ '-D_GNU_SOURCE=1'] )
-MakeStaticLib(          luaenv, 'nplua', 'lua', '*.c')
+# BUILDS LUA if requested
+if env['with_lua'] == 'internal':
+    luaenv.Append(           CPPPATH = [ 'src/Lib/lua/src'] )
+    # _GNU_SOURCE to avoid requiring glibc 2.7 (lua uses fscanf)
+    luaenv.Append(           CFLAGS = [ '-D_GNU_SOURCE=1', '-DLUA_ANSI'] )
+
+    luasources = 'lapi.c,lcode.c,ldebug.c,ldo.c,ldump.c,lfunc.c,lgc.c,llex.c,lmem.c,\
+                  lobject.c,lopcodes.c,lparser.c,lstate.c,lstring.c,ltable.c,ltm.c,\
+                  lundump.c,lvm.c,lzio.c,\
+                  lauxlib.c,lbaselib.c,ldblib.c,liolib.c,lmathlib.c,loslib.c,ltablib.c,\
+                  lstrlib.c,loadlib.c,linit.c'
+    luaenv.StaticLibrary( libpath + 'nplua', PrependPaths('src/Lib/lua/src/',luasources) )
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
@@ -254,7 +276,18 @@ env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
 if env.has_key('WINICON'):
     env.Append( NPSOURCES = env['WINICON'] )
 
-env.Prepend( LIBS = ['np2d','nplua','npnetwork','nplibs','npphysfs'] )
+wanted_libs = ['np2d']
+
+if env['with_lua'] == 'internal':
+    wanted_libs.append('nplua')
+else:
+    wanted_libs.append(env['with_lua'])
+    
+wanted_libs.append('npnetwork');
+wanted_libs.append('nplibs');
+wanted_libs.append('npphysfs');
+
+env.Prepend( LIBS = wanted_libs )
 env.Prepend( LIBPATH = libpath )
 
 netpanzer = env.Program( binpath+'netpanzer'+exeappend, env['NPSOURCES'])

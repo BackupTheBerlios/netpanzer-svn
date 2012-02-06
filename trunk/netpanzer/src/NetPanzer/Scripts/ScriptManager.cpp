@@ -109,6 +109,10 @@ ScriptManager::initialize()
 {
     if ( ! luavm )
     {
+        LOGGER.warning("Lua Version:   '%s'", LUA_RELEASE);
+        LOGGER.warning("Lua Copyright: '%s'", LUA_COPYRIGHT);
+        LOGGER.warning("Lua Authors:   '%s'", LUA_AUTHORS);
+        
         luavm = luaL_newstate();
         if ( luavm )
         {

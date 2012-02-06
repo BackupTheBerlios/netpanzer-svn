@@ -9,4 +9,4 @@ Icon=netpanzer
 Exec=netpanzer
 Terminal=false
 StartupNotify=false
-Categories=Application;Game;StrategyGame;
+Categories=Game;StrategyGame;

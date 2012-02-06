@@ -16,11 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "Scripts/ScriptManager.hpp"
-
-#include "lua/lua.hpp"
-
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -44,6 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Network/NetworkManager.hpp"
 
+#include "Scripts/ScriptManager.hpp"
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/DedicatedGameManager.hpp"
@@ -254,6 +250,8 @@ BaseGameManager *initialise(int argc, char** argv)
     }
 #endif
     
+    ScriptManager::initialize();
+    
     BaseGameManager *manager;
     // finally initialize the game objects
     try {
@@ -316,10 +314,7 @@ BaseGameManager *initialise(int argc, char** argv)
 int netpanzer_main(int argc, char** argv)
 {
     network::NetworkManager::initialize();
-    ScriptManager::initialize();
     
-    //ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
-
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
