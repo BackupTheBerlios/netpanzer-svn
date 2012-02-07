@@ -76,6 +76,7 @@ vars.AddVariables(
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
     ('version', 'sets the version name to build, use "auto" for using the RELEASE_VERSION file or the default svn code', 'auto'),
     ('with_lua', 'use internal lua or link with provided parameter, with_lua=lua5.1 will add -llua5.1 in the link stage, default is internal', 'internal'),
+    ('with_physfs', 'use internal physfs or link with provided parameter, with_physfs=physfs will add -lphysfs in the link stage, default is internal', 'internal'),
 )
 
 env = Environment(ENV = os.environ, variables = vars)
@@ -179,15 +180,20 @@ env.VariantDir(buildpath,'.',duplicate=0)
 
 if env['with_lua'] == 'internal':
     luaenv = env.Clone()
+
+if env['with_physfs'] == 'internal':
+    physfsenv = env.Clone()
     
-physfsenv = env.Clone()
 networkenv = env.Clone()    
 
 ################################################################
 # Configure Environments
 ################################################################
 
-env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer', 'src/Lib/physfs' ] )
+env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer' ] )
+
+if env['with_physfs'] == 'internal':
+    env.Append( CPPPATH = [ 'src/Lib/physfs' ] )
 
 if env['with_lua'] == 'internal':
     env.Append( CPPPATH = [ 'src/Lib/lua/etc', 'src/Lib/lua/src' ] )
@@ -249,14 +255,14 @@ if env['with_lua'] == 'internal':
     luaenv.StaticLibrary( libpath + 'nplua', PrependPaths('src/Lib/lua/src/',luasources) )
 
 # BUILDS PHYSFS
-physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
-physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
-MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
+if env['with_physfs'] == 'internal':
+    physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
+    physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
+    MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
-env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
-MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
+MakeStaticLib(env, 'np2d', '2D', '*.c*')
 
 # BUILDS REST OF LIBRARIES
 MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
@@ -285,7 +291,11 @@ else:
     
 wanted_libs.append('npnetwork');
 wanted_libs.append('nplibs');
-wanted_libs.append('npphysfs');
+
+if env['with_physfs'] == 'internal':
+    wanted_libs.append('npphysfs');
+else:
+    wanted_libs.append(env['with_physfs'])
 
 env.Prepend( LIBS = wanted_libs )
 env.Prepend( LIBPATH = libpath )
