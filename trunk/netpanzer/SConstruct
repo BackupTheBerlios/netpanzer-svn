@@ -77,6 +77,9 @@ vars.AddVariables(
     ('version', 'sets the version name to build, use "auto" for using the RELEASE_VERSION file or the default svn code', 'auto'),
     ('with_lua', 'use internal lua or link with provided parameter, with_lua=lua5.1 will add -llua5.1 in the link stage, default is internal', 'internal'),
     ('with_physfs', 'use internal physfs or link with provided parameter, with_physfs=physfs will add -lphysfs in the link stage, default is internal', 'internal'),
+    EnumVariable('with_libgcc', 'Link libgcc static or dynamic', 'static', allowed_values=('static', 'dynamic')),
+    EnumVariable('with_libstdcpp', 'Link libstdc++ static or dynamic', 'static', allowed_values=('static', 'dynamic')),
+    EnumVariable('with_stackprotector', 'Enable gcc stack protector (requires glibc 2.7)', 'no', allowed_values=('no', 'yes')),
 )
 
 env = Environment(ENV = os.environ, variables = vars)
@@ -118,8 +121,10 @@ print 'Building version ' + NPVERSION + ' on ' + thisplatform
 #
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
-#env.Append( CCFLAGS = [ '-fno-stack-protector' ] )
-env.Append( CFLAGS = [  '-fno-stack-protector' ] )
+
+if env['with_stackprotector'] == 'no':
+    #env.Append( CCFLAGS = [ '-fno-stack-protector' ] )
+    env.Append( CFLAGS = [  '-fno-stack-protector' ] )
 
 if env['datadir'] != '':
     env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
@@ -147,8 +152,11 @@ if env['cross'] == 'mingw':
     env.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
     env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
 
-env.Append( LINKFLAGS = [ '-static-libstdc++' ] )
-env.Append( LINKFLAGS = [ '-static-libgcc' ] )
+if env['with_libstdcpp'] == 'static':
+    env.Append( LINKFLAGS = [ '-static-libstdc++' ] )
+    
+if env['with_libgcc'] == 'static':
+    env.Append( LINKFLAGS = [ '-static-libgcc' ] )
 
 if env['mode'] == 'debug':
     env.Append(CCFLAGS = ['-g', '-O0'])
@@ -174,7 +182,6 @@ env.Append(CCFLAGS = ['-Wall'])
 #    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-lstdc++' ] )
 #    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
 #    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
-    
 
 env.VariantDir(buildpath,'.',duplicate=0)
 
