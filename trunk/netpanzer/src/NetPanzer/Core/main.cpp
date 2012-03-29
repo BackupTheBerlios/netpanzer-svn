@@ -318,7 +318,7 @@ int netpanzer_main(int argc, char** argv)
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
-    
+
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {

@@ -60,6 +60,7 @@ extern iXY resignPos;
 
 // This is the text area in the menus.
 extern iRect bodyTextRect;
+extern iRect newsRect;
 extern iRect MenuRect;
 
 // These are the possible background colors for the menus.

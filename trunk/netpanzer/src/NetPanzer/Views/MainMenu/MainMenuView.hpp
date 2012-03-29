@@ -21,14 +21,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
+#include "Network/NewsGetter.hpp"
 
 //--------------------------------------------------------------------------
 class MainMenuView : public MenuTemplateView
 {
+private:
+    NewsGetter news_getter;
+
 public:
     MainMenuView();
+    ~MainMenuView();
+
+    static void setNews(const std::string& news);
+    static const char * news_message;
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
+
 }; // end MainMenuView
 
 #endif // end __MainMenuView_hpp__
