@@ -19,45 +19,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef NEWSGETTER_HPP
 #define NEWSGETTER_HPP
 
-#include "Network/TCPSocket.hpp"
-#include <string>
+#include "HTTPClientSocket.hpp"
 
-class NewsGetter : public network::TCPSocketObserver
+class NewsGetter : public HTTPClientSocket
 {
 public:
     NewsGetter();
     ~NewsGetter() {}
-    void onDataReceived(network::TCPSocket *so, const char *data, const int len);
-    void onConnected(network::TCPSocket *so);
-    void onDisconected(network::TCPSocket *so);
-    void onSocketError(network::TCPSocket *so);
 
 private:
-    network::TCPSocket * socket;
-    enum
-    {
-        ERROR,
-        RESPONSE_LINE,
-        RESPONSE_CODE,
-        RESPONSE_TEXT,
-        HEADER_BEGIN,
-        HEADER_NAME,
-        HEADER_SKIP_SPACE,
-        HEADER_VALUE,
-        RECEIVING_DATA,
-        IGNORE
-    } state;
-
-    std::string token;
-    std::string header_name;
-    std::string news;
-
-    int wanted_len;
-
-    void handleReceivedByte(unsigned char data);
-    void onResponseFinished();
-    void handleHeader();
-
+    void onContentFinished();
+    void onSocketError(network::TCPSocket *so);
 };
 
 #endif // NEWSGETTER_HPP
