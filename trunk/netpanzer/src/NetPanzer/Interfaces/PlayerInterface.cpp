@@ -1,6 +1,6 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -47,12 +48,12 @@ static void setAlliance(PlayerID by_player, PlayerID with_player )
 {
     *(alliance_matrix + (by_player * PlayerInterface::getMaxPlayers()) + with_player ) = true;
 }
-
+ 
 static void clearAlliance(PlayerID by_player, PlayerID with_player )
 {
     *(alliance_matrix + (by_player * PlayerInterface::getMaxPlayers()) + with_player ) = false;
 }
-
+ 
 static void disconnectedPlayerAllianceCleanup(PlayerID index )
 {
     for ( PlayerID player_index = 0; player_index < PlayerInterface::getMaxPlayers(); ++player_index )
@@ -61,7 +62,7 @@ static void disconnectedPlayerAllianceCleanup(PlayerID index )
         clearAlliance( player_index, index );
     }
 }
-
+ 
 bool PlayerInterface::isAllied( PlayerID player, PlayerID with_player )
 {
     if ( player < max_players && with_player < max_players
@@ -72,7 +73,7 @@ bool PlayerInterface::isAllied( PlayerID player, PlayerID with_player )
     }
     return false;
 }
-
+ 
 bool PlayerInterface::isSingleAllied( PlayerID player, PlayerID with_player )
 {
     if ( player < max_players && with_player < max_players
@@ -82,7 +83,7 @@ bool PlayerInterface::isSingleAllied( PlayerID player, PlayerID with_player )
     }
     return false;
 }
-
+ 
 static void handleAllianceMessage(const int type,
                                   PlayerID by_player,
                                   PlayerID with_player)
@@ -92,7 +93,7 @@ static void handleAllianceMessage(const int type,
     if ( type == _player_make_alliance )
     {
         setAlliance(by_player, with_player);
-
+ 
         if ( by_player == local_player )
         {
             player_state = PlayerInterface::getPlayer(with_player);
@@ -115,8 +116,8 @@ static void handleAllianceMessage(const int type,
             if ( PlayerInterface::isSingleAllied( local_player, player_state->getID()) )
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                           "%s accepted your alliance request.",
-                                           player_state->getName().c_str());
+                                              "%s accepted your alliance request.",
+                                              player_state->getName().c_str());
             }
             else
             {
@@ -162,32 +163,42 @@ static void handleAllianceMessage(const int type,
                                               player_state->getName().c_str());
             }
         }
-
+ 
         clearAlliance(with_player, by_player);
     }
 }
-
+ 
 static void resetAllianceMatrix()
 {
     int matrix_size;
-
+ 
     matrix_size = PlayerInterface::getMaxPlayers() * PlayerInterface::getMaxPlayers();
-
+ 
     for ( int i = 0; i < matrix_size; i++ )
     {
         alliance_matrix[ i ] = false;
     }
 }
-
+ 
+void PlayerInterface::allyplayers(PlayerID by_player, PlayerID with_player )
+{
+    setAlliance( by_player, with_player );
+}
+ 
+void PlayerInterface::unallyplayers(PlayerID by_player, PlayerID with_player )
+{
+    clearAlliance( by_player, with_player );
+}
+ 
 void PlayerInterface::initialize(const unsigned int _max_players)
 {
     char temp_str[64];
     PlayerID player_id;
     max_players = _max_players;
-
+ 
     delete[] player_lists;
     player_lists = new PlayerState[max_players];
-
+ 
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
         player_lists[ player_id ].setID( player_id );
@@ -196,24 +207,24 @@ void PlayerInterface::initialize(const unsigned int _max_players)
         sprintf( temp_str, "Player %u", player_id );
         player_lists[ player_id ].setName( temp_str );
     }
-
+ 
     delete[] alliance_matrix;
     alliance_matrix = new bool [max_players * max_players];
     resetAllianceMatrix();
-
+ 
     mutex = SDL_CreateMutex();
     if(!mutex)
     {
         throw std::runtime_error("Couldn't create PlayerInterface mutex.");
     }
 }
-
+ 
 void PlayerInterface::reset()
 {
     resetPlayerStats(countPlayers() > 0);
     resetAllianceMatrix(); // XXX ALLY
 }
-
+ 
 void PlayerInterface::cleanUp()
 {
     delete[] player_lists;
@@ -221,34 +232,34 @@ void PlayerInterface::cleanUp()
     delete[] alliance_matrix;
     alliance_matrix = 0;
     max_players = 0;
-
+ 
     SDL_DestroyMutex(mutex);
     mutex = 0;
 }
-
+ 
 void PlayerInterface::lock()
 {
     SDL_mutexP(mutex);
 }
-
+ 
 void PlayerInterface::unLock()
 {
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
-        UnitType unit_type)
+                              UnitType unit_type)
 {
     SDL_mutexP(mutex);
     by_player->incKills( unit_type );
     on_player->incLosses( unit_type );
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::lockPlayerStats()
 {
     PlayerID player_id;
-
+ 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
@@ -256,11 +267,11 @@ void PlayerInterface::lockPlayerStats()
     } // ** for
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::unlockPlayerStats()
 {
     PlayerID player_id;
-
+ 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
@@ -268,11 +279,11 @@ void PlayerInterface::unlockPlayerStats()
     } // ** for
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::resetPlayerStats(bool keepAdmin)
 {
     PlayerID player_id;
-
+ 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
@@ -280,32 +291,32 @@ void PlayerInterface::resetPlayerStats(bool keepAdmin)
     } // ** for
     SDL_mutexV(mutex);
 }
-
+ 
 int PlayerInterface::getActivePlayerCount()
 {
     PlayerID player_id;
     int count = 0;
-
+ 
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
         player_lists[ player_id ].isActive() && count++;
     } // ** for
-
+ 
     return( count );
 }
-
+ 
 PlayerState* PlayerInterface::allocateLoopBackPlayer()
 {
     local_player_index = 0;
-
+ 
     SDL_mutexP(mutex);
     player_lists[local_player_index].setStateSelectingFlag();
     player_lists[local_player_index].unit_config.initialize();
     SDL_mutexV(mutex);
-
+ 
     return &player_lists[local_player_index];
 }
-
+ 
 PlayerID PlayerInterface::countPlayers()
 {
     PlayerID count;
@@ -316,12 +327,12 @@ PlayerID PlayerInterface::countPlayers()
     }
     return count;
 }
-
+ 
 PlayerState * PlayerInterface::allocateNewPlayer()
 {
     PlayerID player_id;
     PlayerState * res = 0;
-
+ 
     SDL_mutexP(mutex);
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
@@ -335,10 +346,9 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         }
     }
     SDL_mutexV(mutex);
-
     return( res );
 }
-
+ 
 void PlayerInterface::spawnPlayer( PlayerID player_id, const iXY &location )
 {
     if ( player_id < max_players )
@@ -354,12 +364,12 @@ void PlayerInterface::spawnPlayer( PlayerID player_id, const iXY &location )
         SDL_mutexV(mutex);
     }
 }
-
-
+ 
+ 
 bool PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** player_state )
 {
     PlayerID player_id;
-
+ 
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
         if ( player_lists[ player_id ].getKills() >= score_limit )
@@ -367,33 +377,33 @@ bool PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** playe
             *player_state = &player_lists[ player_id ];
             return( true );
         } // ** if
-
+ 
     } // ** for
-
+ 
     return( false );
 }
-
+ 
 static bool testRuleObjectiveOccupationRatio( PlayerID player_id,
-                                              float precentage )
+        float precentage )
 {
     ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
-
+ 
     size_t occupation_ratio = (size_t) ( ((float) num_objectives) * precentage  + 0.999);
-
+ 
     if (occupation_ratio == 0)
     {
         occupation_ratio = 1;
     }
-
+ 
     size_t occupied = 0;
     for ( int i = 0; i < num_objectives; ++i )
     {
         Objective *objective_state = ObjectiveInterface::getObjective(i);
-
+ 
         if ( objective_state->occupying_player != 0 )
         {
             PlayerID occuping_player_id = objective_state->occupying_player->getID();
-
+ 
             if ( occuping_player_id == player_id )
             {
                 occupied++;
@@ -405,19 +415,19 @@ static bool testRuleObjectiveOccupationRatio( PlayerID player_id,
             }
         }
     }
-
+ 
     if ( occupied >= occupation_ratio )
     {
         return true;
     }
-
+ 
     return false;
 }
-
+ 
 bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** player_state )
 {
     PlayerID player_id;
-
+ 
     for ( player_id = 0; player_id < max_players; ++player_id )
     {
         if ( testRuleObjectiveOccupationRatio(player_id, precentage) )
@@ -426,15 +436,15 @@ bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** p
             return true;
         } // ** if
     } // ** for
-
+ 
     return false;
 }
-
-
+ 
+ 
 bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **player_state )
 {
     if ( respawn_rule_player_index == max_players
-        || respawn_rule_player_index == INVALID_PLAYER_ID )
+            || respawn_rule_player_index == INVALID_PLAYER_ID )
     {
         respawn_rule_player_index = 0;
         *completed = true;
@@ -444,102 +454,104 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
     {
         *completed = false;
     }
-    
+ 
     if (  player_lists[ respawn_rule_player_index ].isPlaying()
-       && UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
+            && UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
     {
         *player_state = &player_lists[ respawn_rule_player_index ];
         ++respawn_rule_player_index;
         return( true );
     }
-
+ 
     ++respawn_rule_player_index;
     return( false );
 }
-
+ 
 void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
     const PlayerConnectID *connect_mesg
-        = (const PlayerConnectID *) message;
-
+    = (const PlayerConnectID *) message;
+ 
     local_player_index = connect_mesg->player_id;
-    if(local_player_index >= max_players) {
+    if(local_player_index >= max_players)
+    {
         LOGGER.warning("Invalide netMessageConnectID Message");
         return;
     }
-
+ 
 //    SDL_mutexP(mutex);
 //    player_lists[local_player_index].setFromNetworkPlayerState
 //        (&connect_mesg->connect_state);
 //    SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::netMessageSyncState(const NetMessage* message)
 {
     const PlayerStateSync *sync_mesg
-        = (const PlayerStateSync *) message;
+    = (const PlayerStateSync *) message;
     PlayerID player_id = sync_mesg->player_state.getPlayerIndex();
-
-    if(player_id >= max_players) {
+ 
+    if(player_id >= max_players)
+    {
         LOGGER.warning("Malformed MessageSyncState message");
         return;
     }
-    
+ 
     SDL_mutexP(mutex);
-        player_lists[player_id].setFromNetworkPlayerState(&sync_mesg->player_state);
-        // XXX ALLY
-        if ( player_lists[player_id].isFree() )
-        {
-            disconnectedPlayerAllianceCleanup(player_id);
-        }
-        if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
-        {
-            Desktop::setVisibility("GFlagSelectionView", true);
-        }
+    player_lists[player_id].setFromNetworkPlayerState(&sync_mesg->player_state);
+    // XXX ALLY
+    if ( player_lists[player_id].isFree() )
+    {
+        disconnectedPlayerAllianceCleanup(player_id);
+    }
+    if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
+    {
+        Desktop::setVisibility("GFlagSelectionView", true);
+    }
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 {
-    const PlayerScoreUpdate* score_update 
-        = (const PlayerScoreUpdate *) message;
-
+    const PlayerScoreUpdate* score_update
+    = (const PlayerScoreUpdate *) message;
+ 
     if(score_update->getKillByPlayerIndex() >= PlayerInterface::getMaxPlayers()
-            || score_update->getKillOnPlayerIndex() 
+            || score_update->getKillOnPlayerIndex()
             >= PlayerInterface::getMaxPlayers())
     {
         LOGGER.warning("Malformed score update packet.");
         return;
     }
-
+ 
     PlayerState* player1 = getPlayer(score_update->getKillByPlayerIndex());
     PlayerState* player2 = getPlayer(score_update->getKillOnPlayerIndex());
     setKill(player1, player2, (UnitType) score_update->unit_type );
 }
-
+ 
 void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
 {
     if ( GameConfig::game_allowallies == false )
     {
         return;
     }
-
+ 
     const PlayerAllianceRequest *allie_request
-        = (const PlayerAllianceRequest *) message;
-
+    = (const PlayerAllianceRequest *) message;
+ 
     if(allie_request->getAllieByPlayerIndex() >= max_players
-       || allie_request->getAllieWithPlayerIndex() >= max_players)
+            || allie_request->getAllieWithPlayerIndex() >= max_players)
     {
         LOGGER.warning("Invalid alliance request message");
         return;
     }
-
+ 
     SDL_mutexP(mutex);
     handleAllianceMessage(allie_request->alliance_request_type,
                           allie_request->getAllieByPlayerIndex(),
                           allie_request->getAllieWithPlayerIndex());
     SDL_mutexV(mutex);
-
+ 
     PlayerAllianceUpdate allie_update;
     allie_update.set(allie_request->getAllieByPlayerIndex(),
                      allie_request->getAllieWithPlayerIndex(),
@@ -556,108 +568,111 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
                             &allie_update, sizeof(PlayerAllianceUpdate));
     }
 }
-
+ 
 void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
 {
     const PlayerAllianceUpdate* allie_update
-        = (const PlayerAllianceUpdate *) message;
-
+    = (const PlayerAllianceUpdate *) message;
+ 
     if(allie_update->getAllieByPlayerIndex() >= max_players
-       || allie_update->getAllieWithPlayerIndex() >= max_players) {
+            || allie_update->getAllieWithPlayerIndex() >= max_players)
+    {
         LOGGER.warning("Invalid alliance update message");
         return;
     }
-
+ 
     SDL_mutexP(mutex);
     handleAllianceMessage(allie_update->alliance_update_type,
                           allie_update->getAllieByPlayerIndex(),
                           allie_update->getAllieWithPlayerIndex());
     SDL_mutexV(mutex);
 }
-
+ 
 void PlayerInterface::processNetMessage(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
-    switch(message->message_id) {
-        case _net_message_id_player_connect_id :
-            netMessageConnectID(message);
-            break;
-
-        case _net_message_id_player_sync_flag:
-            {
-                const PlayerFlagSync* pfs = (const PlayerFlagSync*)message;
-                ResourceManager::updateFlagData(pfs->player_id,
-                                                pfs->player_flag,
-                                                sizeof(pfs->player_flag) );
-
-                player_lists[pfs->player_id].setStateActive();
-            }
-            break;
-
-        case _net_message_id_player_update_flag:
-            {
-                const UpdatePlayerFlag* upf = (const UpdatePlayerFlag*)message;
-                ResourceManager::updateFlagData(packet->fromPlayer,
-                                                upf->player_flag,
-                                                sizeof(upf->player_flag) );
-
-                PlayerFlagSync pfs;
-                pfs.player_id = packet->fromPlayer;
-                memcpy(pfs.player_flag, upf->player_flag, sizeof(pfs.player_flag));
-
-                player_lists[packet->fromPlayer].setStateActive();
-
-                SERVER->broadcastMessage(&pfs, sizeof(pfs));
-            }
-            break;
-
-        case _net_message_id_player_sync_state :
-            netMessageSyncState(message);
-            break;
-
-        case _net_message_id_player_score_update :
-            netMessageScoreUpdate(message);
-            break;
-
-        case _net_message_id_player_alliance_request :
-            netMessageAllianceRequest(message);
-            break;
-
-        case _net_message_id_player_alliance_update :
-            netMessageAllianceUpdate(message);
-            break;
-
-        case _net_message_id_player_flagtimer_update :
-                const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
-                gameconfig->game_changeflagtime = pftu->getflagtimer();
-            break;
+    switch(message->message_id)
+    {
+    case _net_message_id_player_connect_id :
+        netMessageConnectID(message);
+        break;
+ 
+    case _net_message_id_player_sync_flag:
+    {
+        const PlayerFlagSync* pfs = (const PlayerFlagSync*)message;
+        ResourceManager::updateFlagData(pfs->player_id,
+                                        pfs->player_flag,
+                                        sizeof(pfs->player_flag) );
+ 
+        player_lists[pfs->player_id].setStateActive();
+    }
+    break;
+ 
+    case _net_message_id_player_update_flag:
+    {
+        const UpdatePlayerFlag* upf = (const UpdatePlayerFlag*)message;
+        ResourceManager::updateFlagData(packet->fromPlayer,
+                                        upf->player_flag,
+                                        sizeof(upf->player_flag) );
+ 
+        PlayerFlagSync pfs;
+        pfs.player_id = packet->fromPlayer;
+        memcpy(pfs.player_flag, upf->player_flag, sizeof(pfs.player_flag));
+ 
+        player_lists[packet->fromPlayer].setStateActive();
+ 
+        SERVER->broadcastMessage(&pfs, sizeof(pfs));
+    }
+    break;
+ 
+    case _net_message_id_player_sync_state :
+        netMessageSyncState(message);
+        break;
+ 
+    case _net_message_id_player_score_update :
+        netMessageScoreUpdate(message);
+        break;
+ 
+    case _net_message_id_player_alliance_request :
+        netMessageAllianceRequest(message);
+        break;
+ 
+    case _net_message_id_player_alliance_update :
+        netMessageAllianceUpdate(message);
+        break;
+ 
+    case _net_message_id_player_flagtimer_update :
+        const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
+        gameconfig->game_changeflagtime = pftu->getflagtimer();
+        break;
     }
 }
-
+ 
 void PlayerInterface::disconnectPlayerCleanup( PlayerID player_id )
 {
     PlayerState *player_state = getPlayer( player_id );
     if ( player_state )
     {
         SDL_mutexP(mutex);
-
+ 
         // XXX ALLY
         disconnectedPlayerAllianceCleanup(player_id);
-
+ 
         player_state->setStateFree();
         player_state->setAdmin(false);
-
+ 
         PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
-
+ 
         SDL_mutexV(mutex);
-
+ 
         SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
     }
 }
-
+ 
 void PlayerInterface::SyncFlagTimer()
 {
     PlayerFlagTimerUpdate player_flagtimer_update(gameconfig->game_changeflagtime);
-    
+ 
     SERVER->broadcastMessage(&player_flagtimer_update, sizeof(PlayerFlagTimerUpdate));
 }
+ 

@@ -39,6 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
 #include "Interfaces/TileInterface.hpp"
@@ -203,6 +204,8 @@ void GameManager::initializeGameLogic()
     UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
     PathScheduler::initialize();
     PowerUpInterface::resetLogic();
+    // todo : change it for add more team
+    if (GameConfig::game_teammode) TeamManager::initialize(2);
 }
 
 // ******************************************************************
@@ -294,6 +297,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "RespawnType: "  << gameconfig->getRespawnTypeString() << "\n"
         << "Mapcycle: "     << *GameConfig::game_mapcycle << "\n"
         << "Powerups: "     << (GameConfig::game_powerups ? "yes" : "no") << "\n"
+        << "TeamMode: "     << (GameConfig::game_teammode ? "yes" : "no") << "\n"
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
     
@@ -313,9 +317,16 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 void GameManager::spawnPlayer( PlayerID player )
 {
     sound->stopTankIdle();
-
+    iXY spawn_point;
     // ** Get a new spawn point and spawn the player **
-    iXY spawn_point = MapInterface::getFreeSpawnPoint();
+    if (GameConfig::game_teammode)
+    {
+        spawn_point = TeamManager::getPlayerSpawnPoint(player);
+    }
+    else 
+    {
+        spawn_point = MapInterface::getFreeSpawnPoint();
+    }
     PlayerInterface::spawnPlayer( player, spawn_point );
 
     //** Change the location of the view camera to the spawn point **
@@ -382,25 +393,48 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
     switch (connect_alert->alert_enum) {
         case _connect_alert_mesg_connect:
-            ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                          "%s has joined the game.",
-                    player_state->getName().c_str());
+
+            if (GameConfig::game_teammode)
+            {
+                TeamManager::addPlayerinTeam(connect_alert->getPlayerID(), connect_alert->getTeamID());
+                ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
+                                        "%s has joined the game in team %d.",
+                                        player_state->getName().c_str(), 
+                                        player_state->getTeamID());
+            } else
+            {
+                 ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
+                                        "%s has joined the game.",
+                                        player_state->getName().c_str());
+            }
 
             break;
 
         case _connect_alert_mesg_disconnect: 
+            if (GameConfig::game_teammode)
+            {
+                TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
+            }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                          "%s has left the game.",
-                    player_state->getName().c_str());
+                                        "%s has left the game.",
+                                        player_state->getName().c_str());
             break;
 
         case _connect_alert_mesg_client_drop:
+            if (GameConfig::game_teammode)
+            {
+                TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
+            }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                     "Connection to %s has been unexpectedly broken.",
                     player_state->getName().c_str());
             break;
 
         case _connect_alert_mesg_client_kicked:
+            if (GameConfig::game_teammode)
+            {
+                TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
+            }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                 "Player %s was kicked.",
                 player_state->getName().c_str());
@@ -432,6 +466,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setWindSpeed(GameConfig::game_windspeed);
     game_setup->setGameType(GameConfig::game_gametype);
     game_setup->powerup_state = GameConfig::game_powerups;
+    game_setup->teammode_state = GameConfig::game_teammode;
     game_setup->setFragLimit(GameConfig::game_fraglimit);
     game_setup->setTimeLimit(GameConfig::game_timelimit);
     game_setup->setElapsedTime(getGameTime());
@@ -485,6 +520,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     GameConfig::game_cloudcoverage = game_setup->getCloudCoverage();
     GameConfig::game_windspeed = (int) game_setup->getWindSpeed();
     GameConfig::game_powerups = game_setup->powerup_state;
+    GameConfig::game_teammode = game_setup->teammode_state;
     GameConfig::game_gametype = game_setup->getGameType();
     GameConfig::game_fraglimit = game_setup->getFragLimit();
     GameConfig::game_timelimit = game_setup->getTimeLimit();

@@ -32,6 +32,8 @@ public:
 
     void loadSpawnFile(const std::string& file_path);
     iXY getFreeSpawnPoint();
+    iXY getMinSpawnPoint();
+    iXY getMaxSpawnPoint();
 };
 
 #endif // ** _SPAWNLIST_HPP

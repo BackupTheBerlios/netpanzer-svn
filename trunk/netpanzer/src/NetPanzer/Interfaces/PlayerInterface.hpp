@@ -29,6 +29,7 @@ protected:
     static PlayerState *player_lists;
     static PlayerID max_players;
     static PlayerID local_player_index;
+    static Uint8 team_index;
 
     static SDL_mutex* mutex;
 
@@ -131,6 +132,9 @@ public:
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
     
     static void SyncFlagTimer();
+    
+    static void allyplayers(PlayerID by_player, PlayerID with_player );
+    static void unallyplayers(PlayerID by_player, PlayerID with_player );
 
 protected:
     static PlayerID respawn_rule_player_index;

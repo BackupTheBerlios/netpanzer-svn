@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Util/Log.hpp"
 
 SpawnList::SpawnList()
 {
@@ -79,4 +80,26 @@ iXY SpawnList::getFreeSpawnPoint()
     }
 
     return at(spawn_index);
+}
+iXY SpawnList::getMinSpawnPoint()
+{
+    iXY curpoint , minpoint = at(0);
+    
+    for ( size_t i = 0; i < size(); ++i )
+    {
+        curpoint = at(i); 
+        if ( (curpoint.x < minpoint.x) && (curpoint.y < minpoint.y) ) minpoint = curpoint;
+    }
+    return minpoint;
+}
+iXY SpawnList::getMaxSpawnPoint()
+{
+    iXY curpoint, maxpoint = at(0);
+    
+    for ( size_t i = 0; i < size(); ++i )
+    {
+        curpoint = at(i);  
+        if ( (curpoint.x > maxpoint.x) && (curpoint.y > maxpoint.y) ) maxpoint = curpoint;
+    }
+    return maxpoint;
 }

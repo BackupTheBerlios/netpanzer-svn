@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "NetMessage.hpp"
 #include "Types/iXY.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -141,6 +142,7 @@ class SystemConnectAlert : public NetMessage
 {
 private:
     PlayerID player_index;
+    Uint8 team_index; 
 public:
     Uint8 alert_enum;
 
@@ -153,12 +155,18 @@ public:
     void set(const PlayerID player_idx, unsigned char alert_type)
     {
         player_index = player_idx;
+        team_index = PlayerInterface::getPlayer(player_idx)->getTeamID();
         alert_enum = alert_type;
     }                                               
     
     PlayerID getPlayerID() const
     {
         return player_index;
+    }
+    
+    PlayerID getTeamID() const
+    {
+        return team_index;
     }
 
 } __attribute__((packed));

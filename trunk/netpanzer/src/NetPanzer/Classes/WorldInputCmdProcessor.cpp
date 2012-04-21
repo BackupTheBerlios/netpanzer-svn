@@ -234,7 +234,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         // XXX ALLY
         if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
         {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            if ( KeyboardInterface::getKeyState(SDLK_a) && !GameConfig::game_teammode )
             {
                 if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
                 {
@@ -254,7 +254,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         }
         else
         {
-            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            if ( KeyboardInterface::getKeyState(SDLK_a) && !GameConfig::game_teammode )
             {
                 return _cursor_break_allie;
             }
@@ -400,7 +400,8 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
             && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
     {
-        setKeyboardInputModeChatMesg();
+        if (GameConfig::game_teammode) setKeyboardInputModeAllieChatMesg();
+        else setKeyboardInputModeChatMesg();
     }
 
     if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))

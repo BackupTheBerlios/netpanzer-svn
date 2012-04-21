@@ -177,10 +177,11 @@ public:
     char     map_name[32];
 private:
     Sint32  cloud_coverage;
-    float    wind_speed;
+    float   wind_speed;
     Sint32  game_type;
 public:
     Uint8  powerup_state;
+    Uint8  teammode_state;
 private:
     Sint32  frag_limit;
     Sint32  time_limit;

@@ -64,6 +64,7 @@ int       GameConfig::game_maxunits = 8*40;
 int       GameConfig::game_timelimit = 30;
 int       GameConfig::game_fraglimit = 300;
 bool      GameConfig::game_powerups = true;
+bool      GameConfig::game_teammode = false;
 int       GameConfig::game_occupationpercentage = 75;
 bool      GameConfig::game_allowallies = true;
 int       GameConfig::game_cloudcoverage = 0;
@@ -191,6 +192,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "timelimit",          GETSVTYPE_INT,     &GameConfig::game_timelimit },
     { "fraglimit",          GETSVTYPE_INT,     &GameConfig::game_fraglimit },
     { "powerups",           GETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
+    { "teammode",           GETSVTYPE_BOOLEAN, &GameConfig::game_teammode },
     { "occupationpercentage",GETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
     { "allowallies",        GETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
     { "cloudcoverage",      GETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
@@ -219,6 +221,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "timelimit",          SETSVTYPE_INT,     &GameConfig::game_timelimit },
     { "fraglimit",          SETSVTYPE_INT,     &GameConfig::game_fraglimit },
     { "powerups",           SETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
+    { "teammode",           SETSVTYPE_BOOLEAN, &GameConfig::game_teammode },
     { "occupationpercentage",SETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
     { "allowallies",        SETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
     { "cloudcoverage",      SETSVTYPE_INT,     &GameConfig::game_cloudcoverage },

@@ -20,11 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 
-#include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "NetworkClient.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
 #include "Resources/ResourceManager.hpp"
@@ -217,6 +218,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
             LoadingView::append( "Game Synchronized" );
             LoadingView::loadFinish();
             connection_state = _connect_state_idle;
+            if (GameConfig::game_teammode) TeamManager::SynchPlayers();
         }
         break;
     }

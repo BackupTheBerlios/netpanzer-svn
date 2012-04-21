@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/TeamManager.hpp"
 
 #include "Objectives/ObjectiveInterface.hpp"
 #include "SystemNetMessage.hpp"
@@ -393,6 +394,10 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 
         if ( player && sendalert && ! kicked)
         {
+            if (GameConfig::game_teammode)
+            {
+                TeamManager::removePlayer(player->getID(), player->getTeamID());
+            }
             ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
                                       "'%s' has left.",
                                       player->getName().c_str());

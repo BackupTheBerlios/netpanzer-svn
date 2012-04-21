@@ -124,7 +124,7 @@ void BaseGameManager::initializeGameObjects()
     PowerUpInterface::initialize();
     ParticleInterface::initParticleSystems();
 
-    GameManager::initializeGameLogic();
+//    GameManager::initializeGameLogic();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameObjects()

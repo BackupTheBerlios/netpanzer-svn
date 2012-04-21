@@ -49,6 +49,7 @@ private:
     friend class PlayerStateSync;
     
     PlayerID id;
+    Uint8 teamid;
     char name[64];
     Uint8 status;
     Sint16 kills;
@@ -67,6 +68,7 @@ class PlayerState
 {
 private:
     PlayerID id;
+    Uint8 team_id;
     std::string name;
     unsigned char status;
     short kills;
@@ -91,6 +93,7 @@ public:
     const std::string& getName() const;
 
     PlayerID getID() const { return id; }
+    Uint8 getTeamID() const { return team_id; }
 
     void resetAutokick();
     bool checkAutokick();
@@ -108,6 +111,7 @@ public:
     short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
     void setID( PlayerID id );
+    void setTeamID( Uint8 team_id );
     FlagID getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;

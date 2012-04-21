@@ -223,6 +223,7 @@ void RankView::notifyMoveTo()
 void RankView::lMouseDown(const iXY& pos)
 {
     GameTemplateView::lMouseDown(pos);
+    if (GameConfig::game_teammode) return;
     // XXX ALLY
     if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
     {

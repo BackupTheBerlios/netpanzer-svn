@@ -292,6 +292,11 @@ void PlayerState::setID( PlayerID id )
     this->id = id;
 }
 
+void PlayerState::setTeamID( Uint8 team_id )
+{
+    this->team_id = team_id;
+}
+
 FlagID PlayerState::getFlag() const
 {
     return id;
@@ -324,6 +329,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
 void PlayerState::getNetworkPlayerState(NetworkPlayerState& state) const
 {
     state.id = id;
+    state.teamid = team_id;
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.status = status;
@@ -342,6 +348,7 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     tmp[63] = 0;
     name = tmp;
     id = state->id;
+    team_id = state->teamid;
     status = state->status;
     kills = ltoh16(state->kills);
     kill_points = ltoh16(state->kill_points);

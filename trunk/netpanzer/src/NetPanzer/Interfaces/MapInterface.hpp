@@ -165,6 +165,14 @@ public:
     {
         return spawn_list.getFreeSpawnPoint();
     }
+    static iXY getMinSpawnPoint()
+    {
+        return spawn_list.getMinSpawnPoint();
+    }
+    static iXY getMaxSpawnPoint()
+    {
+        return spawn_list.getMaxSpawnPoint();
+    }
 
     static SpawnList* getSpawnList()
     {

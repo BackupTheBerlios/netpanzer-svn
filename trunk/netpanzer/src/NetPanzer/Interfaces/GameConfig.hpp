@@ -143,6 +143,7 @@ public:
     static int       game_timelimit;
     static int       game_fraglimit;
     static bool      game_powerups;
+    static bool      game_teammode;
     static int       game_occupationpercentage;
     static bool      game_allowallies;
     static int       game_cloudcoverage;

@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/TeamManager.hpp"
 
 enum ConnectionState
 {
@@ -84,12 +85,24 @@ static void sendConnectionAlert(ClientSocket * client)
 
     player_state = PlayerInterface::getPlayer( client->getPlayerIndex() );
 
-    connect_alert.set( client->getPlayerIndex(), _connect_alert_mesg_connect );
 
-    ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
+    if (GameConfig::game_teammode)
+    {
+        TeamManager::addPlayer(player_state->getID());
+        ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
+                                  "'%s' [%s] has joined the game int team %d.",
+                                  player_state->getName().c_str(),
+                                  client->getFullIPAddress().c_str(),
+                                  player_state->getTeamID());
+    } else
+    {
+        ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                   "'%s' [%s] has joined the game.",
                                   player_state->getName().c_str(),
-                                  client->getFullIPAddress().c_str() );
+                                  client->getFullIPAddress().c_str());
+    }
+
+    connect_alert.set( client->getPlayerIndex(), _connect_alert_mesg_connect );
 
     player_state->resetAutokick();
 
@@ -729,7 +742,7 @@ public:
         connect_client->sendMessage( &state_mesg,
                                      sizeof(ConnectProcessStateMessage));
         sendConnectionAlert( connect_client );
-
+        
         return connect_state_idle;
     }
 };
