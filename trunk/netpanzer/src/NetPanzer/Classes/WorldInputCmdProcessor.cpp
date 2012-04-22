@@ -339,6 +339,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
     
+    if ( KeyboardInterface::getKeyPressed(SDLK_t) )
+    {
+        if (GameConfig::game_teammode)
+            Desktop::toggleVisibility( "GTeamView" );
+    }
+
     if ( KeyboardInterface::getKeyPressed(SDLK_m) )
     {
         Desktop::toggleVisibility( "MiniMapView" );

@@ -25,7 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapsManager.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
- 
+#include "Interfaces/TeamManager.hpp"
+
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/GameControlNetMessage.hpp"
@@ -416,7 +417,7 @@ void GameControlRulesDaemon::checkGameRules()
         case _gametype_fraglimit:
             if (GameConfig::game_teammode)
             {
-                if (TeamManager::testRuleScoreLimit( long score_limit ))
+                if (TeamManager::testRuleScoreLimit( GameConfig::game_fraglimit ))
                     onFraglimitGameCompleted();
             }
             else

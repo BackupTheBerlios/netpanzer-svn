@@ -1,0 +1,155 @@
+/*
+Copyright (C) 2012 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+ 
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
+#include "Interfaces/Team.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Util/Log.hpp"
+ 
+Team       * TeamManager::Teams_lists = 0;
+Uint8        TeamManager::max_Teams = 0;
+ 
+void TeamManager::initialize(const Uint8 _max_teams)
+{
+ 
+    max_Teams = _max_teams;
+    int team_id;
+ 
+    delete[] Teams_lists;
+    Teams_lists = new Team[max_Teams];
+ 
+    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[ team_id ].initialize(GameConfig::game_maxplayers);
+        Teams_lists[ team_id ].setID( team_id );
+    }
+}
+ 
+void TeamManager::addPlayer(PlayerID player_id)
+{
+    int team_id;
+    int lowTeam = 0, countPlayers = Teams_lists[ 0 ].countPlayers();
+ 
+    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        //LOGGER.warning("number of players %d in team %d", Teams_lists[ team_id ].countPlayers(), team_id);
+        if (Teams_lists[ team_id ].countPlayers() < countPlayers)
+        {
+            countPlayers = Teams_lists[ team_id ].countPlayers();
+            lowTeam = team_id;
+        }
+    }
+    //LOGGER.warning("add players %d in team %d", player_id, lowTeam);
+    Teams_lists[ lowTeam ].addPlayer(player_id);
+}
+ 
+void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
+{
+    //LOGGER.warning("add players %d in team %d", player_id, team_id);
+    Teams_lists[ team_id ].addPlayer(player_id);
+}
+ 
+void TeamManager::removePlayer(PlayerID player_id, Uint8 team_id)
+{
+    Teams_lists[ team_id ].removePlayer(player_id);
+}
+ 
+void TeamManager::SynchPlayers()
+{
+    for ( PlayerID _player_id = 0; _player_id < PlayerInterface::getMaxPlayers(); ++_player_id )
+    {
+        if (PlayerInterface::isPlayerActive(_player_id))
+        {
+            Uint8 Team_id = PlayerInterface::getPlayer(_player_id)->getTeamID();
+            Uint8 Player_id = PlayerInterface::getPlayer(_player_id)->getID();
+            Teams_lists[ Team_id ].addPlayer(Player_id);
+        }
+    }
+}
+ 
+void TeamManager::cleanUp()
+{
+    Uint8 team_id;
+    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[ team_id ].cleanUp();
+    }
+    delete[] Teams_lists;
+    Teams_lists = 0;
+    max_Teams = 0;
+}
+ 
+void TeamManager::spawnTeams()
+{
+    iXY spawn_point = MapInterface::getMinSpawnPoint();
+    Teams_lists[ 0 ].spawnTeam(spawn_point);
+    spawn_point = MapInterface::getMaxSpawnPoint();
+    Teams_lists[ 1 ].spawnTeam(spawn_point);
+}
+ 
+void TeamManager::spawnPlayer(PlayerID player_id)
+{
+    Uint8 Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
+    iXY spawn_point;
+    switch (Team_id)
+    {
+    case 0:
+        spawn_point = MapInterface::getMinSpawnPoint();
+        break;
+    case 1:
+        spawn_point = MapInterface::getMaxSpawnPoint();
+        break;
+    default:
+        spawn_point = MapInterface::getFreeSpawnPoint();
+    }
+    Teams_lists[ Team_id ].spawnPlayer(player_id, spawn_point);
+}
+ 
+iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
+{
+    Uint8 Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
+ 
+    iXY spawn_point;
+    switch (Team_id)
+    {
+    case 0:
+        spawn_point = MapInterface::getMinSpawnPoint();
+        break;
+    case 1:
+        spawn_point = MapInterface::getMaxSpawnPoint();
+        break;
+    default:
+        spawn_point = MapInterface::getFreeSpawnPoint();
+    }
+    return spawn_point;
+}
+ 
+bool TeamManager::testRuleScoreLimit( long score_limit )
+{
+    Uint8 team_id;
+    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        if ( Teams_lists[team_id].getTeamScore() >= score_limit )
+            return( true );
+    }
+    return( false );
+}
+ 
+ 
