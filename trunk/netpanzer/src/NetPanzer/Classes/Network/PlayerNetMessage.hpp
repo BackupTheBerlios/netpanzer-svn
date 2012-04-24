@@ -28,7 +28,8 @@ enum { _net_message_id_player_connect_id,
        _net_message_id_player_score_update,
        _net_message_id_player_alliance_request,
        _net_message_id_player_alliance_update,
-       _net_message_id_player_flagtimer_update
+       _net_message_id_player_flagtimer_update,
+       _net_message_id_player_changeteam_request
      };
 
 #ifdef MSVC
@@ -226,6 +227,42 @@ public:
     }
 }
 __attribute__((packed));
+
+enum { change_team_request,
+       change_team_Accepted
+     };
+
+class PlayerTeamRequest : public NetMessage
+{
+private:
+    PlayerID player_index;
+    Uint8 team_index;
+public:
+    Uint8  request_type;
+
+    PlayerTeamRequest()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_changeteam_request;
+    }
+
+    void set(PlayerID player_idx, Uint8 team_idx, Uint8 type_request)
+    {
+        this->player_index = player_idx;
+        this->team_index = team_idx;
+        this->request_type = type_request;
+    }
+    PlayerID getPlayerIndex() const
+    {
+        return player_index;
+    }
+    Uint8 gettoteamindex() const
+    {
+        return team_index;
+    }
+}
+__attribute__((packed));
+
 
 #ifdef MSVC
 #pragma pack()

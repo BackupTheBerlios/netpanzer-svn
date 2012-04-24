@@ -588,6 +588,24 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
     SDL_mutexV(mutex);
 }
  
+void PlayerInterface::netMessageChangeTeamRequest(const NetMessage* message)
+{
+    const PlayerTeamRequest* changeTeamRequest
+    = (const PlayerTeamRequest *) message;
+    
+    switch(changeTeamRequest->request_type)
+    {
+    case change_team_request :
+        TeamManager::serverrequestchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
+        break;
+ 
+    case change_team_Accepted:
+        TeamManager::PlayerchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
+        break;
+    }
+
+}
+
 void PlayerInterface::processNetMessage(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
@@ -639,6 +657,10 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
  
     case _net_message_id_player_alliance_update :
         netMessageAllianceUpdate(message);
+        break;
+
+    case _net_message_id_player_changeteam_request :
+        netMessageChangeTeamRequest(message);
         break;
  
     case _net_message_id_player_flagtimer_update :

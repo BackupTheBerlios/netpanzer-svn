@@ -16,11 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
  
+#include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/Team.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
  
 Team       * TeamManager::Teams_lists = 0;
@@ -143,13 +147,47 @@ iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
  
 bool TeamManager::testRuleScoreLimit( long score_limit )
 {
-    Uint8 team_id;
-    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
     {
         if ( Teams_lists[team_id].getTeamScore() >= score_limit )
             return( true );
     }
     return( false );
 }
+
+void TeamManager::PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam)
+{
+    PlayerTeamRequest Changeteam_request;
+    Changeteam_request.set(player_id, newteam, change_team_request);
+    CLIENT->sendMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
+}
+
+void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
+{
+    Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
+    
+    if ( Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
+    {
+        Teams_lists[current_team].removePlayer(player_id);
+        Teams_lists[newteam].addPlayer(player_id);
+        PlayerTeamRequest Changeteam_request;
+        
+        Changeteam_request.set(player_id, newteam, change_team_Accepted);
+        SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
+    }
+}
  
+void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
+{
+    LOGGER.warning("change Team %d %d", player_id, team_idx);
+    Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
+    Teams_lists[current_team].removePlayer(player_id);
+    Teams_lists[team_idx].addPlayer(player_id);
+    ConsoleInterface::postMessage(Color::yellow, false, 0, 
+                                  "%s has changed to team %d.", 
+                                  PlayerInterface::getPlayer(player_id)->getName().c_str(), team_idx);
+}
+
+
+
  

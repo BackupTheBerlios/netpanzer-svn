@@ -144,6 +144,8 @@ protected:
     static void netMessageAllianceRequest(const NetMessage *message );
     static void netMessageAllianceUpdate(const NetMessage *message );
 
+    static void netMessageChangeTeamRequest(const NetMessage* message);
+
 public:
     static void processNetMessage(const NetPacket *packet );
     static void disconnectPlayerCleanup( PlayerID player_id );

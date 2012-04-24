@@ -69,6 +69,15 @@ void Team::addPlayer(PlayerID player_id)
 void Team::removePlayer(PlayerID player_id)
 {
    // LOGGER.warning("Team::removePlayer %d", player_id);
+    for ( PlayerID _player_id = 0; _player_id < max_players; ++_player_id )
+    {
+        if (player_lists[ _player_id ] != 0xFF) 
+        {
+            //LOGGER.warning("ally %d with %d", _player_id, player_id);
+            PlayerInterface::unallyplayers( _player_id, player_id);
+            PlayerInterface::unallyplayers( player_id, _player_id);
+        }
+    }
     player_lists[ player_id ] = 0xFF;
 }
 

@@ -43,6 +43,9 @@ public:
     static void removePlayer(PlayerID player_id, Uint8 team_id);
 
     static bool testRuleScoreLimit( long score_limit );
+    static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
+    static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);
+    static void PlayerchangeTeam(PlayerID player_id, Uint8 team_idx);
 };
 
 #endif // ** _TEAMMANAGER_HPP

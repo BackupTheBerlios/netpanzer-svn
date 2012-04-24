@@ -22,10 +22,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
 
-static const char * stats_format = "%-20s%6i%7i%7i%6i";
+static const char * stats_format = "%-20s%6i%7i";
+static Uint8 newteam = 0;
 
-GTeamView::GTeamView() : View()
+static void bChangeTeam()
+{
+    TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
+}
+
+GTeamView::GTeamView() : GameTemplateView()
 {
     setSearchName("GTeamView");
     setTitle("GTeamView");
@@ -45,21 +52,30 @@ void GTeamView::init()
 
     iRect viewrect = getClientRect();
 
-    rect.min.x = (viewrect.getSizeX()/2) - 250;
-    rect.min.y = (viewrect.getSizeY()/2) - 250;
-    rect.max.x = rect.min.x + 500;
-    rect.max.y = rect.min.y + 500;
+    
+    firstrect.min.x = (viewrect.getSizeX()/2) - 350;
+    firstrect.min.y = (viewrect.getSizeY()/2) - 250;
+    firstrect.max.x = firstrect.min.x + 350;
+    firstrect.max.y = firstrect.min.y + 500;
+    
+    secondrect.min.x = firstrect.max.x+30;
+    secondrect.min.y = firstrect.min.y;
+    secondrect.max.x = secondrect.min.x + 350;
+    secondrect.max.y = secondrect.min.y + 500;
 
     loaded = true;
 }
 
 void GTeamView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    clientArea.BltRoundRect(rect, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(rect,14, Color::gray);
+    clientArea.BltRoundRect(firstrect, 14, Palette::darkGray256.getColorArray());
+    clientArea.RoundRect(firstrect,14, Color::gray);
 
-    View::doDraw(viewArea, clientArea);
+    clientArea.BltRoundRect(secondrect, 14, Palette::darkGray256.getColorArray());
+    clientArea.RoundRect(secondrect,14, Color::gray);
+
     drawTeams(clientArea, 20);
+    View::doDraw(viewArea, clientArea);
 }
 
 class StatesSortByTeam
@@ -88,31 +104,45 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
     }
     std::sort(states.begin(), states.end(), StatesSortByTeam());
 
-    int cur_line_pos = rect.min.y +30 + ((20 - Surface::getFontHeight())/2);
-    int Start_x = rect.min.x+40;
+    int cur_line_pos = firstrect.min.y +30;
+    dest.bltStringShadowed(firstrect.min.x+10, cur_line_pos, "Team 0:",Color::lightGreen, Color::gray64);
+    dest.bltStringShadowed(secondrect.min.x+10, cur_line_pos, "Team 1:",Color::lightGreen, Color::gray64);
+    cur_line_pos += 25;
+    dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);
+    dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, Color::lightGreen);
+ 
+    int Start_x = firstrect.min.x+10;
     int current_Team = 0;
-    snprintf(statBuf, sizeof(statBuf), "Team %2i:", current_Team);
-    dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-    cur_line_pos += 20;
 
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
         const PlayerState* state = *i;
+        
         if (current_Team != state->getTeamID())
         {
-            cur_line_pos += 30;
+            cur_line_pos = firstrect.min.y +55;
+            Start_x = secondrect.min.x+10;
             current_Team = state->getTeamID();
-            snprintf(statBuf, sizeof(statBuf), "Team %2i:", current_Team);
-            dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-            cur_line_pos += 20;
         }
-
+        if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
+        {
+            if (current_Team > 0)
+            {
+                // TODO (laurent#1#): add check if add button or not
+                addButtonCenterText(iXY(Start_x -35, cur_line_pos-4), 22, "<", "", bChangeTeam);
+                newteam=0;
+            }
+            else
+            {
+                // TODO (laurent#1#): add check if add button or not
+                addButtonCenterText(iXY(Start_x +345, cur_line_pos-4), 22, ">", "", bChangeTeam);
+                newteam=1;
+            }
+        }
         snprintf(statBuf, sizeof(statBuf),
                  stats_format, state->getName().substr(0,20).c_str(),
-                 state->getKills(), state->getLosses(), state->getTotal(),
-                 state->getObjectivesHeld());
-
+                 state->getKills(), state->getLosses());
         dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::gray224, Color::gray64);
         cur_line_pos += 20;
     }

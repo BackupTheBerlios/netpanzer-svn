@@ -20,17 +20,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define GTEAMVIEW_HPP
 
 #include <vector>
-#include "Views/Components/View.hpp"
+#include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
 
 class PlayerState;
 
-class GTeamView : public View
+class GTeamView : public GameTemplateView
 {
 private:
     bool loaded;
 
-    iRect rect;
+    iRect firstrect;
+    iRect secondrect;
     std::vector<const PlayerState*> states;
 
     void drawTeams(Surface &dest, unsigned int flagHeight);
