@@ -395,6 +395,7 @@ void GameControlRulesDaemon::forceMapChange(std::string _nextmap)
 void GameControlRulesDaemon::checkGameRules()
 {
     PlayerState *player_state;
+
  
     if ( (GameControlRulesDaemon::game_state == _game_state_in_progress) &&
             (NetworkState::status == _network_state_server)

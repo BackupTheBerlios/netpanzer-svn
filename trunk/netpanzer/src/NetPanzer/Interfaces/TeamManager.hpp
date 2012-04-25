@@ -41,6 +41,7 @@ public:
     static iXY getPlayerSpawnPoint(PlayerID player_id);
     static void removePlayer(PlayerID player_id, Uint8 team_id);
 
+    static long GetTeamScore(  Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );
     static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
     static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);

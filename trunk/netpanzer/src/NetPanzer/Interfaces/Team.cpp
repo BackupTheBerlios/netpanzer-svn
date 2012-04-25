@@ -123,11 +123,12 @@ long Team::getTeamScore()
     
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
-        if (PlayerInterface::getPlayer(player_id)->isActive())
+        PlayerState* state = PlayerInterface::getPlayer(player_id);
+        if (state->isActive())
         {
-            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
+            if (state->getTeamID() == teamID) 
             {
-                teamScore = PlayerInterface::getPlayer(player_id)->getKills();
+                teamScore += state->getKills();
             }
         }
     }
