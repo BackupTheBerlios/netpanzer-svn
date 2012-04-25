@@ -24,12 +24,10 @@ class Team
 {
 protected:
     Uint8 teamID;
-    PlayerID *player_lists;
-    PlayerID max_players;
     std::string name;
 
 public:
-    void initialize(const Uint8 _max_players);
+    void initialize(const Uint8 id);
 
     void setName(const std::string& newname);
     const std::string& getName() const;
@@ -38,11 +36,6 @@ public:
     void removePlayer(PlayerID player_id);
     void cleanUp();
     Uint8 getID() const { return teamID; }
-    void setID( Uint8 _id );
-    PlayerID getMaxPlayers()
-    {
-        return max_players;
-    }
     PlayerID countPlayers();
     void spawnTeam(const iXY &location );
     void spawnPlayer(PlayerID player_id, const iXY &location );

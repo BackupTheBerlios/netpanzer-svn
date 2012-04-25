@@ -30,7 +30,6 @@ public:
     static void initialize(const Uint8 _max_teams);
     static void addPlayer(PlayerID player_id);
     static void addPlayerinTeam(PlayerID player_id, Uint8 team_id);
-    static void SynchPlayers();
     
     static void cleanUp();
     static PlayerID getMaxteams()

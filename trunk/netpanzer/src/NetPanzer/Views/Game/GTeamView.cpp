@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Views/Components/cButton.hpp"
+
 
 static const char * stats_format = "%-20s%6i%7i";
 static Uint8 newteam = 0;
@@ -35,7 +37,7 @@ static void bChangeTeam()
 GTeamView::GTeamView() : GameTemplateView()
 {
     setSearchName("GTeamView");
-    setTitle("GTeamView");
+    setTitle("Team View");
     setSubTitle("");
 
     setAllowResize(false);
@@ -44,25 +46,29 @@ GTeamView::GTeamView() : GameTemplateView()
     setBordered(false);
 
     loaded = false;
+    TeamOneImage.loadBMP("pics/default/team-one.bmp");
+    TeamTwoImage.loadBMP("pics/default/team-two.bmp");
+
 }
 
 void GTeamView::init()
 {
     removeComponents();
-
+    removeAllButtons();
     iRect viewrect = getClientRect();
 
-    
+
     firstrect.min.x = (viewrect.getSizeX()/2) - 350;
     firstrect.min.y = (viewrect.getSizeY()/2) - 250;
     firstrect.max.x = firstrect.min.x + 350;
     firstrect.max.y = firstrect.min.y + 500;
-    
+
     secondrect.min.x = firstrect.max.x+30;
     secondrect.min.y = firstrect.min.y;
     secondrect.max.x = secondrect.min.x + 350;
     secondrect.max.y = secondrect.min.y + 500;
-
+    
+    addButtonCenterText( iXY(firstrect.max.x+2, firstrect.min.y+18), 28, "<->", "", bChangeTeam);
     loaded = true;
 }
 
@@ -104,13 +110,15 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
     }
     std::sort(states.begin(), states.end(), StatesSortByTeam());
 
-    int cur_line_pos = firstrect.min.y +30;
-    dest.bltStringShadowed(firstrect.min.x+10, cur_line_pos, "Team 0:",Color::lightGreen, Color::gray64);
-    dest.bltStringShadowed(secondrect.min.x+10, cur_line_pos, "Team 1:",Color::lightGreen, Color::gray64);
+    int cur_line_pos = firstrect.min.y +20;
+    dest.bltStringShadowed(firstrect.min.x+10, cur_line_pos, "Team :",Color::lightGreen, Color::gray64);
+    TeamOneImage.bltTrans(dest, firstrect.min.x+60, cur_line_pos-5 );
+    dest.bltStringShadowed(secondrect.min.x+10, cur_line_pos, "Team :",Color::lightGreen, Color::gray64);
+    TeamTwoImage.bltTrans(dest, secondrect.min.x+60, cur_line_pos-5 );
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);
     dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, Color::lightGreen);
- 
+
     int Start_x = firstrect.min.x+10;
     int current_Team = 0;
 
@@ -118,26 +126,23 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
             i != states.end(); ++i)
     {
         const PlayerState* state = *i;
-        
+
         if (current_Team != state->getTeamID())
         {
-            cur_line_pos = firstrect.min.y +55;
+            cur_line_pos = firstrect.min.y +45;
             Start_x = secondrect.min.x+10;
             current_Team = state->getTeamID();
         }
         if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
         {
+            removeComponents();
             if (current_Team > 0)
             {
-                // TODO (laurent#1#): add check if add button or not
-                addButtonCenterText(iXY(Start_x -35, cur_line_pos-4), 22, "<", "", bChangeTeam);
-                newteam=0;
+                 newteam=0;
             }
             else
             {
-                // TODO (laurent#1#): add check if add button or not
-                addButtonCenterText(iXY(Start_x +345, cur_line_pos-4), 22, ">", "", bChangeTeam);
-                newteam=1;
+                 newteam=1;
             }
         }
         snprintf(statBuf, sizeof(statBuf),
@@ -161,12 +166,12 @@ void GTeamView::doDeactivate()
     if ( ! getVisible() )
     {
         removeComponents();
+        removeAllButtons();
         loaded = false;
     }
 }
 
-void
-GTeamView::checkResolution(iXY oldResolution, iXY newResolution)
+void GTeamView::checkResolution(iXY oldResolution, iXY newResolution)
 {
     resize(iXY(newResolution.x, newResolution.y));
     moveTo(iXY(0,0));

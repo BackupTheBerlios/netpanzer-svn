@@ -406,8 +406,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
             && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
     {
-        if (GameConfig::game_teammode) setKeyboardInputModeAllieChatMesg();
-        else setKeyboardInputModeChatMesg();
+        setKeyboardInputModeChatMesg();
     }
 
     if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))

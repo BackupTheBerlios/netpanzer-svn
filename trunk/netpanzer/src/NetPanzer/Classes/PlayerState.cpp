@@ -103,15 +103,15 @@ PlayerState::getColor() const
 }
 
 PlayerState::PlayerState()
-    : status(0), kills(0), kill_points(0), losses(0),
+    :  status(0), kills(0), kill_points(0), losses(0),
       loss_points(0), total(0), objectives_held(0), stats_locked(false),
-      admin_flag(false)
+      admin_flag(false) 
 {
     autokick.reset();
 }
 
 PlayerState::PlayerState(const PlayerState& other)
-    :  id(other.id), name(other.name),
+    :  id(other.id), team_id(0xFF), name(other.name),
       status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held),
@@ -123,6 +123,7 @@ PlayerState::PlayerState(const PlayerState& other)
 void PlayerState::operator= (const PlayerState& other)
 {
     id = other.id;
+    team_id = other.team_id;
     name = other.name;
     status = other.status;
     kills = other.kills;

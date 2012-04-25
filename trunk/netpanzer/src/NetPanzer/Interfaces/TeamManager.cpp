@@ -41,8 +41,7 @@ void TeamManager::initialize(const Uint8 _max_teams)
  
     for ( team_id = 0; team_id < max_Teams; ++team_id )
     {
-        Teams_lists[ team_id ].initialize(GameConfig::game_maxplayers);
-        Teams_lists[ team_id ].setID( team_id );
+        Teams_lists[ team_id ].initialize(team_id);
     }
 }
  
@@ -60,13 +59,11 @@ void TeamManager::addPlayer(PlayerID player_id)
             lowTeam = team_id;
         }
     }
-    //LOGGER.warning("add players %d in team %d", player_id, lowTeam);
     Teams_lists[ lowTeam ].addPlayer(player_id);
 }
  
 void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
 {
-    //LOGGER.warning("add players %d in team %d", player_id, team_id);
     Teams_lists[ team_id ].addPlayer(player_id);
 }
  
@@ -74,20 +71,7 @@ void TeamManager::removePlayer(PlayerID player_id, Uint8 team_id)
 {
     Teams_lists[ team_id ].removePlayer(player_id);
 }
- 
-void TeamManager::SynchPlayers()
-{
-    for ( PlayerID _player_id = 0; _player_id < PlayerInterface::getMaxPlayers(); ++_player_id )
-    {
-        if (PlayerInterface::isPlayerActive(_player_id))
-        {
-            Uint8 Team_id = PlayerInterface::getPlayer(_player_id)->getTeamID();
-            Uint8 Player_id = PlayerInterface::getPlayer(_player_id)->getID();
-            Teams_lists[ Team_id ].addPlayer(Player_id);
-        }
-    }
-}
- 
+
 void TeamManager::cleanUp()
 {
     Uint8 team_id;
@@ -166,7 +150,8 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
     
-    if ( Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
+    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
+          && (Teams_lists[newteam].countPlayers() > 0))
     {
         Teams_lists[current_team].removePlayer(player_id);
         Teams_lists[newteam].addPlayer(player_id);

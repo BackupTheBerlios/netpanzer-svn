@@ -183,11 +183,13 @@ static void resetAllianceMatrix()
 void PlayerInterface::allyplayers(PlayerID by_player, PlayerID with_player )
 {
     setAlliance( by_player, with_player );
+    setAlliance( with_player, by_player );
 }
  
 void PlayerInterface::unallyplayers(PlayerID by_player, PlayerID with_player )
 {
     clearAlliance( by_player, with_player );
+    clearAlliance(with_player, by_player);
 }
  
 void PlayerInterface::initialize(const unsigned int _max_players)

@@ -218,7 +218,6 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
             LoadingView::append( "Game Synchronized" );
             LoadingView::loadFinish();
             connection_state = _connect_state_idle;
-            if (GameConfig::game_teammode) TeamManager::SynchPlayers();
         }
         break;
     }
