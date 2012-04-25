@@ -144,6 +144,7 @@ public:
     static int       game_fraglimit;
     static bool      game_powerups;
     static bool      game_teammode;
+    static NPString* game_team_names;
     static int       game_occupationpercentage;
     static bool      game_allowallies;
     static int       game_cloudcoverage;

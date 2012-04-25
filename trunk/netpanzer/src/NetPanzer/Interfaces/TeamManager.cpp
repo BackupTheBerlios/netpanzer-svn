@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
+#include "Util/StringUtil.hpp"
+
 
 Team       * TeamManager::Teams_lists = 0;
 Uint8        TeamManager::max_Teams = 0;
@@ -39,9 +41,14 @@ void TeamManager::initialize(const Uint8 _max_teams)
     delete[] Teams_lists;
     Teams_lists = new Team[max_Teams];
 
+    std::vector<NPString> plist;
+    NPString pl = *GameConfig::game_team_names;
+    string_to_params(pl, plist);
+
     for ( team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].initialize(team_id);
+        if (team_id < (Uint8) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
     }
 }
 
@@ -134,6 +141,11 @@ long TeamManager::GetTeamScore(  Uint8 team_id )
     return Teams_lists[team_id].getTeamScore();
 }
 
+const std::string& TeamManager::getTeamName( Uint8 team_id )
+{
+    return Teams_lists[team_id].getName();
+}
+
 bool TeamManager::testRuleScoreLimit( long score_limit )
 {
     for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
@@ -173,8 +185,9 @@ void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
     Teams_lists[current_team].removePlayer(player_id);
     Teams_lists[team_idx].addPlayer(player_id);
     ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                  "%s has changed to team %d.",
-                                  PlayerInterface::getPlayer(player_id)->getName().c_str(), team_idx);
+                                  "%s has changed to team %s.",
+                                  PlayerInterface::getPlayer(player_id)->getName().c_str(), 
+                                  Teams_lists[current_team].getName().c_str());
 }
  
  

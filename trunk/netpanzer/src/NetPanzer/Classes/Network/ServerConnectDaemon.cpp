@@ -90,10 +90,10 @@ static void sendConnectionAlert(ClientSocket * client)
     {
         TeamManager::addPlayer(player_state->getID());
         ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                  "'%s' [%s] has joined the game int team %d.",
+                                  "'%s' [%s] has joined the game int team %s.",
                                   player_state->getName().c_str(),
                                   client->getFullIPAddress().c_str(),
-                                  player_state->getTeamID());
+                                  TeamManager::getTeamName(player_state->getTeamID()).c_str());
     } else
     {
         ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),

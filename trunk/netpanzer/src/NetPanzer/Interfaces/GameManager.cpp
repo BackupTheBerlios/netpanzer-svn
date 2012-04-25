@@ -398,9 +398,9 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
             {
                 TeamManager::addPlayerinTeam(connect_alert->getPlayerID(), connect_alert->getTeamID());
                 ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                        "%s has joined the game in team %d.",
+                                        "%s has joined the game in team %s.",
                                         player_state->getName().c_str(), 
-                                        player_state->getTeamID());
+                                        TeamManager::getTeamName(player_state->getTeamID()).c_str());
             } else
             {
                  ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),

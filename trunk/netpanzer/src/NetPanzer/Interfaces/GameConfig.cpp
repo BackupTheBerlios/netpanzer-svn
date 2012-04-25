@@ -65,6 +65,7 @@ int       GameConfig::game_timelimit = 30;
 int       GameConfig::game_fraglimit = 300;
 bool      GameConfig::game_powerups = true;
 bool      GameConfig::game_teammode = false;
+NPString* GameConfig::game_team_names = 0;
 int       GameConfig::game_occupationpercentage = 75;
 bool      GameConfig::game_allowallies = true;
 int       GameConfig::game_cloudcoverage = 0;
@@ -193,6 +194,7 @@ static const ScriptVarBindRecord game_getters[] =
     { "fraglimit",          GETSVTYPE_INT,     &GameConfig::game_fraglimit },
     { "powerups",           GETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
     { "teammode",           GETSVTYPE_BOOLEAN, &GameConfig::game_teammode },
+    { "team_names",         GETSVTYPE_STRING,  &GameConfig::game_team_names},
     { "occupationpercentage",GETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
     { "allowallies",        GETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
     { "cloudcoverage",      GETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
@@ -222,6 +224,7 @@ static const ScriptVarBindRecord game_setters[] =
     { "fraglimit",          SETSVTYPE_INT,     &GameConfig::game_fraglimit },
     { "powerups",           SETSVTYPE_BOOLEAN, &GameConfig::game_powerups },
     { "teammode",           SETSVTYPE_BOOLEAN, &GameConfig::game_teammode },
+    { "team_names",         SETSVTYPE_STRING,  &GameConfig::game_team_names},
     { "occupationpercentage",SETSVTYPE_INT,    &GameConfig::game_occupationpercentage },
     { "allowallies",        SETSVTYPE_BOOLEAN, &GameConfig::game_allowallies },
     { "cloudcoverage",      SETSVTYPE_INT,     &GameConfig::game_cloudcoverage },
@@ -344,6 +347,11 @@ void GameConfig::registerScript(const NPString& table_name)
         game_mapcycle = new NPString("Two clans, Bullet Hole");
     }
 
+    if ( ! game_team_names )
+    {
+        game_team_names = new NPString("One, Two");
+    }
+    
     if ( ! server_bindaddress )
     {
         server_bindaddress = new NPString("");
@@ -368,6 +376,7 @@ void GameConfig::registerScript(const NPString& table_name)
     {
         player_name = new NPString("Player");
     }
+    
 
     ScriptManager::bindStaticVariables(table_name + ".video",
                                        "ConfigVideoMetaTable",
