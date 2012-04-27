@@ -30,8 +30,6 @@ class GTeamView : public GameTemplateView
 private:
     bool loaded;
 
-    Surface TeamOneImage;
-    Surface TeamTwoImage;
     iRect firstrect;
     iRect secondrect;
     std::vector<const PlayerState*> states;

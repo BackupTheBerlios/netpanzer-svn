@@ -28,22 +28,20 @@ protected:
 
 public:
     static void initialize(const Uint8 _max_teams);
+
     static void addPlayer(PlayerID player_id);
     static void addPlayerinTeam(PlayerID player_id, Uint8 team_id);
+    static void removePlayer(PlayerID player_id, Uint8 team_id);
     
     static void cleanUp();
-    static PlayerID getMaxteams()
-    {
-        return max_Teams;
-    }
-    static void spawnTeams();
-    static void spawnPlayer(PlayerID player_id);
-    static iXY getPlayerSpawnPoint(PlayerID player_id);
-    static void removePlayer(PlayerID player_id, Uint8 team_id);
 
-    static long GetTeamScore( Uint8 team_id );
+    static PlayerID getMaxteams(){return max_Teams;}
+    static iXY getPlayerSpawnPoint(PlayerID player_id);
+
+    static long getTeamScore( Uint8 team_id );
     static const std::string& getTeamName( Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );
+    static void drawFlag(Uint8 team_id, Surface &dest, int x, int y);
     
     static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
     static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);

@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Classes/Network/PlayerNetMessage.hpp"
-#include "Classes/Network/NetworkClient.hpp"
+#include "Interfaces/TeamManager.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 
@@ -123,6 +123,16 @@ public:
     }
 };
 
+class StatesSortByTeam
+    : public std::binary_function<const PlayerState*, const PlayerState*, bool>
+{
+public:
+    bool operator() (const PlayerState* state1, const PlayerState* state2)
+    {
+            return state1->getTeamID() < state2->getTeamID();
+    }
+};
+
 
 // drawPlayerStats
 //---------------------------------------------------------------------------
@@ -142,7 +152,11 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             states.push_back(state);
         }
     }
-
+    if (GameConfig::game_teammode)
+    {
+        std::sort(states.begin(), states.end(), StatesSortByTeam());
+    }
+    else
     switch(GameConfig::game_gametype)
     {
         case _gametype_objective:
@@ -169,6 +183,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     cur_line_pos += ENTRY_HEIGHT;
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
+
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {
         const PlayerState* state = *i;
@@ -215,45 +230,6 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
 }
 
-void EndRoundView::lMouseDown(const iXY& pos)
-{
-    // XXX ALLY
-    if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
-    {
-        unsigned int ypos = pos.y - TABLE_START;
-        unsigned int linepos = ypos / ENTRY_HEIGHT;
-        if ( linepos < states.size() )
-        {
-            unsigned int destplayer = states[linepos]->getID();
-            unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
-            if ( destplayer != localplayer )
-            {
-                PlayerAllianceRequest allie_request;
-
-                if ( PlayerInterface::isSingleAllied(localplayer, destplayer) )
-                {
-                    allie_request.set( localplayer, destplayer, _player_break_alliance);
-                }
-                else
-                {
-                    allie_request.set( localplayer, destplayer, _player_make_alliance);
-                }
-
-                CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
-            }
-        }
-    }
-}
-
-void EndRoundView::mouseMove(const iXY & prevPos, const iXY &newPos)
-{
-    selected_line = -1;
-    if ( newPos.y >= TABLE_START )
-    {
-        selected_line = (newPos.y-TABLE_START) / ENTRY_HEIGHT;
-    }
-}
-
 void EndRoundView::doActivate()
 {
     selected_line = -1;
@@ -269,4 +245,9 @@ void EndRoundView::checkResolution(iXY oldResolution, iXY newResolution)
     int x = (screen->getWidth() / 2) - 250;
     int y = (screen->getHeight() / 2) - 250;
     moveTo(iXY(x, y));
+}
+
+void EndRoundView::processEvents()
+{
+    COMMAND_PROCESSOR.process(false);
 }

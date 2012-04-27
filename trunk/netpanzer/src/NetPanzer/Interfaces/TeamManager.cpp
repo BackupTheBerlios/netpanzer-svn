@@ -34,10 +34,10 @@ Uint8        TeamManager::max_Teams = 0;
 
 void TeamManager::initialize(const Uint8 _max_teams)
 {
-
+    char txtBuf[256];
     max_Teams = _max_teams;
     int team_id;
-
+    
     delete[] Teams_lists;
     Teams_lists = new Team[max_Teams];
 
@@ -49,6 +49,8 @@ void TeamManager::initialize(const Uint8 _max_teams)
     {
         Teams_lists[ team_id ].initialize(team_id);
         if (team_id < (Uint8) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
+        snprintf(txtBuf, sizeof(txtBuf), "pics/default/team-%d.bmp", team_id+1);
+        Teams_lists[ team_id ].loadFlag(txtBuf);
     }
 }
 
@@ -91,32 +93,6 @@ void TeamManager::cleanUp()
     max_Teams = 0;
 }
 
-void TeamManager::spawnTeams()
-{
-    iXY spawn_point = MapInterface::getMinSpawnPoint();
-    Teams_lists[ 0 ].spawnTeam(spawn_point);
-    spawn_point = MapInterface::getMaxSpawnPoint();
-    Teams_lists[ 1 ].spawnTeam(spawn_point);
-}
-
-void TeamManager::spawnPlayer(PlayerID player_id)
-{
-    Uint8 Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
-    iXY spawn_point;
-    switch (Team_id)
-    {
-    case 0:
-        spawn_point = MapInterface::getMinSpawnPoint();
-        break;
-    case 1:
-        spawn_point = MapInterface::getMaxSpawnPoint();
-        break;
-    default:
-        spawn_point = MapInterface::getFreeSpawnPoint();
-    }
-    Teams_lists[ Team_id ].spawnPlayer(player_id, spawn_point);
-}
-
 iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
 {
     Uint8 Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
@@ -136,7 +112,7 @@ iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
     return spawn_point;
 }
 
-long TeamManager::GetTeamScore(  Uint8 team_id )
+long TeamManager::getTeamScore(  Uint8 team_id )
 {
     return Teams_lists[team_id].getTeamScore();
 }
@@ -144,6 +120,11 @@ long TeamManager::GetTeamScore(  Uint8 team_id )
 const std::string& TeamManager::getTeamName( Uint8 team_id )
 {
     return Teams_lists[team_id].getName();
+}
+
+void TeamManager::drawFlag(Uint8 team_id, Surface &dest, int x, int y)
+{
+    Teams_lists[team_id].drawFlag(dest, x, y);
 }
 
 bool TeamManager::testRuleScoreLimit( long score_limit )

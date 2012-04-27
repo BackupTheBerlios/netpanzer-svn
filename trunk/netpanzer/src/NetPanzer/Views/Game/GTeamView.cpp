@@ -45,10 +45,7 @@ GTeamView::GTeamView() : GameTemplateView()
     setVisible(false);
     setBordered(false);
  
-    loaded = false;
-    TeamOneImage.loadBMP("pics/default/team-one.bmp");
-    TeamTwoImage.loadBMP("pics/default/team-two.bmp");
- 
+    loaded = false; 
 }
  
 void GTeamView::init()
@@ -90,7 +87,7 @@ class StatesSortByTeam
 public:
     bool operator() (const PlayerState* state1, const PlayerState* state2)
     {
-        return state1->getTeamID() < state2->getTeamID();
+            return state1->getTeamID() < state2->getTeamID();
     }
 };
  
@@ -111,12 +108,12 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
     std::sort(states.begin(), states.end(), StatesSortByTeam());
  
     int cur_line_pos = firstrect.min.y +20;
-    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(0).c_str(), TeamManager::GetTeamScore(0));
+    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(0).c_str(), TeamManager::getTeamScore(0));
     dest.bltStringShadowed(firstrect.min.x+10, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-    TeamOneImage.bltTrans(dest, firstrect.min.x+(firstrect.getSizeX()/2), cur_line_pos-15 );
-    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(1).c_str(), TeamManager::GetTeamScore(1));
+    TeamManager::drawFlag(0, dest, firstrect.min.x+(firstrect.getSizeX()/2), cur_line_pos-17 );
+    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(1).c_str(), TeamManager::getTeamScore(1));
     dest.bltStringShadowed(secondrect.min.x+10, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-    TeamTwoImage.bltTrans(dest, secondrect.min.x+(secondrect.getSizeX()/2), cur_line_pos-15 );
+    TeamManager::drawFlag(1, dest, secondrect.min.x+(secondrect.getSizeX()/2), cur_line_pos-17);
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);
     dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, Color::lightGreen);

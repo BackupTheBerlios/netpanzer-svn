@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SelectionBoxSprite.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/TeamManager.hpp"
 #include "Resources/ResourceManager.hpp"
 
 bool SelectionBoxSprite::isVisible(const iRect &world_win) const
@@ -150,6 +151,15 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     {
         if ( playerName.length() > 0 )
         {   // XXX dirty trick, I don't center the text, just "by hand"
+            if (GameConfig::game_teammode == true)
+            {
+                
+            TeamManager::drawFlag(team_ID, *surface, min_abs.x + FLAG_WIDTH  + 2, min_abs.y - FLAG_HEIGHT-2 );
+            surface->bltString( min_abs.x + FLAG_WIDTH  + 17,
+                                min_abs.y - FLAG_HEIGHT + 2,
+                                playerName.c_str(),  Color::gray224);
+            }
+            else
             surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
                                 min_abs.y - FLAG_HEIGHT + 2,
                                 playerName.c_str(), Color::gray224);

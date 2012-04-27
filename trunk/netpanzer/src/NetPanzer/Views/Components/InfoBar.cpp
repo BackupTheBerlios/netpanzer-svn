@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/TeamManager.hpp"
 
 
 static const PIX titles_color = 206; // #6d78c1 more or less "slate blue"
@@ -57,7 +58,8 @@ InfoBar::draw(Surface &dest)
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
              GameConfig::game_maxunits / GameConfig::game_maxplayers,
              
-             PlayerInterface::getLocalPlayer()->getKills(),
+             (GameConfig::game_gametype == true)?PlayerInterface::getLocalPlayer()->getKills()
+             :TeamManager::getTeamScore(PlayerInterface::getLocalPlayer()->getTeamID()),
              (GameConfig::game_gametype == _gametype_fraglimit)?(int)GameConfig::game_fraglimit:0,
              
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),

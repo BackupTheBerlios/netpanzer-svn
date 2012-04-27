@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/Team.hpp"
 #include "Util/Log.hpp"
+#include "2D/Surface.hpp"
 
 void Team::initialize(const Uint8 id)
 {
@@ -61,7 +62,6 @@ void Team::addPlayer(PlayerID new_player)
 
 void Team::removePlayer(PlayerID old_player)
 {
-   // LOGGER.warning("Team::removePlayer %d", player_id);
     for ( PlayerID player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
         if (PlayerInterface::getPlayer(player_id)->isActive())
@@ -96,24 +96,14 @@ PlayerID Team::countPlayers()
     return count;
 }
 
-void Team::spawnTeam( const iXY &location )
+void Team::loadFlag(const char *fileName)
 {
-    PlayerID player_id;
-    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
-    {
-        if (PlayerInterface::getPlayer(player_id)->isActive())
-        {
-            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
-            {
-                PlayerInterface::spawnPlayer(player_id, location);
-            }
-        }
-    }
+    Flag.loadBMP(fileName);
 }
 
-void Team::spawnPlayer( PlayerID player_id, const iXY &location )
+void Team::drawFlag(Surface &dest, int x, int y) const
 {
-    PlayerInterface::spawnPlayer(player_id, location);
+    Flag.bltTrans(dest, x, y);
 }
 
 long Team::getTeamScore()

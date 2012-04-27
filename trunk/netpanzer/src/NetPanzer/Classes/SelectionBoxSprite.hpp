@@ -62,6 +62,7 @@ protected:
     
     Surface * unit_flag;
     std::string playerName;
+    Uint8 team_ID;
 
 public:
     UnitSelectionBox( );
@@ -105,6 +106,10 @@ public:
     inline void setName( std::string name )
     {
         playerName = name;
+    }
+    inline void setTeam( Uint8 Team_index )
+    {
+        team_ID = Team_index;
     }
 
     virtual void blit( Surface *surface, const iRect &world_win );

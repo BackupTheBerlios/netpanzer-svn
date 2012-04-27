@@ -19,27 +19,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TEAM_HPP
 
 #include "Core/CoreTypes.hpp"
+#include "2D/Surface.hpp"
 
 class Team
 {
 protected:
     Uint8 teamID;
     std::string name;
+    Surface Flag;
 
 public:
     void initialize(const Uint8 id);
 
     void setName(const std::string& newname);
     const std::string& getName() const;
-    
+
     void addPlayer(PlayerID player_id);
     void removePlayer(PlayerID player_id);
     void cleanUp();
     Uint8 getID() const { return teamID; }
     PlayerID countPlayers();
-    void spawnTeam(const iXY &location );
-    void spawnPlayer(PlayerID player_id, const iXY &location );
-    
+    void loadFlag(const char *fileName);
+    void drawFlag(Surface &dest, int x, int y) const;
     long getTeamScore();
 
 };

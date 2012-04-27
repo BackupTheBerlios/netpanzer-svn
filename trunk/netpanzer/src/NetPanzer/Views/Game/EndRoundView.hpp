@@ -53,10 +53,9 @@ public:
     void checkResolution(iXY oldResolution, iXY newResolution);
 
 protected:
-    virtual void lMouseDown(const iXY &pos);
-    virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
     virtual void doActivate();
     virtual void doDeactivate();
+    virtual void processEvents();
     void drawTitle(Surface &windowArea)
     {
     }
