@@ -33,7 +33,7 @@ private:
     iRect firstrect;
     iRect secondrect;
     std::vector<const PlayerState*> states;
-    void drawTeams(Surface &dest, unsigned int flagHeight);
+    void drawTeams(Surface &dest);
 
 public:
     GTeamView();

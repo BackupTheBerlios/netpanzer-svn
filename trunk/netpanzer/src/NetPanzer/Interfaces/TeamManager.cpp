@@ -117,12 +117,29 @@ long TeamManager::getTeamScore(  Uint8 team_id )
     return Teams_lists[team_id].getTeamScore();
 }
 
+Uint8 TeamManager::getTeamWin()
+{
+    long Score = 0;
+    Uint8 teamWin = 0;
+    
+    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Score = Teams_lists[team_id].getTeamScore();
+        if (Score < Teams_lists[team_id].getTeamScore()) 
+        {
+            teamWin = team_id;
+            Score = Teams_lists[team_id].getTeamScore();
+        }
+    }
+    return teamWin;
+}
+
 const std::string& TeamManager::getTeamName( Uint8 team_id )
 {
     return Teams_lists[team_id].getName();
 }
 
-void TeamManager::drawFlag(Uint8 team_id, Surface &dest, int x, int y)
+void TeamManager::drawFlag(Uint8 team_id, Surface& dest, int x, int y)
 {
     Teams_lists[team_id].drawFlag(dest, x, y);
 }

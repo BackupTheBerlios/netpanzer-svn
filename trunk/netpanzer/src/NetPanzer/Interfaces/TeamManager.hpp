@@ -39,9 +39,10 @@ public:
     static iXY getPlayerSpawnPoint(PlayerID player_id);
 
     static long getTeamScore( Uint8 team_id );
+    static Uint8 getTeamWin();
     static const std::string& getTeamName( Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );
-    static void drawFlag(Uint8 team_id, Surface &dest, int x, int y);
+    static void drawFlag( Uint8 team_id, Surface &dest, int x, int y);
     
     static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
     static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);

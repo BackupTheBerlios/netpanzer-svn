@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/cButton.hpp"
  
  
-static const char * stats_format = "%-20s%6i%7i";
+static const char * stats_format = "%-20s%6i%7i%6i";
 static Uint8 newteam = 0;
  
 static void bChangeTeam()
@@ -77,7 +77,7 @@ void GTeamView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.BltRoundRect(secondrect, 14, Palette::darkGray256.getColorArray());
     clientArea.RoundRect(secondrect,14, Color::gray);
  
-    drawTeams(clientArea, 20);
+    drawTeams(clientArea);
     View::doDraw(viewArea, clientArea);
 }
  
@@ -91,7 +91,7 @@ public:
     }
 };
  
-void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
+void GTeamView::drawTeams(Surface &dest)
 {
     char statBuf[256];
  
@@ -109,34 +109,36 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
  
     int cur_line_pos = firstrect.min.y +20;
     snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(0).c_str(), TeamManager::getTeamScore(0));
-    dest.bltStringShadowed(firstrect.min.x+10, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
+    dest.bltStringShadowed(firstrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
     TeamManager::drawFlag(0, dest, firstrect.min.x+(firstrect.getSizeX()/2), cur_line_pos-17 );
     snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(1).c_str(), TeamManager::getTeamScore(1));
-    dest.bltStringShadowed(secondrect.min.x+10, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
+    dest.bltStringShadowed(secondrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
     TeamManager::drawFlag(1, dest, secondrect.min.x+(secondrect.getSizeX()/2), cur_line_pos-17);
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);
     dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, Color::lightGreen);
  
-    int Start_x = firstrect.min.x+10;
+    int Start_x = firstrect.min.x+20;
     int current_Team = 0;
- 
+    
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
         const PlayerState* state = *i;
- 
+
         if (current_Team != state->getTeamID())
         {
             cur_line_pos = firstrect.min.y +45;
-            Start_x = secondrect.min.x+10;
+            Start_x = secondrect.min.x+20;
             current_Team = state->getTeamID();
         }
+        TeamManager::drawFlag(current_Team, dest, Start_x-16, cur_line_pos-5 );
+        
         if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
         {
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str(),
-                     state->getKills(), state->getLosses());
+                     state->getKills(), state->getLosses(), state->getObjectivesHeld());
             dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::cyan, Color::gray64);
             if (current_Team > 0)
             {
@@ -151,7 +153,7 @@ void GTeamView::drawTeams(Surface &dest, unsigned int flagHeight)
         {
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str(),
-                     state->getKills(), state->getLosses());
+                     state->getKills(), state->getLosses(),state->getObjectivesHeld());
             dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::gray224, Color::gray64);
         }
         cur_line_pos += 20;

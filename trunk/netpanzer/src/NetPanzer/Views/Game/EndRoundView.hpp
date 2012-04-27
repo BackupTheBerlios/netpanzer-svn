@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2009 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,17 +22,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include "2D/Surface.hpp"
-#include "Views/MainMenu/SpecialButtonView.hpp"
+#include "GameTemplateView.hpp"
 
 class PlayerState;
 
 //---------------------------------------------------------------------------
-class EndRoundView : public SpecialButtonView
+class EndRoundView : public GameTemplateView
 {
 private:
     int viewableMessageCount;
     enum { ITEM_GAP_SPACE = 10 };
     void drawPlayerStats(Surface &dest, unsigned int flagHeight);
+    void drawTeamStats(Surface &dest, unsigned int flagHeight);
 
     Surface allyImage;
     Surface allyRequestImage;
