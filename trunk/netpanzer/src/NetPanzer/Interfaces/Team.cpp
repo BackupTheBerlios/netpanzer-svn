@@ -28,9 +28,9 @@ void Team::initialize(const Uint8 id)
 
 void Team::setName(const std::string& newname)
 {
-    if ( newname.length() > 63 )
+    if ( newname.length() > 25 )
     {
-        name = newname.substr(0,63);
+        name = newname.substr(0,25);
     }
     else
     {
@@ -79,7 +79,7 @@ void Team::cleanUp()
 {
 }
 
-PlayerID Team::countPlayers()
+PlayerID Team::countPlayers() const
 {
     PlayerID count = 0;
     PlayerID player_id;
@@ -106,9 +106,9 @@ void Team::drawFlag(Surface &dest, int x, int y) const
     Flag.bltTrans(dest, x, y);
 }
 
-long Team::getTeamScore()
+short Team::getKills() const
 {
-    long teamScore = 0;
+    short TeamKills = 0;
     PlayerID player_id;
     
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
@@ -118,9 +118,48 @@ long Team::getTeamScore()
         {
             if (state->getTeamID() == teamID) 
             {
-                teamScore += state->getKills();
+                TeamKills += state->getKills();
             }
         }
     }
-    return teamScore;
+    return TeamKills;
 }
+
+short Team::getLosses() const
+{
+    long TeamLosses = 0;
+    PlayerID player_id;
+    
+    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        PlayerState* state = PlayerInterface::getPlayer(player_id);
+        if (state->isActive())
+        {
+            if (state->getTeamID() == teamID) 
+            {
+                TeamLosses += state->getLosses();
+            }
+        }
+    }
+    return TeamLosses;
+}
+
+int Team::getTeamObjective() const
+{
+    long TeamObjective = 0;
+    PlayerID player_id;
+    
+    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        PlayerState* state = PlayerInterface::getPlayer(player_id);
+        if (state->isActive())
+        {
+            if (state->getTeamID() == teamID) 
+            {
+                TeamObjective += state->getObjectivesHeld();
+            }
+        }
+    }
+    return TeamObjective;
+}
+

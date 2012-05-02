@@ -108,11 +108,19 @@ void GTeamView::drawTeams(Surface &dest)
     std::sort(states.begin(), states.end(), StatesSortByTeam());
  
     int cur_line_pos = firstrect.min.y +20;
-    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(0).c_str(), TeamManager::getTeamScore(0));
-    dest.bltStringShadowed(firstrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
+    snprintf(statBuf, sizeof(statBuf), stats_format, 
+             TeamManager::getTeamName(0).c_str(), 
+             TeamManager::getKills(0),
+             TeamManager::getLosses(0),
+             TeamManager::getObjectivesHeld(0));
+    dest.bltStringShadowed(firstrect.min.x+20, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
     TeamManager::drawFlag(0, dest, firstrect.min.x+(firstrect.getSizeX()/2), cur_line_pos-17 );
-    snprintf(statBuf, sizeof(statBuf), "%-20s%6ld", TeamManager::getTeamName(1).c_str(), TeamManager::getTeamScore(1));
-    dest.bltStringShadowed(secondrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
+    snprintf(statBuf, sizeof(statBuf), stats_format, 
+             TeamManager::getTeamName(1).c_str(), 
+             TeamManager::getKills(1),
+             TeamManager::getLosses(1),
+             TeamManager::getObjectivesHeld(1));
+    dest.bltStringShadowed(secondrect.min.x+20, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
     TeamManager::drawFlag(1, dest, secondrect.min.x+(secondrect.getSizeX()/2), cur_line_pos-17);
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);

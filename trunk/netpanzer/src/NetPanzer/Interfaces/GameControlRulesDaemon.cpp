@@ -431,9 +431,19 @@ void GameControlRulesDaemon::checkGameRules()
         case _gametype_objective:
         {
             float ratio = (float) GameConfig::game_occupationpercentage / 100.0;
-            if (PlayerInterface::testRuleObjectiveRatio( ratio, &player_state))
+
+
+            if (GameConfig::game_teammode)
             {
-                onObjectiveGameCompleted( );
+                if (TeamManager::testRuleObjectiveRatio( ratio ))
+                    onObjectiveGameCompleted();
+            }
+            else
+            {
+                if (PlayerInterface::testRuleObjectiveRatio( ratio, &player_state))
+                {
+                    onObjectiveGameCompleted( );
+                }
             }
             break;
         }

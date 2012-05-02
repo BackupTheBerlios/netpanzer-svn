@@ -38,10 +38,12 @@ public:
     void removePlayer(PlayerID player_id);
     void cleanUp();
     Uint8 getID() const { return teamID; }
-    PlayerID countPlayers();
+    PlayerID countPlayers() const;
     void loadFlag(const char *fileName);
     void drawFlag(Surface &dest, int x, int y) const;
-    long getTeamScore();
+    short getKills() const;
+    short getLosses() const;
+    int getTeamObjective() const;
 
 };
 

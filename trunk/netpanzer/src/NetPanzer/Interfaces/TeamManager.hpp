@@ -38,10 +38,13 @@ public:
     static PlayerID getMaxteams(){return max_Teams;}
     static iXY getPlayerSpawnPoint(PlayerID player_id);
 
-    static long getTeamScore( Uint8 team_id );
+    static short getKills( Uint8 team_id );
+    static short getLosses( Uint8 team_id );
+    static short getObjectivesHeld( Uint8 team_id );
     static Uint8 getTeamWin();
     static const std::string& getTeamName( Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );
+    static bool testRuleObjectiveRatio( float precentage );
     static void drawFlag( Uint8 team_id, Surface &dest, int x, int y);
     
     static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);

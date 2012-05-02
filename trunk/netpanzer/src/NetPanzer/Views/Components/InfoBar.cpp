@@ -58,11 +58,13 @@ InfoBar::draw(Surface &dest)
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
              GameConfig::game_maxunits / GameConfig::game_maxplayers,
              
-             (GameConfig::game_gametype == true)?PlayerInterface::getLocalPlayer()->getKills()
-             :TeamManager::getTeamScore(PlayerInterface::getLocalPlayer()->getTeamID()),
+             (GameConfig::game_teammode == false)?PlayerInterface::getLocalPlayer()->getKills()
+             :TeamManager::getKills(PlayerInterface::getLocalPlayer()->getTeamID()),
+             
              (GameConfig::game_gametype == _gametype_fraglimit)?(int)GameConfig::game_fraglimit:0,
              
-             PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
+             (GameConfig::game_teammode == false)?PlayerInterface::getLocalPlayer()->getObjectivesHeld()
+             :TeamManager::getObjectivesHeld(PlayerInterface::getLocalPlayer()->getTeamID()),
              (GameConfig::game_gametype == _gametype_objective)?ObjectiveInterface::getObjectiveLimit():0,
              
              (int)GameManager::getGameTime() / 3600,

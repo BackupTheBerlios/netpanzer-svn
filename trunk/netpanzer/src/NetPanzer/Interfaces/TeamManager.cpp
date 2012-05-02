@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
 #include "Util/StringUtil.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
+#include "Objectives/Objective.hpp"
 
 
 Team       * TeamManager::Teams_lists = 0;
@@ -61,7 +63,6 @@ void TeamManager::addPlayer(PlayerID player_id)
 
     for ( team_id = 0; team_id < max_Teams; ++team_id )
     {
-        //LOGGER.warning("number of players %d in team %d", Teams_lists[ team_id ].countPlayers(), team_id);
         if (Teams_lists[ team_id ].countPlayers() < countPlayers)
         {
             countPlayers = Teams_lists[ team_id ].countPlayers();
@@ -112,24 +113,52 @@ iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
     return spawn_point;
 }
 
-long TeamManager::getTeamScore(  Uint8 team_id )
+short TeamManager::getKills(  Uint8 team_id )
 {
-    return Teams_lists[team_id].getTeamScore();
+    return Teams_lists[team_id].getKills();
+}
+
+short TeamManager::getLosses(  Uint8 team_id )
+{
+    return Teams_lists[team_id].getLosses();
+}
+
+short TeamManager::getObjectivesHeld( Uint8 team_id )
+{
+    return Teams_lists[team_id].getTeamObjective();
 }
 
 Uint8 TeamManager::getTeamWin()
 {
     long Score = 0;
     Uint8 teamWin = 0;
+    unsigned char game_type = GameConfig::game_gametype;
     
-    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    switch (game_type)
     {
-        Score = Teams_lists[team_id].getTeamScore();
-        if (Score < Teams_lists[team_id].getTeamScore()) 
-        {
-            teamWin = team_id;
-            Score = Teams_lists[team_id].getTeamScore();
-        }
+        case _gametype_fraglimit:
+        case _gametype_timelimit:
+            for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+            {
+                Score = Teams_lists[team_id].getKills();
+                if (Score < Teams_lists[team_id].getKills()) 
+                {
+                    teamWin = team_id;
+                    Score = Teams_lists[team_id].getKills();
+                }
+            }
+        break;
+        case _gametype_objective:
+            for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+            {
+                Score = Teams_lists[team_id].getTeamObjective();
+                if (Score < Teams_lists[team_id].getTeamObjective()) 
+                {
+                    teamWin = team_id;
+                    Score = Teams_lists[team_id].getTeamObjective();
+                }
+            }
+        break;
     }
     return teamWin;
 }
@@ -148,10 +177,30 @@ bool TeamManager::testRuleScoreLimit( long score_limit )
 {
     for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
     {
-        if ( Teams_lists[team_id].getTeamScore() >= score_limit )
+        if ( Teams_lists[team_id].getKills() >= score_limit )
             return( true );
     }
     return( false );
+}
+
+bool TeamManager::testRuleObjectiveRatio( float precentage )
+{
+    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
+ 
+    int occupation_ratio = (int) ( ((float) num_objectives) * precentage  + 0.999);
+    if (occupation_ratio == 0)
+    {
+        occupation_ratio = 1;
+    }
+
+    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        if ( Teams_lists[team_id].getTeamObjective() >= occupation_ratio )
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void TeamManager::PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam)
