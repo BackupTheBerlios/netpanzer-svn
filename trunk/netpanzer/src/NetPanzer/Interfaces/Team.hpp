@@ -27,13 +27,15 @@ protected:
     Uint8 teamID;
     std::string name;
     Surface Flag;
+    Uint8 teamColor;
 
 public:
     void initialize(const Uint8 id);
 
     void setName(const std::string& newname);
     const std::string& getName() const;
-
+    void setColor(const Uint8 newcolor);
+    Uint8 getColor() const {return teamColor;}
     void addPlayer(PlayerID player_id);
     void removePlayer(PlayerID player_id);
     void cleanUp();

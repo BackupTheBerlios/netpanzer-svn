@@ -43,6 +43,11 @@ const std::string& Team::getName() const
     return name;
 }
 
+void Team::setColor(const Uint8 newcolor)
+{
+    teamColor = newcolor;
+}
+
 void Team::addPlayer(PlayerID new_player)
 {
     for ( PlayerID player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )

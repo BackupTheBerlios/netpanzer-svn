@@ -37,9 +37,10 @@ Uint8        TeamManager::max_Teams = 0;
 void TeamManager::initialize(const Uint8 _max_teams)
 {
     char txtBuf[256];
+    Uint8 colorsteam[4] = {Color::yellow, 208, Color::green, Color::cyan};
     max_Teams = _max_teams;
     int team_id;
-    
+
     delete[] Teams_lists;
     Teams_lists = new Team[max_Teams];
 
@@ -53,7 +54,13 @@ void TeamManager::initialize(const Uint8 _max_teams)
         if (team_id < (Uint8) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
         snprintf(txtBuf, sizeof(txtBuf), "pics/default/team-%d.bmp", team_id+1);
         Teams_lists[ team_id ].loadFlag(txtBuf);
+        Teams_lists[ team_id ].setColor(colorsteam[team_id]);
     }
+}
+
+Uint8 TeamManager::getTeamColor(Uint8 team_id)
+{
+    return Teams_lists[ team_id ].getColor();
 }
 
 void TeamManager::addPlayer(PlayerID player_id)
@@ -70,6 +77,26 @@ void TeamManager::addPlayer(PlayerID player_id)
         }
     }
     Teams_lists[ lowTeam ].addPlayer(player_id);
+}
+
+void TeamManager::reset()
+{
+    for ( PlayerID player_index = 0; player_index < PlayerInterface::getMaxPlayers()-1; ++player_index )
+    {
+        for ( PlayerID player_id = 1; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+        {
+            PlayerState* state_id = PlayerInterface::getPlayer(player_id);
+            PlayerState* state_index = PlayerInterface::getPlayer(player_index);
+            if (state_id->isActive() && state_index->isActive())
+            {
+                if (state_id->getTeamID() == state_index->getTeamID()
+                        && (player_id != player_index))
+                {
+                    PlayerInterface::allyplayers( player_id, player_index);
+                }
+            }
+        }
+    }
 }
 
 void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
@@ -133,31 +160,31 @@ Uint8 TeamManager::getTeamWin()
     long Score = 0;
     Uint8 teamWin = 0;
     unsigned char game_type = GameConfig::game_gametype;
-    
+
     switch (game_type)
     {
-        case _gametype_fraglimit:
-        case _gametype_timelimit:
-            for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    case _gametype_fraglimit:
+    case _gametype_timelimit:
+        for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+        {
+            Score = Teams_lists[team_id].getKills();
+            if (Score < Teams_lists[team_id].getKills())
             {
+                teamWin = team_id;
                 Score = Teams_lists[team_id].getKills();
-                if (Score < Teams_lists[team_id].getKills()) 
-                {
-                    teamWin = team_id;
-                    Score = Teams_lists[team_id].getKills();
-                }
             }
+        }
         break;
-        case _gametype_objective:
-            for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    case _gametype_objective:
+        for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+        {
+            Score = Teams_lists[team_id].getTeamObjective();
+            if (Score < Teams_lists[team_id].getTeamObjective())
             {
+                teamWin = team_id;
                 Score = Teams_lists[team_id].getTeamObjective();
-                if (Score < Teams_lists[team_id].getTeamObjective()) 
-                {
-                    teamWin = team_id;
-                    Score = Teams_lists[team_id].getTeamObjective();
-                }
             }
+        }
         break;
     }
     return teamWin;
@@ -186,7 +213,7 @@ bool TeamManager::testRuleScoreLimit( long score_limit )
 bool TeamManager::testRuleObjectiveRatio( float precentage )
 {
     ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
- 
+
     int occupation_ratio = (int) ( ((float) num_objectives) * precentage  + 0.999);
     if (occupation_ratio == 0)
     {
@@ -209,23 +236,23 @@ void TeamManager::PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam)
     Changeteam_request.set(player_id, newteam, change_team_request);
     CLIENT->sendMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
 }
- 
+
 void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
- 
+
     if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
             && (Teams_lists[newteam].countPlayers() > 0))
     {
         Teams_lists[current_team].removePlayer(player_id);
         Teams_lists[newteam].addPlayer(player_id);
         PlayerTeamRequest Changeteam_request;
- 
+
         Changeteam_request.set(player_id, newteam, change_team_Accepted);
         SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
     }
 }
- 
+
 void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
@@ -233,11 +260,11 @@ void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
     Teams_lists[team_idx].addPlayer(player_id);
     ConsoleInterface::postMessage(Color::yellow, false, 0,
                                   "%s has changed to team %s.",
-                                  PlayerInterface::getPlayer(player_id)->getName().c_str(), 
+                                  PlayerInterface::getPlayer(player_id)->getName().c_str(),
                                   Teams_lists[current_team].getName().c_str());
 }
- 
- 
- 
- 
- 
+
+
+
+
+

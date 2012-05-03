@@ -154,10 +154,9 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
             if (GameConfig::game_teammode == true)
             {
                 
-            TeamManager::drawFlag(team_ID, *surface, min_abs.x + FLAG_WIDTH  + 2, min_abs.y - FLAG_HEIGHT-2 );
-            surface->bltString( min_abs.x + FLAG_WIDTH  + 17,
+            surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
                                 min_abs.y - FLAG_HEIGHT + 2,
-                                playerName.c_str(),  Color::gray224);
+                                playerName.c_str(), TeamManager::getTeamColor(team_ID) );
             }
             else
             surface->bltString( min_abs.x + FLAG_WIDTH  + 2,

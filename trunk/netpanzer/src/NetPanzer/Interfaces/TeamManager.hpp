@@ -28,7 +28,8 @@ protected:
 
 public:
     static void initialize(const Uint8 _max_teams);
-
+    static Uint8 getTeamColor(Uint8 team_id);
+    static void reset();
     static void addPlayer(PlayerID player_id);
     static void addPlayerinTeam(PlayerID player_id, Uint8 team_id);
     static void removePlayer(PlayerID player_id, Uint8 team_id);
