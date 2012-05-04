@@ -41,6 +41,7 @@ public:
     void cleanUp();
     Uint8 getID() const { return teamID; }
     PlayerID countPlayers() const;
+    PlayerID getrandomplayer() const;
     void loadFlag(const char *fileName);
     void drawFlag(Surface &dest, int x, int y) const;
     short getKills() const;

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/Team.hpp"
@@ -77,6 +78,31 @@ void TeamManager::addPlayer(PlayerID player_id)
         }
     }
     Teams_lists[ lowTeam ].addPlayer(player_id);
+}
+
+void TeamManager::BalancedTeam()
+{
+    int team_id;
+    int lowTeam = 0, highTeam = 0;
+    int minPlayers = Teams_lists[ 0 ].countPlayers(), maxPlayers = 0;
+
+    for ( team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        if (Teams_lists[ team_id ].countPlayers() < minPlayers)
+        {
+            minPlayers = Teams_lists[ team_id ].countPlayers();
+            lowTeam = team_id;
+        }
+        if (Teams_lists[ team_id ].countPlayers() > maxPlayers)
+        {
+            maxPlayers = Teams_lists[ team_id ].countPlayers();
+            highTeam = team_id;
+        }
+    }
+    if ((maxPlayers - minPlayers) > 1)
+    {
+        serverrequestchangeTeam(Teams_lists[ highTeam ].getrandomplayer(), lowTeam);
+    }
 }
 
 void TeamManager::reset()
@@ -241,12 +267,14 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
 
-    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
-            && (Teams_lists[newteam].countPlayers() > 0))
+    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers()))
     {
         Teams_lists[current_team].removePlayer(player_id);
         Teams_lists[newteam].addPlayer(player_id);
         PlayerTeamRequest Changeteam_request;
+        
+        UnitInterface::destroyPlayerUnits(player_id);
+        GameManager::spawnPlayer( player_id );
 
         Changeteam_request.set(player_id, newteam, change_team_Accepted);
         SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
@@ -256,6 +284,7 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
+
     Teams_lists[current_team].removePlayer(player_id);
     Teams_lists[team_idx].addPlayer(player_id);
     ConsoleInterface::postMessage(Color::yellow, false, 0,

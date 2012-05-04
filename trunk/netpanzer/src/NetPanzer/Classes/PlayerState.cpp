@@ -140,9 +140,9 @@ void PlayerState::operator= (const PlayerState& other)
 
 void PlayerState::setName(const std::string& newname)
 {
-    if ( newname.length() > 25 )
+    if ( newname.length() > 15 )
     {
-        name = newname.substr(0,25);
+        name = newname.substr(0,15);
     }
     else
     {
@@ -170,9 +170,9 @@ void PlayerState::setName(const std::string& newname)
                 std::string strnum=ssnamenum.str();
                 
                 std::string::size_type newlen = newname.length();
-                if ( newlen+strnum.length() > 63 )
+                if ( newlen+strnum.length() > 15 )
                 {
-                    newlen -= strnum.length() - (63 - newlen);  
+                    newlen -= strnum.length() - (15 - newlen);  
                 }
                 
                 name = newname.substr(0,newlen)+strnum;

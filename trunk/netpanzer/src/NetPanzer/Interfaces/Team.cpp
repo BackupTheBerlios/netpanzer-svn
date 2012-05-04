@@ -28,9 +28,9 @@ void Team::initialize(const Uint8 id)
 
 void Team::setName(const std::string& newname)
 {
-    if ( newname.length() > 25 )
+    if ( newname.length() > 15 )
     {
-        name = newname.substr(0,25);
+        name = newname.substr(0,15);
     }
     else
     {
@@ -99,6 +99,27 @@ PlayerID Team::countPlayers() const
         }
     }
     return count;
+}
+
+PlayerID Team::getrandomplayer() const
+{
+    PlayerID count = 0;
+    PlayerID player_id, result;
+    Uint8 player = rand()%countPlayers();
+    
+    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        if (PlayerInterface::getPlayer(player_id)->isActive())
+        {
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
+            {
+                if (count == player) return player_id;
+                count++;
+                result = player_id;
+            }
+        }
+    }
+    return result; // default return the last
 }
 
 void Team::loadFlag(const char *fileName)

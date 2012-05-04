@@ -34,6 +34,7 @@ public:
     void init();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void processEvents();
 
 protected:
     void checkResolution(iXY oldResolution, iXY newResolution);
