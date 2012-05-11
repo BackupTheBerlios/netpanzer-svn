@@ -26,13 +26,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/GameControlNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
- 
+
 #include "Units/UnitProfileInterface.hpp"
  
 #include "Views/Components/Desktop.hpp"
@@ -47,21 +48,20 @@ enum { _map_cycle_server_state_idle,
        _map_cycle_server_state_wait_for_client_map_load,
        _map_cycle_server_state_load_unit_profiles,
        _map_cycle_server_state_sync_profiles,
-       _map_cycle_server_state_respawn_players
+       _map_cycle_server_state_respawn_players,
+       _map_cycle_server_prepare_team
      };
  
 enum { _map_cycle_client_idle,
        _map_cycle_client_start_map_load,
        _map_cycle_client_load_map,
-       _map_cycle_client_wait_for_respawn_ack
+       _map_cycle_client_wait_for_respawn_ack,
+       _map_cycle_client_prepare_team,
+       _map_cycle_client_team_start
      };
  
 enum { _execution_mode_loop_back_server,
        _execution_mode_dedicated_server
-     };
-enum { _game_state_idle,
-       _game_state_in_progress,
-       _game_state_completed
      };
  
 int GameControlRulesDaemon::execution_mode = _execution_mode_loop_back_server;
@@ -74,6 +74,7 @@ std::string GameControlRulesDaemon::nextmap = "";
 int GameControlRulesDaemon::map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 Timer GameControlRulesDaemon::map_cycle_fsm_server_endgame_timer;
 Timer GameControlRulesDaemon::map_cycle_fsm_server_map_load_timer;
+Timer GameControlRulesDaemon::cooldown;
  
 int GameControlRulesDaemon::map_cycle_fsm_client_state = _map_cycle_client_idle;
 bool GameControlRulesDaemon::map_cycle_fsm_client_respawn_ack_flag = false;
@@ -90,6 +91,14 @@ void GameControlRulesDaemon::setStateServerInProgress()
 void GameControlRulesDaemon::setStateServerIdle()
 {
     GameControlRulesDaemon::game_state = _game_state_idle;
+}
+
+void GameControlRulesDaemon::setStateServerprepareteam()
+{
+    GameControlRulesDaemon::game_state = _game_state_prepare_team;
+    map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
+    cooldown.changePeriod(300);
+    cooldown.reset();
 }
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::setDedicatedServer()
@@ -173,7 +182,27 @@ void GameControlRulesDaemon::mapCycleFsmClient()
         return;
     }
     break;
+
+    case _map_cycle_client_prepare_team :
+    {
+        if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
+        {
+            Desktop::setVisibility("PrepareTeam", true);
+        }
+        if (Desktop::getVisible("PrepareTeam"))
+            WorldViewInterface::MoveCamera();
+        LOGGER.warning("rest %i", 300-(int)cooldown.getTime());
+        return;
+    }
+    break;
  
+    case _map_cycle_client_team_start :
+    {
+            Desktop::setVisibility("PrepareTeam", false);
+        return;
+    }
+    break;
+    
     } // ** switch
 }
  
@@ -349,9 +378,29 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         GameControlCycleRespawnAck respawn_ack_mesg;
         SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
  
-        map_cycle_fsm_server_state = _map_cycle_server_state_idle;
+        if (GameConfig::game_teammode)
+        {
+            map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
+            GameControlCyclePrepareTeam prepare_team_mesg;
+            SERVER->broadcastMessage(&prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
+
+        }
+        else
+        {
+            map_cycle_fsm_server_state = _map_cycle_server_state_idle;
+        }
  
         ServerConnectDaemon::unlockConnectProcess();
+    }
+    break;
+
+    case _map_cycle_server_prepare_team :
+    {
+        if (cooldown.count())
+        {
+            GameControlCycleTeamStart team_start_mesg;
+            SERVER->broadcastMessage(&team_start_mesg, sizeof(GameControlCycleTeamStart));
+        }
     }
     break;
  
@@ -480,6 +529,22 @@ void GameControlRulesDaemon::netMessageCycleRespawnAck(const NetMessage* )
 {
     map_cycle_fsm_client_respawn_ack_flag = true;
 }
+
+void GameControlRulesDaemon::netMessageCyclePrepareTeam(const NetMessage* message)
+{
+    GameControlCyclePrepareTeam *prepare_team_mesg;
+    prepare_team_mesg = (GameControlCyclePrepareTeam *) message;
+    
+    map_cycle_fsm_client_state = _map_cycle_client_prepare_team;
+    GameControlRulesDaemon::game_state = _game_state_prepare_team;
+    cooldown.changePeriod(prepare_team_mesg->Cooldown);
+}
+
+void GameControlRulesDaemon::netMessageCycleTeamStart(const NetMessage* )
+{
+    map_cycle_fsm_client_state = _map_cycle_client_team_start;
+    GameControlRulesDaemon::game_state = _game_state_idle;
+}
  
 void GameControlRulesDaemon::processNetMessage(const NetMessage* message)
 {
@@ -491,6 +556,14 @@ void GameControlRulesDaemon::processNetMessage(const NetMessage* message)
  
     case _net_message_id_game_control_cycle_respawn_ack :
         netMessageCycleRespawnAck(message);
+        break;
+
+    case _net_message_id_game_control_cycle_prepare_team :
+        netMessageCyclePrepareTeam(message);
+        break;
+
+    case _net_message_id_game_control_cycle_team_start :
+        netMessageCycleTeamStart(message);
         break;
  
     default:

@@ -54,6 +54,11 @@ public:
         main_camera->scrollPlusY(scroll_increment);
     }
 
+    static inline void MoveCamera()
+    {
+        main_camera->MoveCamera();
+    }
+
     static inline void setCameraPosition(const iXY &world_loc)
     {
         main_camera->setCamera(world_loc);

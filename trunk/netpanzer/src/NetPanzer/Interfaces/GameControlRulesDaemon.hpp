@@ -22,11 +22,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Timer.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
+enum { _game_state_idle,
+       _game_state_in_progress,
+       _game_state_completed,
+       _game_state_prepare_team
+     };
+
 class GameControlRulesDaemon
 {
     static int execution_mode;
     static unsigned char game_state;
     static std::string nextmap;
+    static Timer cooldown;
 
 protected:
     static int map_cycle_fsm_server_state;
@@ -49,10 +56,13 @@ protected:
 
     static void netMessageCycleMap(const NetMessage* message);
     static void netMessageCycleRespawnAck(const NetMessage* message);
+    static void netMessageCyclePrepareTeam(const NetMessage* message);
+    static void netMessageCycleTeamStart(const NetMessage* );
 
 public:
     static void setStateServerInProgress();
     static void setStateServerIdle();
+    static void setStateServerprepareteam();
     static void setDedicatedServer();
 
     static void forceMapChange(std::string map);
@@ -60,6 +70,7 @@ public:
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
     static unsigned char getGameState() { return game_state; }
+    static int getTeamCD() { return (int)cooldown.getTimeLeft(); }
 };
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

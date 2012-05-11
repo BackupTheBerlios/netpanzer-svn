@@ -1,27 +1,30 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "ViewCamera.hpp"
+#include "Util/Log.hpp"
 
 ViewCamera::ViewCamera()
 {
     loc.x = 0;
     loc.y = 0;
+    move.x = 1;
+    move.y = -1;
 }
 
 void ViewCamera::scrollPlusX( long scroll_increment )
@@ -34,7 +37,8 @@ void ViewCamera::scrollPlusX( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.x >= 0) && (view.x <= map_size.x) ) {
+    if ( (view.x >= 0) && (view.x <= map_size.x) )
+    {
         loc.x = view.x;
     }
 }
@@ -49,7 +53,8 @@ void ViewCamera::scrollMinusX( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.x >= 0) && (view.x <= map_size.x) ) {
+    if ( (view.x >= 0) && (view.x <= map_size.x) )
+    {
         loc.x = view.x;
     }
 }
@@ -64,7 +69,8 @@ void ViewCamera::scrollMinusY( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.y >= 0) && (view.y <= map_size.y) ) {
+    if ( (view.y >= 0) && (view.y <= map_size.y) )
+    {
         loc.y = view.y;
     }
 }
@@ -78,14 +84,43 @@ void ViewCamera::scrollPlusY( long scroll_increment )
     view.y = view.y - (view.y % 4);
 
     getMapPointSize( &map_size );
-
-    if ( (view.y >= 0) && (view.y <= map_size.y) ) {
+    
+    if ( (view.y >= 0) && (view.y <= map_size.y) )
+    {
         loc.y = view.y;
     }
 }
 
+void ViewCamera::MoveCamera()
+{
+    iXY view;
+    iXY map_size;
+
+    view.y = loc.y + move.y;
+    view.x = loc.x + move.x;
+
+    getMapPointSize( &map_size );
+    if ( (view.y-(view_size.y/2) >= 0) && (view.y+(view_size.y/2) <= map_size.y) )
+    {
+        loc.y = view.y;
+    }
+    else
+    {
+        move.y = -move.y;
+    }
+
+    if ( (view.x-(view_size.x/2) >= 0) && (view.x+(view_size.x/2) <= map_size.x) )
+    {
+        loc.x = view.x;
+    }
+    else
+    {
+        move.x = -move.x;
+    }
+}
+
 void ViewCamera::getViewStart(unsigned long view_size_x,
-			      unsigned long view_size_y,
+                              unsigned long view_size_y,
                               int *view_start_x,
                               int *view_start_y)
 {

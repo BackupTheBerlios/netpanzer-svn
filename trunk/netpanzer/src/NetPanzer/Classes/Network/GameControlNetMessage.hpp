@@ -20,11 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <string.h>
+#include "Interfaces/GameControlRulesDaemon.hpp"
 
 #include "NetMessage.hpp"
 
 enum { _net_message_id_game_control_cycle_map,
-       _net_message_id_game_control_cycle_respawn_ack
+       _net_message_id_game_control_cycle_respawn_ack,
+       _net_message_id_game_control_cycle_prepare_team,
+       _net_message_id_game_control_cycle_team_start
      };
 
 #ifdef MSVC
@@ -58,6 +61,30 @@ public:
     {
         message_class = _net_message_class_game_control;
         message_id = _net_message_id_game_control_cycle_respawn_ack;
+    }
+}
+__attribute__((packed));
+
+class GameControlCyclePrepareTeam : public NetMessage
+{
+public:
+    Uint16 Cooldown;
+    GameControlCyclePrepareTeam()
+    {
+        message_class = _net_message_class_game_control;
+        message_id = _net_message_id_game_control_cycle_prepare_team;
+        Cooldown = GameControlRulesDaemon::getTeamCD();
+    }
+}
+__attribute__((packed));
+
+class GameControlCycleTeamStart : public NetMessage
+{
+public:
+    GameControlCycleTeamStart()
+    {
+        message_class = _net_message_class_game_control;
+        message_id = _net_message_id_game_control_cycle_team_start;
     }
 }
 __attribute__((packed));

@@ -617,7 +617,7 @@ DesktopView::DesktopView() : View()
     setDisplayStatusBar(false);
     setVisible(false);
 
-    resizeClientArea(iXY(320, 400));
+    resizeClientArea(iXY(800, 600));
     moveTo(iXY(0, 0));
 
     add( new Label( 0, 0,   "Name", Color::white) );

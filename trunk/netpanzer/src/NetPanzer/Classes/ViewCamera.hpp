@@ -25,6 +25,7 @@ class ViewCamera : private MapInterface
 {
 protected:
     iXY loc;
+    iXY move;
     iXY view_size;
 
 public:
@@ -33,6 +34,7 @@ public:
     void scrollMinusX( long scroll_increment );
     void scrollMinusY( long scroll_increment );
     void scrollPlusY( long scroll_increment );
+    void MoveCamera();
 
     inline void setCamera( const iXY &new_loc )
     {

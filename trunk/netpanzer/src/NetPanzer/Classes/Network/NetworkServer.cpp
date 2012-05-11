@@ -394,10 +394,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 
         if ( player && sendalert && ! kicked)
         {
-            if (GameConfig::game_teammode)
-            {
-                TeamManager::removePlayer(player->getID(), player->getTeamID());
-            }
+            if (GameConfig::game_teammode == true)
             ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
                                       "'%s' has left.",
                                       player->getName().c_str());
@@ -423,6 +420,11 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
                 scmsg.set( player_index, _connect_alert_mesg_client_drop );
             }
             SERVER->broadcastMessage(&scmsg, sizeof(scmsg));
+        }
+        if (GameConfig::game_teammode == true)
+        {
+            TeamManager::removePlayer(player->getID(), player->getTeamID());
+            TeamManager::BalancedTeam();
         }
     }
 }

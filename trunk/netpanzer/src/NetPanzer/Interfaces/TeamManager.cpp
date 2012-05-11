@@ -267,7 +267,8 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
 
-    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers()))
+    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
+        && ((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
     {
         Teams_lists[current_team].removePlayer(player_id);
         Teams_lists[newteam].addPlayer(player_id);

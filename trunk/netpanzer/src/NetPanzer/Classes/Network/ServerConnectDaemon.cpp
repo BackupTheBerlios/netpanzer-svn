@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "NetMessage.hpp"
 #include "NetMessageEncoder.hpp"
+#include "GameControlNetMessage.hpp"
 
 #include "Classes/PlayerState.hpp"
 #include "PlayerNetMessage.hpp"
@@ -723,6 +724,12 @@ public:
 
         PowerUpInterface::syncPowerUps( connect_client );
 
+        if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
+        {
+            GameControlCyclePrepareTeam prepare_team_mesg;
+            SERVER->sendMessage(connect_client->player_id, &prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
+        }
+        
         PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
 
         player->setStateSelectingFlag();
@@ -741,8 +748,9 @@ public:
         state_mesg.setMessageEnum(_connect_state_sync_complete);
         connect_client->sendMessage( &state_mesg,
                                      sizeof(ConnectProcessStateMessage));
+
+
         sendConnectionAlert( connect_client );
-        
         return connect_state_idle;
     }
 };

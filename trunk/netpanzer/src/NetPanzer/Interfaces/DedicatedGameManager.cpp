@@ -287,6 +287,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
     console->startThread();
 
     GameManager::startGameTimer();
+    if (GameConfig::game_teammode)
+        GameControlRulesDaemon::setStateServerprepareteam();
     return true;
 }
 

@@ -78,6 +78,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/GFlagSelectionView.hpp"
 #include "Views/Game/GTeamView.hpp"
+#include "Views/Game/PrepareTeam.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
@@ -182,6 +183,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new HelpScrollView());
 
     Desktop::add(new GTeamView());
+    Desktop::add(new PrepareTeam());
 
     LoadingView *lv = new LoadingView();
     Desktop::add(lv);
