@@ -104,7 +104,7 @@ PlayerID Team::countPlayers() const
 PlayerID Team::getrandomplayer() const
 {
     PlayerID count = 0;
-    PlayerID player_id, result;
+    PlayerID player_id, result =0;
     Uint8 player = rand()%countPlayers();
     
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )

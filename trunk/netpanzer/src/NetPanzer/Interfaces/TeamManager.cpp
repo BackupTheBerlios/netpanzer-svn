@@ -294,6 +294,19 @@ void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
                                   Teams_lists[current_team].getName().c_str());
 }
 
+void TeamManager::SpawnTeams()
+{
+    for ( PlayerID player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        PlayerState* state_id = PlayerInterface::getPlayer(player_id);
+        if (state_id->isActive())
+        {
+            UnitInterface::destroyPlayerUnits(player_id);
+            GameManager::spawnPlayer( player_id );
+        }
+    }
+}
+
 
 
 

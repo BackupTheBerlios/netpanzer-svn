@@ -141,7 +141,7 @@ void PrepareTeam::DrawInfo(Surface &dest)
              PlayerInterface::getActivePlayerCount(), 
              GameConfig::game_maxplayers);
     dest.bltString(start.x, start.y, statBuf, Color::white);
-    snprintf(statBuf, sizeof(statBuf), "Objectives: %i", ObjectiveInterface::getObjectiveCount());
+    snprintf(statBuf, sizeof(statBuf), "Objectives: %i", (int) ObjectiveInterface::getObjectiveCount());
     dest.bltString(start.x+nextx, start.y, statBuf, Color::white);
     start.y+= 13;
     snprintf(statBuf, sizeof(statBuf), "Units: %i", GameConfig::game_maxunits/GameConfig::game_maxplayers);

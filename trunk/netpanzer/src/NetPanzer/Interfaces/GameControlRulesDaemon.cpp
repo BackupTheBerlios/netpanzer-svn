@@ -191,7 +191,6 @@ void GameControlRulesDaemon::mapCycleFsmClient()
         }
         if (Desktop::getVisible("PrepareTeam"))
             WorldViewInterface::MoveCamera();
-        LOGGER.warning("rest %i", 300-(int)cooldown.getTime());
         return;
     }
     break;
@@ -199,6 +198,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
     case _map_cycle_client_team_start :
     {
             Desktop::setVisibility("PrepareTeam", false);
+            map_cycle_fsm_client_state = _map_cycle_client_idle;
         return;
     }
     break;
@@ -381,6 +381,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         if (GameConfig::game_teammode)
         {
             map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
+            setStateServerprepareteam();
             GameControlCyclePrepareTeam prepare_team_mesg;
             SERVER->broadcastMessage(&prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
 
@@ -400,6 +401,9 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         {
             GameControlCycleTeamStart team_start_mesg;
             SERVER->broadcastMessage(&team_start_mesg, sizeof(GameControlCycleTeamStart));
+            TeamManager::SpawnTeams();
+            map_cycle_fsm_server_state = _map_cycle_server_state_idle;
+            setStateServerInProgress();
         }
     }
     break;

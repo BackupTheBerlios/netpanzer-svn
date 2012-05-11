@@ -52,6 +52,7 @@ public:
     static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
     static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);
     static void PlayerchangeTeam(PlayerID player_id, Uint8 team_idx);
+    static void SpawnTeams();
 };
 
 #endif // ** _TEAMMANAGER_HPP

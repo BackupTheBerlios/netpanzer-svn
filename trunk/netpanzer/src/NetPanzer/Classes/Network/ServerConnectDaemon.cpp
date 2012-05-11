@@ -724,11 +724,6 @@ public:
 
         PowerUpInterface::syncPowerUps( connect_client );
 
-        if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
-        {
-            GameControlCyclePrepareTeam prepare_team_mesg;
-            SERVER->sendMessage(connect_client->player_id, &prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
-        }
         
         PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
 
@@ -751,6 +746,11 @@ public:
 
 
         sendConnectionAlert( connect_client );
+        if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
+        {
+            GameControlCyclePrepareTeam prepare_team_mesg;
+            SERVER->sendMessage(connect_client->player_id, &prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
+        }
         return connect_state_idle;
     }
 };
