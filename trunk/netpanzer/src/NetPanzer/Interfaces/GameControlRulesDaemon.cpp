@@ -91,6 +91,7 @@ void GameControlRulesDaemon::setStateServerInProgress()
 void GameControlRulesDaemon::setStateServerIdle()
 {
     GameControlRulesDaemon::game_state = _game_state_idle;
+    map_cycle_fsm_client_state = _map_cycle_client_idle;
 }
 
 void GameControlRulesDaemon::setStateServerprepareteam()
