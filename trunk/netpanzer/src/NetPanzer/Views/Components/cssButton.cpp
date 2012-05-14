@@ -90,23 +90,7 @@ cssButton::createcssButton( std::string cname,
                             std::string label,
                             iXY loc)
 {
-    Surface bstart;
-    bstart.loadBMP("pics/backgrounds/menus/buttons/default/bs-black.bmp");
-    Surface bend;
-    bend.loadBMP("pics/backgrounds/menus/buttons/default/be-black.bmp");
-
-    Surface spbutton(Surface::getTextLength(label)+20, bstart.getHeight(), 1);
-
-    spbutton.setFrame(0);
-    bstart.blt(spbutton,0,0);
-    bend.blt(spbutton,spbutton.getWidth()-10,0);
-
-    cssButton *b = new cssButton(cname);
-    b->setImage(spbutton);
-    b->setLabel(label);
-    b->setLocation(loc);
-    b->setTextColors(Color::white, Color::yellow, Color::yellow, Color::darkGray);
-
+    cssButton *b = cssButton::createcssButton(cname, label, loc, Surface::getTextLength(label)+20);
     return b;
 }
 
@@ -115,22 +99,31 @@ cssButton::createcssButton( std::string cname,
                             std::string label,
                             iXY loc, int width)
 {
+    Surface bitmap;
+    bitmap.loadBMP("pics/backgrounds/menus/buttons/default/b-black.bmp");
+    
     Surface bstart;
-    bstart.loadBMP("pics/backgrounds/menus/buttons/default/bs-black.bmp");
+    bstart.grab(bitmap, iRect(0, 0, 15, bitmap.getHeight()));
     Surface bend;
-    bend.loadBMP("pics/backgrounds/menus/buttons/default/be-black.bmp");
+    bend.grab(bitmap, iRect(bitmap.getWidth()-15, 0, bitmap.getWidth(), bitmap.getHeight()));
+    Surface bmiddle;
+    bmiddle.grab(bitmap, iRect(15, 0, bitmap.getWidth()-15, bitmap.getHeight()));
 
     Surface spbutton(width, bstart.getHeight(), 1);
 
     spbutton.setFrame(0);
     bstart.blt(spbutton,0,0);
-    bend.blt(spbutton,spbutton.getWidth()-10,0);
-
+    int msize = bmiddle.getWidth();
+    for (int i = 0; i < (int)((spbutton.getWidth())/msize);i++)
+    {
+        bmiddle.blt(spbutton,15+(msize*i),0);
+    }
+    bend.blt(spbutton,spbutton.getWidth()-15,0);
     cssButton *b = new cssButton(cname);
     b->setImage(spbutton);
     b->setLabel(label);
     b->setLocation(loc);
-    b->setTextColors(Color::white, Color::yellow, Color::yellow, Color::darkGray);
+    b->setTextColors(componentActiveTextColor, componentBodyColor, componentBodyColor, 33);
 
     return b;
 }

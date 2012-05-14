@@ -34,11 +34,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static const char * stats_format = "%-20s";
 static Uint8 newteam = 0;
 
-//static void bChangeTeam()
-//{
-//    TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
-//}
-
 PrepareTeam::PrepareTeam() : GameTemplateView()
 {
     setSearchName("PrepareTeam");
@@ -78,18 +73,19 @@ void PrepareTeam::init()
     secondrect.max.x = rect.max.x-7;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = cssButton::createcssButton( "changeteam", " >> ", iXY(firstrect.max.x+15, (firstrect.min.y+50)), 70);
+    changebutton = cssButton::createcssButton( "changeteam", " >> ", iXY(firstrect.max.x+10, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-20);
     add(changebutton);
-    readybutton = cssButton::createcssButton( "ready", "Ready", iXY(firstrect.max.x+15, (firstrect.min.y+85)), 70);
+    readybutton = cssButton::createcssButton( "ready", "Ready", iXY(firstrect.max.x+10, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-20);
     add(readybutton);
+
     loaded = true;
 }
 
 void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
 {
     menuImage.bltTrans(clientArea, menuImageXY.x, menuImageXY.y);
-    clientArea.FillRoundRect(rect, 12, Color::black);
-    clientArea.RoundRect(rect,12, Color::white);
+    clientArea.FillRoundRect(rect, 12, 33);
+    clientArea.RoundRect(rect,12, 15);
 
     clientArea.RoundRect(firstrect,10, TeamManager::getTeamColor(0));
     clientArea.RoundRect(secondrect,10, TeamManager::getTeamColor(1));
@@ -190,7 +186,7 @@ void PrepareTeam::drawTeams(Surface &dest)
     int Start_x = firstrect.min.x+30;
     int current_Team = 0;
     Surface * flag = 0;
-
+    PIX textcolor;
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
@@ -205,11 +201,17 @@ void PrepareTeam::drawTeams(Surface &dest)
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, Start_x-23, cur_line_pos-5 );
 
+        textcolor = Color::white;
+        if (TeamManager::isPlayerReady(state->getID()))
+            textcolor = Color::darkGray;
+        else if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
+            textcolor = Color::cyan;
+
         if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
         {
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str());
-            dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::cyan, Color::gray64);
+            dest.bltString(Start_x, cur_line_pos, statBuf,textcolor);
             if (current_Team > 0)
             {
                 newteam=0;
@@ -225,7 +227,7 @@ void PrepareTeam::drawTeams(Surface &dest)
         {
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str());
-            dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::gray224, Color::gray64);
+            dest.bltString(Start_x, cur_line_pos, statBuf,textcolor);
         }
         cur_line_pos += 20;
     }
@@ -268,8 +270,9 @@ void PrepareTeam::onComponentClicked(Component* c)
     }
     else if ( c == readybutton )
     {
-        readybutton->Disable();
+        TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
         changebutton->Disable();
+        readybutton->Disable();
     }
 }
 

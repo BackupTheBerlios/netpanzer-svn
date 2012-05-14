@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/TeamManager.hpp"
 #include "Resources/ResourceManager.hpp"
 #include <sstream>
 
@@ -99,6 +100,9 @@ Uint8
 PlayerState::getColor() const
 {
     assert(id < playerColorCount);
+    if (GameConfig::game_teammode)
+    return TeamManager::getTeamColor(team_id);
+    else
     return ( *playerColorArray[ id ] );
 }
 

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/Team.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -31,25 +32,57 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
 
-
 Team       * TeamManager::Teams_lists = 0;
 Uint8        TeamManager::max_Teams = 0;
+static bool   * player_ready = 0;
+
+static void resetPlayerReady()
+{
+    for ( int i = 0; i < PlayerInterface::getMaxPlayers(); i++ )
+    {
+        player_ready[ i ] = false;
+    }
+}
+
+static bool isAllPlayersReady()
+{
+    for ( int i = 0; i < PlayerInterface::getMaxPlayers(); i++ )
+    {
+        if (PlayerInterface::getPlayer(i)->isActive())
+        {
+            if (player_ready[ i ] == false) return false;
+        }
+    }
+    return true;
+}
+
+static void setReady(PlayerID player_id)
+{
+    player_ready[ player_id ] = true;
+}
+
+bool TeamManager::isPlayerReady(PlayerID player_id)
+{
+    return player_ready[ player_id ];
+}
 
 void TeamManager::initialize(const Uint8 _max_teams)
 {
     char txtBuf[256];
     Uint8 colorsteam[4] = {Color::yellow, 208, Color::green, Color::cyan};
     max_Teams = _max_teams;
-    int team_id;
 
     delete[] Teams_lists;
     Teams_lists = new Team[max_Teams];
+    delete[] player_ready;
+    player_ready = new bool [PlayerInterface::getMaxPlayers()];
 
     std::vector<NPString> plist;
     NPString pl = *GameConfig::game_team_names;
     string_to_params(pl, plist);
 
-    for ( team_id = 0; team_id < max_Teams; ++team_id )
+
+    for ( int team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].initialize(team_id);
         if (team_id < (Uint8) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
@@ -123,6 +156,7 @@ void TeamManager::reset()
             }
         }
     }
+    resetPlayerReady();
 }
 
 void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
@@ -267,18 +301,31 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
 {
     Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
 
-    if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
-        && ((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
+    if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
     {
-        Teams_lists[current_team].removePlayer(player_id);
-        Teams_lists[newteam].addPlayer(player_id);
-        PlayerTeamRequest Changeteam_request;
-        
-        UnitInterface::destroyPlayerUnits(player_id);
-        GameManager::spawnPlayer( player_id );
+        if (((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
+        {
+            Teams_lists[current_team].removePlayer(player_id);
+            Teams_lists[newteam].addPlayer(player_id);
+            PlayerTeamRequest Changeteam_request;
+            Changeteam_request.set(player_id, newteam, change_team_Accepted);
+            SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
+        }
+    }
+    else
+    {
+        if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
+                && ((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
+        {
+            Teams_lists[current_team].removePlayer(player_id);
+            Teams_lists[newteam].addPlayer(player_id);
+            PlayerTeamRequest Changeteam_request;
+            Changeteam_request.set(player_id, newteam, change_team_Accepted);
+            SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
 
-        Changeteam_request.set(player_id, newteam, change_team_Accepted);
-        SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
+            UnitInterface::destroyPlayerUnits(player_id);
+            GameManager::spawnPlayer( player_id );
+        }
     }
 }
 
@@ -288,10 +335,44 @@ void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
 
     Teams_lists[current_team].removePlayer(player_id);
     Teams_lists[team_idx].addPlayer(player_id);
-    ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                  "%s has changed to team %s.",
-                                  PlayerInterface::getPlayer(player_id)->getName().c_str(),
-                                  Teams_lists[current_team].getName().c_str());
+
+    if (GameControlRulesDaemon::getGameState() != _game_state_prepare_team)
+        ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                      "%s has changed to team %s.",
+                                      PlayerInterface::getPlayer(player_id)->getName().c_str(),
+                                      Teams_lists[current_team].getName().c_str());
+}
+
+void TeamManager::PlayerRequestReady(PlayerID player_id)
+{
+    PlayerReadyRequest Ready_request;
+    Ready_request.set(player_id, ready_request);
+    CLIENT->sendMessage( &Ready_request, sizeof(PlayerReadyRequest));
+}
+
+void TeamManager::ServerRequestReady(PlayerID player_id)
+{
+    setReady(player_id);
+    PlayerReadyRequest Ready_request;
+    Ready_request.set(player_id, ready_Accepted);
+    SERVER->broadcastMessage( &Ready_request, sizeof(PlayerReadyRequest));
+}
+
+bool TeamManager::CheckisPlayerReady()
+{
+    if (PlayerInterface::getActivePlayerCount() > 1)
+    {
+        if (isAllPlayersReady())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void TeamManager::PlayerRequestReadyAccepted(PlayerID player_id)
+{
+    setReady(player_id);
 }
 
 void TeamManager::SpawnTeams()
@@ -306,6 +387,41 @@ void TeamManager::SpawnTeams()
         }
     }
 }
+
+void TeamManager::netMessageChangeTeamRequest(const NetMessage* message)
+{
+    const PlayerTeamRequest* changeTeamRequest
+    = (const PlayerTeamRequest *) message;
+    
+    switch(changeTeamRequest->request_type)
+    {
+    case change_team_request :
+        serverrequestchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
+        break;
+ 
+    case change_team_Accepted:
+        PlayerchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
+        break;
+    }
+}
+void TeamManager::netMessageReadyRequest(const NetMessage* message)
+{
+    const PlayerReadyRequest* ReadyRequest
+    = (const PlayerReadyRequest *) message;
+    
+    switch(ReadyRequest->request_type)
+    {
+    case ready_request :
+        ServerRequestReady(ReadyRequest->getPlayerIndex());
+        break;
+ 
+    case change_team_Accepted:
+        PlayerRequestReadyAccepted(ReadyRequest->getPlayerIndex());
+        break;
+    }
+    
+}
+
 
 
 

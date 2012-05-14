@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TEAMMANAGER_HPP
 
 #include "Interfaces/Team.hpp"
+#include "Classes/Network/NetMessage.hpp"
 
 class TeamManager
 {
@@ -53,6 +54,16 @@ public:
     static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);
     static void PlayerchangeTeam(PlayerID player_id, Uint8 team_idx);
     static void SpawnTeams();
+    
+    static bool CheckisPlayerReady();
+    static bool isPlayerReady(PlayerID player_id);
+    static void PlayerRequestReady(PlayerID player_id);
+    static void ServerRequestReady(PlayerID player_id);
+    static void PlayerRequestReadyAccepted(PlayerID player_id);
+
+    static void netMessageChangeTeamRequest(const NetMessage* message);
+    static void netMessageReadyRequest(const NetMessage* message);
+
 };
 
 #endif // ** _TEAMMANAGER_HPP

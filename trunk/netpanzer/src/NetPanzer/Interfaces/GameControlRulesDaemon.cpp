@@ -188,6 +188,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
     {
         if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
         {
+            TeamManager::reset();
             Desktop::setVisibility("PrepareTeam", true);
         }
         if (Desktop::getVisible("PrepareTeam"))
@@ -382,10 +383,10 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         if (GameConfig::game_teammode)
         {
             map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
+            TeamManager::reset();
             setStateServerprepareteam();
             GameControlCyclePrepareTeam prepare_team_mesg;
             SERVER->broadcastMessage(&prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
-
         }
         else
         {
@@ -398,7 +399,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
     case _map_cycle_server_prepare_team :
     {
-        if (cooldown.count())
+        if (cooldown.count() || TeamManager::CheckisPlayerReady())
         {
             GameControlCycleTeamStart team_start_mesg;
             SERVER->broadcastMessage(&team_start_mesg, sizeof(GameControlCycleTeamStart));

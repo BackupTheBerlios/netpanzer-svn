@@ -109,6 +109,7 @@ public:
 
     void drawRect(iRect bounds, const PIX &color);
     void fillRect(iRect bounds, const PIX &color);
+    bool grab(const Surface &s, iRect bounds);
 
 private:
     friend class ScreenSurface;
@@ -117,7 +118,6 @@ private:
     PIX   *frame0;    // Pointer to first frame
     
     void alloc(unsigned int w, unsigned int h, int nframes);
-    bool grab(const Surface &s, iRect bounds);
 
     PIX *pixPtr(unsigned int x, unsigned int y) const
     {
