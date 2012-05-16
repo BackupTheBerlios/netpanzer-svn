@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/cssButton.hpp"
 
 class PlayerState;
 
@@ -34,6 +35,7 @@ private:
     iRect secondrect;
     std::vector<const PlayerState*> states;
     void drawTeams(Surface &dest);
+    cssButton * changebutton;
 
 public:
     GTeamView();
@@ -45,6 +47,8 @@ public:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     virtual void processEvents();
+    virtual void onComponentClicked(Component* c);
+    virtual void resize(const iXY &size);
 
     void init();
 };

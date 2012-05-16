@@ -1100,6 +1100,22 @@ WorldInputCmdProcessor::process(bool process_mouse)
     working_list.validateList();
 }
 
+void WorldInputCmdProcessor::processChat()
+{
+    switch( keyboard_input_mode ) {
+    case _keyboard_input_mode_command :
+        if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true))
+        {
+            setKeyboardInputModeChatMesg();
+        }
+        break;
+
+    case _keyboard_input_mode_chat_mesg :
+        keyboardInputModeChatMesg();
+        break;
+    }
+}
+
 bool
 WorldInputCmdProcessor::getConsoleInputString(char *input_string)
 {

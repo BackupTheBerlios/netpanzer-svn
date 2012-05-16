@@ -397,6 +397,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
         {
             unit_placement_matrix.getNextEmptyLoc( &next_loc );
             unit = createUnit(unit_type_index, next_loc, player_id);
+            if (unit == 0) return;
             UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
                     next_loc.x, next_loc.y, unit->unit_state.unit_type);
             if ( !encoder.encodeMessage(&create_mesg, sizeof(create_mesg)) )

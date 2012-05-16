@@ -65,6 +65,7 @@ public:
     static ColorTable gray128;
     static ColorTable gray256;
     static ColorTable darkGray256;
+    static ColorTable darkbrown256;
     static ColorTable brightness256;
     static ColorTable red256;
     static ColorTable green256;

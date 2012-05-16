@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/SystemNetMessage.hpp"
 #include "Util/Log.hpp"
 #include "Util/StringUtil.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -101,7 +102,6 @@ void TeamManager::addPlayer(PlayerID player_id)
 {
     int team_id;
     int lowTeam = 0, countPlayers = Teams_lists[ 0 ].countPlayers();
-
     for ( team_id = 0; team_id < max_Teams; ++team_id )
     {
         if (Teams_lists[ team_id ].countPlayers() < countPlayers)
@@ -340,7 +340,7 @@ void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
         ConsoleInterface::postMessage(Color::yellow, false, 0,
                                       "%s has changed to team %s.",
                                       PlayerInterface::getPlayer(player_id)->getName().c_str(),
-                                      Teams_lists[current_team].getName().c_str());
+                                      Teams_lists[team_idx].getName().c_str());
 }
 
 void TeamManager::PlayerRequestReady(PlayerID player_id)

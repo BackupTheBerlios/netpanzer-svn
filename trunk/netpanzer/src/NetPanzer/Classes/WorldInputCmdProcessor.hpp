@@ -109,6 +109,7 @@ public:
     WorldInputCmdProcessor();
 
     void process(bool process_mouse = true);
+    void processChat();
 
     void inFocus();
 

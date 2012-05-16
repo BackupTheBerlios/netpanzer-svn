@@ -45,6 +45,7 @@ ColorTable Palette::gray64;
 ColorTable Palette::gray128;
 ColorTable Palette::gray256;
 ColorTable Palette::darkGray256;
+ColorTable Palette::darkbrown256;
 ColorTable Palette::brightness256;
 ColorTable Palette::red32;
 ColorTable Palette::green32;
@@ -132,6 +133,15 @@ void Palette::setColorTables()
     for (num = 0; num < 256; num++) {
         int c = color[num].r/3;// dark gray
         darkGray256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
+    }
+
+    darkbrown256.init(256);
+    for (num = 0; num < 256; num++) {
+        // the magic values are for palete color 33
+        int r = abs(color[num].r - 0x16)/4.5;
+        int g = abs(color[num].g - 0x1a)/4.5;
+        int b = abs(color[num].b - 0x19)/4.5;
+        darkbrown256.setColor(num, int(findNearestColor(0x16 + r,0x1a + g,0x19 + b)));
     }
 
     red256.init(256);

@@ -79,7 +79,7 @@ public:
         dirty = true;
     }
     
-    bool isEnable()
+    bool isEnable() const
     {
         return enabled;
     }

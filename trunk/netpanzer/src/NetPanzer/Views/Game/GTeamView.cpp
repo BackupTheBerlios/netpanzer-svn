@@ -23,17 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
-#include "Views/Components/cButton.hpp"
- 
+#include "Util/Timer.hpp"
+
  
 static const char * stats_format = "%-20s%6i%7i%6i";
 static Uint8 newteam = 0;
- 
-static void bChangeTeam()
-{
-    TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
-}
- 
+static Timer chantetimer;
+
 GTeamView::GTeamView() : GameTemplateView()
 {
     setSearchName("GTeamView");
@@ -46,6 +42,8 @@ GTeamView::GTeamView() : GameTemplateView()
     setBordered(false);
  
     loaded = false; 
+    chantetimer.changePeriod(2); //2 sec on start
+    chantetimer.reset();
 }
  
 void GTeamView::init()
@@ -58,24 +56,31 @@ void GTeamView::init()
     firstrect.min.x = (viewrect.getSizeX()/2) - 350;
     firstrect.min.y = (viewrect.getSizeY()/2) - 250;
     firstrect.max.x = firstrect.min.x + 350;
-    firstrect.max.y = firstrect.min.y + 500;
+    firstrect.max.y = firstrect.min.y + 400;
  
     secondrect.min.x = firstrect.max.x+30;
     secondrect.min.y = firstrect.min.y;
     secondrect.max.x = secondrect.min.x + 350;
-    secondrect.max.y = secondrect.min.y + 500;
+    secondrect.max.y = firstrect.max.y;
  
-    addButtonCenterText( iXY(firstrect.max.x+2, firstrect.min.y+18), 28, "<->", "", bChangeTeam);
+    changebutton = cssButton::createcssButton( "changeteam", " >> ", iXY(firstrect.max.x+1, ((firstrect.getSizeY()/2)-10)), (secondrect.min.x-firstrect.max.x));
+    add(changebutton);
     loaded = true;
+    if (!chantetimer.count()) changebutton->Disable();
 }
  
 void GTeamView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    clientArea.BltRoundRect(firstrect, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(firstrect,14, Color::gray);
+    if (!changebutton->isEnable() && chantetimer.count())
+    {
+        changebutton->Enable();
+    }
+
+    clientArea.BltRoundRect(firstrect, 14, Palette::darkbrown256.getColorArray());
+    clientArea.RoundRect(firstrect,14, 15);
  
-    clientArea.BltRoundRect(secondrect, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(secondrect,14, Color::gray);
+    clientArea.BltRoundRect(secondrect, 14, Palette::darkbrown256.getColorArray());
+    clientArea.RoundRect(secondrect,14, 15);
  
     drawTeams(clientArea);
     View::doDraw(viewArea, clientArea);
@@ -151,10 +156,12 @@ void GTeamView::drawTeams(Surface &dest)
             if (current_Team > 0)
             {
                 newteam=0;
+                changebutton->setLabel("<<");
             }
             else
             {
                 newteam=1;
+                changebutton->setLabel(">>");
             }
         }
         else
@@ -196,4 +203,24 @@ void GTeamView::processEvents()
 {
     COMMAND_PROCESSOR.process(false);
 }
- 
+
+void GTeamView::onComponentClicked(Component* c)
+{
+    if ( c == changebutton && chantetimer.count())
+    {
+        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
+        chantetimer.changePeriod(120); //2 minutes after first change
+        chantetimer.reset();
+        changebutton->Disable();
+    }
+    else
+    {
+        View::onComponentClicked(c);
+    }
+}
+void GTeamView::resize(const iXY &size)
+{
+    View::resize(size);
+    init();
+}
+

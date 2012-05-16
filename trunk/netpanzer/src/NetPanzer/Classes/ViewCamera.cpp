@@ -18,13 +18,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ViewCamera.hpp"
 #include "Util/Log.hpp"
+#include <time.h>
+
+char getmoveratio()
+{
+// return range (-3 -> 3) without 0
+    char ratio = 0;
+    while (ratio == 0)
+    {
+        ratio = -3+rand()%7;
+    }
+    return ratio;
+}
 
 ViewCamera::ViewCamera()
 {
     loc.x = 0;
     loc.y = 0;
-    move.x = 1;
-    move.y = -1;
+    srand(time(NULL));
+    move.x = getmoveratio();
+    move.y = getmoveratio();
 }
 
 void ViewCamera::scrollPlusX( long scroll_increment )
@@ -106,7 +119,7 @@ void ViewCamera::MoveCamera()
     }
     else
     {
-        move.y = -move.y;
+        move.y = getmoveratio();
     }
 
     if ( (view.x-(view_size.x/2) >= 0) && (view.x+(view_size.x/2) <= map_size.x) )
@@ -115,7 +128,7 @@ void ViewCamera::MoveCamera()
     }
     else
     {
-        move.x = -move.x;
+        move.x = getmoveratio();
     }
 }
 

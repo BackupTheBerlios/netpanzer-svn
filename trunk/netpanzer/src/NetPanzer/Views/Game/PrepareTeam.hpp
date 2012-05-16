@@ -38,7 +38,7 @@ private:
     void drawTeams(Surface &dest);
     void DrawInfo(Surface &dest);
     iXY menuImageXY;
-    Surface menuImage;
+    Surface menuImage, vsImage;
     cssButton * changebutton;
     cssButton * readybutton;
 

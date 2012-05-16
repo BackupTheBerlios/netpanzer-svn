@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Interfaces/MapInterface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Components/cButton.hpp"
 #include "Views/Components/cssButton.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -45,6 +47,7 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     setVisible(false);
     setBordered(false);
     menuImage.loadBMP("pics/backgrounds/menus/menu/canon.bmp");
+    vsImage.loadBMP("pics/backgrounds/menus/menu/vs.bmp");
 
     loaded = false;
 }
@@ -61,7 +64,7 @@ void PrepareTeam::init()
     rect.min.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
     rect.min.y = menuImageXY.y+menuImage.getHeight();
     rect.max.x = rect.min.x+500;
-    rect.max.y = rect.min.y+350;
+    rect.max.y = rect.min.y+330;
 
     firstrect.min.x = rect.min.x+7;
     firstrect.min.y = rect.min.y+7;
@@ -77,7 +80,6 @@ void PrepareTeam::init()
     add(changebutton);
     readybutton = cssButton::createcssButton( "ready", "Ready", iXY(firstrect.max.x+10, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-20);
     add(readybutton);
-
     loaded = true;
 }
 
@@ -91,6 +93,7 @@ void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.RoundRect(secondrect,10, TeamManager::getTeamColor(1));
     DrawInfo(clientArea);
     drawTeams(clientArea);
+    vsImage.bltTrans(clientArea, firstrect.max.x+10, firstrect.max.y-vsImage.getHeight()-10);
     View::doDraw(viewArea, clientArea);
 }
 
@@ -259,7 +262,7 @@ void PrepareTeam::checkResolution(iXY oldResolution, iXY newResolution)
 
 void PrepareTeam::processEvents()
 {
-    COMMAND_PROCESSOR.process(false);
+    COMMAND_PROCESSOR.processChat();
 }
 
 void PrepareTeam::onComponentClicked(Component* c)
@@ -273,6 +276,10 @@ void PrepareTeam::onComponentClicked(Component* c)
         TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
         changebutton->Disable();
         readybutton->Disable();
+    }
+    else
+    {
+        View::onComponentClicked(c);
     }
 }
 
