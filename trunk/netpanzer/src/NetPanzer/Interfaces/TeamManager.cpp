@@ -140,22 +140,22 @@ void TeamManager::BalancedTeam()
 
 void TeamManager::reset()
 {
-    for ( PlayerID player_index = 0; player_index < PlayerInterface::getMaxPlayers()-1; ++player_index )
-    {
-        for ( PlayerID player_id = 1; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
-        {
-            PlayerState* state_id = PlayerInterface::getPlayer(player_id);
-            PlayerState* state_index = PlayerInterface::getPlayer(player_index);
-            if (state_id->isActive() && state_index->isActive())
-            {
-                if (state_id->getTeamID() == state_index->getTeamID()
-                        && (player_id != player_index))
-                {
-                    PlayerInterface::allyplayers( player_id, player_index);
-                }
-            }
-        }
-    }
+//    for ( PlayerID player_index = 0; player_index < PlayerInterface::getMaxPlayers()-1; ++player_index )
+//    {
+//        for ( PlayerID player_id = 1; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+//        {
+//            PlayerState* state_id = PlayerInterface::getPlayer(player_id);
+//            PlayerState* state_index = PlayerInterface::getPlayer(player_index);
+//            if (state_id->isActive() && state_index->isActive())
+//            {
+//                if (state_id->getTeamID() == state_index->getTeamID()
+//                        && (player_id != player_index))
+//                {
+//                    PlayerInterface::allyplayers( player_id, player_index);
+//                }
+//            }
+//        }
+//    }
     resetPlayerReady();
 }
 
@@ -227,7 +227,6 @@ Uint8 TeamManager::getTeamWin()
     case _gametype_timelimit:
         for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
         {
-            Score = Teams_lists[team_id].getKills();
             if (Score < Teams_lists[team_id].getKills())
             {
                 teamWin = team_id;
@@ -238,7 +237,6 @@ Uint8 TeamManager::getTeamWin()
     case _gametype_objective:
         for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
         {
-            Score = Teams_lists[team_id].getTeamObjective();
             if (Score < Teams_lists[team_id].getTeamObjective())
             {
                 teamWin = team_id;
@@ -272,17 +270,11 @@ bool TeamManager::testRuleScoreLimit( long score_limit )
 
 bool TeamManager::testRuleObjectiveRatio( float precentage )
 {
-    ObjectiveID num_objectives = ObjectiveInterface::getObjectiveCount();
-
-    int occupation_ratio = (int) ( ((float) num_objectives) * precentage  + 0.999);
-    if (occupation_ratio == 0)
-    {
-        occupation_ratio = 1;
-    }
+    ObjectiveID max_objectives = ObjectiveInterface::getObjectiveLimit();
 
     for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
     {
-        if ( Teams_lists[team_id].getTeamObjective() >= occupation_ratio )
+        if ( Teams_lists[team_id].getTeamObjective() >= max_objectives )
         {
             return true;
         }

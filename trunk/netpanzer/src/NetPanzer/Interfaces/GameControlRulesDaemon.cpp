@@ -49,6 +49,7 @@ enum { _map_cycle_server_state_idle,
        _map_cycle_server_state_load_unit_profiles,
        _map_cycle_server_state_sync_profiles,
        _map_cycle_server_state_respawn_players,
+       _map_cycle_server_restart_team,
        _map_cycle_server_prepare_team
      };
  
@@ -178,6 +179,13 @@ void GameControlRulesDaemon::mapCycleFsmClient()
             LoadingView::loadFinish();
             map_cycle_fsm_client_respawn_ack_flag = false;
             map_cycle_fsm_client_state = _map_cycle_client_idle;
+            if (GameConfig::game_teammode)
+            {
+                map_cycle_fsm_client_state = _map_cycle_client_prepare_team;
+                TeamManager::reset();
+                setStateServerprepareteam();
+                cooldown.reset();
+            }
         }
  
         return;
@@ -186,6 +194,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
     case _map_cycle_client_prepare_team :
     {
+        LOGGER.warning("_map_cycle_client_prepare_team");
         if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
         {
             TeamManager::reset();
@@ -199,8 +208,9 @@ void GameControlRulesDaemon::mapCycleFsmClient()
  
     case _map_cycle_client_team_start :
     {
-            Desktop::setVisibility("PrepareTeam", false);
-            map_cycle_fsm_client_state = _map_cycle_client_idle;
+        LOGGER.warning("_map_cycle_client_team_start");
+        Desktop::setVisibility("PrepareTeam", false);
+        map_cycle_fsm_client_state = _map_cycle_client_idle;
         return;
     }
     break;
@@ -364,7 +374,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
     }
     break;
  
- 
     case _map_cycle_server_state_respawn_players :
     {
         SystemResetGameLogic reset_game_logic_mesg;
@@ -382,11 +391,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
  
         if (GameConfig::game_teammode)
         {
-            map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
-            TeamManager::reset();
-            setStateServerprepareteam();
-            GameControlCyclePrepareTeam prepare_team_mesg;
-            SERVER->broadcastMessage(&prepare_team_mesg, sizeof(GameControlCyclePrepareTeam));
+            map_cycle_fsm_server_state = _map_cycle_server_restart_team;
         }
         else
         {
@@ -396,7 +401,16 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         ServerConnectDaemon::unlockConnectProcess();
     }
     break;
-
+    
+    case _map_cycle_server_restart_team :
+    {
+        map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
+        TeamManager::reset();
+        setStateServerprepareteam();
+        cooldown.reset();
+    }
+    break;
+    
     case _map_cycle_server_prepare_team :
     {
         if (cooldown.count() || TeamManager::CheckisPlayerReady())
