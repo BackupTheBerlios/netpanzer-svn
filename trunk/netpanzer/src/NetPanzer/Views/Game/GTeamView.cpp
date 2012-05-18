@@ -24,9 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
 #include "Util/Timer.hpp"
+#include "Resources/ResourceManager.hpp"
 
  
-static const char * stats_format = "%-20s%6i%7i%6i";
+static const char * stats_format = "%-16s%6i%7i%6i";
 static Uint8 newteam = 0;
 static Timer chantetimer;
 
@@ -52,7 +53,6 @@ void GTeamView::init()
     removeAllButtons();
     iRect viewrect = getClientRect();
  
- 
     firstrect.min.x = (viewrect.getSizeX()/2) - 350;
     firstrect.min.y = (viewrect.getSizeY()/2) - 250;
     firstrect.max.x = firstrect.min.x + 350;
@@ -63,7 +63,9 @@ void GTeamView::init()
     secondrect.max.x = secondrect.min.x + 350;
     secondrect.max.y = firstrect.max.y;
  
-    changebutton = cssButton::createcssButton( "changeteam", " >> ", iXY(firstrect.max.x+1, ((firstrect.getSizeY()/2)-10)), (secondrect.min.x-firstrect.max.x));
+    changebutton = cssButton::createcssButton( "changeteam", " >> ", 
+                                              iXY(firstrect.max.x+1, firstrect.min.y+((firstrect.getSizeY()/2)-10)), 
+                                              secondrect.min.x-firstrect.max.x);
     add(changebutton);
     loaded = true;
     if (!chantetimer.count()) changebutton->Disable();
@@ -118,22 +120,23 @@ void GTeamView::drawTeams(Surface &dest)
              TeamManager::getKills(0),
              TeamManager::getLosses(0),
              TeamManager::getObjectivesHeld(0));
-    dest.bltStringShadowed(firstrect.min.x+20, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-    TeamManager::drawFlag(0, dest, firstrect.min.x+(firstrect.getSizeX()/2), cur_line_pos-17 );
+    dest.bltString(firstrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen);
+    TeamManager::drawFlag(0, dest, firstrect.min.x+7, cur_line_pos-4);
     snprintf(statBuf, sizeof(statBuf), stats_format, 
              TeamManager::getTeamName(1).c_str(), 
              TeamManager::getKills(1),
              TeamManager::getLosses(1),
              TeamManager::getObjectivesHeld(1));
-    dest.bltStringShadowed(secondrect.min.x+20, cur_line_pos, statBuf,Color::lightGreen, Color::gray64);
-    TeamManager::drawFlag(1, dest, secondrect.min.x+(secondrect.getSizeX()/2), cur_line_pos-17);
+    dest.bltString(secondrect.min.x+30, cur_line_pos, statBuf,Color::lightGreen);
+    TeamManager::drawFlag(1, dest, secondrect.min.x+7, cur_line_pos-4);
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, Color::lightGreen);
     dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, Color::lightGreen);
  
-    int Start_x = firstrect.min.x+20;
+    int Start_x = firstrect.min.x+30;
     int current_Team = 0;
-    
+    Surface * flag = 0;
+
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
@@ -142,17 +145,18 @@ void GTeamView::drawTeams(Surface &dest)
         if (current_Team != state->getTeamID())
         {
             cur_line_pos = firstrect.min.y +45;
-            Start_x = secondrect.min.x+20;
+            Start_x = secondrect.min.x+30;
             current_Team = state->getTeamID();
         }
-        TeamManager::drawFlag(current_Team, dest, Start_x-16, cur_line_pos-5 );
-        
+        flag = ResourceManager::getFlag(state->getFlag());
+        flag->blt( dest, Start_x-23, cur_line_pos-4 );
+
         if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
         {
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str(),
                      state->getKills(), state->getLosses(), state->getObjectivesHeld());
-            dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::cyan, Color::gray64);
+            dest.bltString(Start_x, cur_line_pos, statBuf,Color::cyan);
             if (current_Team > 0)
             {
                 newteam=0;
@@ -169,7 +173,7 @@ void GTeamView::drawTeams(Surface &dest)
             snprintf(statBuf, sizeof(statBuf),
                      stats_format, state->getName().substr(0,20).c_str(),
                      state->getKills(), state->getLosses(),state->getObjectivesHeld());
-            dest.bltStringShadowed(Start_x, cur_line_pos, statBuf,Color::gray224, Color::gray64);
+            dest.bltString(Start_x, cur_line_pos, statBuf,Color::gray224);
         }
         cur_line_pos += 20;
     }

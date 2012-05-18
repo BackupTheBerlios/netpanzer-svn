@@ -99,7 +99,7 @@ void GameControlRulesDaemon::setStateServerprepareteam()
 {
     GameControlRulesDaemon::game_state = _game_state_prepare_team;
     map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
-    cooldown.changePeriod(300);
+    cooldown.changePeriod(20);
     cooldown.reset();
 }
 //-----------------------------------------------------------------
@@ -181,24 +181,22 @@ void GameControlRulesDaemon::mapCycleFsmClient()
             map_cycle_fsm_client_state = _map_cycle_client_idle;
             if (GameConfig::game_teammode)
             {
-                map_cycle_fsm_client_state = _map_cycle_client_prepare_team;
-                TeamManager::reset();
                 setStateServerprepareteam();
+                TeamManager::reset();
                 cooldown.reset();
+                map_cycle_fsm_client_state = _map_cycle_client_prepare_team;
             }
         }
- 
         return;
     }
     break;
 
     case _map_cycle_client_prepare_team :
     {
-        LOGGER.warning("_map_cycle_client_prepare_team");
         if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
         {
-            TeamManager::reset();
             Desktop::setVisibility("PrepareTeam", true);
+            TeamManager::reset();
         }
         if (Desktop::getVisible("PrepareTeam"))
             WorldViewInterface::MoveCamera();
@@ -208,9 +206,9 @@ void GameControlRulesDaemon::mapCycleFsmClient()
  
     case _map_cycle_client_team_start :
     {
-        LOGGER.warning("_map_cycle_client_team_start");
         Desktop::setVisibility("PrepareTeam", false);
         map_cycle_fsm_client_state = _map_cycle_client_idle;
+        setStateServerInProgress();
         return;
     }
     break;
@@ -382,8 +380,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         SERVER->broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
  
         PlayerInterface::unlockPlayerStats();
-        GameControlRulesDaemon::game_state = _game_state_in_progress;
- 
         LoadingView::loadFinish();
  
         GameControlCycleRespawnAck respawn_ack_mesg;
@@ -397,7 +393,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         {
             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
         }
- 
         ServerConnectDaemon::unlockConnectProcess();
     }
     break;
@@ -529,6 +524,7 @@ void GameControlRulesDaemon::checkGameRules()
             {
                 PlayerInterface::resetPlayerUnitConfig( player_state->getID() );
                 GameManager::spawnPlayer( player_state->getID() );
+                LOGGER.warning("respawn_rule_complete");
             }
         }
     }

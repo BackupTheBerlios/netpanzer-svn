@@ -93,7 +93,7 @@ void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.RoundRect(secondrect,10, TeamManager::getTeamColor(1));
     DrawInfo(clientArea);
     drawTeams(clientArea);
-    vsImage.bltTrans(clientArea, firstrect.max.x+10, firstrect.max.y-vsImage.getHeight()-10);
+    vsImage.bltTrans(clientArea, firstrect.max.x+15, firstrect.max.y-vsImage.getHeight()-10);
     View::doDraw(viewArea, clientArea);
 }
 
@@ -104,10 +104,15 @@ void PrepareTeam::DrawInfo(Surface &dest)
     start.y = menuImageXY.y+115;
     int nextx = 145;
     char statBuf[256];
-
-    snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
-    dest.bltString(firstrect.max.x+40 , firstrect.min.y+5, statBuf, Color::white);
-
+    if (GameControlRulesDaemon::getTeamCD() < 1)
+    {
+        dest.bltString(start.x-5 , rect.min.y-5, "Get ready, the battle will begin...", Color::white);
+    }
+    else
+    {
+        snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
+        dest.bltString(firstrect.max.x+40 , firstrect.min.y+5, statBuf, Color::white);
+    }
     dest.bltString(start.x , start.y, "Game:", Color::white);
     dest.bltString(start.x+nextx , start.y, "Map:", Color::white);
     start.y+= 10;
@@ -128,7 +133,7 @@ void PrepareTeam::DrawInfo(Surface &dest)
     }
     case _gametype_objective:
     {
-        snprintf(statBuf, sizeof(statBuf), "Objective: %i%%", GameConfig::game_occupationpercentage);
+        snprintf(statBuf, sizeof(statBuf), "Objective: %i", GameConfig::game_occupationpercentage);
         break;
     }
     }

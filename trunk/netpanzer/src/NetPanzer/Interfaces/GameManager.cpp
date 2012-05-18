@@ -468,6 +468,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->setGameType(GameConfig::game_gametype);
     game_setup->powerup_state = GameConfig::game_powerups;
     game_setup->teammode_state = GameConfig::game_teammode;
+    game_setup->occupation_percentage = GameConfig::game_occupationpercentage;
     game_setup->setFragLimit(GameConfig::game_fraglimit);
     game_setup->setTimeLimit(GameConfig::game_timelimit);
     game_setup->setElapsedTime(getGameTime());
@@ -522,6 +523,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     GameConfig::game_windspeed = (int) game_setup->getWindSpeed();
     GameConfig::game_powerups = game_setup->powerup_state;
     GameConfig::game_teammode = game_setup->teammode_state;
+    GameConfig::game_occupationpercentage = game_setup->occupation_percentage;
     GameConfig::game_gametype = game_setup->getGameType();
     GameConfig::game_fraglimit = game_setup->getFragLimit();
     GameConfig::game_timelimit = game_setup->getTimeLimit();

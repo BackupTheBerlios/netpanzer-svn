@@ -182,12 +182,13 @@ private:
 public:
     Uint8  powerup_state;
     Uint8  teammode_state;
+    Uint8  occupation_percentage;
 private:
     Sint32  frag_limit;
     Sint32  time_limit;
     time_t   elapsed_time;
     Sint32  flag_time;
-
+    
 public:
     ConnectMesgServerGameSettings();
     Uint16 getMaxPlayers() const;
