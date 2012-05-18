@@ -99,7 +99,7 @@ void GameControlRulesDaemon::setStateServerprepareteam()
 {
     GameControlRulesDaemon::game_state = _game_state_prepare_team;
     map_cycle_fsm_server_state = _map_cycle_server_prepare_team;
-    cooldown.changePeriod(20);
+    cooldown.changePeriod(300);
     cooldown.reset();
 }
 //-----------------------------------------------------------------
