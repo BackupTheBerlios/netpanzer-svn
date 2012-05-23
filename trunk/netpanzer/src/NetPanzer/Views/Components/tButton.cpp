@@ -17,16 +17,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "Views/Components/cssButton.hpp"
+#include "Views/Components/tButton.hpp"
 #include "Views/Components/View.hpp"
+#include "Views/Theme.hpp"
 #include "Util/Log.hpp"
 
 #include "MouseEvent.hpp"
 
-cssButton::cssButton(const std::string &cname)
+tButton::tButton(const std::string &cname)
     : Component("Button." + cname)
 {
-    setTextColors(Color::white, Color::red, Color::yellow, Color::darkGray);
+    setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);
     position.zero();
     label.clear();
     bstate = NORMAL;
@@ -35,7 +36,7 @@ cssButton::cssButton(const std::string &cname)
 
 // render
 void
-cssButton::render()
+tButton::render()
 {
     surface.fill(0);
     Surface text;
@@ -59,7 +60,7 @@ cssButton::render()
 // actionPerformed
 //---------------------------------------------------------------------------
 void
-cssButton::actionPerformed(const mMouseEvent &me)
+tButton::actionPerformed(const mMouseEvent &me)
 {
     if (enabled == false) return;
     
@@ -85,22 +86,22 @@ cssButton::actionPerformed(const mMouseEvent &me)
     }
 } // end Button::actionPerformed
 
-cssButton *
-cssButton::createcssButton( std::string cname,
+tButton *
+tButton::createtButton( std::string cname,
                             std::string label,
                             iXY loc)
 {
-    cssButton *b = cssButton::createcssButton(cname, label, loc, Surface::getTextLength(label)+20);
+    tButton *b = tButton::createtButton(cname, label, loc, Surface::getTextLength(label)+20);
     return b;
 }
 
-cssButton *
-cssButton::createcssButton( std::string cname,
+tButton *
+tButton::createtButton( std::string cname,
                             std::string label,
                             iXY loc, int width)
 {
     Surface bitmap;
-    bitmap.loadBMP("pics/backgrounds/menus/buttons/default/b-black.bmp");
+    bitmap.loadBMP(itButton);
     
     Surface bstart;
     bstart.grab(bitmap, iRect(0, 0, 15, bitmap.getHeight()));
@@ -119,11 +120,11 @@ cssButton::createcssButton( std::string cname,
         bmiddle.blt(spbutton,15+(msize*i),0);
     }
     bend.blt(spbutton,spbutton.getWidth()-15,0);
-    cssButton *b = new cssButton(cname);
+    tButton *b = new tButton(cname);
     b->setImage(spbutton);
     b->setLabel(label);
     b->setLocation(loc);
-    b->setTextColors(componentActiveTextColor, componentBodyColor, componentBodyColor, 33);
+    b->setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);
 
     return b;
 }

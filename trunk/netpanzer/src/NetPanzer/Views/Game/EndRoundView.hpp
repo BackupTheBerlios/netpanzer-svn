@@ -42,6 +42,7 @@ private:
     Surface colorImage;
     std::vector<const PlayerState*> states;
     int selected_line;
+    int selected_col;
     iRect RectWinner;
     iRect RectStates;
 public:
@@ -56,7 +57,7 @@ public:
 protected:
     virtual void doActivate();
     virtual void doDeactivate();
-    virtual void processEvents();
+    virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
     void drawTitle(Surface &windowArea)
     {
     }

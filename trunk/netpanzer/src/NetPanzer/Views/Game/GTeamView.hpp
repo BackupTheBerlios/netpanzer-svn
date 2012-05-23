@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/cssButton.hpp"
+#include "Views/Components/tButton.hpp"
 
 class PlayerState;
 
@@ -35,7 +35,7 @@ private:
     iRect secondrect;
     std::vector<const PlayerState*> states;
     void drawTeams(Surface &dest);
-    cssButton * changebutton;
+    tButton * changebutton;
 
 public:
     GTeamView();

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/cssButton.hpp"
+#include "Views/Components/tButton.hpp"
 
 class PlayerState;
 
@@ -39,8 +39,8 @@ private:
     void DrawInfo(Surface &dest);
     iXY menuImageXY;
     Surface menuImage, vsImage;
-    cssButton * changebutton;
-    cssButton * readybutton;
+    tButton * changebutton;
+    tButton * readybutton;
 
 public:
     PrepareTeam();

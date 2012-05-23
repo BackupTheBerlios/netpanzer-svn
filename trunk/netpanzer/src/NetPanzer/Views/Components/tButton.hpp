@@ -16,12 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __cssButton_hpp__
-#define __cssButton_hpp__
+#ifndef __tButton_hpp__
+#define __tButton_hpp__
 
 #include "Component.hpp"
 #include "2D/Color.hpp"
-#include "ViewGlobals.hpp"
 
 typedef enum
 {
@@ -32,7 +31,7 @@ typedef enum
 } BState;
 
 //--------------------------------------------------------------------------
-class cssButton : public Component
+class tButton : public Component
 {
 protected:
     std::string label;
@@ -48,14 +47,14 @@ protected:
 
 public:
 
-    cssButton(const std::string &cname);
+    tButton(const std::string &cname);
 
-    virtual ~cssButton() {}
+    virtual ~tButton() {}
 
-    static cssButton * createcssButton(std::string cname,
+    static tButton * createtButton(std::string cname,
                                        std::string label,
                                        iXY loc);
-    static cssButton * createcssButton(std::string cname,
+    static tButton * createtButton(std::string cname,
                                        std::string label,
                                        iXY loc, int with);
 
@@ -107,4 +106,4 @@ public:
     virtual void actionPerformed(const mMouseEvent &me);
 }; // end Button
 
-#endif // end __Button_hpp__
+#endif // end __tButton_hpp__

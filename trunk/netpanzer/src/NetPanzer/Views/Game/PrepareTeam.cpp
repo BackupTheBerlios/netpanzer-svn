@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Views/Components/cButton.hpp"
-#include "Views/Components/cssButton.hpp"
+#include "Views/Components/tButton.hpp"
+#include "Views/Theme.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 
@@ -76,9 +76,9 @@ void PrepareTeam::init()
     secondrect.max.x = rect.max.x-7;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = cssButton::createcssButton( "changeteam", " >> ", iXY(firstrect.max.x+10, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-20);
+    changebutton = tButton::createtButton( "changeteam", " >> ", iXY(firstrect.max.x+10, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-20);
     add(changebutton);
-    readybutton = cssButton::createcssButton( "ready", "Ready", iXY(firstrect.max.x+10, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-20);
+    readybutton = tButton::createtButton( "ready", "Ready", iXY(firstrect.max.x+10, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-20);
     add(readybutton);
     loaded = true;
 }
@@ -86,8 +86,8 @@ void PrepareTeam::init()
 void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
 {
     menuImage.bltTrans(clientArea, menuImageXY.x, menuImageXY.y);
-    clientArea.FillRoundRect(rect, 12, 33);
-    clientArea.RoundRect(rect,12, 15);
+    clientArea.FillRoundRect(rect, 12, ctWindowsbackground);
+    clientArea.RoundRect(rect,12, ctWindowsBorder);
 
     clientArea.RoundRect(firstrect,10, TeamManager::getTeamColor(0));
     clientArea.RoundRect(secondrect,10, TeamManager::getTeamColor(1));
@@ -106,18 +106,18 @@ void PrepareTeam::DrawInfo(Surface &dest)
     char statBuf[256];
     if (GameControlRulesDaemon::getTeamCD() < 1)
     {
-        dest.bltString(start.x-5 , rect.min.y-5, "Get ready, the battle will begin...", Color::white);
+        dest.bltString(start.x-5 , rect.min.y-5, "Get ready, the battle will begin...", ctTexteNormal);
     }
     else
     {
         snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
-        dest.bltString(firstrect.max.x+40 , firstrect.min.y+5, statBuf, Color::white);
+        dest.bltString(firstrect.max.x+40 , firstrect.min.y+5, statBuf, ctTexteNormal);
     }
-    dest.bltString(start.x , start.y, "Game:", Color::white);
-    dest.bltString(start.x+nextx , start.y, "Map:", Color::white);
+    dest.bltString(start.x , start.y, "Game:", ctTexteNormal);
+    dest.bltString(start.x+nextx , start.y, "Map:", ctTexteNormal);
     start.y+= 10;
-    dest.drawLine(start.x, start.y, start.x+100, start.y, Color::white);
-    dest.drawLine(start.x+nextx, start.y, start.x+nextx+100, start.y, Color::white);
+    dest.drawLine(start.x, start.y, start.x+100, start.y, ctTexteNormal);
+    dest.drawLine(start.x+nextx, start.y, start.x+nextx+100, start.y,ctTexteNormal);
     start.y+= 7;
     switch(GameConfig::game_gametype)
     {
@@ -137,19 +137,19 @@ void PrepareTeam::DrawInfo(Surface &dest)
         break;
     }
     }
-    dest.bltString(start.x, start.y, statBuf, Color::white);
+    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
     snprintf(statBuf, sizeof(statBuf), "Name: %-20s", MapInterface::getMap()->getName().c_str());
-    dest.bltString(start.x+nextx, start.y, statBuf, Color::white);
+    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
     start.y+= 13;
     snprintf(statBuf, sizeof(statBuf), "Players: %i/%i",  
              PlayerInterface::getActivePlayerCount(), 
              GameConfig::game_maxplayers);
-    dest.bltString(start.x, start.y, statBuf, Color::white);
+    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
     snprintf(statBuf, sizeof(statBuf), "Objectives: %i", (int) ObjectiveInterface::getObjectiveCount());
-    dest.bltString(start.x+nextx, start.y, statBuf, Color::white);
+    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
     start.y+= 13;
     snprintf(statBuf, sizeof(statBuf), "Units: %i", GameConfig::game_maxunits/GameConfig::game_maxplayers);
-    dest.bltString(start.x, start.y, statBuf, Color::white);
+    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
 }
 
 class StatesSortByTeam
@@ -209,11 +209,11 @@ void PrepareTeam::drawTeams(Surface &dest)
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, Start_x-23, cur_line_pos-5 );
 
-        textcolor = Color::white;
+        textcolor = ctTexteNormal;
         if (TeamManager::isPlayerReady(state->getID()))
-            textcolor = Color::darkGray;
+            textcolor = ctTexteDisable;
         else if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
-            textcolor = Color::cyan;
+            textcolor = ctTexteOver;
 
         if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
         {

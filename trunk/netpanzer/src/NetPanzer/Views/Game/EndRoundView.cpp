@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Views/Components/cButton.hpp"
+#include "Views/Theme.hpp"
 
 #define HEADER_HEIGHT 70
 #define ENTRY_HEIGHT 20
@@ -36,11 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define TABLE_START (HEADER_HEIGHT + TABLE_BORDER)
 
 #define ALLY_START 4
-#define FLAG_START 26
-// characters * character width
-#define NAME_START (6*8)
-
-#define TABLE_HEADER_PIX_LEN (52*8)
 
 #define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
 
@@ -73,6 +69,7 @@ EndRoundView::EndRoundView() : GameTemplateView()
     colorImage.loadBMP("pics/default/playerColor.bmp");
 
     selected_line = -1;
+    selected_col = -1;
     RectWinner = getClientRect();
     RectWinner.min.x = RectWinner.min.y = 0;
     RectStates = RectWinner;
@@ -87,10 +84,10 @@ void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
     clientArea.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
-    clientArea.RoundRect(RectWinner,14, Color::gray);
+    clientArea.RoundRect(RectWinner,14, ctWindowsBorder);
 
-    clientArea.BltRoundRect(RectStates, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(RectStates, 14, Color::gray);
+    clientArea.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
+    clientArea.RoundRect(RectStates, 14, ctWindowsBorder);
 
     if (GameConfig::game_teammode) drawTeamStats(clientArea, flagHeight);
     else drawPlayerStats(clientArea, flagHeight);
@@ -161,11 +158,13 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     Surface * flag = 0;
     int cur_state = 0;
 
-    dest.bltString(0, cur_line_pos, table_header, Color::gray);
+    dest.bltString(0, cur_line_pos, table_header, ctTexteNormal);
     cur_line_pos += ENTRY_HEIGHT;
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
-
+    int FLAG_START = RectStates.min.x+5;
+    int NAME_START = RectStates.min.x+27;
+    
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
@@ -175,9 +174,8 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                  stats_format, state->getName().substr(0,20).c_str(),
                  state->getKills(), state->getLosses(), state->getTotal(),
                  state->getObjectivesHeld());
-        dest.bltStringShadowed(NAME_START, cur_line_pos, statBuf,
-                               (cur_state == selected_line)?Color::yellow:Color::gray224,
-                               Color::gray64);
+        dest.bltString(NAME_START, cur_line_pos, statBuf,
+                       (cur_state == selected_line)?Color::yellow:ctTexteNormal);
 
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, FLAG_START, flag_pos );
@@ -204,7 +202,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             }
         }
 
-        colorImage.bltTransColor(dest, TABLE_HEADER_PIX_LEN+5, flag_pos, state->getColor());
+        colorImage.bltTransColor(dest, 52+5, flag_pos, state->getColor());
 
         cur_line_pos += ENTRY_HEIGHT;
         flag_pos += ENTRY_HEIGHT;
@@ -223,9 +221,34 @@ public:
     }
 };
 
+static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
+{
+    char statBuf[256];
+    int x = rect.min.x+5;
+    int y = rect.min.y+5;
+    
+    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
+    snprintf(statBuf, sizeof(statBuf), "%5i Points", state->getTotal());
+    dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
+    y += 10;
+    dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
+    y += 5;
+    snprintf(statBuf, sizeof(statBuf), " Frags: %5i", state->getKills());
+    dest.bltString(x, y, statBuf, ctTexteNormal);
+    y += 12;
+    snprintf(statBuf, sizeof(statBuf), "deaths: %5i", state->getLosses());
+    dest.bltString(x, y, statBuf, ctTexteNormal);
+    x += 120;
+    y = rect.min.y+20;
+    snprintf(statBuf, sizeof(statBuf), " Objectives: %5i", state->getObjectivesHeld());
+    dest.bltString(x, y, statBuf, ctTexteNormal);
+}
+
 void EndRoundView::drawTeamStats(Surface& dest, unsigned int flagHeight)
 {
     char statBuf[256];
+    iRect r((RectStates.getSizeX()/2)-2, RectStates.min.y+5, (RectStates.getSizeX()/2)+2, RectStates.max.y-20);
+    dest.fillRect(r, ctTexteDisable);
 
     states.clear();
     PlayerID i;
@@ -250,14 +273,21 @@ void EndRoundView::drawTeamStats(Surface& dest, unsigned int flagHeight)
     int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
     int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
     Surface * flag = 0;
-    int cur_state = 0;
+    int cur_state = 1;
 
-    dest.bltString(0, cur_line_pos, table_header, Color::gray);
+    dest.bltString(0, cur_line_pos, "      Name             Points", ctTexteNormal);
+    dest.bltString(5+RectStates.getSizeX()/2, cur_line_pos, "      Name             Points", ctTexteNormal);
+    dest.drawLine(RectStates.min.x+5, cur_line_pos+10, RectStates.max.x-5, cur_line_pos+10, ctTexteNormal);
+
     cur_line_pos += ENTRY_HEIGHT;
     flag_pos += ENTRY_HEIGHT;
-    ++cur_state;
     int current_Team = 0;
+    int FLAG_START = 3+RectStates.min.x+5;
+    int NAME_START = 3+RectStates.min.x+28;
 
+    iRect infopanel(RectStates.min.x+10,RectStates.max.y-50, RectStates.max.x-10, RectStates.max.y-5);
+    dest.fillRect(infopanel, ctWindowsbackground);
+    
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
     {
@@ -265,31 +295,49 @@ void EndRoundView::drawTeamStats(Surface& dest, unsigned int flagHeight)
 
         if (current_Team != state->getTeamID())
         {
+            cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+            flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
             cur_line_pos += ENTRY_HEIGHT;
-            dest.drawLine(RectStates.min.x+10, cur_line_pos-10, RectStates.max.x-10, cur_line_pos-10, Color::lightGreen);
             flag_pos += ENTRY_HEIGHT;
             current_Team = state->getTeamID();
+            FLAG_START = (3+RectStates.getSizeX()/2)+5;
+            NAME_START = (3+RectStates.getSizeX()/2)+28;
+            cur_state = 1;
         }
-
         snprintf(statBuf, sizeof(statBuf),
-                 stats_format, state->getName().substr(0,20).c_str(),
-                 state->getKills(), state->getLosses(), state->getTotal(),
-                 state->getObjectivesHeld());
-        dest.bltStringShadowed(NAME_START, cur_line_pos, statBuf,
-                               Color::gray224,
-                               Color::gray64);
+                 "%-15s%7i", state->getName().c_str(), state->getTotal());
+        if (cur_state == selected_line)
+        {
+            if (selected_col == current_Team)
+            {
+                iRect r(FLAG_START, cur_line_pos-3, FLAG_START+235, cur_line_pos+11);
+                dest.fillRect(r, ctTexteOver);
+                DrawPanelUser(infopanel, dest, state);
+            } 
+        }
+        dest.bltString(NAME_START, cur_line_pos, statBuf, ctTexteNormal);
 
-        TeamManager::drawFlag(current_Team, dest, FLAG_START-20, flag_pos );
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, FLAG_START, flag_pos );
-
-        colorImage.bltTransColor(dest, TABLE_HEADER_PIX_LEN+5, flag_pos, state->getColor());
 
         cur_line_pos += ENTRY_HEIGHT;
         flag_pos += ENTRY_HEIGHT;
         ++cur_state;
     }
 
+}
+
+void EndRoundView::mouseMove(const iXY & prevPos, const iXY &newPos)
+{
+    GameTemplateView::mouseMove(prevPos, newPos);
+//    selected_line = -1;
+//    selected_col = -1;
+    if ( newPos.y >= TABLE_START )
+    {
+        selected_line = (newPos.y-TABLE_START) / ENTRY_HEIGHT;
+        if (newPos.x > RectStates.getSizeX()/2) selected_col = 1;
+        else selected_col = 0;
+    }
 }
 
 void EndRoundView::doActivate()
@@ -307,9 +355,4 @@ void EndRoundView::checkResolution(iXY oldResolution, iXY newResolution)
     int x = (screen->getWidth() / 2) - 250;
     int y = (screen->getHeight() / 2) - 250;
     moveTo(iXY(x, y));
-}
-
-void EndRoundView::processEvents()
-{
-    COMMAND_PROCESSOR.process(false);
 }

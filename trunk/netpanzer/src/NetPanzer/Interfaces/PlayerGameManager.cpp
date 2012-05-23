@@ -282,6 +282,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     PlayerState *player_state;
     Timer wait;
 
+    GameConfig::game_teammode = false;
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
@@ -336,7 +337,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     // refresh views
     LoadingView::update( "Launching Server ... (100%) " );
     graphicsLoop();
-
     GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
 
