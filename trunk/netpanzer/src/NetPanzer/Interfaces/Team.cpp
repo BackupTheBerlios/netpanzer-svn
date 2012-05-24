@@ -134,45 +134,17 @@ void Team::drawFlag(Surface &dest, int x, int y) const
 
 short Team::getKills() const
 {
-    short TeamKills = 0;
-    PlayerID player_id;
-    
-    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
-    {
-        PlayerState* state = PlayerInterface::getPlayer(player_id);
-        if (state->isActive())
-        {
-            if (state->getTeamID() == teamID) 
-            {
-                TeamKills += state->getKills();
-            }
-        }
-    }
-    return TeamKills;
+    return kills;
 }
 
 short Team::getLosses() const
 {
-    long TeamLosses = 0;
-    PlayerID player_id;
-    
-    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
-    {
-        PlayerState* state = PlayerInterface::getPlayer(player_id);
-        if (state->isActive())
-        {
-            if (state->getTeamID() == teamID) 
-            {
-                TeamLosses += state->getLosses();
-            }
-        }
-    }
-    return TeamLosses;
+    return losses;
 }
 
-int Team::getTeamObjective() const
+short Team::getTeamObjective() const
 {
-    long TeamObjective = 0;
+    short TeamObjective = 0;
     PlayerID player_id;
     
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
@@ -187,5 +159,41 @@ int Team::getTeamObjective() const
         }
     }
     return TeamObjective;
+}
+void Team::incKills()
+{
+    if ( stats_locked == true )
+        return;
+    kills++;
+}
+
+void Team::incLosses()
+{
+    if ( stats_locked == true )
+        return;
+    losses++;
+}
+
+void Team::lockStats()
+{
+    stats_locked = true;
+}
+
+void Team::unlockStats()
+{
+    stats_locked = false;
+}
+
+void Team::resetStats()
+{
+    kills  = 0;
+    losses = 0;
+    stats_locked = false;
+}
+
+void Team::syncScore(short newKills, short newLosses)
+{
+    kills = newKills;
+    losses = newLosses;
 }
 

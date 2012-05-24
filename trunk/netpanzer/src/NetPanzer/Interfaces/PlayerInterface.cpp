@@ -255,6 +255,11 @@ void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
     SDL_mutexP(mutex);
     by_player->incKills( unit_type );
     on_player->incLosses( unit_type );
+    if (GameConfig::game_teammode)
+    {
+        TeamManager::incKills(by_player->getTeamID());
+        TeamManager::incLosses(on_player->getTeamID());
+    }
     SDL_mutexV(mutex);
 }
  
@@ -267,6 +272,7 @@ void PlayerInterface::lockPlayerStats()
     {
         player_lists[ player_id ].lockStats();
     } // ** for
+    if (GameConfig::game_teammode) TeamManager::lockTeamStats();
     SDL_mutexV(mutex);
 }
  
@@ -279,6 +285,7 @@ void PlayerInterface::unlockPlayerStats()
     {
         player_lists[ player_id ].unlockStats();
     } // ** for
+    if (GameConfig::game_teammode) TeamManager::unlockTeamStats();
     SDL_mutexV(mutex);
 }
  
@@ -291,6 +298,7 @@ void PlayerInterface::resetPlayerStats(bool keepAdmin)
     {
         player_lists[ player_id ].resetStats(keepAdmin);
     } // ** for
+    if (GameConfig::game_teammode) TeamManager::resetTeamStats();
     SDL_mutexV(mutex);
 }
  
@@ -650,7 +658,11 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
     case _net_message_id_player_ready_request :
         TeamManager::netMessageReadyRequest(message);
         break;
- 
+    
+    case _net_message_id_player_team_score_sync :
+        TeamManager::receiveScores(message);
+        break;
+
     case _net_message_id_player_flagtimer_update :
         const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
         gameconfig->game_changeflagtime = pftu->getflagtimer();

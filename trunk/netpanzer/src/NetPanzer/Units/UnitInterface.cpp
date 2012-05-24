@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 #include "Units/Vehicle.hpp"
 
@@ -717,8 +718,11 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
             << "' with his '" << unitname1 << "'." << std::endl;
     }
 
+    // killing team own units doesn't give score
+    if (GameConfig::game_teammode && (player1->getTeamID() == player2->getTeamID())) return;
     // killing own units doesn't give score
-    if(player1 != player2) {
+    if( (player1 != player2) ) 
+    {
         PlayerInterface::setKill(unit1->player, unit2->player,
                 (UnitType) lifecycle_update->unit_type);
         

@@ -30,7 +30,8 @@ enum { _net_message_id_player_connect_id,
        _net_message_id_player_alliance_update,
        _net_message_id_player_flagtimer_update,
        _net_message_id_player_changeteam_request,
-       _net_message_id_player_ready_request
+       _net_message_id_player_ready_request,
+       _net_message_id_player_team_score_sync
      };
 
 #ifdef MSVC
@@ -288,6 +289,47 @@ public:
     PlayerID getPlayerIndex() const
     {
         return player_index;
+    }
+}
+__attribute__((packed));
+
+class TeamScoreSync : public NetMessage
+{
+private:
+    short TeamKills;
+    short TeamLosses;
+public:
+    Uint8 TeamID;
+
+    TeamScoreSync()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_team_score_sync;
+    }
+
+    void set(Uint8 Team_ID, short kills, short Losses)
+    {
+        TeamKills = kills;
+        TeamLosses =  Losses;
+        TeamID = Team_ID;
+    }
+
+    void setKills(short kills)
+    {
+        TeamKills = kills;
+    }
+    short getKills() const
+    {
+        return TeamKills;
+    }
+
+    void setLosses(short Losses)
+    {
+        TeamKills = Losses;
+    }
+    short getLosses() const
+    {
+        return TeamLosses;
     }
 }
 __attribute__((packed));

@@ -90,6 +90,7 @@ static void sendConnectionAlert(ClientSocket * client)
     if (GameConfig::game_teammode)
     {
         TeamManager::addPlayer(player_state->getID());
+        TeamManager::sendScores();
         ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                   "'%s' [%s] has joined the game int team %s.",
                                   player_state->getName().c_str(),

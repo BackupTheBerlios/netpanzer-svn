@@ -240,7 +240,7 @@ static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
     dest.bltString(x, y, statBuf, ctTexteNormal);
     x += 120;
     y = rect.min.y+20;
-    snprintf(statBuf, sizeof(statBuf), " Objectives: %5i", state->getObjectivesHeld());
+    snprintf(statBuf, sizeof(statBuf), "Objectives: %5i", state->getObjectivesHeld());
     dest.bltString(x, y, statBuf, ctTexteNormal);
 }
 
@@ -269,6 +269,13 @@ void EndRoundView::drawTeamStats(Surface& dest, unsigned int flagHeight)
     snprintf(statBuf, sizeof(statBuf),
              "Winner is Team %s", TeamManager::getTeamName(TeamWin).substr(0,20).c_str());
     dest.bltStringCenteredInRect(RectWinner,statBuf, Color::yellow);
+
+    snprintf(statBuf, sizeof(statBuf),
+             "frags: %5i  deaths: %5i  Objectives: %5i", 
+             TeamManager::getKills(TeamWin),
+             TeamManager::getLosses(TeamWin),
+             TeamManager::getObjectivesHeld(TeamWin));
+    dest.bltString(RectWinner.min.x+50, RectWinner.max.y-15,statBuf, ctTexteNormal);
 
     int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
     int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;

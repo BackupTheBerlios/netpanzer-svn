@@ -28,6 +28,11 @@ protected:
     std::string name;
     Surface Flag;
     Uint8 teamColor;
+    
+    short kills;
+    short losses;
+    short total;
+    bool stats_locked;
 
 public:
     void initialize(const Uint8 id);
@@ -44,10 +49,16 @@ public:
     PlayerID getrandomplayer() const;
     void loadFlag(const char *fileName);
     void drawFlag(Surface &dest, int x, int y) const;
+
     short getKills() const;
     short getLosses() const;
-    int getTeamObjective() const;
-
+    short getTeamObjective() const;
+    void incKills();
+    void incLosses();
+    void lockStats();
+    void unlockStats();
+    void resetStats();
+    void syncScore(short newKills, short newLosses);
 };
 
 #endif // ** _TEAM_HPP

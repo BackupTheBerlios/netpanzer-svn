@@ -48,6 +48,14 @@ public:
     static short getKills( Uint8 team_id );
     static short getLosses( Uint8 team_id );
     static short getObjectivesHeld( Uint8 team_id );
+    static void incKills( Uint8 team_id );
+    static void incLosses( Uint8 team_id );
+    static void lockTeamStats();
+    static void unlockTeamStats();
+    static void resetTeamStats();
+    static void sendScores();
+    static void receiveScores(const NetMessage* message);
+    
     static Uint8 getTeamWin();
     static const std::string& getTeamName( Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );

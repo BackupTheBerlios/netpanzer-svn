@@ -81,7 +81,7 @@ void TeamManager::initialize(const Uint8 _max_teams)
     std::vector<NPString> plist;
     NPString pl = *GameConfig::game_team_names;
     string_to_params(pl, plist);
-
+    reset();
 
     for ( int team_id = 0; team_id < max_Teams; ++team_id )
     {
@@ -140,23 +140,8 @@ void TeamManager::BalancedTeam()
 
 void TeamManager::reset()
 {
-//    for ( PlayerID player_index = 0; player_index < PlayerInterface::getMaxPlayers()-1; ++player_index )
-//    {
-//        for ( PlayerID player_id = 1; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
-//        {
-//            PlayerState* state_id = PlayerInterface::getPlayer(player_id);
-//            PlayerState* state_index = PlayerInterface::getPlayer(player_index);
-//            if (state_id->isActive() && state_index->isActive())
-//            {
-//                if (state_id->getTeamID() == state_index->getTeamID()
-//                        && (player_id != player_index))
-//                {
-//                    PlayerInterface::allyplayers( player_id, player_index);
-//                }
-//            }
-//        }
-//    }
     resetPlayerReady();
+    resetTeamStats();
 }
 
 void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
@@ -200,6 +185,30 @@ iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
     return spawn_point;
 }
 
+void TeamManager::lockTeamStats()
+{
+    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[ team_id ].lockStats();
+    }
+}
+
+void TeamManager::unlockTeamStats()
+{
+    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[ team_id ].unlockStats();
+    }
+}
+
+void TeamManager::resetTeamStats()
+{
+    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[ team_id ].resetStats();
+    }
+}
+
 short TeamManager::getKills(  Uint8 team_id )
 {
     return Teams_lists[team_id].getKills();
@@ -208,6 +217,16 @@ short TeamManager::getKills(  Uint8 team_id )
 short TeamManager::getLosses(  Uint8 team_id )
 {
     return Teams_lists[team_id].getLosses();
+}
+
+void TeamManager::incKills( Uint8 team_id )
+{
+    Teams_lists[team_id].incKills();
+}
+
+void TeamManager::incLosses( Uint8 team_id )
+{
+    Teams_lists[team_id].incLosses();
 }
 
 short TeamManager::getObjectivesHeld( Uint8 team_id )
@@ -314,7 +333,7 @@ void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
             PlayerTeamRequest Changeteam_request;
             Changeteam_request.set(player_id, newteam, change_team_Accepted);
             SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
-
+            ObjectiveInterface::disownPlayerObjectives(player_id);
             UnitInterface::destroyPlayerUnits(player_id);
             GameManager::spawnPlayer( player_id );
         }
@@ -378,6 +397,25 @@ void TeamManager::SpawnTeams()
             GameManager::spawnPlayer( player_id );
         }
     }
+}
+
+void TeamManager::sendScores()
+{
+    TeamScoreSync score_Sync;
+    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        score_Sync.set( getKills(team_id), getLosses(team_id), team_id);
+        SERVER->broadcastMessage(&score_Sync, sizeof(TeamScoreSync));
+    }
+}
+
+void TeamManager::receiveScores(const NetMessage* message)
+{
+    const TeamScoreSync* score_Sync
+    = (const TeamScoreSync *) message;
+    
+    if (score_Sync->TeamID < max_Teams)
+        Teams_lists[score_Sync->TeamID].syncScore(score_Sync->getKills(), score_Sync->getLosses());
 }
 
 void TeamManager::netMessageChangeTeamRequest(const NetMessage* message)
