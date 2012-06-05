@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <list>
 #include <algorithm>
+#include "Views/Components/StateChangedCallback.hpp"
 
 using namespace std;
 
@@ -39,7 +40,7 @@ enum DEFAULT_VIEW_BUTTON
     MINMAX_VIEW_BUTTON
 };
 
-class View : public iRect
+class View : public iRect, public StateChangedCallback
 {
     friend class Desktop;
 public:

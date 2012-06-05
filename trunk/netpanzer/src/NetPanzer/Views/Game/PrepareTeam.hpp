@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
 #include "Views/Components/tButton.hpp"
-
-class PlayerState;
+#include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tPlayerStateBox.hpp"
 
 class PrepareTeam : public GameTemplateView
 {
@@ -34,14 +34,16 @@ private:
     iRect firstrect;
     iRect secondrect;
     iRect rect;
-    std::vector<const PlayerState*> states;
     void drawTeams(Surface &dest);
     void DrawInfo(Surface &dest);
     iXY menuImageXY;
     Surface menuImage, vsImage;
     tButton * changebutton;
     tButton * readybutton;
-
+    tVScrollBar * scTeam1;
+    tPlayerStateBox * StateTeam1;
+    tVScrollBar * scTeam2;
+    tPlayerStateBox * StateTeam2;
 public:
     PrepareTeam();
     virtual ~PrepareTeam()

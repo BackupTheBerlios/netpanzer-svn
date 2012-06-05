@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/Components/CheckBox.hpp"
 #include "Views/Components/Choice.hpp"
-#include "Views/Components/StateChangedCallback.hpp"
 
 //--------------------------------------------------------------------------
-class OptionsTemplateView : public MenuTemplateView, public StateChangedCallback
+class OptionsTemplateView : public MenuTemplateView
 {
 private:
     int      selectedColorStartY;

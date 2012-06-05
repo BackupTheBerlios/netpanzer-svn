@@ -15,23 +15,33 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __Theme_hpp__
-#define __Theme_hpp__
+#ifndef __tPlayerStateBox_hpp__
+#define __tPlayerStateBox_hpp__
 
-//Color theme
-#define ctWindowsBorder             (15)
-#define ctWindowsbackground         (33)
+#include <vector>
+#include <string>
+#include "Component.hpp"
+#include "MouseEvent.hpp"
+#include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tStringListBox.hpp"
+#include "Classes/PlayerState.hpp"
 
-#define ctTexteNormal               (Color::lightGray)
-#define ctTexteOver                 (174)
-#define ctTextePressed              (174)
-#define ctTexteDisable              (15)
+class StateChangedCallback;
 
-// Image theme
-#define itButton                    ("pics/backgrounds/menus/buttons/default/b-black.bmp")
-#define itScroll                    ("pics/backgrounds/menus/buttons/default/scrollbutton.bmp")
+class tPlayerStateBox : public tStringListBox
+{
+private:
+    std::vector<const PlayerState*> states;
+    bool DrawFlags;
+    bool ShowTeam;
+    Uint8 TeamNumber;
+public:
+    tPlayerStateBox(iRect rect, StateChangedCallback* newcallback);
 
-    //TODO: Load theme from ini file
-//void LoadNPTheme();
+    virtual void onPaint(int Index, int row);
+    void UpdateState(bool ForceUpdate);
+    void setDrawFlags(bool df);
+    void setShowTeam(Uint8 Team_Number);
+};
 
-#endif // __Theme_hpp__
+#endif 

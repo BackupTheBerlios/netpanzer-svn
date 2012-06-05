@@ -22,18 +22,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "2D/Color.hpp"
 
-typedef enum
-{
-    NORMAL =   0,
-    OVER   =   1,
-    PRESSED=   2,
-    DISABLE=   3
-} BState;
 
 //--------------------------------------------------------------------------
 class tButton : public Component
 {
 protected:
+    enum BState
+    {
+        NORMAL =   0,
+        OVER   =   1,
+        PRESSED=   2,
+        DISABLE=   3
+    } ;
     std::string label;
     PIX textColors[4];
     Surface bimage;

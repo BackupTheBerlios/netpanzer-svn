@@ -30,11 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Views/Components/tButton.hpp"
 #include "Views/Theme.hpp"
+#include "Views/Components/tPlayerStateBox.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
-#include "Resources/ResourceManager.hpp"
-
-static const char * stats_format = "%-20s";
-static Uint8 newteam = 0;
 
 PrepareTeam::PrepareTeam() : GameTemplateView()
 {
@@ -67,19 +64,32 @@ void PrepareTeam::init()
     rect.max.y = rect.min.y+330;
 
     firstrect.min.x = rect.min.x+7;
-    firstrect.min.y = rect.min.y+7;
-    firstrect.max.x =  rect.min.x+200;
+    firstrect.min.y = rect.min.y+30;
+    firstrect.max.x =  rect.min.x+177;
     firstrect.max.y = rect.max.y-7;
 
-    secondrect.min.x = rect.max.x-207;
+    secondrect.min.x = rect.max.x-190;
     secondrect.min.y = firstrect.min.y;
-    secondrect.max.x = rect.max.x-7;
+    secondrect.max.x = rect.max.x-25;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = tButton::createtButton( "changeteam", " >> ", iXY(firstrect.max.x+10, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-20);
+    changebutton = tButton::createtButton( "changeteam", " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
     add(changebutton);
-    readybutton = tButton::createtButton( "ready", "Ready", iXY(firstrect.max.x+10, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-20);
+    readybutton = tButton::createtButton( "ready", "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
     add(readybutton);
+    scTeam1 = new tVScrollBar();
+    add(scTeam1);
+    StateTeam1 = new tPlayerStateBox(firstrect, 0);
+    StateTeam1->setVscrollBar(scTeam1);
+    StateTeam1->setShowTeam(0);
+    add(StateTeam1);
+
+    scTeam2 = new tVScrollBar();
+    add(scTeam2);
+    StateTeam2 = new tPlayerStateBox(secondrect, 0);
+    StateTeam2->setVscrollBar(scTeam2);
+    StateTeam2->setShowTeam(1);
+    add(StateTeam2);
     loaded = true;
 }
 
@@ -89,12 +99,12 @@ void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.FillRoundRect(rect, 12, ctWindowsbackground);
     clientArea.RoundRect(rect,12, ctWindowsBorder);
 
-    clientArea.RoundRect(firstrect,10, TeamManager::getTeamColor(0));
-    clientArea.RoundRect(secondrect,10, TeamManager::getTeamColor(1));
     DrawInfo(clientArea);
     drawTeams(clientArea);
-    vsImage.bltTrans(clientArea, firstrect.max.x+15, firstrect.max.y-vsImage.getHeight()-10);
+    vsImage.bltTrans(clientArea, firstrect.max.x+40, firstrect.max.y-vsImage.getHeight()-10);
     View::doDraw(viewArea, clientArea);
+    StateTeam1->UpdateState(true);
+    StateTeam2->UpdateState(true);
 }
 
 void PrepareTeam::DrawInfo(Surface &dest)
@@ -111,7 +121,7 @@ void PrepareTeam::DrawInfo(Surface &dest)
     else
     {
         snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
-        dest.bltString(firstrect.max.x+40 , firstrect.min.y+5, statBuf, ctTexteNormal);
+        dest.bltString(firstrect.max.x+60 , firstrect.min.y+5, statBuf, ctTexteNormal);
     }
     dest.bltString(start.x , start.y, "Game:", ctTexteNormal);
     dest.bltString(start.x+nextx , start.y, "Map:", ctTexteNormal);
@@ -166,19 +176,7 @@ void PrepareTeam::drawTeams(Surface &dest)
 {
     char statBuf[256];
 
-    states.clear();
-    PlayerID i;
-    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
-    {
-        PlayerState* state = PlayerInterface::getPlayer(i);
-        if( state->isActive() )
-        {
-            states.push_back(state);
-        }
-    }
-    std::sort(states.begin(), states.end(), StatesSortByTeam());
-
-    int cur_line_pos = firstrect.min.y +10;
+    int cur_line_pos = rect.min.y +10;
     snprintf(statBuf, sizeof(statBuf), "Team: %-20s", TeamManager::getTeamName(0).c_str());
     dest.bltString(firstrect.min.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(0));
     TeamManager::drawFlag(0, dest, firstrect.min.x+10, cur_line_pos-2);
@@ -190,55 +188,6 @@ void PrepareTeam::drawTeams(Surface &dest)
     cur_line_pos += 25;
     dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(0));
     dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(1));
-
-    int Start_x = firstrect.min.x+30;
-    int current_Team = 0;
-    Surface * flag = 0;
-    PIX textcolor;
-    for(std::vector<const PlayerState*>::iterator i = states.begin();
-            i != states.end(); ++i)
-    {
-        const PlayerState* state = *i;
-
-        if (current_Team != state->getTeamID())
-        {
-            cur_line_pos = firstrect.min.y +35;
-            Start_x = secondrect.min.x+30;
-            current_Team = state->getTeamID();
-        }
-        flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, Start_x-23, cur_line_pos-5 );
-
-        textcolor = ctTexteNormal;
-        if (TeamManager::isPlayerReady(state->getID()))
-            textcolor = ctTexteDisable;
-        else if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
-            textcolor = ctTexteOver;
-
-        if ( state->getID() == PlayerInterface::getLocalPlayerIndex() )
-        {
-            snprintf(statBuf, sizeof(statBuf),
-                     stats_format, state->getName().substr(0,20).c_str());
-            dest.bltString(Start_x, cur_line_pos, statBuf,textcolor);
-            if (current_Team > 0)
-            {
-                newteam=0;
-                changebutton->setLabel("<<");
-            }
-            else
-            {
-                newteam=1;
-                changebutton->setLabel(">>");
-            }
-        }
-        else
-        {
-            snprintf(statBuf, sizeof(statBuf),
-                     stats_format, state->getName().substr(0,20).c_str());
-            dest.bltString(Start_x, cur_line_pos, statBuf,textcolor);
-        }
-        cur_line_pos += 20;
-    }
 }
 void PrepareTeam::doActivate()
 {
@@ -274,7 +223,11 @@ void PrepareTeam::onComponentClicked(Component* c)
 {
     if ( c == changebutton )
     {
-        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
+        
+        if (PlayerInterface::getLocalPlayer()->getTeamID() == 0)
+            TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 1);
+        else 
+            TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 0);
     }
     else if ( c == readybutton )
     {
@@ -293,6 +246,7 @@ void PrepareTeam::resize(const iXY &size)
     View::resize(size);
     init();
 }
+
 
 
 

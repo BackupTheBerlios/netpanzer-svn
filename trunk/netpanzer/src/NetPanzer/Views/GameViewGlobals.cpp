@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 
 iRect MenuRect(80, 80, 80+640, 80+470);
-iRect bodyTextRect(MenuRect.min.x +10, MenuRect.min.y+10, MenuRect.max.x-10, MenuRect.max.y-132);
+iRect bodyTextRect(MenuRect.min.x +10, MenuRect.min.y+10, MenuRect.max.x-10, MenuRect.max.y-80);
 iRect newsRect(bodyTextRect.min.x, bodyTextRect.max.y+10, bodyTextRect.max.x, MenuRect.max.y-10);
 
 iXY mainPos(MenuRect.min.x+8, MenuRect.min.y-26);

@@ -1,0 +1,76 @@
+/*
+Copyright (C) 2012 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+#ifndef __tStringListBox_hpp__
+#define __tStringListBox_hpp__
+
+#include <vector>
+#include <string>
+#include "Component.hpp"
+#include "MouseEvent.hpp"
+#include "Views/Components/StateChangedCallback.hpp"
+#include "Views/Components/tVScrollBar.hpp"
+
+class StateChangedCallback;
+
+class DataItem
+{
+public:
+    std::string text;
+    void * Data;
+};
+
+class tStringListBox : public Component, public StateChangedCallback
+{
+protected:
+    std::vector<DataItem> List;
+
+private:
+    StateChangedCallback* callback;
+    
+    enum { ItemHeight = 14 };
+    
+    tVScrollBar *VScrollBar;
+    int StartItem;
+    int MaxItemView;
+    int SelectedItem;
+    virtual void render();
+    virtual void actionPerformed(const mMouseEvent &me);
+public:
+
+    tStringListBox(iRect rect, StateChangedCallback* newcallback = 0);
+    virtual ~tStringListBox()
+    {}
+
+    virtual void setColor(PIX newColor);
+    virtual void setStateChangedCallback(StateChangedCallback* newcallback)
+    {
+        callback = newcallback;
+    }
+    virtual void setVscrollBar(tVScrollBar *newVScrollBar);
+    virtual void stateChanged(Component* source);
+    virtual void Add(const std::string S);
+    virtual void AddData(const std::string S, void * D);
+    virtual void Clear(){List.clear();dirty = true;}
+    virtual void Delete(int Index);
+    //virtual void Sort(){sort(List.begin(), List.end());dirty = true;}
+    virtual int IndexOf(const std::string S);
+    virtual int Count(){return List.size();}
+    virtual void onPaint(int Index, int row);
+}; 
+
+#endif 

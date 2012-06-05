@@ -199,7 +199,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         clientArea.RoundRect(MenuRect, 10, Color::gray);
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, bodyTextRect.max.y-50, Palette::colorTable6040);
+        titlePackedSurface.bltBlend(clientArea, MenuRect.min.x, MenuRect.max.y-60, Palette::colorTable6040);
     }
 
     static char text[] =

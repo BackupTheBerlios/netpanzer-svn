@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2012 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
