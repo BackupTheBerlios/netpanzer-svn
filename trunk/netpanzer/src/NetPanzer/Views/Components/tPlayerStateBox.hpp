@@ -18,27 +18,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __tPlayerStateBox_hpp__
 #define __tPlayerStateBox_hpp__
 
-#include <vector>
-#include <string>
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tStringListBox.hpp"
-#include "Classes/PlayerState.hpp"
-
-class StateChangedCallback;
 
 class tPlayerStateBox : public tStringListBox
 {
 private:
-    std::vector<const PlayerState*> states;
     bool DrawFlags;
     bool ShowTeam;
     Uint8 TeamNumber;
 public:
     tPlayerStateBox(iRect rect, StateChangedCallback* newcallback);
 
-    virtual void onPaint(int Index, int row);
+    virtual int getMaxItemWidth(int Index);
+    virtual void onPaint(Surface &dst, int Index);
     void UpdateState(bool ForceUpdate);
     void setDrawFlags(bool df);
     void setShowTeam(Uint8 Team_Number);

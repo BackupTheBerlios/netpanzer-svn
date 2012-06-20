@@ -27,12 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Button.hpp"
 #include "Views/Components/tStringListBox.hpp"
 #include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tHScrollBar.hpp"
 
 //---------------------------------------------------------------------------
 class HelpScrollView : public SpecialButtonView
 {
 protected:
-    tVScrollBar *scrollBar;
+    tVScrollBar *VscrollBar;
+    tHScrollBar *HscrollBar;
     tStringListBox *HelpBox;
 
 public:

@@ -55,7 +55,7 @@ private:
     int LargeChange;
     int SmallChange;
     
-    enum { bSize = 19 };
+    enum { bSize = 15 };
     
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);

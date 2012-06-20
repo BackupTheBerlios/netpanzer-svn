@@ -19,6 +19,7 @@
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
+#include "Views/Game/ChatView.hpp"
 
 #include "Particles/ParticleInterface.hpp"
 
@@ -194,6 +195,10 @@ LoadingView::loadFinish()
     GameManager::setNetPanzerGameOptions();
     Desktop::setVisibility("MiniMapView", true);
     Desktop::setVisibility("GameView", true);
+    Desktop::setVisibility("ChatView", true);
+    ChatView *cv = (ChatView*) Desktop::getView("ChatView");
+    if (cv) cv->clear();
+    
     if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
     {
         Desktop::setVisibility("GFlagSelectionView", true);

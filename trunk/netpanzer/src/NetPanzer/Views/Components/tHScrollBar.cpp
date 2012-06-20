@@ -28,10 +28,11 @@ void tHScrollBar::initScrollBar()
     bRiseOver.grab(bitmap, iRect(bSize*4, bSize, bSize*5, bSize*2));
     bRiseNormal.grab(bitmap, iRect(bSize*4, 0, bSize*5, bSize));
     
-    bUpOver.grab(bitmap, iRect(bSize*2, bSize, bSize*3, bSize*2));
-    bUpNormal.grab(bitmap, iRect(bSize*3, bSize, bSize*4, bSize*2));
-    bDownOver.grab(bitmap, iRect(0, bSize, bSize, bSize*2));
-    bDownNormal.grab(bitmap, iRect(bSize, bSize, bSize*2, bSize*2));
+    bRightOver.grab(bitmap, iRect(bSize*2, bSize, bSize*3, bSize*2));
+    bRightNormal.grab(bitmap, iRect(bSize*3, bSize, bSize*4, bSize*2));
+    bLeftOver.grab(bitmap, iRect(0, bSize, bSize, bSize*2));
+    bLeftNormal.grab(bitmap, iRect(bSize, bSize, bSize*2, bSize*2));
+
     setLocation(iXY(0,0));
     setSize(0, bSize);
 
@@ -40,8 +41,8 @@ void tHScrollBar::initScrollBar()
     Max = 100;
     RisePos = 0;
     bRisestate = NORMAL;
-    bUpstate = NORMAL;
-    bDownstate = NORMAL;
+    bLeftstate = NORMAL;
+    bRightstate = NORMAL;
     background = ctWindowsbackground;
     SmallChange = 1;
     LargeChange = 10;
@@ -63,16 +64,16 @@ tHScrollBar::tHScrollBar(iXY pos, int Width, StateChangedCallback* newcallback)
 void tHScrollBar::actionPerformed(const mMouseEvent &me)
 {
     if (!enabled) return;
-    iRect rect_button_up(position.x, position.y, position.x+bSize, position.y+bSize);
-    iRect rect_button_Down(position.x, position.y+size.y-bSize, position.x+bSize, position.y+size.y);
+    iRect rect_button_Left(position.x, position.y, position.x+bSize, position.y+bSize);
+    iRect rect_button_Right(position.x+size.x-bSize, position.y, position.x+size.x, position.y+size.y);
     
-    if (rect_button_up.contains(iXY(me.getX(), me.getY())))
+    if (rect_button_Left.contains(iXY(me.getX(), me.getY())))
     {
-        bUpstate = OVER;
+        bLeftstate = OVER;
         dirty = true;
         if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
         {
-            bUpstate = PRESSED;
+            bLeftstate = PRESSED;
             if (Position-SmallChange > Min) setPosition(Position-SmallChange);
             else setPosition(Min);
             if(callback)
@@ -82,17 +83,17 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
     }
     else
     {
-        bUpstate = NORMAL;
+        bLeftstate = NORMAL;
         dirty = true;
     }
 
-    if (rect_button_Down.contains(iXY(me.getX(), me.getY())))
+    if (rect_button_Right.contains(iXY(me.getX(), me.getY())))
     {
-        bDownstate = OVER;
+        bRightstate = OVER;
         dirty = true;
         if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
         {
-            bDownstate = PRESSED;
+            bRightstate = PRESSED;
             if (Position+SmallChange < Max) setPosition(Position+SmallChange);
             else setPosition(Max);
             if(callback)
@@ -102,13 +103,13 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
     }
     else
     {
-        bDownstate = NORMAL;
+        bRightstate = NORMAL;
         dirty = true;
     }
 
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
     {
-        if (me.getY() < (position.y+bSize+RisePos)) 
+        if (me.getX() < (position.x+bSize+RisePos)) 
         {
             if (Position-LargeChange > Min) setPosition(Position-LargeChange);
             else setPosition(Min);
@@ -116,7 +117,7 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
                 callback->stateChanged(this);
             return;
         }
-        if (me.getY() > (position.y+bSize+RisePos+bSize))
+        if (me.getX() > (position.x+bSize+RisePos+bSize))
         {
             if (Position+LargeChange < Max) setPosition(Position+LargeChange);
             else setPosition(Max);
@@ -134,8 +135,8 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
     }
     if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED)
     {
-        bUpstate = NORMAL;
-        bDownstate = NORMAL;
+        bLeftstate = NORMAL;
+        bRightstate = NORMAL;
         bRisestate = NORMAL;
         dirty = true;
     }
@@ -145,30 +146,30 @@ void tHScrollBar::render()
 {
     surface.fill(background);
     surface.drawRect(surface.getRect(), ctWindowsBorder);
-    if (bUpstate == PRESSED)
+    if (bLeftstate == PRESSED)
     {
-        bUpOver.bltTrans(surface, 1, 1);
+        bLeftOver.bltTrans(surface, 1, 1);
     }
-    else if (bUpstate == OVER)
+    else if (bLeftstate == OVER)
     {
-        bUpOver.bltTrans(surface, 0, 0);
+        bLeftOver.bltTrans(surface, 0, 0);
     } 
     else
     {
-        bUpNormal.bltTrans(surface, 0, 0);
+        bLeftNormal.bltTrans(surface, 0, 0);
     }
 
-    if (bDownstate == PRESSED)
+    if (bRightstate == PRESSED)
     {
-        bDownOver.bltTrans(surface, size.x-(bSize-1), 1);
+        bRightOver.bltTrans(surface, size.x-(bSize-1), 1);
     }
-    else if (bDownstate == OVER)
+    else if (bRightstate == OVER)
     {
-        bDownOver.bltTrans(surface, size.x-bSize, 0);
+        bRightOver.bltTrans(surface, size.x-bSize, 0);
     } 
     else
     {
-        bDownNormal.bltTrans(surface, size.x-bSize, 0);
+        bRightNormal.bltTrans(surface, size.x-bSize, 0);
     }
     if (bRisestate == OVER)
     {
@@ -182,11 +183,12 @@ void tHScrollBar::render()
 
 void tHScrollBar::setPosition(int newPosition)
 {
+    if (newPosition < 0) return;
     Position = newPosition;
-
     int R = Max - Min;
     if (R == 0) RisePos = 0;
-    else RisePos = (((Position-Min) * (size.x-bSize*3))-1) / R+1 ;
+    else RisePos = ((Position-Min) * (size.x-(bSize*3))) / R+1 ;
+    dirty = true;
 }
 
 void tHScrollBar::setMax(int newMax)

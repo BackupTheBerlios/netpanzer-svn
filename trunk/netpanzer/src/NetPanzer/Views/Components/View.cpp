@@ -1392,7 +1392,7 @@ cInputField* View::addInputField(
     inputfield->setPos(pos);
     inputfield->setInputFieldString(string);
     inputfield->setExcludedCharacters(excludedCharacters);
-    inputfield->setmaxChar(maxCharCount);
+//    inputfield->setmaxChar(maxCharCount); wtf,  already assigned on string !!
     inputFields.push_back(inputfield);
 
     if (isSelected) {

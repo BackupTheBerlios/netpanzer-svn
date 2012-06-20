@@ -181,11 +181,13 @@ void tVScrollBar::render()
 
 void tVScrollBar::setPosition(int newPosition)
 {
+    if (newPosition < 0) return;
     Position = newPosition;
 
     int R = Max - Min;
     if (R == 0) RisePos = 0;
-    else RisePos = (((Position-Min) * (size.y-bSize*3))-1) / R+1 ;
+    else RisePos = ((Position-Min) * (size.y-(bSize*3))) / R+1 ;
+    dirty = true;
 }
 
 void tVScrollBar::setMax(int newMax)

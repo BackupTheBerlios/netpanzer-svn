@@ -55,7 +55,6 @@ public:
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     virtual void processEvents();
     virtual void onComponentClicked(Component* c);
-    virtual void resize(const iXY &size);
     void init();
 };
 

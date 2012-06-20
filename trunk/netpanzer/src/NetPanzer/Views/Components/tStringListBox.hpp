@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseEvent.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
 #include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tHScrollBar.hpp"
 
 class StateChangedCallback;
 
@@ -45,9 +46,13 @@ private:
     enum { ItemHeight = 14 };
     
     tVScrollBar *VScrollBar;
+    tHScrollBar *HScrollBar;
     int StartItem;
+    int StartWidth;
     int MaxItemView;
     int SelectedItem;
+    int MaxItemWidth;
+    bool AutoScroll;
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
 public:
@@ -62,7 +67,11 @@ public:
         callback = newcallback;
     }
     virtual void setVscrollBar(tVScrollBar *newVScrollBar);
+    virtual void setHscrollBar(tHScrollBar *newHScrollBar);
     virtual void stateChanged(Component* source);
+    virtual int getMaxItemWidth(int Index);
+    virtual int getSelectedItem();
+    virtual std::string getTextItem();
     virtual void Add(const std::string S);
     virtual void AddData(const std::string S, void * D);
     virtual void Clear(){List.clear();dirty = true;}
@@ -70,7 +79,10 @@ public:
     //virtual void Sort(){sort(List.begin(), List.end());dirty = true;}
     virtual int IndexOf(const std::string S);
     virtual int Count(){return List.size();}
-    virtual void onPaint(int Index, int row);
+    virtual void onPaint(Surface &dst, int Index);
+    virtual void setLocation(int x, int y);
+    virtual void setLocation(const iXY &p) { setLocation(p.x, p.y); }
+    virtual void setAutoScroll(bool Value){AutoScroll = Value;}
 }; 
 
 #endif 

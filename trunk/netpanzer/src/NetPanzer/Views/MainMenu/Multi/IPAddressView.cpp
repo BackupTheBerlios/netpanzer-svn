@@ -47,8 +47,8 @@ IPAddressView::IPAddressView() : View()
 
 void IPAddressView::Init()
 {
-    szServer.init("", 256,29);
-    addInputField(iXY(8, 6), &szServer, "", true, 255);
+    szServer.init("", 256, getSizeX()-24);
+    addInputField(iXY(8, 3), &szServer, "", true, 255);
 } // end IPAddressView::init
 
 // doDraw

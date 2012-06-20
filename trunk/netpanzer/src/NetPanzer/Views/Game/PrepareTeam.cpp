@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Theme.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
@@ -28,9 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Views/Components/tButton.hpp"
-#include "Views/Theme.hpp"
-#include "Views/Components/tPlayerStateBox.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 
 PrepareTeam::PrepareTeam() : GameTemplateView()
@@ -46,37 +44,32 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     menuImage.loadBMP("pics/backgrounds/menus/menu/canon.bmp");
     vsImage.loadBMP("pics/backgrounds/menus/menu/vs.bmp");
 
-    loaded = false;
-}
-
-void PrepareTeam::init()
-{
-    removeComponents();
-    removeAllButtons();
-    iRect viewrect = getClientRect();
-
-    menuImageXY.x = (viewrect.getSizeX()/2) - 382;
-    menuImageXY.y = (viewrect.getSizeY()/2.5) - 190;
+    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2), 
+           (screen->getHeight()/2) - ( menuImage.getHeight()/1.5));
+    resize(menuImage.getWidth(), menuImage.getHeight()+300);
+    menuImageXY.x = 0;
+    menuImageXY.y = 0;
 
     rect.min.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
     rect.min.y = menuImageXY.y+menuImage.getHeight();
     rect.max.x = rect.min.x+500;
-    rect.max.y = rect.min.y+330;
+    rect.max.y = rect.min.y+300;
 
     firstrect.min.x = rect.min.x+7;
     firstrect.min.y = rect.min.y+30;
-    firstrect.max.x =  rect.min.x+177;
+    firstrect.max.x =  rect.min.x+180;
     firstrect.max.y = rect.max.y-7;
 
-    secondrect.min.x = rect.max.x-190;
+    secondrect.min.x = rect.max.x-185;
     secondrect.min.y = firstrect.min.y;
-    secondrect.max.x = rect.max.x-25;
+    secondrect.max.x = rect.max.x-20;
     secondrect.max.y = firstrect.max.y;
     
     changebutton = tButton::createtButton( "changeteam", " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
     add(changebutton);
     readybutton = tButton::createtButton( "ready", "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
     add(readybutton);
+
     scTeam1 = new tVScrollBar();
     add(scTeam1);
     StateTeam1 = new tPlayerStateBox(firstrect, 0);
@@ -90,6 +83,38 @@ void PrepareTeam::init()
     StateTeam2->setVscrollBar(scTeam2);
     StateTeam2->setShowTeam(1);
     add(StateTeam2);
+    loaded = false;
+}
+
+void PrepareTeam::init()
+{
+    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2), 
+           (screen->getHeight()/3) - ( menuImage.getHeight()));
+    resize(menuImage.getWidth(), menuImage.getHeight()+300);
+    menuImageXY.x = 0;
+    menuImageXY.y = 0;
+
+    rect.min.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
+    rect.min.y = menuImageXY.y+menuImage.getHeight();
+    rect.max.x = rect.min.x+500;
+    rect.max.y = rect.min.y+300;
+
+    firstrect.min.x = rect.min.x+7;
+    firstrect.min.y = rect.min.y+30;
+    firstrect.max.x =  rect.min.x+177;
+    firstrect.max.y = rect.max.y-7;
+
+    secondrect.min.x = rect.max.x-190;
+    secondrect.min.y = firstrect.min.y;
+    secondrect.max.x = rect.max.x-25;
+    secondrect.max.y = firstrect.max.y;
+    
+    changebutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+50)));
+    readybutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+85)));
+    StateTeam1->setLocation(firstrect.min);
+    StateTeam2->setLocation(secondrect.min);
+    StateTeam1->UpdateState(true);
+    StateTeam2->UpdateState(true);
     loaded = true;
 }
 
@@ -103,16 +128,16 @@ void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
     drawTeams(clientArea);
     vsImage.bltTrans(clientArea, firstrect.max.x+40, firstrect.max.y-vsImage.getHeight()-10);
     View::doDraw(viewArea, clientArea);
-    StateTeam1->UpdateState(true);
-    StateTeam2->UpdateState(true);
+    StateTeam1->UpdateState(false);
+    StateTeam2->UpdateState(false);
 }
 
 void PrepareTeam::DrawInfo(Surface &dest)
 {
     iXY start;
-    start.x = menuImageXY.x+245;
-    start.y = menuImageXY.y+115;
-    int nextx = 145;
+    start.x = menuImageXY.x+210;
+    start.y = menuImageXY.y+100;
+    int nextx = 125;
     char statBuf[256];
     if (GameControlRulesDaemon::getTeamCD() < 1)
     {
@@ -202,21 +227,19 @@ void PrepareTeam::doDeactivate()
 {
     if ( ! getVisible() )
     {
-        removeComponents();
-        removeAllButtons();
         loaded = false;
     }
 }
 
 void PrepareTeam::checkResolution(iXY oldResolution, iXY newResolution)
 {
-    resize(iXY(newResolution.x, newResolution.y));
-    moveTo(iXY(0,0));
+    init();
 }
 
 void PrepareTeam::processEvents()
 {
-    COMMAND_PROCESSOR.processChat();
+    //COMMAND_PROCESSOR.processChat();
+    View::processEvents();
 }
 
 void PrepareTeam::onComponentClicked(Component* c)
@@ -225,9 +248,15 @@ void PrepareTeam::onComponentClicked(Component* c)
     {
         
         if (PlayerInterface::getLocalPlayer()->getTeamID() == 0)
+        {
             TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 1);
-        else 
+            changebutton->setLabel(" << ");
+        }
+        else
+        {
             TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 0);
+            changebutton->setLabel(" >> ");
+        }
     }
     else if ( c == readybutton )
     {
@@ -240,13 +269,6 @@ void PrepareTeam::onComponentClicked(Component* c)
         View::onComponentClicked(c);
     }
 }
-
-void PrepareTeam::resize(const iXY &size)
-{
-    View::resize(size);
-    init();
-}
-
 
 
 

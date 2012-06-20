@@ -36,13 +36,13 @@ private:
     } ;
     StateChangedCallback* callback;
     
-    BState bUpstate;
-    Surface bUpOver;
-    Surface bUpNormal;
+    BState bLeftstate;
+    Surface bLeftOver;
+    Surface bLeftNormal;
     
-    BState bDownstate;
-    Surface bDownOver;
-    Surface bDownNormal;
+    BState bRightstate;
+    Surface bRightOver;
+    Surface bRightNormal;
     
     BState bRisestate;
     Surface bRiseOver;
@@ -55,7 +55,7 @@ private:
     int LargeChange;
     int SmallChange;
     
-    enum { bSize = 19 };
+    enum { bSize = 15 };
     
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);

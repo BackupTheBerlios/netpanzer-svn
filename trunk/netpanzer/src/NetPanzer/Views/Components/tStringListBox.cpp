@@ -23,14 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
 {
+    VScrollBar = 0;
+    HScrollBar = 0;
     callback = newcallback;
     setLocation(rect.min);
     setSize(rect.getSizeX(), rect.getSizeY());
     background = ctWindowsbackground;
-    VScrollBar = 0;
     StartItem = 0;
+    StartWidth = 0;
+    MaxItemWidth = size.x;
     SelectedItem = -1;
     MaxItemView = (size.y-5)/ItemHeight;
+    AutoScroll = false;
     dirty = true;
 }
 
@@ -48,12 +52,36 @@ void tStringListBox::actionPerformed(const mMouseEvent &me)
     }
 }
 
+int tStringListBox::getSelectedItem()
+{
+    return SelectedItem;
+}
+
+std::string tStringListBox::getTextItem()
+{
+    if (SelectedItem < 0) return "";
+    else return List[SelectedItem].text;
+}
+
+int tStringListBox::getMaxItemWidth(int Index)
+{
+    return Surface::getTextLength(List[Index].text)+10;
+}
+
 void tStringListBox::Add(const std::string S)
 {
     DataItem data;
     data.text = S;
     List.push_back(data);
+    int HSize = getMaxItemWidth(List.size()-1);
+    if (MaxItemWidth < HSize) MaxItemWidth = HSize;
     if (VScrollBar) VScrollBar->setMax(List.size()-MaxItemView);
+    if (HScrollBar) HScrollBar->setMax(MaxItemWidth-size.x);
+    if (AutoScroll && VScrollBar) 
+    {
+        VScrollBar->setPosition(VScrollBar->getMax());
+        StartItem = VScrollBar->getPosition();
+    }
     dirty = true;
 }
 
@@ -63,7 +91,15 @@ void tStringListBox::AddData(const std::string S, void * D)
     data.text = S;
     data.Data = D;
     List.push_back(data);
+    int HSize = getMaxItemWidth(List.size()-1);
+    if (MaxItemWidth < HSize) MaxItemWidth = HSize;
     if (VScrollBar) VScrollBar->setMax(List.size()-MaxItemView);
+    if (HScrollBar) HScrollBar->setMax(MaxItemWidth-size.x);
+    if (AutoScroll && VScrollBar) 
+    {
+        VScrollBar->setPosition(VScrollBar->getMax());
+        StartItem = VScrollBar->getPosition();
+    }
     dirty = true;
 }
 
@@ -75,21 +111,26 @@ void tStringListBox::render()
     if ( (StartItem+MaxItemView) > (int)List.size()) MaxItem  = List.size();
     else MaxItem = StartItem+MaxItemView;
     int row = 5;
+    Surface RowPaint(MaxItemWidth+10, ItemHeight, 1);
+    Surface Bitmap(size.x, ItemHeight, 1);
     for(PlayerID i = StartItem; i < MaxItem; ++i)
     {
-        if (SelectedItem == i) 
+        RowPaint.fill(background);
+        if (SelectedItem == i)
         {
-            iRect r(1, row-3, size.x, row+ItemHeight-3);
-            surface.fillRect(r, ctTexteOver);
+            RowPaint.fill(ctTexteOver);
         }
-        onPaint(i, row);
+        onPaint(RowPaint, i);
+        iRect r(StartWidth, 0, StartWidth+size.x, ItemHeight);
+        Bitmap.grab(RowPaint, r);
+        Bitmap.blt(surface, 0, row);
         row += ItemHeight;
     }
 }
 
-void tStringListBox::onPaint(int Index, int row)
+void tStringListBox::onPaint(Surface &dst, int Index)
 {
-    surface.bltString(5 , row, List[Index].text.c_str(), ctTexteNormal);
+    dst.bltString(1 , 4, List[Index].text.c_str(), ctTexteNormal);
 }
 
 void tStringListBox::setColor(PIX newColor)
@@ -110,11 +151,29 @@ void tStringListBox::setVscrollBar(tVScrollBar *newVScrollBar)
     }
 }
 
+void tStringListBox::setHscrollBar(tHScrollBar *newHScrollBar)
+{
+    HScrollBar = newHScrollBar;
+    if (HScrollBar)
+    {
+        HScrollBar->setLocation(position.x, position.y+size.y);
+        HScrollBar->setWidth(size.x);
+        HScrollBar->setStateChangedCallback(this);
+        HScrollBar->setSmallChange(3);
+        HScrollBar->setMax(MaxItemWidth-size.x);
+    }
+}
+
 void tStringListBox::stateChanged(Component* source)
 {
     if (source == VScrollBar)
     {
         StartItem = VScrollBar->getPosition();
+        dirty = true;
+    }
+    if (source == HScrollBar)
+    {
+        StartWidth = HScrollBar->getPosition();
         dirty = true;
     }
 }
@@ -135,5 +194,19 @@ int tStringListBox::IndexOf(const std::string S)
         if (S == List[i].text) return i;
     }
     return -1;
+}
+
+void tStringListBox::setLocation(int x, int y)
+{
+    position.x = x;
+    position.y = y;
+    if (VScrollBar)
+    {
+        VScrollBar->setLocation(position.x+size.x, position.y);
+    }
+    if (HScrollBar)
+    {
+        HScrollBar->setLocation(position.x, position.y+size.y);
+    }
 }
 

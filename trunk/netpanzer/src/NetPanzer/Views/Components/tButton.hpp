@@ -98,6 +98,7 @@ public:
         }
         dirty = true;
     }
+    
     const std::string& getLabel() const
     {
         return label;

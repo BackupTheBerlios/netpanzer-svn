@@ -115,6 +115,7 @@ public:
     void drawHighlighted(Surface &dest);
     void checkCursor();
     void resetString();     // reset string position
+    void clearString();     // reset string
 
 private:
     iXY      pos;

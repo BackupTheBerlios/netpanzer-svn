@@ -90,6 +90,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/MiniMapView.hpp"
 #include "Views/Game/DisconectedView.hpp"
 #include "Views/Game/LoadingView.hpp"
+#include "Views/Game/ChatView.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -182,6 +183,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
 
+    Desktop::add(new ChatView());
     Desktop::add(new GTeamView());
     Desktop::add(new PrepareTeam());
 

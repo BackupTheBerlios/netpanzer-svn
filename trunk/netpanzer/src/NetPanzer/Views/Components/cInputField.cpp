@@ -145,6 +145,13 @@ void cInputField::resetString()
     cursorPos          = 0;
 }
 
+void cInputField::clearString()
+{
+    cursorPos          = 0;
+    destString[0]      = '\0';
+    strDisplayStart    = 0;
+}
+
 // setPos
 //--------------------------------------------------------------------------
 void cInputField::setPos(iXY pos)
@@ -168,8 +175,9 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
     iXY size;
     // XXX (8 is hardcoded here...)
-    size.x = (string->maxWidth+1) * 8 + 8;
-    size.y = Surface::getFontHeight() + 4;
+//    size.x = (string->maxWidth+1) * 8 + 8;
+    size.x = (string->maxWidth+1);
+    size.y = Surface::getFontHeight() + 6;
 
     bounds.max = bounds.min + size;
 
@@ -372,8 +380,8 @@ void cInputField::checkCursor()
     if(((size_t)strDisplayStart)>cursorPos) {
         strDisplayStart=cursorPos;
     }
-    else if(((size_t)(strDisplayStart+maxWidth))<=cursorPos) {
-        strDisplayStart=cursorPos-maxWidth;
+    else if(((size_t)(strDisplayStart+(maxWidth/9)))<=cursorPos) {
+        strDisplayStart=cursorPos-(maxWidth/9);
     }
 } // end checkCursor
 
@@ -386,6 +394,8 @@ void cInputField::pressKey(int ch)
 // check repeat and insert characters as needed
 void cInputField::checkRepeat()
 {
+    return; // I disable this function, bug with shift and capslock keys
+    
     if(depressedKey==0) { return; }
     Uint32 ticks=SDL_GetTicks();
     if(depressedKeyTimeNext>ticks) {

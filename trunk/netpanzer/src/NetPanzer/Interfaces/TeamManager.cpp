@@ -113,6 +113,11 @@ void TeamManager::addPlayer(PlayerID player_id)
     Teams_lists[ lowTeam ].addPlayer(player_id);
 }
 
+int TeamManager::CountPlayerinTeam(Uint8 team_id)
+{
+    return Teams_lists[ team_id ].countPlayers();
+}
+
 void TeamManager::BalancedTeam()
 {
     int team_id;

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
 
 tPlayerStateBox::tPlayerStateBox(iRect rect, StateChangedCallback* newcallback)
@@ -32,25 +34,37 @@ tPlayerStateBox::tPlayerStateBox(iRect rect, StateChangedCallback* newcallback)
     TeamNumber = 0;
 }
 
-void tPlayerStateBox::onPaint(int Index, int row)
+int tPlayerStateBox::getMaxItemWidth(int Index)
+{
+    if (DrawFlags)
+        return Surface::getTextLength(List[Index].text)+34;
+    else
+        return Surface::getTextLength(List[Index].text)+10;
+}
+
+void tPlayerStateBox::onPaint(Surface &dst, int Index)
 {
     char statBuf[256];
-    int StartX = 3;
-    PlayerState *state = reinterpret_cast<PlayerState *>(List[Index].Data);
+    int StartX = 1;
+    PlayerState *state = (PlayerState*)(List[Index].Data);
     if (DrawFlags)
     {
         Surface * flag = 0;
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt(surface, 2, row-3);
+        flag->blt(dst, 0, 0);
         StartX = flag->getWidth()+4;
     }
     snprintf(statBuf, sizeof(statBuf), "%-20s", state->getName().c_str());
-    surface.bltString(StartX , row, statBuf, ctTexteNormal);
+    dst.bltString(StartX , 4, statBuf, ctTexteNormal);
 }
 
 void tPlayerStateBox::UpdateState(bool ForceUpdate)
 {
-    if ((PlayerInterface::getActivePlayerCount() > Count()) || ForceUpdate) 
+    int nbPlayer = PlayerInterface::getActivePlayerCount();
+    if (GameConfig::game_teammode && ShowTeam)
+        nbPlayer = TeamManager::CountPlayerinTeam(TeamNumber);
+
+    if ((nbPlayer != Count()) || ForceUpdate) 
     {
         Clear();
         for ( int i = 0; i < PlayerInterface::getMaxPlayers(); ++i)

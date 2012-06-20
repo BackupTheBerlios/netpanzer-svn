@@ -36,7 +36,7 @@ public:
     static void addPlayerinTeam(PlayerID player_id, Uint8 team_id);
     static void BalancedTeam();
     static void removePlayer(PlayerID player_id, Uint8 team_id);
-
+    static int CountPlayerinTeam(Uint8 team_id);
     static void cleanUp();
 
     static PlayerID getMaxteams()

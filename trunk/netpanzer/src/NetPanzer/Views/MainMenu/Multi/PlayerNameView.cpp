@@ -53,7 +53,7 @@ PlayerNameView::~PlayerNameView()
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
 {
-    playerName.init(GameConfig::player_name->c_str(), INPUT_FIELD_CHARACTERS);
+    playerName.init(GameConfig::player_name->c_str(), INPUT_FIELD_CHARACTERS, getSizeX()-16);
     playerName.setString(*GameConfig::player_name);
     cInputField* input 
         = addInputField(iXY(BORDER_SPACE, BORDER_SPACE+2), &playerName, "", true, INPUT_FIELD_CHARACTERS);

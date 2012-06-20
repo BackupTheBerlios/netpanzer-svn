@@ -182,7 +182,6 @@ void GameManager::setVideoMode()
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
     screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
-
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
     loadPalette("netp");

@@ -32,11 +32,14 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
     moveTo(bodyTextRect.min);
     resize(bodyTextRect.getSize());
-    iRect r(0, 0, bodyTextRect.getSizeX()-25, bodyTextRect.getSizeY()-20);
+    iRect r(0, 0, bodyTextRect.getSizeX()-20, bodyTextRect.getSizeY()-33);
     HelpBox = new tStringListBox(r, 0);
-    scrollBar = new tVScrollBar();
-    add(scrollBar);
-    HelpBox->setVscrollBar(scrollBar);
+    VscrollBar = new tVScrollBar();
+    add(VscrollBar);
+    HscrollBar = new tHScrollBar();
+    add(HscrollBar);
+    HelpBox->setVscrollBar(VscrollBar);
+    HelpBox->setHscrollBar(HscrollBar);
     add(HelpBox);
     HelpBox->Add("Key");
     HelpBox->Add("");
