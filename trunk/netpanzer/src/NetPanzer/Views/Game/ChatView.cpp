@@ -1,0 +1,199 @@
+/*
+Copyright (C) 2012 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#include "Views/Game/ChatView.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
+#include "Interfaces/ChatInterface.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/Theme.hpp"
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+ChatView::ChatView() : GameTemplateView()
+{
+    setSearchName("ChatView");
+    setTitle("Chat View");
+    setSubTitle("");
+
+    setAllowResize(false);
+    setVisible(false);
+    setAllowMove(true);
+    setBordered(false);
+    resize(500, 150);
+    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    
+    Surface bitmap, button;
+    bitmap.loadBMP(itScroll);
+    button.grab(bitmap, iRect(0, 0, 15, 15));
+    bHideWindow = tBitButton::createButton("HideWindow", button, iXY(0, 0));
+    add(bHideWindow);
+
+    button.grab(bitmap, iRect(15*2, 0, 15*3, 15));
+    bShowWindow = tBitButton::createButton("ShowWindow", button, iXY(15, 0));
+    add(bShowWindow);
+    bShowWindow->Disable();
+    HideWindow = false;
+    
+    iRect r(0, 15, getSizeX()-15, getSizeY()-31);
+    ChatList = new tChatBox(r, 0);
+    vsbChat = new tVScrollBar();
+    hsbChat = new tHScrollBar();
+    add(vsbChat);
+    add(hsbChat);
+    ChatList->setVscrollBar(vsbChat);
+    ChatList->setHscrollBar(hsbChat);
+    ChatList->setColor(0);
+    ChatList->setAutoScroll(true);
+    add(ChatList);
+    ChatString.init("", 100, getSizeX()-5);
+    input = addInputField(iXY(2, getSizeY()-16), &ChatString, "", true, 100);
+    input->setExcludedCharacters("\\ `²");
+}
+
+void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
+{
+    clientArea.bltLookup(viewArea.getRect(), Palette::brightness256.getColorArray());
+    clientArea.bltString(35, 4, title, ctTexteNormal);
+    View::doDraw(viewArea, clientArea);
+}
+
+void ChatView::processEvents()
+{
+    if (KeyboardInterface::getKeyPressed(SDLK_RETURN)||
+            KeyboardInterface::getKeyPressed(SDLK_KP_ENTER))
+    {
+        if (strlen(input->getDestString())!= 0)
+        {
+            std::string msg = input->getDestString();
+            if (msg[0] == '/')
+            {
+                if (!msg.compare(0,5,"/all "))
+                {
+                    ChatInterface::say(msg.substr(5));
+                }
+            }
+            else
+            {
+                ChatInterface::teamsay(msg);
+            }
+            input->clearString();
+        }
+    }
+#ifdef WIN32
+    else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
+               || KeyboardInterface::getKeyState(SDLK_RCTRL))
+              && (KeyboardInterface::getKeyPressed(SDLK_v) ))
+    {
+        OpenClipboard(NULL);
+        HANDLE clip = GetClipboardData(CF_TEXT);
+        CloseClipboard();
+        if (clip)
+        {
+            char* pntchr = (char*)clip;
+            int count = 0;
+            while ((*pntchr != 0) && (count < 150))
+            {
+                if (isprint(*pntchr))
+                {
+                    input->addChar(*pntchr);
+                    count++;
+                }
+                pntchr++;
+            }
+        }
+    }
+    else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
+               || KeyboardInterface::getKeyState(SDLK_RCTRL))
+              && (KeyboardInterface::getKeyPressed(SDLK_c) ))
+    {
+        std::string str = ChatList->getTextItem();
+        if (str != "")
+        {
+            if(OpenClipboard(NULL))
+            {
+                int pos = str.find_first_of(':')+2;
+                std::string chaine = str.substr(pos);
+                HGLOBAL hText = GlobalAlloc(GMEM_DDESHARE, chaine.length()+1);
+                char * pText = (char*)GlobalLock(hText);
+                strcpy(pText, chaine.c_str());
+                GlobalUnlock(hText);
+                EmptyClipboard();
+                SetClipboardData(CF_TEXT, hText);
+                CloseClipboard();
+            }
+        }
+    }
+#endif
+    else
+    {
+        View::processEvents();
+    }
+}
+
+void ChatView::onComponentClicked(Component* c)
+{
+    if ( c == bHideWindow )
+    {
+        HideWindow = true;
+        bHideWindow->Disable();
+        bShowWindow->Enable();
+        resize(500, 17);
+        moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    }
+    if ( c == bShowWindow )
+    {
+        HideWindow = false;
+        bHideWindow->Enable();
+        bShowWindow->Disable();
+        resize(500, 150);
+        moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    }
+    View::onComponentClicked(c);
+}
+
+void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
+{
+    char temp_str[256];
+    va_list vap;
+
+    va_start( vap, format );
+    vsnprintf( temp_str, 256, format, vap );
+    va_end( vap );
+    
+    ChatList->AddChat(temp_str, msgcolor, hasFlag, flag);
+}
+
+void ChatView::checkResolution(iXY oldResolution, iXY newResolution)
+{
+    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+}
+
+void ChatView::doActivate()
+{
+    Desktop::setActiveView(this);
+}
+
+void ChatView::clear()
+{
+    ChatList->Clear();
+}
+
