@@ -40,7 +40,7 @@ ChatView::ChatView() : GameTemplateView()
     setBordered(false);
     resize(500, 150);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
-    
+
     Surface bitmap, button;
     bitmap.loadBMP(itScroll);
     button.grab(bitmap, iRect(0, 0, 15, 15));
@@ -52,7 +52,7 @@ ChatView::ChatView() : GameTemplateView()
     add(bShowWindow);
     bShowWindow->Disable();
     HideWindow = false;
-    
+
     iRect r(0, 15, getSizeX()-15, getSizeY()-31);
     ChatList = new tChatBox(r, 0);
     vsbChat = new tVScrollBar();
@@ -178,7 +178,7 @@ void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *
     va_start( vap, format );
     vsnprintf( temp_str, 256, format, vap );
     va_end( vap );
-    
+
     ChatList->AddChat(temp_str, msgcolor, hasFlag, flag);
 }
 
@@ -190,6 +190,7 @@ void ChatView::checkResolution(iXY oldResolution, iXY newResolution)
 void ChatView::doActivate()
 {
     Desktop::setActiveView(this);
+    View::selectedInputField = View::findInputFieldContaining(input->getPos());
 }
 
 void ChatView::clear()
