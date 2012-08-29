@@ -71,7 +71,7 @@ void HTTPClientSocket::doRequest()
     try
     {
         socket = new network::TCPSocket(host, port , this);
-        state = RESPONSE_PROTO;
+        state = sRESPONSE_PROTO;
     }
     catch (...)
     {
@@ -133,11 +133,11 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
 {
     switch (state)
     {
-        case ERROR:
+        case sERROR:
             break;
-        case IDLE:
+        case sIDLE:
             break;
-        case RESPONSE_PROTO:
+        case sRESPONSE_PROTO:
             if ( ! isspace(data) )
             {
                 token.append(1, tolower(data));
@@ -152,10 +152,10 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
                 token.clear();
                 content_length = 0;
                 content.clear();
-                state = RESPONSE_CODE;
+                state = sRESPONSE_CODE;
             }
             break;
-        case RESPONSE_CODE:
+        case sRESPONSE_CODE:
             if ( token.size() < 3 )
             {
                 if ( isdigit(data) )
@@ -165,7 +165,7 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
                 else
                 {
                     LOGGER.warning("Wrong response code, is not a digit");
-                    state = ERROR;
+                    state = sERROR;
                 }
             }
             else
@@ -180,10 +180,10 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
                 ss >> response_code;
 
                 token.clear();
-                state = RESPONSE_TEXT;
+                state = sRESPONSE_TEXT;
             }
             break;
-        case RESPONSE_TEXT:
+        case sRESPONSE_TEXT:
             token.append(1, data); // actualy \r\n shouldn't be in the text
             if ( data == '\n' )
             {
@@ -192,11 +192,11 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
                     token.resize(token.size()-1);
                 }
                 response_description = token;
-                state = HEADER_BEGIN;
+                state = sHEADER_BEGIN;
                 token.clear();
             }
             break;
-        case HEADER_ENDING:
+        case sHEADER_ENDING:
             if ( data == 10 )
             {
                 token.clear();
@@ -204,39 +204,39 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
             }
             else
             {
-                state = ERROR;
+                state = sERROR;
             }
             break;
-        case HEADER_BEGIN:
+        case sHEADER_BEGIN:
             if ( data == 13 )
             {
-                state = HEADER_ENDING;
+                state = sHEADER_ENDING;
                 break;
             }
             token.clear();
-            state = HEADER_NAME;
+            state = sHEADER_NAME;
             // fall through, it is begin of name
-        case HEADER_NAME:
+        case sHEADER_NAME:
             if ( data == ':' )
             {
                 header_name = token;
                 token.clear();
-                state = HEADER_SKIP_SPACE;
+                state = sHEADER_SKIP_SPACE;
             }
             else
             {
                 token.append(1, tolower(data));
             }
             break;
-        case HEADER_SKIP_SPACE:
+        case sHEADER_SKIP_SPACE:
             if ( isspace(data) )
             {
                 break;
             }
-            state = HEADER_VALUE;
+            state = sHEADER_VALUE;
             // fall through, it is not space
 
-        case HEADER_VALUE:
+        case sHEADER_VALUE:
             if ( data == '\n' )
             {
                 while ( !token.empty() && isspace(*token.rbegin()) )
@@ -245,20 +245,20 @@ void HTTPClientSocket::_handleReceivedByte(uint8_t data)
                 }
                 response_headers[header_name] = token;
                 // handle header here
-                state = HEADER_BEGIN;
+                state = sHEADER_BEGIN;
             }
             else
             {
                 token.append(1,data);
             }
             break;
-        case RECEIVING_DATA:
+        case sRECEIVING_DATA:
             content.append(1,data);
             if ( --content_length <= 0 )
             {
                 onContentFinished();
                 socket->destroy();
-                state = IDLE;
+                state = sIDLE;
             }
             break;
     }
@@ -288,37 +288,37 @@ HTTPClientSocket::STATE HTTPClientSocket::_handleHeaders()
 
     if ( response_code < 100 )
     {
-        return ERROR; // this is bad server
+        return sERROR; // this is bad server
     }
     else if ( response_code < 200 )
     {
-        return RESPONSE_PROTO;
+        return sRESPONSE_PROTO;
     }
     else if ( response_code < 300 )
     {
         if ( response_code == 204 ) // no content
-            return IDLE;
+            return sIDLE;
 
         if ( content_length > 0 )
-            return RECEIVING_DATA;
+            return sRECEIVING_DATA;
 
-        return IDLE;
+        return sIDLE;
     }
     else if ( response_code < 400 )
     {
-        return IDLE; // this is a redirect
+        return sIDLE; // this is a redirect
     }
     else if ( response_code < 500 )
     {
-        return ERROR; // this is client error
+        return sERROR; // this is client error
     }
     else if ( response_code < 600 )
     {
-        return ERROR; // this is server error
+        return sERROR; // this is server error
     }
     else
     {
-        return ERROR; // this is bad server
+        return sERROR; // this is bad server
     }
 
 

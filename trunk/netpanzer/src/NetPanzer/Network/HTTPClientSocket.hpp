@@ -57,17 +57,17 @@ private:
 
     enum STATE
     {
-        ERROR,
-        IDLE,
-        RESPONSE_PROTO,
-        RESPONSE_CODE,
-        RESPONSE_TEXT,
-        HEADER_ENDING,
-        HEADER_BEGIN,
-        HEADER_NAME,
-        HEADER_SKIP_SPACE,
-        HEADER_VALUE,
-        RECEIVING_DATA
+        sERROR,
+        sIDLE,
+        sRESPONSE_PROTO,
+        sRESPONSE_CODE,
+        sRESPONSE_TEXT,
+        sHEADER_ENDING,
+        sHEADER_BEGIN,
+        sHEADER_NAME,
+        sHEADER_SKIP_SPACE,
+        sHEADER_VALUE,
+        sRECEIVING_DATA
     } state;
 
     std::string token;
