@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
 // ** PlayerInterface Statics
 PlayerState   * PlayerInterface::player_lists = 0;
@@ -481,11 +482,11 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
 {
     const PlayerConnectID *connect_mesg
     = (const PlayerConnectID *) message;
- 
+    
     local_player_index = connect_mesg->player_id;
     if(local_player_index >= max_players)
     {
-        LOGGER.warning("Invalide netMessageConnectID Message");
+        LOGGER.warning("Invalid netMessageConnectID Message");
         return;
     }
  
@@ -604,7 +605,16 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
     switch(message->message_id)
     {
     case _net_message_id_player_connect_id :
-        netMessageConnectID(message);
+        if ( NetworkState::getNetworkStatus() == _network_state_client )
+        {
+            netMessageConnectID(message);
+        }
+        else
+        {
+            LOGGER.warning("### Player %d @ %s is trying to cheat!!!",
+                            packet->fromPlayer,
+                            packet->fromClient->getFullIPAddress().c_str() );
+        }
         break;
  
     case _net_message_id_player_sync_flag:
