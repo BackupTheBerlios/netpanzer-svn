@@ -183,6 +183,10 @@ env.Append(CCFLAGS = ['-Wall'])
 #    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
 #    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
 
+# note, fix for gcc 4.7 if compiler is older and doesn't want to compile, comment these two
+env.Append(  CFLAGS = '-mno-ms-bitfields' )
+env.Append(  CXXFLAGS = '-mno-ms-bitfields' )
+
 env.VariantDir(buildpath,'.',duplicate=0)
 
 if env['with_lua'] == 'internal':
