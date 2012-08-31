@@ -115,10 +115,33 @@ static void chatMessageRequest(const NetPacket* packet)
         return;
     }
 
+    int text_len = chat_request->getTextLen(packet->size);
+    NPString text(chat_request->message_text, 0, text_len);
+    
+    ScriptManager::prepareFunction("Filters.chatFilter");
+    ScriptManager::pushParameterInt(packet->fromPlayer);
+    ScriptManager::pushParameterString(text);
+    if ( ScriptManager::callFunction(1) )
+    {
+        if ( ScriptManager::isNullResult(-1) || ! ScriptManager::getStringResult(-1, text) )
+        {
+            LOGGER.warning("Message from [%d] filtered", packet->fromPlayer);
+            ScriptManager::endFunction();
+            return;
+            // should return here and ignore, finishing the function
+        }
+    } else { // if function doesn't exits, then ignore
+        NPString s;
+        ScriptManager::getStringResult(-1, s);
+        LOGGER.warning("Error in chatFilter: '%s'", s.c_str());
+    }
+    
+    ScriptManager::endFunction();
+    
+    text_len = text.length();
+    
     bool post_on_server = false;
     ChatMesg chat_mesg;
-    int text_len = chat_request->getTextLen(packet->size);
-    const NPString text(chat_request->message_text, 0, text_len);
 
     chat_mesg.setSourcePlayerIndex(packet->fromPlayer);
     chat_mesg.message_scope = chat_request->message_scope;

@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 
 lua_State * ScriptManager::luavm = 0;
+int ScriptManager::previous_top = 0;
+int ScriptManager::num_params = 0;
 
 int npmodule_load (lua_State *L);
 
@@ -72,7 +74,7 @@ static void DumpStack (const NPString& text, lua_State *L)
 #endif
 
 /**
-  * Prepares the lua stack to be able to do an indexing operationg:
+  * Prepares the lua stack to be able to do an indexing operation:
   *     table[key]
   * The table name might contain dots as "table1.table2.key"
   * table1 and table 2 will be created in that case.
@@ -167,6 +169,60 @@ ScriptManager::runFunction(const NPString& func_name)
     lua_getfield(luavm, -1, fname.c_str());
     lua_call(luavm, 0, 0);
     lua_pop(luavm, 1);
+}
+
+bool
+ScriptManager::prepareFunction(const NPString& func_name)
+{
+    previous_top = lua_gettop(luavm);
+    num_params = 0;
+    NPString fname;
+    PrepareTableIndex(luavm, func_name, fname);
+    lua_getfield(luavm, -1, fname.c_str());
+}
+
+void
+ScriptManager::pushParameterInt(int n)
+{
+    lua_pushinteger(luavm, n);
+    num_params += 1;
+}
+
+void
+ScriptManager::pushParameterString(const NPString& str)
+{
+    lua_pushlstring(luavm, str.c_str(), str.length());
+    num_params += 1;
+}
+
+bool
+ScriptManager::callFunction(int num_results)
+{
+    return lua_pcall(luavm, num_params, num_results, 0) == 0;
+}
+
+bool
+ScriptManager::isNullResult(int n)
+{
+    return lua_isnil(luavm, n);
+}
+
+bool
+ScriptManager::getStringResult(int n, NPString& str)
+{
+    const char * s = lua_tolstring(luavm,n,0);
+    if ( s )
+    {
+        str = s;
+    }
+    
+    return s;
+}
+
+void
+ScriptManager::endFunction()
+{
+    lua_settop(luavm, previous_top);
 }
 
 static void SplitCommandAndParams(const NPString& str, NPString& cmd, NPString& params)

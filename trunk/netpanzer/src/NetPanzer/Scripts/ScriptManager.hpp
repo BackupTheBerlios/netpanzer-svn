@@ -40,6 +40,14 @@ public:
     static bool runUserCommand(const NPString& str);
     static bool runServerCommand(const NPString& str, PlayerID runPlayer);
     
+    static bool prepareFunction(const NPString& func_name);
+    static void pushParameterInt( int n );
+    static void pushParameterString( const NPString& str);
+    static bool callFunction(int num_results);
+    static bool isNullResult(int n);
+    static bool getStringResult(int n, NPString& str);
+    static void endFunction();
+    
     // NOTE: runFile has to run after FileSystem has been initialized.
     static void runFile(const NPString& runname, const NPString& filename);
 
@@ -70,6 +78,9 @@ public:
 
 private:        
     static lua_State *luavm;
+    static int previous_top;
+    static int num_params;
+    
 };
 
 #endif	/* _SCRIPTMANAGER_HPP */

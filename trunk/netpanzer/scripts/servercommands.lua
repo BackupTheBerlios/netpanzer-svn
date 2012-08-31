@@ -27,6 +27,15 @@ base_modes[0] = "Can't capture";
 base_modes[1] = "Helipad capture";
 base_modes[2] = "Full base capture";
 
+Filters =
+{
+    chatFilter = function(player_id, message)
+        -- if message_can_pass then
+            return message;
+        -- end
+    end
+};
+
 ServerCommands =
 {
     say_help = "Says something to all players as server.",
@@ -264,6 +273,5 @@ ServerCommands =
             netpanzer.serversayto( player, "The units should be history");
         end
     end
-
 
 };
