@@ -515,8 +515,6 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
 void
 WorldInputCmdProcessor::keyboardInputModeCommand()
 {
-    getManualControlStatus();
-
     evaluateGroupingKeys();
 
     evaluateKeyCommands();
@@ -578,6 +576,8 @@ WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
 void
 WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
+    getManualControlStatus();
+    
     switch( keyboard_input_mode ) {
     case _keyboard_input_mode_command :
         keyboardInputModeCommand();
