@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "HostOptionsView.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "HostView.hpp"
 #include "Particles/ParticleSystemGlobals.hpp"
 #include "MapSelectionView.hpp"
 #include "Views/GameViewGlobals.hpp"

@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Classes/ScreenSurface.hpp"
 
 #include "Util/Log.hpp"
@@ -37,7 +37,6 @@ DisconectedView::buttonOk()
     }
 
     GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-    sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
     // Vlad put all code in here for shutdown.
     //----------------------
@@ -53,7 +52,9 @@ DisconectedView::buttonOk()
     // Must remove the gameView first so that the initButtons detects that
     // and loads the correct buttons.
     Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MenuTemplateView", true);
     Desktop::setVisibility("MainView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
 
     View *v = Desktop::getView("OptionsView");
 

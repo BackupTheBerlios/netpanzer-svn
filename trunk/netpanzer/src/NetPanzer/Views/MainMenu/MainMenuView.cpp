@@ -22,13 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
-#include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Interfaces/GameConfig.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
 #endif
+
+// size is: 620x450 located @ 90,90
+static iRect mainTextRect(0, 0, 620, 370);
+static iRect mainNewsRect(0, 380, 620, 450);
 
 static const char loading_message[] = "Loading news...";
 
@@ -46,13 +48,23 @@ void MainMenuView::setNews(const std::string &news)
 
 // MainMenuView
 //---------------------------------------------------------------------------
-MainMenuView::MainMenuView() : MenuTemplateView()
+MainMenuView::MainMenuView() : RMouseHackView()
 {
     setSearchName("MainView");
     setTitle("Main");
     setSubTitle("");
+    
+    setAllowResize(false);
+    setVisible(false);
+    setAllowMove(false);
+    setDisplayStatusBar(false);
+    setBordered(false);
+    setAlwaysOnBottom(true);
 
-    setVisible(true);
+    moveTo(iXY(90, 90));
+    resize(iXY(620, 450));
+
+//    setVisible(true);
 } // end MainMenuView::MainMenuView
 
 MainMenuView::~MainMenuView()
@@ -68,7 +80,7 @@ MainMenuView::~MainMenuView()
 //---------------------------------------------------------------------------
 void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    RMouseHackView::doDraw(viewArea, clientArea);
 
     static char text[] =
         "This is NetPanzer version " PACKAGE_VERSION
@@ -94,6 +106,6 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "   Tobias Blerch, Ingo Ruhnke\n\n"
         "NetPanzer News:";
 
-    viewArea.bltStringInBox(bodyTextRect, text, windowTextColor, 12, false);
-    viewArea.bltStringInBox(newsRect, news_message, windowTextColor, 12, false);
+    viewArea.bltStringInBox(mainTextRect, text, windowTextColor, 12, false);
+    viewArea.bltStringInBox(mainNewsRect, news_message, windowTextColor, 12, false);
 } // end MainMenuView::doDraw

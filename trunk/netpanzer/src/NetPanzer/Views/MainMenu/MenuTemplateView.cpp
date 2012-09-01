@@ -35,6 +35,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Multi/ServerListView.hpp"
 
+#include "Multi/MapSelectionView.hpp"
+#include "Multi/IPAddressView.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Interfaces/PlayerGameManager.hpp"
+
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
 #endif
@@ -42,49 +47,53 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
 
-//PackedSurface MenuTemplateView::netPanzerLogo;
-
-
-char MenuTemplateView::currentMultiView[] = "GetSessionView";
-char MenuTemplateView::currentView[]      = "";
-
 static void bMain()
 {
     Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MenuTemplateView", true);
     Desktop::setVisibility("MainView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
 }
 
 static void bHost()
 {
-        gameconfig->hostorjoin = _game_session_host;
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("HostView", true);
-        Desktop::setVisibility("UnitSelectionView", true);
-        Desktop::setVisibility("HostOptionsView", true);
-        Desktop::setVisibility("MapSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
+    gameconfig->hostorjoin = _game_session_host;
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MenuTemplateView", true);
+    Desktop::setVisibility("UnitSelectionView", true);
+    Desktop::setVisibility("HostOptionsView", true);
+    Desktop::setVisibility("MapSelectionView", true);
+    Desktop::setVisibility("PlayerNameView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
+    // TODO: do doLoadTitleSurface("hostTitle");
 }
 static void bJoin()
 {
-        gameconfig->hostorjoin = _game_session_join;
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("JoinView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-        Desktop::setVisibility("IPAddressView", true);
-        Desktop::setVisibility("ServerListView", true);
-        serverlistview->refresh();
+    gameconfig->hostorjoin = _game_session_join;
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MenuTemplateView", true);
+    Desktop::setVisibility("PlayerNameView", true);
+    Desktop::setVisibility("IPAddressView", true);
+    Desktop::setVisibility("ServerListView", true);
+    serverlistview->refresh();
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
+    // TODO: do doLoadTitleSurface("joinTitle");
 }
 
 static void bOptions()
 {
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("OptionsView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
 }
 
 static void bHelp()
 {
     Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("HelpView", true);
+    // TODO: should doLoadTitleSurface("helpTitle");
+    Desktop::setVisibility("MenuTemplateView", true);
+    Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
 }
 
 static void bExit()
@@ -115,6 +124,46 @@ static void bExitNetPanzer()
     Desktop::setVisibility("AreYouSureExitView", true);
 }
 
+static void bPlay()
+{
+    if ( GameConfig::player_name->length() == 0 )
+        return;
+
+    // Check a few things which should be ok.
+
+    if (MapSelectionView::curMap == -1)
+    {
+        return;
+    }
+    
+    if (  gameconfig->hostorjoin == _game_session_join
+       && strcmp(IPAddressView::szServer.getString(), "") == 0 )
+    {
+        return;
+    }
+
+    // Close all menu views.
+    Desktop::setVisibilityAllWindows(false);
+
+    if ( gameconfig->hostorjoin == _game_session_join )
+    {
+        gameconfig->serverConnect = IPAddressView::szServer.getString();
+        IPAddressView::szServer.setString("");
+    }
+    
+    serverlistview->endQuery();
+
+    // TODO: do it?
+//    MenuTemplateView::backgroundSurface.free();
+
+    ResourceManager::updateFlagData( 0,
+                                     GameConfig::player_flag_data,
+                                     sizeof(GameConfig::player_flag_data) );
+
+    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+    manager->launchMultiPlayerGame();
+}
+
 // MenuTemplateView
 //---------------------------------------------------------------------------
 MenuTemplateView::MenuTemplateView() : RMouseHackView()
@@ -134,7 +183,7 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
     resize(iXY(800, 600));
 
     initButtons();
-
+    
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 0.5;
 } // end MenuTemplateView constructor
@@ -149,6 +198,9 @@ void MenuTemplateView::initPreGameOptionButtons()
     add( Button::createMenuButton( "OPTIONS", "Options", optionsPos, false) );
     add( Button::createMenuButton( "HELP", "Help", helpPos, false) );
     add( Button::createMenuButton( "EXITNP", "Exit netPanzer", exitPos, false) );
+    
+    playButton = Button::createMenuButton("PLAY", "Play", iXY(-100,-100), true);
+    add( playButton );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -181,13 +233,16 @@ void MenuTemplateView::initButtons()
 void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //setWorldRect();
-    if (Desktop::getVisible("GameView")) {
+    if (Desktop::getVisible("GameView"))
+    {
 	// When ingame, tint the game into gray
         clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
         clientArea.RoundRect(MenuRect, 10, Color::gray);
         clientArea.drawWindowsBorder();
 
-    } else {        
+    }
+    else
+    {        
         screen->fill(0);
 		// Set the following to get does exist.
         if (backgroundSurface.getNumFrames() > 0) {
@@ -214,7 +269,6 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 void MenuTemplateView::doActivate()
 {
     // Make the activating view active, redo this please!
-    sprintf(currentView, "%s", searchName);
     Desktop::setActiveView(searchName);
 
     loadBackgroundSurface();
@@ -312,4 +366,20 @@ void MenuTemplateView::onComponentClicked(Component* c)
     {
         bCloseOptions();
     }
+    else if ( !cname.compare("Button.PLAY") )
+    {
+        bPlay();
+    }
+}
+
+void
+MenuTemplateView::showPlayButton()
+{
+    playButton->setLocation(playPos);
+}
+
+void
+MenuTemplateView::hidePlayButton()
+{
+    playButton->setLocation(-100,-100);
 }

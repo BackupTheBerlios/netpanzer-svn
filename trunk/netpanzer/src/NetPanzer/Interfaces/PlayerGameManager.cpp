@@ -58,12 +58,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/MainMenu/HelpView.hpp"
-#include "Views/MainMenu/Multi/JoinView.hpp"
-#include "Views/MainMenu/Multi/HostView.hpp"
-#include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/UnitColorView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
@@ -191,11 +188,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
-    Desktop::add(new JoinView());
-    Desktop::add(new HostView());
-    Desktop::add(new GetSessionView());
     Desktop::add(new OptionsTemplateView());
-    Desktop::add(new HelpView());
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());
@@ -206,8 +199,10 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new IPAddressView());
     Desktop::add(new ServerListView());
 
+    Desktop::add(new MenuTemplateView());
+    
     Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MainView", true);
+    Desktop::setVisibility("MenuTemplateView", true);
 
     Desktop::checkResolution(iXY(800,600), iXY(screen->getWidth(),screen->getHeight()));
     Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));

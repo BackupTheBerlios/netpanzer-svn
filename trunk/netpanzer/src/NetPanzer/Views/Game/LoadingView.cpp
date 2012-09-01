@@ -20,6 +20,7 @@
 #include "Views/Components/Label.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/ChatView.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 
 #include "Particles/ParticleInterface.hpp"
 
@@ -35,7 +36,9 @@ static void bAbort()
     }
     GameManager::quitNetPanzerGame();
     Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MenuTemplateView", true);
     Desktop::setVisibility("MainView", true);
+    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
 }
 
 void
@@ -216,7 +219,9 @@ LoadingView::loadError()
     else if ( Desktop::getVisible("LoadingView") )
     {
         Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
         Desktop::setVisibility("MainView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
         GameManager::quitNetPanzerGame();
     }
 }

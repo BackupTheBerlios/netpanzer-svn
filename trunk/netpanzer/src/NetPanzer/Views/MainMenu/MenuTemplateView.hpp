@@ -24,9 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 
+class Button;
+
 //--------------------------------------------------------------------------
 class MenuTemplateView : public RMouseHackView
 {
+private:
+    Button * playButton;
+    
 protected:
     static  void loadNetPanzerLogo();
 
@@ -39,7 +44,6 @@ protected:
     float curTitleFlashTime;  // Where am I at in the flash?
     float titleFlashTimeHalf; // Time it takes for a half flash.
 
-    typedef void (*ITEM_FUNC)(void);
     void onComponentClicked(Component *c);
 
 public:
@@ -54,9 +58,9 @@ public:
     void initPreGameOptionButtons();
 
     virtual void initButtons();
-
-    static char currentMultiView[256];  // Used to keep track of where you are in the multiplayer menus.
-    static char currentView[256];       // Used to keep track of which menu you are currently in.
+    
+    void showPlayButton();
+    void hidePlayButton();
 
     //static PackedSurface netPanzerLogo;
     static bool          firstTimeInMenu;
