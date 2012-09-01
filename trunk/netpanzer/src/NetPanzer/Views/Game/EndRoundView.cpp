@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "Views/Components/cButton.hpp"
 #include "Views/Theme.hpp"
 
 #define HEADER_HEIGHT 70

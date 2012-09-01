@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "ViewGlobals.hpp"
 
+class Action;
+
 //--------------------------------------------------------------------------
 class Button : public Component
 {
@@ -38,6 +40,7 @@ public:
     
 private:
     int extraBorder;
+    Action* clickAction;
     
 protected:
     
@@ -69,7 +72,7 @@ public:
     
     Button(const std::string &cname);
 
-    virtual ~Button() {}
+    virtual ~Button();
 
     static Button * createTextButton( std::string cname,
                                         std::string label,
@@ -90,6 +93,8 @@ public:
                                         iXY loc,
                                         bool inverted);
 
+    void setAction( Action * action );
+    
     void setTextColors( PIX normal, PIX over, PIX pressed, PIX disabled)
     {
         textColors[BNORMAL] = normal;

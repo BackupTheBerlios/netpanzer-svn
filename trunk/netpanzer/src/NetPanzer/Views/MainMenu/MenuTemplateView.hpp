@@ -44,8 +44,6 @@ protected:
     float curTitleFlashTime;  // Where am I at in the flash?
     float titleFlashTimeHalf; // Time it takes for a half flash.
 
-    void onComponentClicked(Component *c);
-
 public:
     MenuTemplateView();
 

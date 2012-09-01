@@ -40,6 +40,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 
+#include "Actions/Action.hpp"
+
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
 #endif
@@ -47,122 +49,179 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
 
-static void bMain()
+class ShowMainViewAction : public Action
 {
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("MainView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-}
-
-static void bHost()
-{
-    gameconfig->hostorjoin = _game_session_host;
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("UnitSelectionView", true);
-    Desktop::setVisibility("HostOptionsView", true);
-    Desktop::setVisibility("MapSelectionView", true);
-    Desktop::setVisibility("PlayerNameView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
-    // TODO: do doLoadTitleSurface("hostTitle");
-}
-static void bJoin()
-{
-    gameconfig->hostorjoin = _game_session_join;
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("PlayerNameView", true);
-    Desktop::setVisibility("IPAddressView", true);
-    Desktop::setVisibility("ServerListView", true);
-    serverlistview->refresh();
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
-    // TODO: do doLoadTitleSurface("joinTitle");
-}
-
-static void bOptions()
-{
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("OptionsView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-}
-
-static void bHelp()
-{
-    Desktop::setVisibilityAllWindows(false);
-    // TODO: should doLoadTitleSurface("helpTitle");
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-}
-
-static void bExit()
-{
-    Desktop::setVisibilityAllWindows(false);
-    GameManager::exitNetPanzer();
-}
-
-//---------------------------------------------------------------------------
-static void bResign()
-{
-    Desktop::setVisibility("OptionsView", false);
-    Desktop::setVisibility("AreYouSureResignView", true);
-}
-
-//---------------------------------------------------------------------------
-static void bCloseOptions()
-{
-    GameManager::setNetPanzerGameOptions();
-
-    Desktop::setVisibility("OptionsView", false);
-}
-
-//---------------------------------------------------------------------------
-static void bExitNetPanzer()
-{
-    Desktop::setVisibility("OptionsView", false);
-    Desktop::setVisibility("AreYouSureExitView", true);
-}
-
-static void bPlay()
-{
-    if ( GameConfig::player_name->length() == 0 )
-        return;
-
-    // Check a few things which should be ok.
-
-    if (MapSelectionView::curMap == -1)
-    {
-        return;
-    }
+public:
+    ShowMainViewAction() : Action(false) {}
     
-    if (  gameconfig->hostorjoin == _game_session_join
-       && strcmp(IPAddressView::szServer.getString(), "") == 0 )
+    void execute()
     {
-        return;
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("MainView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
     }
+};
 
-    // Close all menu views.
-    Desktop::setVisibilityAllWindows(false);
-
-    if ( gameconfig->hostorjoin == _game_session_join )
-    {
-        gameconfig->serverConnect = IPAddressView::szServer.getString();
-        IPAddressView::szServer.setString("");
-    }
+class ShowHostViewAction : public Action
+{
+public:
+    ShowHostViewAction() : Action(false) {}
     
-    serverlistview->endQuery();
+    void execute()
+    {
+        gameconfig->hostorjoin = _game_session_host;
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("UnitSelectionView", true);
+        Desktop::setVisibility("HostOptionsView", true);
+        Desktop::setVisibility("MapSelectionView", true);
+        Desktop::setVisibility("PlayerNameView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
+        // TODO: do doLoadTitleSurface("hostTitle");
+    }
+};
 
-    // TODO: do it?
-//    MenuTemplateView::backgroundSurface.free();
+class ShowJoinViewAction : public Action
+{
+public:
+    ShowJoinViewAction() : Action(false) {}
+    
+    void execute()
+    {
+        gameconfig->hostorjoin = _game_session_join;
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("PlayerNameView", true);
+        Desktop::setVisibility("IPAddressView", true);
+        Desktop::setVisibility("ServerListView", true);
+        serverlistview->refresh();
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
+        // TODO: do doLoadTitleSurface("joinTitle");
+    }
+};
 
-    ResourceManager::updateFlagData( 0,
-                                     GameConfig::player_flag_data,
-                                     sizeof(GameConfig::player_flag_data) );
+class ShowOptionsViewAction : public Action
+{
+public:
+    ShowOptionsViewAction() : Action(false) {}
+    
+    void execute()
+    {
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("OptionsView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
+    }
+};
 
-    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
-    manager->launchMultiPlayerGame();
-}
+class ShowHelpViewAction : public Action
+{
+public:
+    ShowHelpViewAction() : Action(false) {}
+    
+    void execute()
+    {
+        Desktop::setVisibilityAllWindows(false);
+        // TODO: should doLoadTitleSurface("helpTitle");
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
+    }
+};
+
+class ExitNetPanzerAction : public Action
+{
+public:
+    ExitNetPanzerAction() : Action(false) {}
+    
+    void execute()
+    {
+        Desktop::setVisibilityAllWindows(false);
+        GameManager::exitNetPanzer();
+    }
+};
+
+class OpenResignGameViewAction : public Action
+{
+public:
+    OpenResignGameViewAction() : Action(false) {}
+    
+    void execute()
+    {
+        Desktop::setVisibility("OptionsView", false);
+        Desktop::setVisibility("AreYouSureResignView", true);
+    }
+};
+
+class CloseOptionsWindowAction : public Action
+{
+public:
+    CloseOptionsWindowAction() : Action(false) {}
+    
+    void execute()
+    {
+        GameManager::setNetPanzerGameOptions();
+        Desktop::setVisibility("OptionsView", false);
+    }
+};
+
+class OpenExitConfirmWindowAction : public Action
+{
+public:
+    OpenExitConfirmWindowAction() : Action(false) {}
+    
+    void execute()
+    {
+        Desktop::setVisibility("OptionsView", false);
+        Desktop::setVisibility("AreYouSureExitView", true);
+    }
+};
+
+class PlayButtonClickedAction : public Action
+{
+public:
+    PlayButtonClickedAction() : Action(false) {}
+    
+    void execute()
+    {
+        if ( GameConfig::player_name->length() == 0 )
+            return;
+
+        // Check a few things which should be ok.
+
+        if (MapSelectionView::curMap == -1)
+        {
+            return;
+        }
+
+        if (  gameconfig->hostorjoin == _game_session_join
+           && strcmp(IPAddressView::szServer.getString(), "") == 0 )
+        {
+            return;
+        }
+
+        // Close all menu views.
+        Desktop::setVisibilityAllWindows(false);
+
+        if ( gameconfig->hostorjoin == _game_session_join )
+        {
+            gameconfig->serverConnect = IPAddressView::szServer.getString();
+            IPAddressView::szServer.setString("");
+        }
+
+        serverlistview->endQuery();
+
+        // TODO: do it?
+    //    MenuTemplateView::backgroundSurface.free();
+
+        ResourceManager::updateFlagData( 0,
+                                         GameConfig::player_flag_data,
+                                         sizeof(GameConfig::player_flag_data) );
+
+        PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+        manager->launchMultiPlayerGame();
+    }
+};
 
 // MenuTemplateView
 //---------------------------------------------------------------------------
@@ -192,14 +251,32 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( Button::createMenuButton("MAIN", "Main", mainPos, false) );
-    add( Button::createMenuButton( "JOIN", "Join", joinPos, false) );
-    add( Button::createMenuButton( "HOST", "Host", hostPos, false) );
-    add( Button::createMenuButton( "OPTIONS", "Options", optionsPos, false) );
-    add( Button::createMenuButton( "HELP", "Help", helpPos, false) );
-    add( Button::createMenuButton( "EXITNP", "Exit netPanzer", exitPos, false) );
+    Button *b = Button::createMenuButton("MAIN", "Main", mainPos, false);
+    b->setAction(new ShowMainViewAction());
+    add( b );
     
+    b = Button::createMenuButton("JOIN", "Join", joinPos, false);
+    b->setAction(new ShowJoinViewAction());
+    add( b );
+    
+    b = Button::createMenuButton("HOST", "Host", hostPos, false);
+    b->setAction(new ShowHostViewAction());
+    add( b );
+    
+    b = Button::createMenuButton("OPTIONS", "Options", optionsPos, false);
+    b->setAction(new ShowOptionsViewAction());
+    add( b );
+    
+    b = Button::createMenuButton("HELP", "Help", helpPos, false);
+    b->setAction(new ShowHelpViewAction());
+    add( b );
+    
+    b = Button::createMenuButton("EXITNP", "Exit netPanzer", exitPos, false);
+    b->setAction(new ExitNetPanzerAction());
+    add( b );
+        
     playButton = Button::createMenuButton("PLAY", "Play", iXY(-100,-100), true);
+    playButton->setAction(new PlayButtonClickedAction());
     add( playButton );
 } // end MenuTemplateView::initPreGameOptionButtons
 
@@ -207,14 +284,27 @@ void MenuTemplateView::initPreGameOptionButtons()
 //---------------------------------------------------------------------------
 void MenuTemplateView::initInGameOptionButtons()
 {
-    if(!gameconfig->quickConnect) {
-        add( Button::createMenuButton( "RESIGN", "Resign", resignPos, false) );
-        add( Button::createMenuButton( "EXITNETNP", "Exit netPanzer", exitPos, false) );
-    } else {
-        add( Button::createMenuButton( "RESIGN", "Resign", exitPos, true) );
+    Button *b;
+    if(!gameconfig->quickConnect)
+    {
+        b = Button::createMenuButton( "RESIGN", "Resign", resignPos, false);
+        b->setAction(new OpenResignGameViewAction());
+        add( b );
+        
+        b = Button::createMenuButton( "EXITNETNP", "Exit netPanzer", exitPos, false);
+        b->setAction(new OpenExitConfirmWindowAction());
+        add( b );
+    }
+    else
+    {
+        b = Button::createMenuButton( "RESIGN", "Resign", exitPos, false);
+        b->setAction(new OpenResignGameViewAction());
+        add( b );
     }
 
-    add( Button::createMenuButton( "CLOSEOPT", "Close Options", returnToGamePos, false) );
+    b = Button::createMenuButton( "CLOSEOPT", "Close Options", returnToGamePos, false);
+    b->setAction(new CloseOptionsWindowAction());
+    add( b );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
@@ -326,51 +416,6 @@ void MenuTemplateView::loadNetPanzerLogo()
 void MenuTemplateView::processEvents()
 {
 } // end MenuTemplateView::processEvents
-
-void MenuTemplateView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.MAIN") )
-    {
-        bMain();
-    }
-    else if ( !cname.compare("Button.JOIN") )
-    {
-        bJoin();
-    }
-    else if ( !cname.compare("Button.HOST") )
-    {
-        bHost();
-    }
-    else if ( !cname.compare("Button.OPTIONS") )
-    {
-        bOptions();
-    }
-    else if ( !cname.compare("Button.HELP") )
-    {
-        bHelp();
-    }
-    else if ( !cname.compare("Button.EXITNP") )
-    {
-        bExit();
-    }
-    else if ( !cname.compare("Button.EXITNETNP") )
-    {
-        bExitNetPanzer();
-    }
-    else if ( !cname.compare("Button.RESIGN") )
-    {
-        bResign();
-    }
-    else if ( !cname.compare("Button.CLOSEOPT") )
-    {
-        bCloseOptions();
-    }
-    else if ( !cname.compare("Button.PLAY") )
-    {
-        bPlay();
-    }
-}
 
 void
 MenuTemplateView::showPlayButton()

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 #include "MouseEvent.hpp"
+#include "Actions/Action.hpp"
 
 Button::Button(const std::string &cname)
         : Component("Button." + cname)
@@ -33,7 +34,28 @@ Button::Button(const std::string &cname)
     bstate = BNORMAL;
     memset(borders, 0, sizeof(borders));
     extraBorder = 0;
+    clickAction = 0;
     dirty = true;
+}
+
+Button::~Button()
+{
+    if ( clickAction && ! clickAction->isShared() )
+    {
+        delete clickAction;
+        clickAction = 0;
+    }
+}
+
+void
+Button::setAction(Action* action)
+{
+    if ( clickAction && ! clickAction->isShared() )
+    {
+        delete clickAction;
+    }
+    
+    clickAction = action;
 }
 
 // render
@@ -100,7 +122,14 @@ Button::actionPerformed(const mMouseEvent &me)
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED)
     {
-        ((View *)parent)->onComponentClicked(this);
+        if ( clickAction )
+        {
+            clickAction->execute();
+        }
+        else
+        {
+            ((View *)parent)->onComponentClicked(this);
+        }
     }
 } // end Button::actionPerformed
 

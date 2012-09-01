@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
+#include "Views/Components/Button.hpp"
+#include "Actions/Action.hpp"
 
 int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;
@@ -51,6 +53,17 @@ static void bIncreasePlayerCount()
     if(GameConfig::game_maxplayers + 1 <= 16)
         GameConfig::game_maxplayers = GameConfig::game_maxplayers + 1;
 }
+
+class DecreaseMaxUnitCountAction : public Action
+{
+public:
+    DecreaseMaxUnitCountAction() : Action(false) {}
+    void execute()
+    {
+        if(GameConfig::game_maxunits - 5 >= 2)
+            GameConfig::game_maxunits = GameConfig::game_maxunits - 5;
+    }
+};
 
 static void bDecreaseMaxUnitCount()
 {
@@ -312,7 +325,21 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     x = xTextStart;
     add( new Label(x, y, "Game Max Unit Count", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMaxUnitCount);
+    
+    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMaxUnitCount);
+    
+    Button *b = new Button("aaa");
+    b->setLocation(iXY(x-1,y));
+    b->setLabel("<");
+    b->setTextButtonSize(arrowButtonWidth-2);
+    b->setNormalBorder();
+    b->setAction(new DecreaseMaxUnitCountAction());
+    b->setTextColors(componentInActiveTextColor, componentFocusTextColor, componentActiveTextColor, componentInActiveTextColor);
+    b->setStateOffset(Button::BPRESSED, 1, 1);
+    add(b);
+    
+    
+    
     x += arrowButtonWidth + meterWidth;
     addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMaxUnitCount);
     y += yOffset;
