@@ -23,23 +23,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "ViewGlobals.hpp"
 
-typedef enum
-{
-    BNORMAL =   0,
-    BOVER   =   1,
-    BPRESSED=   2
-} ButtonState;
-
 //--------------------------------------------------------------------------
 class Button : public Component
 {
+public:
+    typedef enum
+    {
+        BNORMAL =   0,
+        BOVER   =   1,
+        BPRESSED=   2,
+        BDISABLED=  3,
+        BMAX_STATE
+    } ButtonState;
+    
 private:
     int extraBorder;
+    
 protected:
+    
+    typedef enum
+    {
+        BORDER_TOP_LEFT    = 0,
+        BORDER_BOTTOM_RIGHT = 1,
+        BORDER_COLOR_MAX
+    } BorderColorDef;
+    
     std::string label;
        
-    PIX borders[3][2];
-    PIX textColors[3];
+    PIX borders[BMAX_STATE][BORDER_COLOR_MAX];
+    PIX textColors[BMAX_STATE];
+    iXY state_offset[BMAX_STATE];
    
     Surface bimage;
    
@@ -53,25 +66,36 @@ protected:
     }
 
 public:
-
+    
     Button(const std::string &cname);
 
     virtual ~Button() {}
 
-    static Button * createTextButton(   std::string cname,
+    static Button * createTextButton( std::string cname,
                                         std::string label,
                                         iXY loc,
                                         int bwidth);
 
-    static Button * createSpecialButton(std::string cname,
+    static Button * createSpecialButton( std::string cname,
+                                            std::string label,
+                                            iXY loc);
+    
+    static Button * createNewSpecialButton(  std::string cname,
+                                                std::string label,
+                                                iXY loc,
+                                                int with);
+    
+    static Button * createMenuButton(std::string cname,
                                         std::string label,
-                                        iXY loc);
+                                        iXY loc,
+                                        bool inverted);
 
-    void setTextColors( PIX normal, PIX over, PIX pressed)
+    void setTextColors( PIX normal, PIX over, PIX pressed, PIX disabled)
     {
         textColors[BNORMAL] = normal;
         textColors[BOVER] = over;
         textColors[BPRESSED] = pressed;
+        textColors[BDISABLED] = disabled;
     }
 
     void setLabel(const std::string& l)
@@ -82,52 +106,85 @@ public:
    
     void setImage(const Surface &s)
     {
-        if ( s.getNumFrames() ) {
+        if ( s.getNumFrames() )
+        {
             bimage.copy(s);
             setSize(bimage.getWidth(), bimage.getHeight());
         }
         dirty = true;
     }
-    void clearImage()
+    
+    void enable()
     {
-//        bimage.freeFrames();
+        if ( bstate == BDISABLED )
+        {
+            bstate = BNORMAL;
+            dirty = true;
+        }
     }
-   
+    
+    void disable()
+    {
+        if ( bstate != BDISABLED )
+        {
+            bstate = BDISABLED;
+            dirty = true;
+        }
+    }
+    
+    bool isEnabled()
+    {
+        return bstate != BDISABLED;
+    }
+    
     void setUnitSelectionBorder()
     {
         setExtraBorder();
-        borders[0][0] = Color::darkGray;
-        borders[0][1] = Color::darkGray;
-        borders[1][0] = Color::red;
-        borders[1][1] = Color::red;
-        borders[2][0] = Color::darkGray;
-        borders[2][1] = Color::darkGray;
+        borders[BNORMAL][BORDER_TOP_LEFT]       = Color::darkGray;
+        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = Color::darkGray;
+        borders[BOVER][BORDER_TOP_LEFT]         = Color::red;
+        borders[BOVER][BORDER_BOTTOM_RIGHT]     = Color::red;
+        borders[BPRESSED][BORDER_TOP_LEFT]      = Color::darkGray;
+        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = Color::darkGray;
+        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
+        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
         dirty = true;
     }
    
     void setNormalBorder()
     {
         setExtraBorder();
-        borders[0][0] = topLeftBorderColor;
-        borders[0][1] = bottomRightBorderColor;
-        borders[1][0] = topLeftBorderColor;
-        borders[1][1] = bottomRightBorderColor;
-        borders[2][0] = bottomRightBorderColor;
-        borders[2][1] = topLeftBorderColor;
-        dirty=true;
+        borders[BNORMAL][BORDER_TOP_LEFT]       = topLeftBorderColor;
+        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = bottomRightBorderColor;
+        borders[BOVER][BORDER_TOP_LEFT]         = topLeftBorderColor;
+        borders[BOVER][BORDER_BOTTOM_RIGHT]     = bottomRightBorderColor;
+        borders[BPRESSED][BORDER_TOP_LEFT]      = bottomRightBorderColor;
+        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = topLeftBorderColor;
+        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
+        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
+        dirty = true;
     }
 
     void setRedGreenBorder()
     {
         setExtraBorder();
-        borders[0][0] = 0;
-        borders[0][1] = 0;
-        borders[1][0] = Color::red;
-        borders[1][1] = Color::darkRed;
-        borders[2][0] = Color::green;
-        borders[2][1] = Color::darkGreen;
+        borders[BNORMAL][BORDER_TOP_LEFT]       = 0;
+        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = 0;
+        borders[BOVER][BORDER_TOP_LEFT]         = Color::red;
+        borders[BOVER][BORDER_BOTTOM_RIGHT]     = Color::darkRed;
+        borders[BPRESSED][BORDER_TOP_LEFT]      = Color::green;
+        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = Color::darkGreen;
+        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
+        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
+        dirty = true;
     }
 
+    void setStateOffset(ButtonState state, int x, int y)
+    {
+        state_offset[state].x = x;
+        state_offset[state].y = y;
+    }
+    
     void clearBorder()
     {
         memset(borders, 0, sizeof(borders));

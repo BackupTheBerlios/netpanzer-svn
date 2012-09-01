@@ -59,7 +59,7 @@ UserCommands =
     --end,
 
     test = function(param)
-        netpanzer.scriptmessage("the thing is: " .. config.game.unit_profiles);
+        netpanzer.scriptmessage("the thing is: " .. ((config.game.teammode == true) and 'enabled' or 'disabled'));
     end,
     
     countdown_help = "Do a countdown.",

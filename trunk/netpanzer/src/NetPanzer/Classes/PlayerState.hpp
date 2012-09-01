@@ -81,11 +81,13 @@ private:
     bool admin_flag;
     NTimer autokick;
 
+private:
+    PlayerState(const PlayerState& other);
+    
 public:
     PlayerUnitConfig unit_config;
 
     PlayerState();
-    PlayerState(const PlayerState& other);
 
     void operator= (const PlayerState& other);
 

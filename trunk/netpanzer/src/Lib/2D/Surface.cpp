@@ -1812,20 +1812,25 @@ void Surface::FillRoundRect(iRect rect, int radius, PIX color)
     fillRect(iRect(rect.min.x,rect.min.y+radius,
                    rect.max.x,rect.max.y-radius), color);
 
-  while (y >= x) {
-    drawHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, color);//up
-    drawHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, color);//down
-    drawHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, color);//up
-    drawHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, color);//down
+    while (y >= x)
+    {
+        drawHLine((rect.min.x+radius) - x - 1, (rect.min.y+radius) - y, (rect.max.x-radius)+ x + 2, color);//up
+        drawHLine((rect.min.x+radius) - x - 1, (rect.max.y-radius) + y, (rect.max.x-radius)+ x + 2, color);//down
+        drawHLine((rect.min.x+radius) - y - 1, (rect.min.y+radius) - x, (rect.max.x-radius)+ y + 2, color);//up
+        drawHLine((rect.min.x+radius) - y - 1, (rect.max.y-radius) + x, (rect.max.x-radius)+ y + 2, color);//down
 
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else {
-      d = d + 4 * (x - y) + 10;
-      y--;
+        if (d < 0)
+        {
+            d = d + (4 * x) + 6;
+        }
+        else
+        {
+            d = d + 4 * (x - y) + 10;
+            y--;
+        }
+        
+        x++;
     }
-    x++;
-  }
 }
 
 void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])

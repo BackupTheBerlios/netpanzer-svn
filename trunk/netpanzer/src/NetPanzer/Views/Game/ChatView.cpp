@@ -24,9 +24,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
+#include "Views/Components/Button.hpp"
 #ifdef WIN32
 #include <windows.h>
 #endif
+
+static Button* createTitlebarButton(const NPString& name, int x, int y, const Surface& button_images)
+{
+    Surface bimage(15,15,4);
+    
+    bimage.setFrame(0);
+    button_images.blt(bimage, 0, 0);
+    bimage.bltLookup(bimage.getRect(), Palette::darkGray256.getColorArray());
+    
+    bimage.setFrame(1);
+    button_images.blt(bimage, 0, 0);
+    
+    bimage.setFrame(2);
+//    bimage.fill(0);
+    button_images.blt(bimage, 0, 0);
+    
+    bimage.setFrame(3);
+    button_images.blt(bimage, 0, 0);
+    bimage.bltLookup(bimage.getRect(), Palette::darkGray256.getColorArray());
+    
+    Button *b = new Button(name);
+    b->setImage(bimage);
+    b->setLocation( x, y);
+    b->setStateOffset(Button::BPRESSED, 1, 1);
+    
+    return b;
+}
+
 
 ChatView::ChatView() : GameTemplateView()
 {
@@ -41,16 +70,17 @@ ChatView::ChatView() : GameTemplateView()
     resize(500, 150);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
 
-    Surface bitmap, button;
-    bitmap.loadBMP(itScroll);
-    button.grab(bitmap, iRect(0, 0, 15, 15));
-    bHideWindow = tBitButton::createButton("HideWindow", button, iXY(0, 0));
+    Surface button_images;
+    button_images.loadBMP(itScroll);
+    
+    bHideWindow = createTitlebarButton("HideWindow", 0, 0, button_images);
     add(bHideWindow);
-
-    button.grab(bitmap, iRect(15*2, 0, 15*3, 15));
-    bShowWindow = tBitButton::createButton("ShowWindow", button, iXY(15, 0));
+    
+    button_images.setOffsetX(-30);
+    bShowWindow = createTitlebarButton("ShowWindow", 15, 0, button_images);
+    bShowWindow->disable();
     add(bShowWindow);
-    bShowWindow->Disable();
+    
     HideWindow = false;
 
     iRect r(0, 15, getSizeX()-15, getSizeY()-31);
@@ -66,7 +96,7 @@ ChatView::ChatView() : GameTemplateView()
     add(ChatList);
     ChatString.init("", 100, getSizeX()-5);
     input = addInputField(iXY(2, getSizeY()-16), &ChatString, "", true, 100);
-    input->setExcludedCharacters("\\ `²");
+    input->setExcludedCharacters("\\ï¿½`ï¿½");
 }
 
 void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
@@ -154,16 +184,18 @@ void ChatView::onComponentClicked(Component* c)
     if ( c == bHideWindow )
     {
         HideWindow = true;
-        bHideWindow->Disable();
-        bShowWindow->Enable();
+        bHideWindow->disable();
+        bShowWindow->enable();
+        
         resize(500, 17);
         moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
     }
     if ( c == bShowWindow )
     {
         HideWindow = false;
-        bHideWindow->Enable();
-        bShowWindow->Disable();
+        bHideWindow->enable();
+        bShowWindow->disable();
+        
         resize(500, 150);
         moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
     }

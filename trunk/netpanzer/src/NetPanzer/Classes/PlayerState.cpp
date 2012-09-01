@@ -114,16 +114,6 @@ PlayerState::PlayerState()
     autokick.reset();
 }
 
-PlayerState::PlayerState(const PlayerState& other)
-    :  id(other.id), team_id(0xFF), name(other.name),
-      status(other.status), kills(other.kills), kill_points(other.kill_points),
-      losses(other.losses), loss_points(other.loss_points),
-      total(other.total), objectives_held(other.objectives_held),
-      stats_locked(other.stats_locked), unit_config(other.unit_config)
-{
-    // nothing
-}
-
 void PlayerState::operator= (const PlayerState& other)
 {
     id = other.id;

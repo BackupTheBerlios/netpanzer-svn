@@ -20,11 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Views/Components/newButton.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Particles/Particle2D.hpp"
@@ -143,12 +143,12 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( new newButton("MAIN", "Main", mainPos, 0) );
-    add( new newButton( "JOIN", "Join", joinPos, 0) );
-    add( new newButton( "HOST", "Host", hostPos, 0) );
-    add( new newButton( "OPTIONS", "Options", optionsPos, 0) );
-    add( new newButton( "HELP", "Help", helpPos, 0) );
-    add( new newButton( "EXITNP", "Exit netPanzer", exitPos, 0) );
+    add( Button::createMenuButton("MAIN", "Main", mainPos, false) );
+    add( Button::createMenuButton( "JOIN", "Join", joinPos, false) );
+    add( Button::createMenuButton( "HOST", "Host", hostPos, false) );
+    add( Button::createMenuButton( "OPTIONS", "Options", optionsPos, false) );
+    add( Button::createMenuButton( "HELP", "Help", helpPos, false) );
+    add( Button::createMenuButton( "EXITNP", "Exit netPanzer", exitPos, false) );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
@@ -156,13 +156,13 @@ void MenuTemplateView::initPreGameOptionButtons()
 void MenuTemplateView::initInGameOptionButtons()
 {
     if(!gameconfig->quickConnect) {
-        add( new newButton( "RESIGN", "Resign", resignPos, 0) );
-        add( new newButton( "EXITNETNP", "Exit netPanzer", exitPos, 0) );
+        add( Button::createMenuButton( "RESIGN", "Resign", resignPos, false) );
+        add( Button::createMenuButton( "EXITNETNP", "Exit netPanzer", exitPos, false) );
     } else {
-        add( new newButton( "RESIGN", "Resign", exitPos, 1) );
+        add( Button::createMenuButton( "RESIGN", "Resign", exitPos, true) );
     }
 
-    add( new newButton( "CLOSEOPT", "Close Options", returnToGamePos, 0) );
+    add( Button::createMenuButton( "CLOSEOPT", "Close Options", returnToGamePos, false) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons

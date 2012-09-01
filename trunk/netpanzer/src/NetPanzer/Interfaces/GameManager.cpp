@@ -67,8 +67,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/MainMenu/OrderingView.hpp"
-#include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"

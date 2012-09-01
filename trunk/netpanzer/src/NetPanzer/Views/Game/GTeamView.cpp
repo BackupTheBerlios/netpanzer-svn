@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TeamManager.hpp"
 #include "Util/Timer.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "Views/Components/Button.hpp"
 
  
 static const char * stats_format = "%-16s%6i%7i%6i";
@@ -63,19 +64,19 @@ void GTeamView::init()
     secondrect.max.x = secondrect.min.x + 350;
     secondrect.max.y = firstrect.max.y;
  
-   changebutton = tButton::createtButton( "changeteam", " >> ", 
-                                              iXY(firstrect.max.x+1, firstrect.min.y+((firstrect.getSizeY()/2)-10)), 
-                                              secondrect.min.x-firstrect.max.x);
+   changebutton = Button::createNewSpecialButton( "changeteam", " >> ", 
+                                                  iXY(firstrect.max.x+1, firstrect.min.y+((firstrect.getSizeY()/2)-10)), 
+                                                  secondrect.min.x-firstrect.max.x);
     add(changebutton);
     loaded = true;
-    if (!chantetimer.count()) changebutton->Disable();
+    if (!chantetimer.count()) changebutton->disable();
 }
  
 void GTeamView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    if (!changebutton->isEnable() && chantetimer.count())
+    if (!changebutton->isEnabled() && chantetimer.count())
     {
-        changebutton->Enable();
+        changebutton->enable();
     }
 
     clientArea.BltRoundRect(firstrect, 14, Palette::darkbrown256.getColorArray());
@@ -215,7 +216,7 @@ void GTeamView::onComponentClicked(Component* c)
         TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), newteam);
         chantetimer.changePeriod(120); //2 minutes after first change
         chantetimer.reset();
-        changebutton->Disable();
+        changebutton->disable();
     }
     else
     {

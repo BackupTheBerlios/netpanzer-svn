@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "Views/Theme.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -65,9 +66,9 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     secondrect.max.x = rect.max.x-20;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = tButton::createtButton( "changeteam", " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
+    changebutton = Button::createNewSpecialButton( "changeteam", " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
     add(changebutton);
-    readybutton = tButton::createtButton( "ready", "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
+    readybutton = Button::createNewSpecialButton( "ready", "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
     add(readybutton);
 
     scTeam1 = new tVScrollBar();
@@ -261,8 +262,8 @@ void PrepareTeam::onComponentClicked(Component* c)
     else if ( c == readybutton )
     {
         TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
-        changebutton->Disable();
-        readybutton->Disable();
+        changebutton->disable();
+        readybutton->disable();
     }
     else
     {
