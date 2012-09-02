@@ -49,14 +49,6 @@ bool Component::contains(int x, int y) const
 
 } // end Component::contains
 
-//---------------------------------------------------------------------------
-void Component::setParent(void *parent)
-{
-    assert(parent != 0);
-
-    Component::parent = parent;
-}
-
 // setLocation
 //---------------------------------------------------------------------------
 void Component::setLocation(int x, int y)

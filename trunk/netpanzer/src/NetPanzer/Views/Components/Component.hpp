@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 class mMouseEvent;
+class View;
 
 //--------------------------------------------------------------------------
 class Component
@@ -49,9 +50,12 @@ public:
     Component *next;
     Component *prev;
 
-    void *parent;       // Who is my daddy?
+    View * parent;       // Who is my daddy?
 
-    void setParent(void *parent);
+    void setParent(View *parent)
+    {
+        this->parent = parent;
+    }
 
     enum
     {

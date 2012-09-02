@@ -288,9 +288,9 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     {
         keyboardFocusComponent->handleKeyboard();
         KeyboardInterface::flushCharBuffer();
+        keyboardFocusComponent->parent->processEvents();
     }
-    
-    if (focus != 0)
+    else if (focus != 0)
     {
         focus->processEvents();
         KeyboardInterface::flushCharBuffer();
