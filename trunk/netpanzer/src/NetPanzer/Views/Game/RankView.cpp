@@ -68,12 +68,6 @@ RankView::RankView() : GameTemplateView()
     resize(iXY(WINDOW_WIDTH, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
-    // Define the scrollBar fot this view.
-    scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
-    if (scrollBar == 0) {
-        throw Exception("ERROR: Unable to allocate the scrollBar.");
-    }
-
     allyImage.loadBMP("pics/default/ally.bmp");
     allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
     allyOtherImage.loadBMP("pics/default/allyOther.bmp");

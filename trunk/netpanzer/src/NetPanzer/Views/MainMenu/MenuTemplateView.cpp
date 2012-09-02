@@ -73,7 +73,6 @@ public:
         gameconfig->hostorjoin = _game_session_host;
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("MenuTemplateView", true);
-        Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("HostOptionsView", true);
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
