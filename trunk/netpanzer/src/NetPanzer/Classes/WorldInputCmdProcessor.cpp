@@ -59,6 +59,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/Vehicle.hpp"
 
 #include "Scripts/ScriptManager.hpp"
+#include "Views/Game/ChatView.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
@@ -72,17 +73,10 @@ enum { _cursor_regular,
        _cursor_break_allie
      };
 
-enum { _keyboard_input_mode_command,
-       _keyboard_input_mode_chat_mesg,
-       _keyboard_input_mode_allie_mesg
-     };
-
 ObjectiveID WorldInputCmdProcessor::selected_objective_id = 0;
 
 WorldInputCmdProcessor::WorldInputCmdProcessor()
 {
-    keyboard_input_mode = _keyboard_input_mode_command;
-
     selection_box_active = false;
     outpost_goal_selection = OBJECTIVE_NONE;
     previous_manual_control_state = false;
@@ -406,13 +400,21 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
             && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
     {
-        setKeyboardInputModeChatMesg();
+        ChatView *v = (ChatView*)Desktop::getView("ChatView");
+        if ( v )
+        {
+            v->openChat();
+        }
     }
 
     if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
-        && (KeyboardInterface::getKeyPressed(SDLK_a) ))
+        && (KeyboardInterface::getKeyPressed(SDLK_RETURN) ))
     {
-        setKeyboardInputModeAllieChatMesg();
+        ChatView *v = (ChatView*)Desktop::getView("ChatView");
+        if ( v )
+        {
+            v->openFriendsChat();
+        }
     }
 
     //If space is pressed, jump to first currently attacked unit
@@ -513,84 +515,15 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
 }
 
 void
-WorldInputCmdProcessor::keyboardInputModeCommand()
+WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
+    getManualControlStatus();
+    
     evaluateGroupingKeys();
 
     evaluateKeyCommands();
 
     previous_manual_control_state = manual_control_state;
-}
-
-void
-WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
-{
-    ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "> " );
-    KeyboardInterface::flushCharBuffer();
-    KeyboardInterface::setTextMode(true);
-    enter_key_hit_count = 1;
-    keyboard_input_mode = _keyboard_input_mode_chat_mesg;
-}
-
-void
-WorldInputCmdProcessor::keyboardInputModeChatMesg()
-{
-    char chat_string[256];
-    if (getConsoleInputString(chat_string))
-    {
-        if(strcmp(chat_string, "") != 0)
-        {
-            if ( chat_string[0] != '/' || ! ScriptManager::runUserCommand(&chat_string[1]) )
-            {
-                ChatInterface::say(chat_string);
-            }
-        }
-        keyboard_input_mode = _keyboard_input_mode_command;
-        ConsoleInterface::setInputStringStatus(false);
-    }
-}
-
-void
-WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
-{
-    ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "[Team]> " );
-    KeyboardInterface::flushCharBuffer();
-    KeyboardInterface::setTextMode(true);
-    enter_key_hit_count = 1;
-    keyboard_input_mode = _keyboard_input_mode_allie_mesg;
-}
-
-void
-WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
-{
-    char chat_string[256];
-    if ( getConsoleInputString( chat_string ) == true ) {
-        keyboard_input_mode = _keyboard_input_mode_command;
-        ConsoleInterface::setInputStringStatus( false );
-        ChatInterface::teamsay( chat_string );
-    }
-}
-
-void
-WorldInputCmdProcessor::evaluateKeyboardEvents()
-{
-    getManualControlStatus();
-    
-    switch( keyboard_input_mode ) {
-    case _keyboard_input_mode_command :
-        keyboardInputModeCommand();
-        break;
-
-    case _keyboard_input_mode_chat_mesg :
-        keyboardInputModeChatMesg();
-        break;
-
-    case _keyboard_input_mode_allie_mesg :
-        keyboardInputModeAllieChatMesg();
-        break;
-    }
 }
 
 bool
@@ -1098,77 +1031,6 @@ WorldInputCmdProcessor::process(bool process_mouse)
         evaluateMouseEvents();
 
     working_list.validateList();
-}
-
-void WorldInputCmdProcessor::processChat()
-{
-    switch( keyboard_input_mode ) {
-    case _keyboard_input_mode_command :
-        if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true))
-        {
-            setKeyboardInputModeChatMesg();
-        }
-        break;
-
-    case _keyboard_input_mode_chat_mesg :
-        keyboardInputModeChatMesg();
-        break;
-    }
-}
-
-bool
-WorldInputCmdProcessor::getConsoleInputString(char *input_string)
-{
-    int key_char;
-    while (KeyboardInterface::getChar(key_char))
-    {
-        // Check for extended code.
-        if (key_char == 0)
-        {
-            if (KeyboardInterface::getChar(key_char))
-            {
-                ConsoleInterface::addExtendedChar(key_char);
-                if ((key_char == SDLK_RETURN) )
-                {
-                    enter_key_hit_count++;
-                    if (enter_key_hit_count == 2)
-                    {
-                        KeyboardInterface::setTextMode(false);
-                        ConsoleInterface::getInputString( input_string );
-                        return true;
-                    }
-                }
-#ifdef WIN32                
-                if ((key_char == SDLK_INSERT))
-                {
-                    OpenClipboard(NULL);
-                    HANDLE clip = GetClipboardData(CF_TEXT);
-                    CloseClipboard();
-                    if (clip)
-                    {
-                        char* pntchr = (char*)clip;
-						int count = 0;
-                        while ((*pntchr != 0) && (count < 150))
-                        {
-                            if (isprint(*pntchr))
-							{
-								ConsoleInterface::addChar(*pntchr);
-								count++;
-							}
-                            pntchr++;
-                        }
-                    }
-                }
-#endif
-            }
-        }
-        else
-        {
-            ConsoleInterface::addChar(key_char);
-        }
-
-    }
-    return false;
 }
 
 void

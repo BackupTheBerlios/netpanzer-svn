@@ -53,6 +53,8 @@ public:
         Component::setSize(x+4, y);
     }
 
+    void setTextColor(PIX color) { text_color = color; }
+    
     void setMaxTextLength(int max_length) { max_chars = max_length; }
     void setExcludedChars(const std::string& excluded_chars) { this->excluded_chars = excluded_chars; }
     
@@ -72,6 +74,8 @@ private:
     int last_pressed_key;
     bool was_special_key;
     NTimer key_repeat_timer;
+    
+    PIX text_color;
 
     void checkRepeatKey();
     void fixCursorPos();

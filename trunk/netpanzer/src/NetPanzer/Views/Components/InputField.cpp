@@ -33,6 +33,9 @@ InputField::InputField()
 
     this->last_pressed_key = 0;
     this->was_special_key = false;
+    
+    this->text_color = Color::white;
+    
 }
 
 void InputField::render()
@@ -70,7 +73,7 @@ void InputField::draw(Surface &dest)
     
     int text_y = (r.getSizeY()/2)-4;
 
-    s.bltString(0, text_y , text.substr(text_display_start).c_str(), Color::white);
+    s.bltString(0, text_y , text.substr(text_display_start).c_str(), text_color);
 
     if ( inFocus )
     {

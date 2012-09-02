@@ -113,7 +113,7 @@ void tStringListBox::render()
     int row = 5;
     Surface RowPaint(MaxItemWidth+10, ItemHeight, 1);
     Surface Bitmap(size.x, ItemHeight, 1);
-    for(PlayerID i = StartItem; i < MaxItem; ++i)
+    for(int i = StartItem; i < MaxItem; ++i)
     {
         RowPaint.fill(background);
         if (SelectedItem == i)

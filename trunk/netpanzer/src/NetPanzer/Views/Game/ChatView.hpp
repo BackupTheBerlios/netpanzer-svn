@@ -36,8 +36,13 @@ private:
     tHScrollBar * hsbChat;
     Button * bHideWindow;
     Button * bShowWindow;
+    Button * switchModeButton;
     InputField * input;
     bool HideWindow;
+    
+    bool isAllMode;
+    Surface allBg;
+    Surface friendsBg;
     
 public:
     ChatView();
@@ -53,6 +58,15 @@ public:
     
     void minimizeChat();
     void restoreChat();
+    
+    void setChatFriends();
+    void setChatAll();
+    
+    void openChat();
+    void openFriendsChat();
+    
+    void switchChatMode();
+    
 };
 
 #endif

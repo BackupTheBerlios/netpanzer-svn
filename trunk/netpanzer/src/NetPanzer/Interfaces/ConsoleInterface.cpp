@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "Interfaces/ConsoleInterface.hpp"
 
 #include "cstring"
@@ -26,13 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Console.hpp"
 #include "Resources/ResourceManager.hpp"
-
-#define CommandMax 13
-
-std::string CommandList[CommandMax] = {
-    "/server listcommands", "/server adminlogin", "/server unitspawnlist", "/server unitprofiles",
-    "/server listprofiles", "/server kick", "/server baselimit", "/server gamepass",
-    "/server map ", "/server autokick", "/server say", "/server listplayers", "/server flagtimer"}; 
 
 bool ConsoleInterface::stdout_pipe;
 
@@ -48,12 +40,6 @@ long     ConsoleInterface::max_char_per_line;
 
 long ConsoleInterface::line_index;
 
-bool ConsoleInterface::input_string_active;
-
-int  ConsoleInterface::maxCharCount;
-char ConsoleInterface::inputString[256];
-char ConsoleInterface::inputPrompt[256];
-int  ConsoleInterface::cursorPos;
 int ConsoleInterface::commandPos;
 void ConsoleInterface::initialize( long size )
 {
@@ -73,8 +59,6 @@ void ConsoleInterface::initialize( long size )
 
     line_offset.x = 0;
     line_offset.y = (14 + vertical_spacing);
-
-    input_string_active = false;
 
     long line_loop;
 
@@ -191,13 +175,8 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
     } while( index != line_index );
 
-    if( input_string_active == true ) {
-        current_line.y = bounds.min.y + (line_offset.y * visible_count ) + (line_offset.y * 2);
-        current_line.x = bounds.min.x + line_offset.x;
-    } else {
-        current_line.y = bounds.min.y + (line_offset.y * visible_count );
-        current_line.x = bounds.min.x + line_offset.x;
-    }
+    current_line.y = bounds.min.y + (line_offset.y * visible_count );
+    current_line.x = bounds.min.x + line_offset.x;
 
     int flagextrax;
     Surface * flag = 0;
@@ -225,155 +204,4 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
     } while( index != line_index );
 
-
-    if( input_string_active == true ) {
-        iXY input_offset;
-        unsigned long max_char_space;
-        unsigned long input_string_length;
-        char *string_ptr;
-
-        current_line.y = current_line.y - line_offset.y;
-
-        surface.bltStringShadowed(current_line.x, current_line.y, inputPrompt, Color::white,
-                Color::black );
-
-        int CHAR_XPIX = 8; // XXX hardcoded
-        input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
-        input_offset.y = current_line.y;
-
-        max_char_space = (bounds.max.x - input_offset.x ) / CHAR_XPIX;
-        input_string_length = strlen(inputString);
-
-        if( input_string_length > max_char_space ) {
-            string_ptr = inputString + (input_string_length - (max_char_space - 1) );
-        } else {
-            string_ptr = inputString;
-        }
-
-        surface.bltStringShadowed(input_offset.x, input_offset.y, string_ptr , Color::white,
-                Color::black );
-
-        surface.bltStringShadowed(  input_offset.x + cursorPos * CHAR_XPIX,
-                                    input_offset.y,
-                                    "_", Color::white, Color::black );
-    }
 }
-
-void ConsoleInterface::setInputStringStatus( bool on_off )
-{
-    input_string_active = on_off;
-}
-
-void ConsoleInterface::resetInputString( const char *prompt )
-{
-    cursorPos = 0;
-    inputString[0] = 0;
-    maxCharCount = 256;
-    strcpy( inputPrompt, prompt );
-}
-
-void ConsoleInterface::getInputString( char *str )
-{
-    strcpy( str, inputString );
-}
-
-void ConsoleInterface::addChar(int newChar)
-{
-    // Check if the character should be excluded.
-    // Add the character.
-    int length = strlen(inputString) + 1;
-
-    if ( cursorPos != length )
-    {
-        memmove(&inputString[cursorPos+1], &inputString[cursorPos], length-cursorPos);
-        ++length;
-    }
-
-    inputString[cursorPos] = newChar;
-    inputString[length] = '\0';
-
-    if (cursorPos < maxCharCount - 1) {
-        cursorPos++;
-    }
-} // addChar
-
-void ConsoleInterface::addExtendedChar(int newExtendedChar)
-{
-    // Process the extendedChar accordingly.
-    switch (newExtendedChar) {
-    case SDLK_RETURN: {}
-        break;
-
-    case SDLK_HOME: {
-            cursorPos = 0;
-        }
-        break;
-
-    case SDLK_LEFT: {
-            if(--cursorPos < 0) {
-                cursorPos = 0;
-            }
-        }
-        break;
-
-    case SDLK_RIGHT: {
-            int length = strlen(inputString);
-            if(++cursorPos > length) {
-                if (cursorPos > maxCharCount) {
-                    cursorPos = maxCharCount - 1;
-                } else {
-                    cursorPos = length;
-                }
-            }
-        }
-        break;
-
-    case SDLK_END: {
-            cursorPos = strlen(inputString);
-
-            if (cursorPos > maxCharCount) {
-                cursorPos = maxCharCount - 1;
-            }
-        }
-        break;
-
-    case SDLK_INSERT: {}
-        break;
-
-    case SDLK_DELETE: {
-            if (cursorPos == (int) strlen(inputString + cursorPos)) {
-                break;
-            }
-
-            memcpy(inputString + cursorPos, inputString + cursorPos + 1, strlen(inputString + cursorPos + 1) + 1);
-        }
-        break;
-
-    case SDLK_BACKSPACE: {
-            if (cursorPos >= 1) {
-                int byteCount = strlen(inputString + cursorPos);
-
-                // Only do this if we are not at the end of the string.
-                if (byteCount > 0) {
-                    memcpy(inputString + cursorPos - 1, inputString + cursorPos, byteCount);
-                }
-
-                cursorPos--;
-                inputString[cursorPos + byteCount] = '\0';
-            }
-        }
-        break;
-
-    case SDLK_TAB: {
-            cursorPos = 0;
-            strcpy(inputString, CommandList[commandPos].c_str());
-            commandPos++;
-            if (commandPos >= CommandMax) commandPos = 0;
-            cursorPos = strlen(inputString);
-        }
-        break;
-
-    default: break;
-    }
-
-} // addExtendedChar

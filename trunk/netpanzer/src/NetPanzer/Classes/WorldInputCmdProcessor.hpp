@@ -78,16 +78,6 @@ protected:
 
     void evaluateMouseEvents();
 
-    unsigned long keyboard_input_mode;
-
-    void keyboardInputModeCommand();
-
-    long enter_key_hit_count;
-    void setKeyboardInputModeChatMesg();
-    void keyboardInputModeChatMesg();
-    void setKeyboardInputModeAllieChatMesg();
-    void keyboardInputModeAllieChatMesg();
-
     void evaluateKeyCommands();
     void evaluateGroupingKeys();
 
@@ -99,8 +89,6 @@ protected:
      */
     void centerSelectedUnits();
 
-    bool getConsoleInputString(char *input_string);
-
     static ObjectiveID selected_objective_id;
 
 public:
@@ -109,7 +97,6 @@ public:
     WorldInputCmdProcessor();
 
     void process(bool process_mouse = true);
-    void processChat();
 
     void inFocus();
 

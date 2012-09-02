@@ -57,12 +57,6 @@ protected:
 
     static long line_index;
 
-    static bool input_string_active;
-
-    static int  maxCharCount;
-    static char inputString[256];
-    static char inputPrompt[256];
-    static int  cursorPos;
     static int commandPos;
 
 public:
@@ -78,12 +72,6 @@ public:
     static void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... )
         __attribute__(( format(printf, 4, 5) ));
 
-    /* Input String Methods */
-    static void setInputStringStatus( bool on_off );
-    static void resetInputString( const char *prompt );
-    static void addChar(int newChar);
-    static void addExtendedChar(int newExtendedChar);
-    static void getInputString( char *str );
 };
 
 #endif // ** _CONSOLEINTERFACE_HPP

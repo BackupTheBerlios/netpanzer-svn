@@ -34,6 +34,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <windows.h>
 #endif
 
+#include "Actions/Action.hpp"
+
+//#define CommandMax 13
+//
+//std::string CommandList[CommandMax] = {
+//    "/server listcommands", "/server adminlogin", "/server unitspawnlist", "/server unitprofiles",
+//    "/server listprofiles", "/server kick", "/server baselimit", "/server gamepass",
+//    "/server map ", "/server autokick", "/server say", "/server listplayers", "/server flagtimer"}; 
+
+//    case SDLK_TAB: {
+//            cursorPos = 0;
+//            strcpy(inputString, CommandList[commandPos].c_str());
+//            commandPos++;
+//            if (commandPos >= CommandMax) commandPos = 0;
+//            cursorPos = strlen(inputString);
+//        }
+
+class SwitchChatModeAction : public Action
+{
+public:
+    ChatView * view;
+    SwitchChatModeAction(ChatView * view) : Action(false), view(view) {}
+    void execute()
+    {
+        view->switchChatMode();
+    }
+};
+
+
 static Button* createTitlebarButton(int x, int y, const Surface& button_images, Action* action)
 {
     Surface bimage(15,15,4);
@@ -124,13 +153,35 @@ ChatView::ChatView() : GameTemplateView()
     add(ChatList);
     
     input = new InputField();
-    input->setLocation(2,getSizeY()-16);
+    input->setLocation(2 + 16,getSizeY()-16);
     input->setSize(getSizeX()-5,16);
     input->setMaxTextLength(100);
     input->setExcludedChars("\\�`�");
     
     add(input);
     
+    switchModeButton = new Button(); //Button::createTextButton(">", iXY(0, getSizeY()-16), 14, 0);
+    
+    switchModeButton->setLocation(1, getSizeY()-16);
+    switchModeButton->setSize(16, 16);
+    switchModeButton->setLabel(">");
+    switchModeButton->setStateOffset(Button::BPRESSED, 1, 1);
+    switchModeButton->setAction(new SwitchChatModeAction(this));
+    
+    switchModeButton->setTextColors(Color::gray, Color::yellow, Color::gray, Color::darkGray);
+    
+    allBg.create(16,16,1);
+    allBg.FillRoundRect(allBg.getRect(), 3, Color::white);
+    allBg.RoundRect(allBg.getRect(), 3, Color::white);
+    
+    friendsBg.create(16,16,1);
+    friendsBg.FillRoundRect(friendsBg.getRect(), 3, Color::yellow);
+    friendsBg.RoundRect(friendsBg.getRect(), 3, Color::yellow);
+
+    add(switchModeButton);
+    
+    isAllMode = true;
+    setChatFriends();
 }
 
 void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
@@ -142,69 +193,82 @@ void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
 
 void ChatView::processEvents()
 {
-    if ( (KeyboardInterface::getKeyPressed(SDLK_RETURN) || KeyboardInterface::getKeyPressed(SDLK_KP_ENTER) )
-         && Desktop::getKeyboardFocusComponent() == input )
+    if ( Desktop::getKeyboardFocusComponent() == input )
     {
-        if ( input->getText().length() != 0 )
+        if ( (KeyboardInterface::getKeyPressed(SDLK_RETURN) || KeyboardInterface::getKeyPressed(SDLK_KP_ENTER) ) )
         {
-            const NPString& msg = input->getText();
+            if ( input->getText().length() != 0 )
+            {
+                const NPString& msg = input->getText();
 
-            if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
-            {
-                ChatInterface::teamsay(msg);
-            }
-            
-            input->setText("");
-        }
-    }
-#ifdef WIN32
-    else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
-               || KeyboardInterface::getKeyState(SDLK_RCTRL))
-              && (KeyboardInterface::getKeyPressed(SDLK_v) ))
-    {
-        OpenClipboard(NULL);
-        HANDLE clip = GetClipboardData(CF_TEXT);
-        CloseClipboard();
-        if (clip)
-        {
-            char* pntchr = (char*)clip;
-            int count = 0;
-            while ((*pntchr != 0) && (count < 150))
-            {
-                if (isprint(*pntchr))
+                if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
                 {
-                    input->handleNormalKey(*pntchr);
-                    count++;
+                    if ( isAllMode )
+                    {
+                        ChatInterface::say(msg);
+                    }
+                    else
+                    {
+                        ChatInterface::teamsay(msg);
+                    }
                 }
-                pntchr++;
+
+                input->setText("");
             }
         }
-    }
-    else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
-               || KeyboardInterface::getKeyState(SDLK_RCTRL))
-              && (KeyboardInterface::getKeyPressed(SDLK_c) ))
-    {
-        std::string str = ChatList->getTextItem();
-        if (str != "")
+    #ifdef WIN32
+        else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
+                   || KeyboardInterface::getKeyState(SDLK_RCTRL))
+                  && (KeyboardInterface::getKeyPressed(SDLK_v) ))
         {
-            if(OpenClipboard(NULL))
+            OpenClipboard(NULL);
+            HANDLE clip = GetClipboardData(CF_TEXT);
+            CloseClipboard();
+            if (clip)
             {
-                int pos = str.find_first_of(':')+2;
-                std::string chaine = str.substr(pos);
-                HGLOBAL hText = GlobalAlloc(GMEM_DDESHARE, chaine.length()+1);
-                char * pText = (char*)GlobalLock(hText);
-                strcpy(pText, chaine.c_str());
-                GlobalUnlock(hText);
-                EmptyClipboard();
-                SetClipboardData(CF_TEXT, hText);
-                CloseClipboard();
+                char* pntchr = (char*)clip;
+                int count = 0;
+                while ((*pntchr != 0) && (count < 150))
+                {
+                    if (isprint(*pntchr))
+                    {
+                        input->handleNormalKey(*pntchr);
+                        count++;
+                    }
+                    pntchr++;
+                }
             }
         }
+        else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
+                   || KeyboardInterface::getKeyState(SDLK_RCTRL))
+                  && (KeyboardInterface::getKeyPressed(SDLK_c) ))
+        {
+            std::string str = ChatList->getTextItem();
+            if (str != "")
+            {
+                if(OpenClipboard(NULL))
+                {
+                    int pos = str.find_first_of(':')+2;
+                    std::string chaine = str.substr(pos);
+                    HGLOBAL hText = GlobalAlloc(GMEM_DDESHARE, chaine.length()+1);
+                    char * pText = (char*)GlobalLock(hText);
+                    strcpy(pText, chaine.c_str());
+                    GlobalUnlock(hText);
+                    EmptyClipboard();
+                    SetClipboardData(CF_TEXT, hText);
+                    CloseClipboard();
+                }
+            }
+        }
+    #endif
+        else
+        {
+            View::processEvents();
+        }
     }
-#endif
     else
     {
-        View::processEvents();
+        COMMAND_PROCESSOR.process(false);
     }
 }
 
@@ -220,6 +284,7 @@ void ChatView::minimizeChat()
     }
     
     removeComponent(input);
+    removeComponent(switchModeButton);
 
     resize(500, 17);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
@@ -234,6 +299,7 @@ void ChatView::restoreChat()
     resize(500, 150);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
     
+    add(switchModeButton);
     add(input);
 }
 
@@ -265,3 +331,56 @@ void ChatView::clear()
     ChatList->Clear();
 }
 
+void ChatView::setChatFriends()
+{
+    if ( isAllMode )
+    {
+        isAllMode = false;
+        switchModeButton->setImage(friendsBg);
+        input->setTextColor(Color::yellow);
+    }
+}
+
+void ChatView::setChatAll()
+{
+    if ( ! isAllMode )
+    {
+        isAllMode = true;
+        switchModeButton->setImage(allBg);
+        input->setTextColor(Color::white);
+    }
+}
+
+void ChatView::openChat()
+{
+    if ( HideWindow )
+    {
+        restoreChat();
+    }
+    
+    Desktop::setKeyboardFocusComponent(input);
+}
+
+void ChatView::openFriendsChat()
+{
+    if ( HideWindow )
+    {
+        restoreChat();
+    }
+    
+    setChatFriends();
+    
+    Desktop::setKeyboardFocusComponent(input);
+}
+
+void ChatView::switchChatMode()
+{
+    if ( isAllMode )
+    {
+        setChatFriends();
+    }
+    else
+    {
+        setChatAll();
+    }
+}
