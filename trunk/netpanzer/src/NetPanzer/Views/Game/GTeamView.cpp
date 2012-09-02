@@ -63,7 +63,7 @@ void GTeamView::init()
     secondrect.max.x = secondrect.min.x + 350;
     secondrect.max.y = firstrect.max.y;
  
-   changebutton = Button::createNewSpecialButton( "changeteam", " >> ", 
+   changebutton = Button::createNewSpecialButton( " >> ", 
                                                   iXY(firstrect.max.x+1, firstrect.min.y+((firstrect.getSizeY()/2)-10)), 
                                                   secondrect.min.x-firstrect.max.x);
     add(changebutton);

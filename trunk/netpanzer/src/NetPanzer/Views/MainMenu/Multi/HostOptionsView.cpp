@@ -228,9 +228,9 @@ void HostOptionsView::addConfRow(   const iXY pos,
     iXY p(pos);
     add( new Label(p.x, p.y, label, windowTextColor, windowTextColorShadow, true) );
     p.x += xControlStart - 1;
-    add( Button::createTextButton(p, arrowButtonWidth-2, "<", decreaseAction));
+    add( Button::createTextButton( "<", p, arrowButtonWidth-2, decreaseAction));
     p.x += arrowButtonWidth + meterWidth + 3; // 3 = 1 space + 2 of the border
-    add( Button::createTextButton(p, arrowButtonWidth-2, ">", increaseAction));
+    add( Button::createTextButton( ">", p, arrowButtonWidth-2, increaseAction));
 }
 
 // addMeterButtons
@@ -281,7 +281,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     const int minWidth = 150;
     int xChoiceOffset = 2;
 
-    choiceGameType.setName("Game Type");
+    choiceGameType.setLabel("Game Type");
     choiceGameType.addItem("Objective");
     choiceGameType.addItem("Frag Limit");
     choiceGameType.addItem("Time Limit");
@@ -291,7 +291,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     add(&choiceGameType);
     xChoiceOffset += minWidth + 123;
 
-    choiceCloudCoverage.setName("Cloud Coverage");
+    choiceCloudCoverage.setLabel("Cloud Coverage");
     choiceCloudCoverage.addItem("Clear");
     choiceCloudCoverage.addItem("Broken");
     choiceCloudCoverage.addItem("Partly Cloudy");
@@ -303,7 +303,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     add(&choiceCloudCoverage);
     xChoiceOffset += minWidth + 13;
 
-    choiceWindSpeed.setName("Wind Speed");
+    choiceWindSpeed.setLabel("Wind Speed");
     choiceWindSpeed.addItem("Calm");
     choiceWindSpeed.addItem("Breezy");
     choiceWindSpeed.addItem("Brisk");

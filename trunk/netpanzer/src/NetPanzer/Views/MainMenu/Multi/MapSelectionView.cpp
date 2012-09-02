@@ -98,9 +98,9 @@ void MapSelectionView::init()
 
     iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - 14 - BORDER_SPACE);
 
-    add( Button::createTextButton(pos, arrowButtonWidth - 1, "<", new ChangeSelectedMapAction(this, -1)));
+    add( Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, -1)));
     pos.x += arrowButtonWidth + 2;
-    add( Button::createTextButton(pos, arrowButtonWidth - 1, ">", new ChangeSelectedMapAction(this, 1)));
+    add( Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, 1)));
 
     loadMaps();
     HostOptionsView::updateWindSpeedString();

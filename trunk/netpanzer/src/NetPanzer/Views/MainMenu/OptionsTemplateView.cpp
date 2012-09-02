@@ -168,7 +168,7 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     char res_str[20];
     choiceResolution = new Choice();
-    choiceResolution->setName("Resolution");
+    choiceResolution->setLabel("Resolution");
     choiceResolution->addItem("current");
     SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
     int cur_mode = 0;
@@ -216,7 +216,7 @@ void OptionsTemplateView::initButtons()
 
     x = xTextStart;
     choiceMiniMapUnitSize = new Choice();
-    choiceMiniMapUnitSize->setName("Mini Map Unit Size");
+    choiceMiniMapUnitSize->setLabel("Mini Map Unit Size");
     choiceMiniMapUnitSize->addItem("Small");
     choiceMiniMapUnitSize->addItem("Large");
     choiceMiniMapUnitSize->setLocation(x, y);
@@ -233,9 +233,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Scroll Rate:", windowTextColor) );
     x += optionsMeterStartX;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
+    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
+    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
     y += yOffset*3;
 
 // SOUND OPTIONS
@@ -257,9 +257,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Sound Volume:", windowTextColor) );
     x += optionsMeterStartX;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeSoundVolumeAction(-1)));
+    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeSoundVolumeAction(-1)));
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeSoundVolumeAction(1)));
+    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeSoundVolumeAction(1)));
     y += yOffset;
 
     y += yOffset; 
@@ -277,9 +277,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Music Volume:", windowTextColor) );
     x += optionsMeterStartX;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeMusicVolumeAction(-1)));
+    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeMusicVolumeAction(-1)));
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeMusicVolumeAction(1)));
+    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeMusicVolumeAction(1)));
     y += yOffset;
 } // end OptionsTemplateView::initButtons
 

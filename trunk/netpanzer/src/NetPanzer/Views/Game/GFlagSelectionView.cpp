@@ -42,7 +42,6 @@ class GFlagButton : public Button
 {
 public:
     GFlagButton( int x, int y, Surface &s )
-        : Button("gflag")
     {
         setLocation(x, y);
         setSize(s.getWidth(), s.getHeight());

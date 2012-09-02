@@ -24,13 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "Util/NoCopy.hpp"
 #include "Util/Log.hpp"
 
 class mMouseEvent;
 
 //--------------------------------------------------------------------------
-class Component : public NoCopy
+class Component
 {
 protected:
     PIX    background;
@@ -38,7 +37,6 @@ protected:
     iXY     size;
     iXY    position;
     Surface surface;
-    std::string componentName;
     bool    enabled;
     bool    visible;
     bool    dirty;
@@ -69,11 +67,6 @@ public:
         reset();
     }
     
-    Component(const std::string &cname) : componentName(cname)
-    {
-        reset();
-    }
-    
     virtual ~Component()
     {
     }
@@ -86,14 +79,6 @@ public:
     }
     bool contains(int x, int y) const;
     bool contains(iXY p) const { return contains(p.x, p.y); }
-//    Uint8 getBackground() const { return background; }
-//    Uint8 getForeground() const { return foreground; }
-//    const std::string& getName() const { return name; }
-//    const iXY &getSize() const { return size; }
-//    int getSizeX() const { return size.x; }
-//    int getSizeY() const { return size.y; }
-//    bool isEnabled() const { return enabled; }
-//    bool isVisible() const { return visible; }
 
     void setBounds(const iRect &r)
     {
@@ -111,12 +96,8 @@ public:
         dirty=true;
     }
 
-//    void setEnabled(bool _enabled) { enabled = _enabled; }
-//    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
-    void setName(const std::string& name) { Component::componentName = name; }
-    std::string getName() { return componentName; }
     
     virtual void draw(Surface &dest)
     {
@@ -131,6 +112,9 @@ public:
     
     virtual void render() = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
+private:
+    Component(const Component&);
+    void operator=(const Component&);
 }; // end Component
 
 #endif // end __Component_hpp__

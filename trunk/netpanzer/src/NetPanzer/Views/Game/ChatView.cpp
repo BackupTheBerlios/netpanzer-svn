@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <windows.h>
 #endif
 
-static Button* createTitlebarButton(const NPString& name, int x, int y, const Surface& button_images)
+static Button* createTitlebarButton(int x, int y, const Surface& button_images)
 {
     Surface bimage(15,15,4);
     
@@ -48,7 +48,7 @@ static Button* createTitlebarButton(const NPString& name, int x, int y, const Su
     button_images.blt(bimage, 0, 0);
     bimage.bltLookup(bimage.getRect(), Palette::darkGray256.getColorArray());
     
-    Button *b = new Button(name);
+    Button *b = new Button();
     b->setImage(bimage);
     b->setLocation( x, y);
     b->setStateOffset(Button::BPRESSED, 1, 1);
@@ -73,11 +73,11 @@ ChatView::ChatView() : GameTemplateView()
     Surface button_images;
     button_images.loadBMP(itScroll);
     
-    bHideWindow = createTitlebarButton("HideWindow", 0, 0, button_images);
+    bHideWindow = createTitlebarButton( 0, 0, button_images);
     add(bHideWindow);
     
     button_images.setOffsetX(-30);
-    bShowWindow = createTitlebarButton("ShowWindow", 15, 0, button_images);
+    bShowWindow = createTitlebarButton( 15, 0, button_images);
     bShowWindow->disable();
     add(bShowWindow);
     

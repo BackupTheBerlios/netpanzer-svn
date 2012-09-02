@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ScrollBar::ScrollBar() : Component()
 {
     reset();
-    decrease = new Button( "decreaseButton");
+    decrease = new Button();
     decrease->setLabel("-");
     
-    increase = new Button( "increaseButton");
+    increase = new Button();
     increase->setLabel("+");
 
 
@@ -40,10 +40,10 @@ ScrollBar::ScrollBar(Orientation orientation)
     reset();
 
     ScrollBar::orientation = orientation;
-    decrease = new Button( "decreaseButton");
+    decrease = new Button();
     decrease->setLabel("-");
     
-    increase = new Button( "increaseButton");
+    increase = new Button();
     increase->setLabel("+");
 
 } // end ScrollBar::ScrollBar
@@ -60,10 +60,10 @@ ScrollBar::ScrollBar(Orientation orientation, int value, int visible, int minimu
     ScrollBar::minimum     = minimum;
     ScrollBar::maximum     = maximum;
  
-    decrease = new Button( "decreaseButton");
+    decrease = new Button();
     decrease->setLabel("-");
     
-    increase = new Button( "increaseButton");
+    increase = new Button();
     increase->setLabel("+");
     
     decrease->setSize(MINOR_AXIS_SIZE, MINOR_AXIS_SIZE);

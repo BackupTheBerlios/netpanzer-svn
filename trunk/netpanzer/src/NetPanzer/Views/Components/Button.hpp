@@ -70,23 +70,18 @@ protected:
 public:
     PIX borders[BMAX_STATE][BORDER_COLOR_MAX];
     
-    Button(const std::string &cname);
+    Button();
 
     virtual ~Button();
 
-    static Button * createTextButton( const iXY& loc,
+    static Button * createTextButton(   const NPString& label,
+                                        const iXY& loc,
                                         const int bwidth,
-                                        std::string label,
                                         Action * action);
 
-    static Button * createSpecialButton( std::string cname,
-                                            std::string label,
-                                            iXY loc);
-    
-    static Button * createNewSpecialButton(  std::string cname,
-                                                std::string label,
-                                                iXY loc,
-                                                int with);
+    static Button * createNewSpecialButton(     const NPString& label,
+                                                const iXY& loc,
+                                                int width);
 
     void setAction( Action * action );
     

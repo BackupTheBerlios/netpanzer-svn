@@ -55,8 +55,8 @@ public:
 
     void setNeedPassword(bool need_password);
     bool doesNeedPassword() const { return need_password; }
-
-    void onComponentClicked(Component* c);
+    
+    const char * getPassword() { return password_str.getString(); }
 
 private:
     static std::list<NPString> lines;

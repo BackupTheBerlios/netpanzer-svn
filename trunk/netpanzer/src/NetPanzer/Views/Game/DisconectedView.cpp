@@ -90,8 +90,8 @@ DisconectedView::init()
     moveTo(0,0);
 
     int bsize = Surface::getTextLength(" ") * 8;
-    add( Button::createTextButton(iXY((getClientRect().getSizeX()/2)-(bsize/2), (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
-                                  bsize, "Ok", new DisconnectConfirmedAction()));
+    add( Button::createTextButton("Ok", iXY((getClientRect().getSizeX()/2)-(bsize/2), (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
+                                  bsize, new DisconnectConfirmedAction()));
 }
 
 void

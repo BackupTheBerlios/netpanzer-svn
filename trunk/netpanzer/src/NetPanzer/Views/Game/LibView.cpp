@@ -67,9 +67,9 @@ LibView::LibView() : GameTemplateView()
     moveTo(0, 0);
     resize(325, 375);
 
-    add( Button::createTextButton(iXY((getClientRect().getSize().x / 3) * 0, 0),       (getClientRect().getSize().x / 3) - 3, "Surface", new SetDisplayModeAction(LIBVIEW_MODE_SURFACE_INFO)));
-    add( Button::createTextButton(iXY(((getClientRect().getSize().x / 3) * 1) + 1, 0), (getClientRect().getSize().x / 3) - 4, "Particles", new SetDisplayModeAction(LIBVIEW_MODE_PARTICLE_INFO)));
-    add( Button::createTextButton(iXY(((getClientRect().getSize().x / 3) * 2) + 1, 0), (getClientRect().getSize().x / 3) - 2, "Environment",  new SetDisplayModeAction(LIBVIEW_MODE_ENVIRONMENT_INFO)));
+    add( Button::createTextButton("Surface",    iXY((getClientRect().getSize().x / 3) * 0, 0),       (getClientRect().getSize().x / 3) - 3, new SetDisplayModeAction(LIBVIEW_MODE_SURFACE_INFO)));
+    add( Button::createTextButton("Particles",  iXY(((getClientRect().getSize().x / 3) * 1) + 1, 0), (getClientRect().getSize().x / 3) - 4, new SetDisplayModeAction(LIBVIEW_MODE_PARTICLE_INFO)));
+    add( Button::createTextButton("Environment",iXY(((getClientRect().getSize().x / 3) * 2) + 1, 0), (getClientRect().getSize().x / 3) - 2, new SetDisplayModeAction(LIBVIEW_MODE_ENVIRONMENT_INFO)));
 
     checkBoxAllowParticleGeneration = new CheckBox();
     checkBoxAllowParticleGeneration->setLabel("Allow Particle Generation");

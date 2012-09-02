@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseEvent.hpp"
 #include "Actions/Action.hpp"
 
-Button::Button(const std::string &cname)
-        : Component("Button." + cname)
+Button::Button()
 {
     setTextColors(Color::white, Color::red, Color::yellow, Color::darkGray);
     position.zero();
@@ -134,12 +133,12 @@ Button::actionPerformed(const mMouseEvent &me)
 } // end Button::actionPerformed
 
 Button *
-Button::createTextButton( const iXY& loc,
+Button::createTextButton( const NPString& label,
+                            const iXY& loc,
                             const int bwidth,
-                            std::string label,
                             Action * action)
 {
-    Button * b = new Button("");
+    Button * b = new Button();
     b->setLabel(label);
     b->setLocation(loc);
     b->setTextButtonSize(bwidth);
@@ -151,43 +150,9 @@ Button::createTextButton( const iXY& loc,
 }
 
 Button *
-Button::createSpecialButton( std::string cname,
-                             std::string label,
-                             iXY loc)
-{
-    Surface bnormal;
-    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/button.bmp");
-    
-    Surface bhover;
-    bhover.loadBMP("pics/backgrounds/menus/buttons/default/button1.bmp");
-    
-    Surface bclick;
-    bclick.loadBMP("pics/backgrounds/menus/buttons/default/button2.bmp");
-    
-    Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
-
-    spbutton.setFrame(0);
-    bnormal.blt(spbutton,0,0);
-    spbutton.setFrame(1);
-    bhover.blt(spbutton,0,0);
-    spbutton.setFrame(2);
-    bclick.blt(spbutton,0,0);
-    spbutton.setFrame(0);
-
-    Button *b = new Button(cname);
-    b->setImage(spbutton);
-    b->setLabel(label);
-    b->setLocation(loc);
-    b->setTextColors(Color::yellow, Color::white, Color::white, Color::darkGray);
-
-    return b;
-}
-
-Button *
-Button::createNewSpecialButton(  std::string cname,
-                                    std::string label,
-                                    iXY loc,
-                                    int width)
+Button::createNewSpecialButton(    const NPString& label,
+                                   const iXY& loc,
+                                   int width)
 {
     Surface bitmap;
     bitmap.loadBMP(itButton);
@@ -210,7 +175,7 @@ Button::createNewSpecialButton(  std::string cname,
     }
     bend.blt(spbutton,spbutton.getWidth()-15,0);
     
-    Button *b = new Button(cname);
+    Button *b = new Button();
     b->setImage(spbutton);
     b->setLabel(label);
     b->setLocation(loc);

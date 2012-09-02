@@ -39,6 +39,8 @@ private:
     StateChangedCallback* callback;
 
     enum { ChoiceItemHeight = 14 };
+    
+    NPString label;
 
 public:
     Choice(StateChangedCallback* newcallback = 0)
@@ -64,6 +66,8 @@ public:
     void   select(size_t index);
     void   setMinWidth(int minWidth);
 
+    void   setLabel(const NPString& label) { this->label = label; }
+    
     void setStateChangedCallback(StateChangedCallback* newcallback)
     {
         callback = newcallback;

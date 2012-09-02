@@ -81,16 +81,16 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     resizeClientArea(area_size);
 
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton(iXY(0, INFO_AREA_Y_OFFSET),               bXOffset-3,  "Net",    new SetDisplayModeAction(_display_mode_network_stats)));
-    add( Button::createTextButton(iXY(bXOffset+1, INFO_AREA_Y_OFFSET),      bXOffset-4,  "Sprite", new SetDisplayModeAction(_display_mode_sorter_stats)));
-    add( Button::createTextButton(iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET),  bXOffset-2,  "Unit",   new SetDisplayModeAction(_display_mode_unit_stats)));
+    add( Button::createTextButton("Net",    iXY(0, INFO_AREA_Y_OFFSET),              bXOffset-3,    new SetDisplayModeAction(_display_mode_network_stats)));
+    add( Button::createTextButton("Sprite", iXY(bXOffset+1, INFO_AREA_Y_OFFSET),     bXOffset-4,    new SetDisplayModeAction(_display_mode_sorter_stats)));
+    add( Button::createTextButton("Unit",   iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new SetDisplayModeAction(_display_mode_unit_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
-    add( Button::createTextButton(iXY(0, INFO_AREA_Y_OFFSET),               area_size.x-2,"Path",  new SetDisplayModeAction(_display_mode_pathing_stats)));
+    add( Button::createTextButton("Path",   iXY(0, INFO_AREA_Y_OFFSET),              area_size.x-2, new SetDisplayModeAction(_display_mode_pathing_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton(iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET),  bXOffset-2,  "NetLog", new UpdateNetworkStatsAction()));
+    add( Button::createTextButton("NetLog", iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new UpdateNetworkStatsAction()));
 
     INFO_AREA_Y_OFFSET += 18;
 

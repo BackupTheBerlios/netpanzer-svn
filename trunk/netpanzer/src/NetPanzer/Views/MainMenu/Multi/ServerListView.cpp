@@ -58,8 +58,9 @@ ServerListView::ServerListView()
     setAllowMove(false);
     setVisible(false);
 
-    add( Button::createTextButton(iXY(getClientRect().getSizeX()-82, getClientRect().getSizeY() - Surface::getFontHeight() * 2),
-                                  80, "Refresh", new RefreshServerListAction()));
+    add( Button::createTextButton( "Refresh",
+                                   iXY(getClientRect().getSizeX()-82, getClientRect().getSizeY() - Surface::getFontHeight() * 2),
+                                   80,  new RefreshServerListAction()));
     
     // XXX ugly
     serverlistview = this;

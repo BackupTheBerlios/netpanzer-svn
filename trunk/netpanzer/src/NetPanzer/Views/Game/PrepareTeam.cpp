@@ -66,9 +66,9 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     secondrect.max.x = rect.max.x-20;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = Button::createNewSpecialButton( "changeteam", " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
+    changebutton = Button::createNewSpecialButton( " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
     add(changebutton);
-    readybutton = Button::createNewSpecialButton( "ready", "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
+    readybutton = Button::createNewSpecialButton( "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
     add(readybutton);
 
     scTeam1 = new tVScrollBar();

@@ -178,7 +178,7 @@ void Choice::draw(Surface &dest)
 
     // Draw the name of the choice.
     dest.bltStringShadowed( position.x, pos.y + adjustedY,
-                            componentName.c_str(), componentActiveTextColor, Color::black);
+                            label.c_str(), componentActiveTextColor, Color::black);
 
     getBounds(r);
 

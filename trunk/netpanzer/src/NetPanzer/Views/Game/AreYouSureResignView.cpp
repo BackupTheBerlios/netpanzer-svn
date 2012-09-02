@@ -30,48 +30,59 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
-//---------------------------------------------------------------------------
-static void bYES()
+#include "Actions/Action.hpp"
+
+class ResignGameAction : public Action
 {
-    if(gameconfig->quickConnect == true) {
-        GameManager::exitNetPanzer();
-        return;
-    }
-
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-    // Vlad put all code in here for shutdown.
-    //----------------------
-    GameManager::quitNetPanzerGame();
-    //----------------------
-
-    // Swap to the menu resolution.
-    //GameManager::setVideoMode(iXY(640, 480), false);
-
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-    // Must remove the gameView first so that the initButtons detects that
-    // and loads the correct buttons.
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("MainView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-
-    View *v = Desktop::getView("OptionsView");
-
-    if (v != 0) 
+public:
+    ResignGameAction() : Action(false) {}
+    void execute()
     {
-        ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+        if(gameconfig->quickConnect == true) {
+            GameManager::exitNetPanzer();
+            return;
+        }
+
+        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+
+        // Vlad put all code in here for shutdown.
+        //----------------------
+        GameManager::quitNetPanzerGame();
+        //----------------------
+
+        // Swap to the menu resolution.
+        //GameManager::setVideoMode(iXY(640, 480), false);
+
+        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+
+        // Must remove the gameView first so that the initButtons detects that
+        // and loads the correct buttons.
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("MainView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
+
+        View *v = Desktop::getView("OptionsView");
+
+        if (v != 0) 
+        {
+            ((OptionsTemplateView *)v)->initButtons();
+            ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+        }
+
     }
+};
 
-}
-
-//---------------------------------------------------------------------------
-static void bNO()
+class HideView : public Action
 {
-    Desktop::setVisibility("AreYouSureResignView", false);
-}
+public:
+    View * view;
+    HideView(View * view) : Action(false), view(view) {}
+    void execute()
+    {
+        Desktop::setVisibility(view->getSearchName(), false);
+    }
+};
 
 // AreYouSureResignView
 //---------------------------------------------------------------------------
@@ -96,9 +107,9 @@ void AreYouSureResignView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
+    add( Button::createTextButton( "YES", iXY(x, y), 137, new ResignGameAction()));
     x += 141 + 10;
-    add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
+    add( Button::createTextButton( "NO", iXY(x, y), 137, new HideView(this)));
     loaded = true;
 } // end AreYouSureResignView::init
 
@@ -124,16 +135,3 @@ void AreYouSureResignView::doActivate()
     }
     Desktop::setActiveView(this);
 } // end AreYouSureResignView::doActivate
-
-void AreYouSureResignView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.YES") )
-    {
-        bYES();
-    }
-    else if ( !cname.compare("Button.NO") )
-    {
-        bNO();
-    }
-}

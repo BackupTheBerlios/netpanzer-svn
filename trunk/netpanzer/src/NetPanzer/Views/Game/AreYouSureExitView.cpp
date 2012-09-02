@@ -24,19 +24,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
 
-//---------------------------------------------------------------------------
-static void bYES()
-{
-    GameManager::drawTextCenteredOnScreen("Exiting", Color::white);
+#include "Actions/Action.hpp"
 
-    GameManager::exitNetPanzer();
-}
 
-//---------------------------------------------------------------------------
-static void bNO()
+class ExitNetPanzerAction : public Action
 {
-    Desktop::setVisibility("AreYouSureExitView", false);
-}
+public:
+    ExitNetPanzerAction() : Action(false) {}
+    void execute()
+    {
+        GameManager::drawTextCenteredOnScreen("Exiting", Color::white);
+        GameManager::exitNetPanzer();
+    }
+};
+
+class HideView : public Action
+{
+public:
+    View * view;
+    HideView(View * view) : Action(false), view(view) {}
+    void execute()
+    {
+        Desktop::setVisibility(view->getSearchName(), false);
+    }
+};
 
 // AreYouSureExitView
 //---------------------------------------------------------------------------
@@ -61,9 +72,9 @@ void AreYouSureExitView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createSpecialButton( "YES", "YES", iXY(x, y)) );
+    add( Button::createTextButton( "YES", iXY(x, y), 137, new ExitNetPanzerAction()));
     x += 141 + 10;
-    add( Button::createSpecialButton( "NO", "NO", iXY(x, y)) );
+    add( Button::createTextButton( "NO", iXY(x, y), 137, new HideView(this)));
     loaded = true;
 } // end AreYouSureExitView::init
 
@@ -90,16 +101,3 @@ void AreYouSureExitView::doActivate()
     Desktop::setActiveView(this);
 
 } // end AreYouSureExitView::doActivate
-
-void AreYouSureExitView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.YES") )
-    {
-        bYES();
-    }
-    else if ( !cname.compare("Button.NO") )
-    {
-        bNO();
-    }
-}

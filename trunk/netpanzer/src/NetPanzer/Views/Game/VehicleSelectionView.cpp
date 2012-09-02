@@ -81,8 +81,8 @@ protected:
     unsigned short unitType;
     VehicleSelectionView * p;
 public:
-    UnitSelectionButton(VehicleSelectionView * vsv, const char *cname, int unit_type, int x, int y, const Surface &s)
-        : Button(cname), unitType(unit_type), p(vsv)
+    UnitSelectionButton(VehicleSelectionView * vsv, int unit_type, int x, int y, const Surface &s)
+        : unitType(unit_type), p(vsv)
     {
         bimage.copy(s);
         setSize( bimage.getWidth()-1, bimage.getHeight()-1);
@@ -181,7 +181,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonStaticDisplay )
-        buttonStaticDisplay = new Button( "ButtonStaticDisplay");
+        buttonStaticDisplay = new Button();
     buttonStaticDisplay->setLabel("On");
     buttonStaticDisplay->setLocation(pos.x, pos.y);
     buttonStaticDisplay->setSize( 100, 14);
@@ -194,7 +194,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonPower )
-        buttonPower = new Button( "ButtonPower");
+        buttonPower = new Button();
     
     buttonPower->setLabel("Off");
     buttonPower->setLocation(pos.x,pos.y);
@@ -240,8 +240,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
         unitImages.setFrame(ut);
         tempSurface.blt(unitImages, 0, 0);
         
-        usb = new UnitSelectionButton(this, uprofile->unitname.c_str(),
-                                      ut, pos.x, pos.y, tempSurface);
+        usb = new UnitSelectionButton(this, ut, pos.x, pos.y, tempSurface);
         
         add(usb);
         
@@ -273,7 +272,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     pos.x = (getClientRect().getSizeX() - 100) / 2;
     if ( !buttonOk )
-        buttonOk = new Button( "buttonClose");
+        buttonOk = new Button();
     
     buttonOk->setLabel("Close");
     buttonOk->setLocation(pos.x,pos.y);

@@ -47,6 +47,20 @@ public:
         ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
     }
 };
+
+class BeginPasswordConnectAction : public Action
+{
+public:
+    LoadingView * view;
+    BeginPasswordConnectAction(LoadingView * view) : Action(false), view(view) {}
+    void execute()
+    {
+        CLIENT->joinServer(gameconfig->serverConnect, NPString(view->getPassword()));
+        ClientConnectDaemon::startConnectionProcess();
+        view->setNeedPassword(false);
+    }
+};
+        
 void
 LoadingView::init()
 {
@@ -64,10 +78,11 @@ LoadingView::init()
 
     resize(800, 600);
 
-    add( Button::createTextButton(iXY(340, 15), 100, "Abort", new AbortLoadingAction()));
+    add( Button::createTextButton("Abort", iXY(340, 15), 100, new AbortLoadingAction()));
 
 
-    okButton = Button::createTextButton(iXY(340,100), 100, "Enter", 0);
+    okButton = Button::createTextButton("Enter", iXY(340,100), 100, new BeginPasswordConnectAction(this));
+    
     passwordLabel = new Label(340, 68, "Game Password", Color::white);
 
 }
@@ -141,22 +156,6 @@ LoadingView::setNeedPassword(bool need_password)
             removeComponent(passwordLabel);
             password_field = 0;
         }
-    }
-}
-
-void
-LoadingView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-    if ( !cname.compare("Button.OK") )
-    {
-        CLIENT->joinServer(gameconfig->serverConnect, NPString(password_str.getString()));
-        ClientConnectDaemon::startConnectionProcess();
-        setNeedPassword(false);
-    }
-    else
-    {
-        View::onComponentClicked(c);
     }
 }
 

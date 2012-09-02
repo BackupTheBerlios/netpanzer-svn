@@ -33,7 +33,6 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
-    void onComponentClicked(Component* c);
 }; // end AreYouSureResignView
 
 #endif // end __AreYouSureResignView_hpp__
