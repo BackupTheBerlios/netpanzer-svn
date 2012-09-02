@@ -24,23 +24,29 @@
 
 #include "Particles/ParticleInterface.hpp"
 
+#include "Actions/Action.hpp"
+
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
-static void bAbort()
+class AbortLoadingAction : public Action
 {
-    if(gameconfig->quickConnect)
+public:
+    AbortLoadingAction() : Action(false) {}
+    void execute()
     {
-        GameManager::exitNetPanzer();
-        return;
+        if(gameconfig->quickConnect)
+        {
+            GameManager::exitNetPanzer();
+            return;
+        }
+        GameManager::quitNetPanzerGame();
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("MainView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
     }
-    GameManager::quitNetPanzerGame();
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("MainView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-}
-
+};
 void
 LoadingView::init()
 {
@@ -58,10 +64,10 @@ LoadingView::init()
 
     resize(800, 600);
 
-    addButtonCenterText(iXY(340, 15), 100, "Abort", "Cancel the joining of this game.", bAbort);
+    add( Button::createTextButton(iXY(340, 15), 100, "Abort", new AbortLoadingAction()));
 
 
-    okButton = Button::createTextButton("OK", "Enter", iXY(340,100), 100);
+    okButton = Button::createTextButton(iXY(340,100), 100, "Enter", 0);
     passwordLabel = new Label(340, 68, "Game Password", Color::white);
 
 }

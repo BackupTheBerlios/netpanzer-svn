@@ -48,15 +48,20 @@ private:
     int  loadMaps();
     void drawCurMapInfo(Surface &dest, const iXY &pos);
 
+    std::vector<MapInfo*> mapList;
+    int curMap;
 public:
     MapSelectionView();
     ~MapSelectionView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
-    static std::vector<MapInfo*> mapList;
-    static int curMap;
-
+    int getNumMaps() const { return mapList.size(); }
+    int getCurrentSelectedMapNumber() const { return curMap; }
+    
+    void setSelectedMap(int map_number);
+    MapInfo* getCurrentSelectedMapInfo() const { return (curMap < 0) ? 0 : mapList[curMap]; } 
+    
     void init();
 }; // end MapSelectionView
 

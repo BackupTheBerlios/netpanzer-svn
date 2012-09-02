@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "System/SDLSound.hpp"
 #include "System/DummySound.hpp"
+#include "Actions/Action.hpp"
+#include "Actions/ChangeIntVarAction.hpp"
 
 class Separator:public Component
 {
@@ -67,67 +69,47 @@ void Separator::draw(Surface &dest)
     dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
 }
 
-static void bIncreaseScrollRate()
-{
-    if(GameConfig::interface_scrollrate + 100 <= 10000)
-        GameConfig::interface_scrollrate = GameConfig::interface_scrollrate + 100;
-}
-
-static void bDecreaseScrollRate()
-{
-    if(GameConfig::interface_scrollrate - 100 >= 500 )
-        GameConfig::interface_scrollrate = GameConfig::interface_scrollrate - 100;
-}
-
 static int getScrollRate()
 {
     return (int) GameConfig::interface_scrollrate;
 }
 
-static void bDecreaseSoundVolume()
+class ChangeSoundVolumeAction : public Action
 {
-    unsigned int v = GameConfig::sound_effectsvol;
-    if (v) {
-        --v;
-        GameConfig::sound_effectsvol = v;
-        sound->setSoundVolume(v);
+public:
+    int change;
+    ChangeSoundVolumeAction(int change) : Action(false), change(change) {}
+    void execute()
+    {
+        int new_val = std::min(100, std::max(GameConfig::sound_effectsvol + change, 0));
+        if ( new_val != GameConfig::sound_effectsvol )
+        {
+            GameConfig::sound_effectsvol = new_val;
+            sound->setSoundVolume(new_val);
+        }
     }
-}
-
-static void bIncreaseSoundVolume()
-{
-    unsigned int v = GameConfig::sound_effectsvol;
-    if (v<100) {
-        ++v;
-        GameConfig::sound_effectsvol = v;
-        sound->setSoundVolume(v);
-    }
-}
+};
 
 static int getSoundVolume()
 {
     return GameConfig::sound_effectsvol;
 }
 
-static void bDecreaseMusicVolume()
+class ChangeMusicVolumeAction : public Action
 {
-    unsigned int v = GameConfig::sound_musicvol;
-    if (v) {
-        --v;
-        GameConfig::sound_musicvol = v;
-        sound->setMusicVolume(v);
+public:
+    int change;
+    ChangeMusicVolumeAction(int change) : Action(false), change(change) {}
+    void execute()
+    {
+        int new_val = std::min(100, std::max(GameConfig::sound_musicvol + change, 0));
+        if ( new_val != GameConfig::sound_musicvol )
+        {
+            GameConfig::sound_musicvol = new_val;
+            sound->setMusicVolume(new_val);
+        }
     }
-}
-
-static void bIncreaseMusicVolume()
-{
-    unsigned int v = GameConfig::sound_musicvol;
-    if (v<100) {
-        ++v;
-        GameConfig::sound_musicvol = v;
-        sound->setMusicVolume(v);
-    }
-}
+};
 
 static int getMusicVolume()
 {
@@ -152,7 +134,6 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::initButtons()
 {
-    removeAllButtons();
     removeComponents();
 
     MenuTemplateView::initButtons();
@@ -252,9 +233,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Scroll Rate:", windowTextColor) );
     x += optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseScrollRate);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
     y += yOffset*3;
 
 // SOUND OPTIONS
@@ -276,9 +257,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Sound Volume:", windowTextColor) );
     x += optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeSoundVolumeAction(-1)));
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeSoundVolumeAction(1)));
     y += yOffset;
 
     y += yOffset; 
@@ -296,9 +277,9 @@ void OptionsTemplateView::initButtons()
     x = xTextStart;
     add( new Label( x, y+3, "Music Volume:", windowTextColor) );
     x += optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, "<", new ChangeMusicVolumeAction(-1)));
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMusicVolume);
+    add( Button::createTextButton(iXY(x - 1, y), arrowButtonWidth, ">", new ChangeMusicVolumeAction(1)));
     y += yOffset;
 } // end OptionsTemplateView::initButtons
 

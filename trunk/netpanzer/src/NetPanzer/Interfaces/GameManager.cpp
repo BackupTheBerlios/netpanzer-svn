@@ -68,7 +68,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/Multi/UnitSelectionView.hpp"
-#include "Views/MainMenu/Multi/UnitColorView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
@@ -78,7 +77,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
-#include "Views/Game/ResignView.hpp"
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
@@ -267,8 +265,24 @@ void GameManager::finishGameMapLoad()
     std::string temp_path = map_path;
     temp_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
-
-    ParticleInterface::addCloudParticle(GameConfig::game_cloudcoverage);
+    
+    int total_clouds = (MapInterface::getWidth() * MapInterface::getHeight()) / baseTileCountPerCloud;
+    //total_clouds += something_to_add;
+    
+    int cloud_count = 0;
+    
+    switch ( GameConfig::game_cloudcoverage )
+    {
+        case 1: cloud_count = total_clouds * brokenPercentOfBase; break;
+        case 2: cloud_count = total_clouds * partlyCloudyPercentOfBase; break;
+        case 3: cloud_count = total_clouds * overcastPercentOfBase; break;
+        case 4: cloud_count = total_clouds * extremelyCloudyPercentOfBase; break;
+        default:
+            cloud_count = total_clouds * clearPercentOfBase;
+            
+    }
+    
+    ParticleInterface::addCloudParticle(cloud_count);
     Physics::wind.setVelocity(GameConfig::game_windspeed, 107);
 }
 

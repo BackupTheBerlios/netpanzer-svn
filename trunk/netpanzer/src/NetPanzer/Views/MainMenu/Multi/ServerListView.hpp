@@ -40,8 +40,6 @@ private:
     masterserver::ServerQueryThread* queryThread;
 
     Surface lock_image;
-
-    static void buttonRefresh();
 };
 
 extern ServerListView* serverlistview; // XXX ugly

@@ -27,46 +27,51 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 
+#include "Actions/Action.hpp"
+#include "Views/Components/Button.hpp"
 
-void
-DisconectedView::buttonOk()
+class DisconnectConfirmedAction : public Action
 {
-    if(gameconfig->quickConnect == true) {
-        GameManager::exitNetPanzer();
-        return;
+public:
+    DisconnectConfirmedAction() : Action(false) {}
+    void execute()
+    {
+        if(gameconfig->quickConnect == true) {
+            GameManager::exitNetPanzer();
+            return;
+        }
+
+        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+
+        // Vlad put all code in here for shutdown.
+        //----------------------
+        GameManager::quitNetPanzerGame();
+        //----------------------
+
+        // Swap to the menu resolution.
+        //GameManager::setVideoMode(iXY(640, 480), false);
+
+        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+
+
+        // Must remove the gameView first so that the initButtons detects that
+        // and loads the correct buttons.
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
+        Desktop::setVisibility("MainView", true);
+        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
+
+        View *v = Desktop::getView("OptionsView");
+
+        if (v != 0) {
+            ((OptionsTemplateView *)v)->initButtons();
+            ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+        } else {
+            assert(false);
+        }
+        LOGGER.warning("DisconectedView:: finished disconection");
     }
-
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-    // Vlad put all code in here for shutdown.
-    //----------------------
-    GameManager::quitNetPanzerGame();
-    //----------------------
-
-    // Swap to the menu resolution.
-    //GameManager::setVideoMode(iXY(640, 480), false);
-
-    GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-
-    // Must remove the gameView first so that the initButtons detects that
-    // and loads the correct buttons.
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("MainView", true);
-    ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-
-    View *v = Desktop::getView("OptionsView");
-
-    if (v != 0) {
-        ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-    LOGGER.warning("DisconectedView:: finished disconection");
-}
-
+};
 
 DisconectedView::DisconectedView() : SpecialButtonView()
 {
@@ -78,8 +83,6 @@ DisconectedView::DisconectedView() : SpecialButtonView()
 void
 DisconectedView::init()
 {
-    removeAllButtons();
-
     setBordered(true);
     setAllowResize(false);
 
@@ -87,9 +90,8 @@ DisconectedView::init()
     moveTo(0,0);
 
     int bsize = Surface::getTextLength(" ") * 8;
-    addButtonCenterText(iXY((getClientRect().getSizeX()/2)-(bsize/2),
-                (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
-                bsize, "Ok", "", buttonOk);
+    add( Button::createTextButton(iXY((getClientRect().getSizeX()/2)-(bsize/2), (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
+                                  bsize, "Ok", new DisconnectConfirmedAction()));
 }
 
 void

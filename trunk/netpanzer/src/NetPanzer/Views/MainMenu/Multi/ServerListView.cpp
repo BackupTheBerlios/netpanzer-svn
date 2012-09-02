@@ -30,9 +30,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 
 #include "Views/Game/LoadingView.hpp"
+#include "Actions/Action.hpp"
 
 ServerListView* serverlistview = 0;
 
+class RefreshServerListAction : public Action
+{
+public:
+    RefreshServerListAction() : Action(false) {};
+    
+    void execute()
+    {
+        serverlistview->refresh();
+    }
+};
 ServerListView::ServerListView()
     : queryThread(0)
 {
@@ -47,9 +58,8 @@ ServerListView::ServerListView()
     setAllowMove(false);
     setVisible(false);
 
-    addButtonCenterText(iXY(getClientRect().getSizeX()-80,
-                getClientRect().getSizeY() - Surface::getFontHeight() * 2),
-            80, "Refresh", "", buttonRefresh);
+    add( Button::createTextButton(iXY(getClientRect().getSizeX()-82, getClientRect().getSizeY() - Surface::getFontHeight() * 2),
+                                  80, "Refresh", new RefreshServerListAction()));
     
     // XXX ugly
     serverlistview = this;
@@ -101,12 +111,6 @@ ServerListView::endQuery()
         delete queryThread;
         queryThread=0;
     }
-}
-
-void
-ServerListView::buttonRefresh()
-{
-    serverlistview->refresh();
 }
 
 void

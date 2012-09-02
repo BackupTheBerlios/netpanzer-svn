@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkInterface.hpp"
+#include "Actions/Action.hpp"
+#include "Views/Components/Button.hpp"
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,
@@ -36,31 +38,26 @@ enum{ _display_mode_network_stats,
 int gPacketSize = 0;
 int display_mode;
 
-static void buttonNetwork( void )
+class SetDisplayModeAction : public Action
 {
-    display_mode = _display_mode_network_stats;
+public:
+    int mode;
+    SetDisplayModeAction(int mode) : Action(false), mode(mode) {}
+    void execute()
+    {
+        display_mode = mode;
+    }
+};
 
-}
-
-static void buttonSorter( void )
+class UpdateNetworkStatsAction : public Action
 {
-    display_mode = _display_mode_sorter_stats;
-}
-
-static void buttonPathing( void )
-{
-    display_mode = _display_mode_pathing_stats;
-}
-
-static void buttonUnit( void )
-{
-    display_mode = _display_mode_unit_stats;
-}
-
-static void bNetLog( void )
-{
-    NetworkState::logNetworkStats();
-}
+public:
+    UpdateNetworkStatsAction() : Action(false) {}
+    void execute()
+    {
+        NetworkState::logNetworkStats();
+    }
+};
 
 static long INFO_AREA_Y_OFFSET = 60;
 
@@ -84,16 +81,16 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     resizeClientArea(area_size);
 
     bXOffset = area_size.x / 3;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
-    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sprite", "", buttonSorter);
-    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "Unit", "", buttonUnit);
+    add( Button::createTextButton(iXY(0, INFO_AREA_Y_OFFSET),               bXOffset-3,  "Net",    new SetDisplayModeAction(_display_mode_network_stats)));
+    add( Button::createTextButton(iXY(bXOffset+1, INFO_AREA_Y_OFFSET),      bXOffset-4,  "Sprite", new SetDisplayModeAction(_display_mode_sorter_stats)));
+    add( Button::createTextButton(iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET),  bXOffset-2,  "Unit",   new SetDisplayModeAction(_display_mode_unit_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), area_size.x, "Path", "", buttonPathing);
+    add( Button::createTextButton(iXY(0, INFO_AREA_Y_OFFSET),               area_size.x-2,"Path",  new SetDisplayModeAction(_display_mode_pathing_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
+    add( Button::createTextButton(iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET),  bXOffset-2,  "NetLog", new UpdateNetworkStatsAction()));
 
     INFO_AREA_Y_OFFSET += 18;
 

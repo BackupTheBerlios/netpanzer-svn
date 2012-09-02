@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/CheckBox.hpp"
 
+class Action;
+
 //---------------------------------------------------------------------------
 class HostOptionsView : public RMouseHackView
 {
@@ -44,6 +46,11 @@ private:
     Choice choiceGameType;
     Choice choiceWindSpeed;
     Choice choiceCloudCoverage;
+    
+    void addConfRow( const iXY pos, const NPString& label, Action* decreaseAction, Action* increaseAction );
+    
+    static void updateGameConfigCloudCoverage();
+    
 protected:
     virtual void doDeactivate();
 
@@ -55,7 +62,6 @@ public:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void actionPerformed(mMouseEvent me);
 
-    static void updateGameConfigCloudCoverage();
     static void updateGameConfigGameType();
     static void updateWindSpeedString();
 

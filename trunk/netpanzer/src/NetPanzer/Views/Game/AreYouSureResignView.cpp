@@ -71,7 +71,6 @@ static void bYES()
 static void bNO()
 {
     Desktop::setVisibility("AreYouSureResignView", false);
-    //Desktop::setVisibility("ResignView", true);
 }
 
 // AreYouSureResignView
@@ -88,8 +87,6 @@ AreYouSureResignView::AreYouSureResignView() : SpecialButtonView()
 //---------------------------------------------------------------------------
 void AreYouSureResignView::init()
 {
-    removeAllButtons();
-
     setBordered(false);
     setAllowResize(false);
     setDisplayStatusBar(false);

@@ -32,29 +32,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameView.hpp"
 #include "Particles/CraterParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Views/Components/Button.hpp"
+#include "Actions/Action.hpp"
 
 bool gDrawGameTiles = true;
 bool gDrawUnitTips  = false;
 
-
 int LibView::displayMode = LIBVIEW_MODE_SURFACE_INFO;
 
-static void bSurfaceInfo()
+class SetDisplayModeAction : public Action
 {
-    LibView::displayMode = LIBVIEW_MODE_SURFACE_INFO;
-}
-
-static void bParticleInfo()
-{
-    LibView::displayMode = LIBVIEW_MODE_PARTICLE_INFO;
-}
-
-
-static void bEnvironmentInfo()
-{
-    LibView::displayMode = LIBVIEW_MODE_ENVIRONMENT_INFO;
-}
-
+public:
+    int mode;
+    SetDisplayModeAction(int mode) : Action(false), mode(mode) {}
+    void execute()
+    {
+        LibView::displayMode = mode;
+    }
+};
 
 // LibView
 //---------------------------------------------------------------------------
@@ -72,9 +67,9 @@ LibView::LibView() : GameTemplateView()
     moveTo(0, 0);
     resize(325, 375);
 
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 0, 0), getClientRect().getSize().x / 3, "Surface", "", bSurfaceInfo);
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 1, 0), getClientRect().getSize().x / 3, "Particles", "", bParticleInfo);
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 2, 0), getClientRect().getSize().x / 3, "Environment", "", bEnvironmentInfo);
+    add( Button::createTextButton(iXY((getClientRect().getSize().x / 3) * 0, 0),       (getClientRect().getSize().x / 3) - 3, "Surface", new SetDisplayModeAction(LIBVIEW_MODE_SURFACE_INFO)));
+    add( Button::createTextButton(iXY(((getClientRect().getSize().x / 3) * 1) + 1, 0), (getClientRect().getSize().x / 3) - 4, "Particles", new SetDisplayModeAction(LIBVIEW_MODE_PARTICLE_INFO)));
+    add( Button::createTextButton(iXY(((getClientRect().getSize().x / 3) * 2) + 1, 0), (getClientRect().getSize().x / 3) - 2, "Environment",  new SetDisplayModeAction(LIBVIEW_MODE_ENVIRONMENT_INFO)));
 
     checkBoxAllowParticleGeneration = new CheckBox();
     checkBoxAllowParticleGeneration->setLabel("Allow Particle Generation");

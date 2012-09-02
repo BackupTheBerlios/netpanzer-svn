@@ -51,7 +51,6 @@ GTeamView::GTeamView() : GameTemplateView()
 void GTeamView::init()
 {
     removeComponents();
-    removeAllButtons();
     iRect viewrect = getClientRect();
  
     firstrect.min.x = (viewrect.getSizeX()/2) - 350;
@@ -193,7 +192,6 @@ void GTeamView::doDeactivate()
     if ( ! getVisible() )
     {
         removeComponents();
-        removeAllButtons();
         loaded = false;
     }
 }

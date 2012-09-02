@@ -189,7 +189,7 @@ public:
 
         // Check a few things which should be ok.
 
-        if (MapSelectionView::curMap == -1)
+        if ( ((MapSelectionView*)Desktop::getView("MapSelectionView"))->getCurrentSelectedMapNumber() == -1 )
         {
             return;
         }
@@ -223,6 +223,52 @@ public:
     }
 };
 
+static Button * createMenuButton( std::string cname,
+                                    std::string label,
+                                    iXY loc,
+                                    bool inverted,
+                                    Action * action)
+{
+    Surface bitmap;
+    bitmap.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp");
+    if ( inverted )
+    {
+        bitmap.flipVertical();
+    }
+    
+    Button *b = new Button(cname);
+    b->setLocation(loc);
+    b->setLabel(label);
+    b->setSize(Surface::getTextLength(label)+20, 25);
+    b->setTextColors(Color::gray, Color::lightGray, Color::black, Color::darkGray);
+
+    Surface bgSurface(Surface::getTextLength(label)+20, 25, 3);
+    
+    b->setExtraBorder();
+    
+    b->borders[0][0] = Color::gray;
+    b->borders[0][1] = Color::black;
+    b->borders[1][0] = Color::gray;
+    b->borders[1][1] = Color::gray;
+    b->borders[2][0] = Color::gray;
+    b->borders[2][1] = Color::darkGray;
+    
+    iRect r = bgSurface.getRect();
+    
+    for ( unsigned int n = 0; n < bgSurface.getNumFrames(); n++ )
+    {
+        bgSurface.setFrame(n);
+        bgSurface.FillRoundRect(r, 3, b->borders[n][1]);
+        bitmap.bltTrans(bgSurface, 0, 0);
+    }
+    
+    b->setImage(bgSurface);
+    
+    b->setAction(action);
+
+    return b;
+}
+
 // MenuTemplateView
 //---------------------------------------------------------------------------
 MenuTemplateView::MenuTemplateView() : RMouseHackView()
@@ -251,32 +297,14 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    Button *b = Button::createMenuButton("MAIN", "Main", mainPos, false);
-    b->setAction(new ShowMainViewAction());
-    add( b );
+    add( createMenuButton("MAIN", "Main",           mainPos,    false, new ShowMainViewAction()) );
+    add( createMenuButton("JOIN", "Join",           joinPos,    false, new ShowJoinViewAction()) );
+    add( createMenuButton("HOST", "Host",           hostPos,    false, new ShowHostViewAction()) );
+    add( createMenuButton("OPTS", "Options",        optionsPos, false, new ShowOptionsViewAction()) );
+    add( createMenuButton("HELP", "Help",           helpPos,    false, new ShowHelpViewAction()) );
+    add( createMenuButton("EXNP", "Exit netPanzer", exitPos,    false, new ExitNetPanzerAction()) );
     
-    b = Button::createMenuButton("JOIN", "Join", joinPos, false);
-    b->setAction(new ShowJoinViewAction());
-    add( b );
-    
-    b = Button::createMenuButton("HOST", "Host", hostPos, false);
-    b->setAction(new ShowHostViewAction());
-    add( b );
-    
-    b = Button::createMenuButton("OPTIONS", "Options", optionsPos, false);
-    b->setAction(new ShowOptionsViewAction());
-    add( b );
-    
-    b = Button::createMenuButton("HELP", "Help", helpPos, false);
-    b->setAction(new ShowHelpViewAction());
-    add( b );
-    
-    b = Button::createMenuButton("EXITNP", "Exit netPanzer", exitPos, false);
-    b->setAction(new ExitNetPanzerAction());
-    add( b );
-        
-    playButton = Button::createMenuButton("PLAY", "Play", iXY(-100,-100), true);
-    playButton->setAction(new PlayButtonClickedAction());
+    playButton = createMenuButton("PLAY", "Play", iXY(-100, 0), true, new PlayButtonClickedAction());
     add( playButton );
 } // end MenuTemplateView::initPreGameOptionButtons
 
@@ -284,27 +312,17 @@ void MenuTemplateView::initPreGameOptionButtons()
 //---------------------------------------------------------------------------
 void MenuTemplateView::initInGameOptionButtons()
 {
-    Button *b;
     if(!gameconfig->quickConnect)
     {
-        b = Button::createMenuButton( "RESIGN", "Resign", resignPos, false);
-        b->setAction(new OpenResignGameViewAction());
-        add( b );
-        
-        b = Button::createMenuButton( "EXITNETNP", "Exit netPanzer", exitPos, false);
-        b->setAction(new OpenExitConfirmWindowAction());
-        add( b );
+        add( createMenuButton( "RESIGN", "Resign",          resignPos, false, new OpenResignGameViewAction()) );
+        add( createMenuButton( "EXITNP", "Exit netPanzer",  exitPos,   false, new OpenExitConfirmWindowAction()) );
     }
     else
     {
-        b = Button::createMenuButton( "RESIGN", "Resign", exitPos, false);
-        b->setAction(new OpenResignGameViewAction());
-        add( b );
+        add( createMenuButton( "RESIGN", "Resign",          exitPos,   false, new OpenResignGameViewAction()) );
     }
 
-    b = Button::createMenuButton( "CLOSEOPT", "Close Options", returnToGamePos, false);
-    b->setAction(new CloseOptionsWindowAction());
-    add( b );
+    add( createMenuButton( "CLOSEOPT", "Close Options", returnToGamePos, false, new CloseOptionsWindowAction()) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons

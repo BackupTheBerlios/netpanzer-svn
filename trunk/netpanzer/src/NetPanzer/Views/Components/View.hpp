@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-#include "cButton.hpp"
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
 #include "cInputField.hpp"
@@ -55,7 +54,6 @@ public:
     
     Component *focusComponent;
 
-    std::vector<cButton*>     buttons;
     std::vector<cInputField*> inputFields;
 
     enum
@@ -67,22 +65,6 @@ public:
         MAX_WINDOW_CLIENT_YSIZE = 458
     };
 
-    int getPressedButton()
-    {
-        return pressedButton;
-    }
-    int getPrevPressedButton()
-    {
-        return prevPressedButton;
-    }
-    int getHighlightedButton()
-    {
-        return highlightedButton;
-    }
-    int getPrevHighlightedButton()
-    {
-        return prevHighlightedButton;
-    }
     virtual void onComponentClicked(Component *c) { (void)c; }
 
 protected:
@@ -90,11 +72,6 @@ protected:
     {}
     Surface*         getViewArea(Surface& dest);
     virtual Surface* getClientArea(Surface& dest);
-
-    int              pressedButton;
-    int              prevPressedButton;
-    int              highlightedButton;
-    int              prevHighlightedButton;
 
     int              selectedInputField;
     char            *searchName;
@@ -149,13 +126,9 @@ protected:
 
     // Scroll bar functions.
 
-    // cButton Functions.
-    void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
     /*!FIXME!*/ void drawDefinedButtons   (Surface &clientArea);
     void drawHighlightedButton(Surface &clientArea);
     void drawPressedButton(Surface &clientArea);
-    void setPressedButton(const int &cButton);
-    void setHighlightedButton(const int &cButton);
     int  findButtonContaining(const iXY &pos);
 
     // SearchName, Title, and SubTitle functions.
@@ -243,10 +216,7 @@ public:
     {
         moveTo(iXY(x, y));
     }
-    void removeAllButtons()
-    {
-        buttons.clear(); // XXX LEAK
-    }
+
     void removeComponents()
     {
         ComponentsIterator i = components.begin();

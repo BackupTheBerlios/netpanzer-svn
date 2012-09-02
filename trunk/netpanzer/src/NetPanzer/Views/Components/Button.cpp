@@ -134,16 +134,19 @@ Button::actionPerformed(const mMouseEvent &me)
 } // end Button::actionPerformed
 
 Button *
-Button::createTextButton(   std::string cname,
+Button::createTextButton( const iXY& loc,
+                            const int bwidth,
                             std::string label,
-                            iXY loc,
-                            int bwidth)
+                            Action * action)
 {
-    Button * b = new Button(cname);
+    Button * b = new Button("");
     b->setLabel(label);
     b->setLocation(loc);
     b->setTextButtonSize(bwidth);
     b->setNormalBorder();
+    b->setAction(action);
+    b->setTextColors(componentInActiveTextColor, componentFocusTextColor, componentActiveTextColor, componentInActiveTextColor);
+    b->setStateOffset(Button::BPRESSED, 1, 1);
     return b;
 }
 
@@ -213,50 +216,6 @@ Button::createNewSpecialButton(  std::string cname,
     b->setLocation(loc);
     b->setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);
     b->setStateOffset(Button::BPRESSED, 1, 1);
-
-    return b;
-}
-
-Button *
-Button::createMenuButton(std::string cname,
-                            std::string label,
-                            iXY loc,
-                            bool inverted)
-{
-    Surface bitmap;
-    bitmap.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp");
-    if ( inverted )
-    {
-        bitmap.flipVertical();
-    }
-    
-    Button *b = new Button(cname);
-    b->setLocation(loc);
-    b->setLabel(label);
-    b->setSize(Surface::getTextLength(label)+20, 25);
-    b->setTextColors(Color::gray, Color::lightGray, Color::black, Color::darkGray);
-
-    Surface bgSurface(Surface::getTextLength(label)+20, 25, 3);
-    
-    b->setExtraBorder();
-    
-    b->borders[0][0] = Color::gray;
-    b->borders[0][1] = Color::black;
-    b->borders[1][0] = Color::gray;
-    b->borders[1][1] = Color::gray;
-    b->borders[2][0] = Color::gray;
-    b->borders[2][1] = Color::darkGray;
-    
-    iRect r = bgSurface.getRect();
-    
-    for ( int n = 0; n < bgSurface.getNumFrames(); n++ )
-    {
-        bgSurface.setFrame(n);
-        bgSurface.FillRoundRect(r, 3, b->borders[n][1]);
-        bitmap.bltTrans(bgSurface, 0, 0);
-    }
-    
-    b->setImage(bgSurface);
 
     return b;
 }

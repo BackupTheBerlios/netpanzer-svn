@@ -53,7 +53,6 @@ protected:
     
     std::string label;
        
-    PIX borders[BMAX_STATE][BORDER_COLOR_MAX];
     PIX textColors[BMAX_STATE];
     iXY state_offset[BMAX_STATE];
    
@@ -69,15 +68,16 @@ protected:
     }
 
 public:
+    PIX borders[BMAX_STATE][BORDER_COLOR_MAX];
     
     Button(const std::string &cname);
 
     virtual ~Button();
 
-    static Button * createTextButton( std::string cname,
+    static Button * createTextButton( const iXY& loc,
+                                        const int bwidth,
                                         std::string label,
-                                        iXY loc,
-                                        int bwidth);
+                                        Action * action);
 
     static Button * createSpecialButton( std::string cname,
                                             std::string label,
@@ -87,11 +87,6 @@ public:
                                                 std::string label,
                                                 iXY loc,
                                                 int with);
-    
-    static Button * createMenuButton(std::string cname,
-                                        std::string label,
-                                        iXY loc,
-                                        bool inverted);
 
     void setAction( Action * action );
     

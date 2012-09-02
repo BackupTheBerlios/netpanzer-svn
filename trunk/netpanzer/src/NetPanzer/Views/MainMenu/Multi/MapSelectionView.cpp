@@ -30,39 +30,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 
-std::vector<MapInfo*> MapSelectionView::mapList;
-int MapSelectionView::curMap = 0;
+#include "Actions/Action.hpp"
+#include "Views/Components/Button.hpp"
 
-static void bNextMap()
+class ChangeSelectedMapAction : public Action
 {
-    // Make sure some maps are loaded.
-    if (MapSelectionView::curMap == -1) {
-        return;
+public:
+    MapSelectionView * view;
+    int change;
+    ChangeSelectedMapAction(MapSelectionView * view, int change) : Action(false), view(view), change(change) {}
+    void execute()
+    {
+        int num_maps = view->getNumMaps();
+        if ( num_maps == 0 )
+        {
+            return;
+        }
+        
+        int new_val = view->getCurrentSelectedMapNumber() + change;
+        if ( new_val < 0 )
+        {
+            new_val = num_maps -1;
+        }
+        else if ( new_val >= num_maps )
+        {
+            new_val = 0;
+        }
+        
+        view->setSelectedMap(new_val);
     }
-
-    if (++MapSelectionView::curMap >= (int) MapSelectionView::mapList.size()) {
-        MapSelectionView::curMap = 0;
-    }
-
-    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[MapSelectionView::curMap]->name );
-    HostOptionsView::updateGameConfigCloudCoverage();
-}
-
-static void bPreviousMap()
-{
-    // Make sure some maps are loaded.
-    if (MapSelectionView::curMap == -1) {
-        return;
-    }
-
-    if (--MapSelectionView::curMap < 0) {
-        MapSelectionView::curMap = MapSelectionView::mapList.size() - 1;
-    }
-
-    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[MapSelectionView::curMap]->name );
-    HostOptionsView::updateGameConfigCloudCoverage();
-}
-
+};
 
 // MapSelectionView
 //---------------------------------------------------------------------------
@@ -80,6 +77,8 @@ MapSelectionView::MapSelectionView() : RMouseHackView()
 
     resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
 
+    curMap = -1;
+    
     init();
 
 } // end MapSelectionView::MapSelectionView
@@ -99,12 +98,11 @@ void MapSelectionView::init()
 
     iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - 14 - BORDER_SPACE);
 
-    addButtonCenterText(pos, arrowButtonWidth - 1, "<", "", bPreviousMap);
-    pos.x += arrowButtonWidth;
-    addButtonCenterText(pos, arrowButtonWidth, ">", "", bNextMap);
+    add( Button::createTextButton(pos, arrowButtonWidth - 1, "<", new ChangeSelectedMapAction(this, -1)));
+    pos.x += arrowButtonWidth + 2;
+    add( Button::createTextButton(pos, arrowButtonWidth - 1, ">", new ChangeSelectedMapAction(this, 1)));
 
     loadMaps();
-    HostOptionsView::updateGameConfigCloudCoverage();
     HostOptionsView::updateWindSpeedString();
 
 } // end MapSelectionView::init
@@ -136,6 +134,13 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     View::doDraw(viewArea, clientArea);
 
 } // end MapSelectionView::doDraw
+
+void
+MapSelectionView::setSelectedMap(int map_number)
+{
+    curMap = map_number;
+    GameConfig::game_mapcycle->assign( mapList[curMap]->name );
+}
 
 // loadMaps
 //---------------------------------------------------------------------------
@@ -244,8 +249,9 @@ int MapSelectionView::loadMaps()
         throw Exception("ERROR: No maps in map directory");
     }
 
-    curMap = 0;
-    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[curMap]->name );
+    setSelectedMap(0);
+//    curMap = 0;
+//    GameConfig::game_mapcycle->assign( MapSelectionView::mapList[curMap]->name );
 
     // Success
     return -1;

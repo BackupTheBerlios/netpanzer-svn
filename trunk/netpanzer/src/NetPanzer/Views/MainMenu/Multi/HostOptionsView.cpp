@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "Actions/Action.hpp"
+#include "Actions/ChangeIntVarAction.hpp"
 
 int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;
@@ -42,84 +44,30 @@ static int  getCurMaxUnitCount()
     return GameConfig::game_maxunits;
 }
 
-static void bDecreasePlayerCount()
-{
-    if(GameConfig::game_maxplayers - 1 >= 2)
-        GameConfig::game_maxplayers = GameConfig::game_maxplayers - 1;
-}
-
-static void bIncreasePlayerCount()
-{
-    if(GameConfig::game_maxplayers + 1 <= 16)
-        GameConfig::game_maxplayers = GameConfig::game_maxplayers + 1;
-}
-
-class DecreaseMaxUnitCountAction : public Action
-{
-public:
-    DecreaseMaxUnitCountAction() : Action(false) {}
-    void execute()
-    {
-        if(GameConfig::game_maxunits - 5 >= 2)
-            GameConfig::game_maxunits = GameConfig::game_maxunits - 5;
-    }
-};
-
-static void bDecreaseMaxUnitCount()
-{
-    if(GameConfig::game_maxunits - 5 >= 2)
-        GameConfig::game_maxunits = GameConfig::game_maxunits - 5;
-}
-
-static void bIncreaseMaxUnitCount()
-{
-    if(GameConfig::game_maxunits + 5 <= 1000)
-        GameConfig::game_maxunits = GameConfig::game_maxunits + 5;
-}
-
 void HostOptionsView::updateGameConfigCloudCoverage()
 {
-    // Make sure the cloud settings are the same for different size
-    // maps, like clear on 128x128 should have far less clouds than
-    // clear on 800x800.
-
-    float cloudCount = MapSelectionView::mapList[MapSelectionView::curMap]->cells.getArea() / baseTileCountPerCloud;
-    float randCount  = rand() % int(cloudCount / randomDivisorOfBase);
-
-    cloudCount += randCount;
-
-    float clearCloudCount         = float(cloudCount) * clearPercentOfBase;
-    float brokenCloudCount        = float(cloudCount) * brokenPercentOfBase;
-    float partlyCloudyCloudCount  = float(cloudCount) * partlyCloudyPercentOfBase;
-    float overcastCloudCount      = float(cloudCount) * overcastPercentOfBase;
-    float fuckingCloudyCloudCount = float(cloudCount) * extremelyCloudyPercentOfBase;
-
-    switch (cloudCoverageCount) {
-    case 0: {
-            cloudCoverageString = "Clear";
-            GameConfig::game_cloudcoverage = (int(clearCloudCount));
-        }
-        break;
-    case 1: {
+    switch (cloudCoverageCount)
+    {
+        case 1:
             cloudCoverageString = "Broken";
-            GameConfig::game_cloudcoverage = (int(brokenCloudCount));
-        }
-        break;
-    case 2: {
+            GameConfig::game_cloudcoverage = cloudCoverageCount;
+            break;
+        case 2:
             cloudCoverageString = "Partly Cloudy";
-            GameConfig::game_cloudcoverage = (int(partlyCloudyCloudCount));
-        }
-        break;
-    case 3: {
+            GameConfig::game_cloudcoverage = cloudCoverageCount;
+            break;
+        case 3:
             cloudCoverageString = "Overcast";
-            GameConfig::game_cloudcoverage = (int(overcastCloudCount));
-        }
-        break;
-    case 4: {
+            GameConfig::game_cloudcoverage = cloudCoverageCount;
+            break;
+        case 4:
             cloudCoverageString = "Extremely Cloudy";
-            GameConfig::game_cloudcoverage = (int(fuckingCloudyCloudCount));
-        }
-        break;
+            GameConfig::game_cloudcoverage = cloudCoverageCount;
+            break;
+        default:
+            cloudCoverageString = "Clear";
+            GameConfig::game_cloudcoverage = 0;
+            break;
     }
 }
 
@@ -167,17 +115,7 @@ static const char * getGameTypeString()
     return( "Unknown" );
 }
 
-static void bIncreaseTimeLimit()
-{
-    if(GameConfig::game_timelimit + 5 <= 240)
-        GameConfig::game_timelimit = GameConfig::game_timelimit + 5;
-}
 
-static void bDecreaseTimeLimit()
-{
-    if(GameConfig::game_timelimit - 5 >= 5)
-        GameConfig::game_timelimit = GameConfig::game_timelimit - 5;
-}
 
 static int getTimeLimitHours()
 {
@@ -189,17 +127,7 @@ static int getTimeLimitMinutes()
     return GameConfig::game_timelimit % 60;
 }
 
-static void bIncreaseFragLimit()
-{
-    if(GameConfig::game_fraglimit + 5 <= 1000)
-        GameConfig::game_fraglimit = GameConfig::game_fraglimit + 5;
-}
 
-static void bDecreaseFragLimit()
-{
-    if(GameConfig::game_fraglimit - 5 >= 5)
-        GameConfig::game_fraglimit = GameConfig::game_fraglimit - 5;
-}
 
 static int getFragLimit()
 {
@@ -248,19 +176,7 @@ static int getObjectiveCapturePercent()
     return GameConfig::game_occupationpercentage;
 }
 
-static void bIncreaseObjectiveCapturePercent()
-{
-    if(GameConfig::game_occupationpercentage + 5 <= 100)
-        GameConfig::game_occupationpercentage =
-            GameConfig::game_occupationpercentage + 5;
-}
 
-static void bDecreaseObjectiveCapturePercent()
-{
-    if(GameConfig::game_occupationpercentage - 5 >= 5 )
-        GameConfig::game_occupationpercentage =
-            GameConfig::game_occupationpercentage - 5;
-}
 
 
 // HostOptionsView
@@ -301,97 +217,67 @@ void HostOptionsView::doDeactivate()
     // nothing
 }
 
+#define arrowButtonWidth (16)
+#define xControlStart (270)
+
+void HostOptionsView::addConfRow(   const iXY pos,
+                                    const NPString& label,
+                                    Action* decreaseAction,
+                                    Action* increaseAction )
+{
+    iXY p(pos);
+    add( new Label(p.x, p.y, label, windowTextColor, windowTextColorShadow, true) );
+    p.x += xControlStart - 1;
+    add( Button::createTextButton(p, arrowButtonWidth-2, "<", decreaseAction));
+    p.x += arrowButtonWidth + meterWidth + 3; // 3 = 1 space + 2 of the border
+    add( Button::createTextButton(p, arrowButtonWidth-2, ">", increaseAction));
+}
+
 // addMeterButtons
 //---------------------------------------------------------------------------
 void HostOptionsView::addMeterButtons(const iXY &pos)
 {
     const int yOffset          = 15;
-    const int arrowButtonWidth = 16;
 
-    int x;
     int y = pos.y;
-
-    int xTextStart    = pos.x;
-    int xControlStart = 270;
-
-    x = xTextStart;
-    add( new Label(x, y, "Max Players", windowTextColor, windowTextColorShadow, true) );
-    x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreasePlayerCount);
-    x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreasePlayerCount);
+    
+    iXY p(pos);
+    
+    addConfRow(p, "Max Players",
+                   new ChangeIntVarAction<GameConfig::game_maxplayers, 2, 16>(-1),
+                   new ChangeIntVarAction<GameConfig::game_maxplayers, 2, 16>(1) );
+//    addConfRow(p, "Max Players", new ChangePlayerCountAction(-1), new ChangePlayerCountAction(1) );
+    
+    p.y += yOffset;
     y += yOffset;
 
-    x = xTextStart;
-    add( new Label(x, y, "Game Max Unit Count", windowTextColor, windowTextColorShadow, true) );
-    x += xControlStart;
-    
-    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMaxUnitCount);
-    
-    Button *b = new Button("aaa");
-    b->setLocation(iXY(x-1,y));
-    b->setLabel("<");
-    b->setTextButtonSize(arrowButtonWidth-2);
-    b->setNormalBorder();
-    b->setAction(new DecreaseMaxUnitCountAction());
-    b->setTextColors(componentInActiveTextColor, componentFocusTextColor, componentActiveTextColor, componentInActiveTextColor);
-    b->setStateOffset(Button::BPRESSED, 1, 1);
-    add(b);
-    
-    
-    
-    x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMaxUnitCount);
-    y += yOffset;
-    /*
-    	x = xTextStart;
-    	//addLabelShadowed(iXY(x, y), "Player Respawn Unit Count", windowTextColor, windowTextColorShadow);
-    	x += xControlStart;
-    	addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseRespawnCount);
-    	x += arrowButtonWidth + meterWidth;
-    	addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseRespawnCount);
-    	y += yOffset;
-    */
-    //x = xTextStart;
-    //addLabelShadowed(iXY(x, y), "Allow Allies", windowTextColor, windowTextColorShadow);
-    //x += xControlStart;
-    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bSetAllowAlliesFalse);
-    //x += arrowButtonWidth + meterWidth;
-    //addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bSetAllowAlliesTrue);
-    //y += yOffset;
-    //
-    //x = xTextStart;
-    //addLabelShadowed(iXY(x, y), "Spawn Placement", windowTextColor, windowTextColorShadow);
-    //x += xControlStart;
-    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bPreviousSpawnPlacement);
-    //x += arrowButtonWidth + meterWidth;
-    //addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bNextSpawnPlacement);
-    //y += yOffset;
+    addConfRow(p, "Game Max Unit Count",
+                   new ChangeIntVarAction<GameConfig::game_maxunits, 2, 1000>(-5),
+                   new ChangeIntVarAction<GameConfig::game_maxunits, 2, 1000>(5) );
 
-    x = xTextStart;
-    add( new Label( x, y, "Objective Capture Percent", windowTextColor, windowTextColorShadow, true) );
-    x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseObjectiveCapturePercent);
-    x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseObjectiveCapturePercent);
+    p.y += yOffset;
+    y += yOffset;
+    
+    addConfRow(p, "Objective Capture Percent",
+                   new ChangeIntVarAction<GameConfig::game_occupationpercentage, 5, 100>(-5),
+                   new ChangeIntVarAction<GameConfig::game_occupationpercentage, 5, 100>(5) );
+    
+    p.y += yOffset;
     y += yOffset;
 
-    x = xTextStart;
-    add( new Label( x, y, "Time Limit", windowTextColor, windowTextColorShadow, true) );
-    x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseTimeLimit);
-    x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseTimeLimit);
+    addConfRow(p, "Time Limit",
+                   new ChangeIntVarAction<GameConfig::game_timelimit, 5, 240>(-5),
+                   new ChangeIntVarAction<GameConfig::game_timelimit, 5, 240>(5) );
+    p.y += yOffset;
     y += yOffset;
-
-    x = xTextStart;
-    add( new Label( x, y, "Frag Limit", windowTextColor, windowTextColorShadow, true) );
-    x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseFragLimit);
-    x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseFragLimit);
+    
+    addConfRow(p, "Frag Limit",
+                   new ChangeIntVarAction<GameConfig::game_fraglimit, 5, 1000>(-5),
+                   new ChangeIntVarAction<GameConfig::game_fraglimit, 5, 1000>(5) );
+    
+    p.y += yOffset;
     y += yOffset;
-
+    
     const int minWidth = 150;
     int xChoiceOffset = 2;
 
@@ -438,16 +324,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     checkPowerUp.setState(GameConfig::game_powerups);
     checkPowerUp.setLocation(120, 125);
     add(&checkPowerUp);
-
-
-    /*
-    	x = xTextStart;
-    	//addLabelShadowed(iXY(x, y), "Allow Fog Of War", windowTextColor, windowTextColorShadow);
-    	x += xControlStart;
-    	addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bSetAllowFogOfWarFalse);
-    	x += arrowButtonWidth + meterWidth;
-    	addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bSetAllowFogOfWarTrue);
-    */
+    
 } // end HostOptionsView::addMeterButtons
 
 // drawMeterInfo
@@ -456,7 +333,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 
-    const int arrowButtonWidth = 16;
+//    const int arrowButtonWidth = 16;
     const int yOffset          = 15;
 
     int x = pos.x + 270 + arrowButtonWidth;
@@ -478,41 +355,17 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     sprintf(strBuf, "%d - %d max per player", getCurMaxUnitCount(), getCurMaxUnitCount() / getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
-    /*
-    	// Respawn Unit Count
-    	y += yOffset;
-    	tempSurface.fill(meterColor);
-    	tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    	sprintf(strBuf, "%d", getRespawnUnitCount());
-    	tempSurface.bltStringCenter(strBuf, meterTextColor);
-    	tempSurface.blt(dest, x, y);
-    */
-    // Allow Allies
-    //y += yOffset;
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%s", getAllowAllies());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(dest, x, y);
-    //
-    //// Spawn Placement
-    //y += yOffset;
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%s", getSpawnPlacement());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(dest, x, y);
-
+    
     // Objective Capture Percent
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    if (MapSelectionView::curMap >= 0 && MapSelectionView::mapList.size() > 0) {
-        int objectiveCount =
-            MapSelectionView::mapList[MapSelectionView::curMap]->objectiveCount;
+    MapInfo* m = ((MapSelectionView*)Desktop::getView("MapSelectionView"))->getCurrentSelectedMapInfo();
+    if ( m )
+    {
+        int objectiveCount = m->objectiveCount;
         sprintf(strBuf, "%d%% - %d of %d", getObjectiveCapturePercent(),
-                int(float(objectiveCount) * (float(getObjectiveCapturePercent()
-                            ) / 100.0f) + 0.999), objectiveCount);
+                int(float(objectiveCount) * (float(getObjectiveCapturePercent()) / 100.0f) + 0.999), objectiveCount);
     } else {
         sprintf(strBuf, "Map Data Needed");
     }

@@ -28,7 +28,6 @@ class DisconectedView : public SpecialButtonView
 {
 private:
     void init();
-    static void buttonOk();
     std::string disconectMsg;
 
 public:
