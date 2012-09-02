@@ -448,7 +448,3 @@ void OptionsTemplateView::loadTitleSurface()
 
 } // end ControlsView::loadTitleSurface
 
-void OptionsTemplateView::onComponentClicked(Component* c)
-{
-        MenuTemplateView::onComponentClicked(c);
-}

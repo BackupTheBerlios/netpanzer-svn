@@ -47,11 +47,13 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void processEvents();
-    virtual void onComponentClicked(Component* c);
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     virtual void doActivate();
     void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... );
     void clear();
+    
+    void minimizeChat();
+    void restoreChat();
 };
 
 #endif

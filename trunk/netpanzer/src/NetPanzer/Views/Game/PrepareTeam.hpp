@@ -55,8 +55,10 @@ public:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     virtual void processEvents();
-    virtual void onComponentClicked(Component* c);
     void init();
+    
+    void changeTeam();
+    void playerReady();
 };
 
 #endif // PREPARETEAM_HPP

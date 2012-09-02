@@ -65,8 +65,6 @@ public:
         MAX_WINDOW_CLIENT_YSIZE = 458
     };
 
-    virtual void onComponentClicked(Component *c) { (void)c; }
-
 protected:
     virtual void     actionPerformed(mMouseEvent )
     {}
@@ -122,14 +120,6 @@ protected:
     void setBordered        (const bool &newStatus);
     void setAllowMove       (const bool &newStatus);
     void setActive          (const bool &newStatus);
-    //void setScrollBar       (const bool &newStatus);
-
-    // Scroll bar functions.
-
-    /*!FIXME!*/ void drawDefinedButtons   (Surface &clientArea);
-    void drawHighlightedButton(Surface &clientArea);
-    void drawPressedButton(Surface &clientArea);
-    int  findButtonContaining(const iXY &pos);
 
     // SearchName, Title, and SubTitle functions.
     void  setSearchName(const char *searchName);

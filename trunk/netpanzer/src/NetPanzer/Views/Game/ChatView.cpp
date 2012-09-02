@@ -25,11 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 #include "Views/Components/Button.hpp"
+
+#include "Actions/Action.hpp"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
 
-static Button* createTitlebarButton(int x, int y, const Surface& button_images)
+static Button* createTitlebarButton(int x, int y, const Surface& button_images, Action* action)
 {
     Surface bimage(15,15,4);
     
@@ -53,9 +56,32 @@ static Button* createTitlebarButton(int x, int y, const Surface& button_images)
     b->setLocation( x, y);
     b->setStateOffset(Button::BPRESSED, 1, 1);
     
+    b->setAction(action);
+    
     return b;
 }
 
+class MinimizeChatAction : public Action
+{
+public:
+    ChatView * view;
+    MinimizeChatAction(ChatView * view) : Action(false), view(view) {}
+    void execute()
+    {
+        view->minimizeChat();
+    }
+};
+
+class RetoreChatAction : public Action
+{
+public:
+    ChatView * view;
+    RetoreChatAction(ChatView * view) : Action(false), view(view) {}
+    void execute()
+    {
+        view->restoreChat();
+    }
+};
 
 ChatView::ChatView() : GameTemplateView()
 {
@@ -73,11 +99,11 @@ ChatView::ChatView() : GameTemplateView()
     Surface button_images;
     button_images.loadBMP(itScroll);
     
-    bHideWindow = createTitlebarButton( 0, 0, button_images);
+    bHideWindow = createTitlebarButton( 0, 0, button_images, new MinimizeChatAction(this));
     add(bHideWindow);
     
     button_images.setOffsetX(-30);
-    bShowWindow = createTitlebarButton( 15, 0, button_images);
+    bShowWindow = createTitlebarButton( 15, 0, button_images, new RetoreChatAction(this));
     bShowWindow->disable();
     add(bShowWindow);
     
@@ -179,27 +205,24 @@ void ChatView::processEvents()
     }
 }
 
-void ChatView::onComponentClicked(Component* c)
+void ChatView::minimizeChat()
 {
-    if ( c == bHideWindow )
-    {
-        HideWindow = true;
-        bHideWindow->disable();
-        bShowWindow->enable();
-        
-        resize(500, 17);
-        moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
-    }
-    if ( c == bShowWindow )
-    {
-        HideWindow = false;
-        bHideWindow->enable();
-        bShowWindow->disable();
-        
-        resize(500, 150);
-        moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
-    }
-    View::onComponentClicked(c);
+    HideWindow = true;
+    bHideWindow->disable();
+    bShowWindow->enable();
+
+    resize(500, 17);
+    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+}
+
+void ChatView::restoreChat()
+{
+    HideWindow = false;
+    bHideWindow->enable();
+    bShowWindow->disable();
+
+    resize(500, 150);
+    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
 }
 
 void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)

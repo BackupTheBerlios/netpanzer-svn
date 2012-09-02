@@ -125,10 +125,6 @@ Button::actionPerformed(const mMouseEvent &me)
         {
             clickAction->execute();
         }
-        else
-        {
-            ((View *)parent)->onComponentClicked(this);
-        }
     }
 } // end Button::actionPerformed
 
@@ -152,7 +148,8 @@ Button::createTextButton( const NPString& label,
 Button *
 Button::createNewSpecialButton(    const NPString& label,
                                    const iXY& loc,
-                                   int width)
+                                   int width,
+                                   Action * action)
 {
     Surface bitmap;
     bitmap.loadBMP(itButton);
@@ -181,6 +178,8 @@ Button::createNewSpecialButton(    const NPString& label,
     b->setLocation(loc);
     b->setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);
     b->setStateOffset(Button::BPRESSED, 1, 1);
+    
+    b->setAction(action);
 
     return b;
 }

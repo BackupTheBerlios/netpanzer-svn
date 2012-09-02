@@ -81,7 +81,8 @@ public:
 
     static Button * createNewSpecialButton(     const NPString& label,
                                                 const iXY& loc,
-                                                int width);
+                                                int width,
+                                                Action * action);
 
     void setAction( Action * action );
     

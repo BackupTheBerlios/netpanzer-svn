@@ -32,6 +32,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 
+#include "Actions/Action.hpp"
+
+class ChangeTeamAction : public Action
+{
+public:
+    PrepareTeam * view;
+    ChangeTeamAction(PrepareTeam * view) : Action(false), view(view) {}
+    void execute()
+    {
+        view->changeTeam();
+    }
+};
+
+class PlayerReadyAction : public Action
+{
+public:
+    PrepareTeam * view;
+    PlayerReadyAction(PrepareTeam * view) : Action(false), view(view) {}
+    void execute()
+    {
+        view->playerReady();
+    }
+};
+
 PrepareTeam::PrepareTeam() : GameTemplateView()
 {
     setSearchName("PrepareTeam");
@@ -66,9 +90,16 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     secondrect.max.x = rect.max.x-20;
     secondrect.max.y = firstrect.max.y;
     
-    changebutton = Button::createNewSpecialButton( " >> ", iXY(firstrect.max.x+29, (firstrect.min.y+50)), (secondrect.min.x-firstrect.max.x)-39);
+    changebutton = Button::createNewSpecialButton( " >> ",
+                                                   iXY(firstrect.max.x+29, (firstrect.min.y+50)),
+                                                   (secondrect.min.x-firstrect.max.x)-39,
+                                                   new ChangeTeamAction(this));
     add(changebutton);
-    readybutton = Button::createNewSpecialButton( "Ready", iXY(firstrect.max.x+29, (firstrect.min.y+85)), (secondrect.min.x-firstrect.max.x)-39);
+    
+    readybutton = Button::createNewSpecialButton( "Ready",
+                                                  iXY(firstrect.max.x+29, (firstrect.min.y+85)),
+                                                  (secondrect.min.x-firstrect.max.x)-39,
+                                                  new PlayerReadyAction(this));
     add(readybutton);
 
     scTeam1 = new tVScrollBar();
@@ -243,34 +274,23 @@ void PrepareTeam::processEvents()
     View::processEvents();
 }
 
-void PrepareTeam::onComponentClicked(Component* c)
+void PrepareTeam::changeTeam()
 {
-    if ( c == changebutton )
+    if (PlayerInterface::getLocalPlayer()->getTeamID() == 0)
     {
-        
-        if (PlayerInterface::getLocalPlayer()->getTeamID() == 0)
-        {
-            TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 1);
-            changebutton->setLabel(" << ");
-        }
-        else
-        {
-            TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 0);
-            changebutton->setLabel(" >> ");
-        }
-    }
-    else if ( c == readybutton )
-    {
-        TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
-        changebutton->disable();
-        readybutton->disable();
+        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 1);
+        changebutton->setLabel(" << ");
     }
     else
     {
-        View::onComponentClicked(c);
+        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 0);
+        changebutton->setLabel(" >> ");
     }
 }
 
-
-
-
+void PrepareTeam::playerReady()
+{
+    TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
+    changebutton->disable();
+    readybutton->disable();
+}
