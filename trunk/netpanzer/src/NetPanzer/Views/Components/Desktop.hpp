@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 class Surface;
+class Component;
 
 class Desktop
 {
@@ -40,6 +41,7 @@ private: // Variables
     static float      currentMouseDownTime;
     static std::vector<View*> views;
     static View      *focus;
+    static Component *keyboardFocusComponent;
     static int        mouseActions;
     static iXY        lMouseDownPos;
     static iXY        rMouseDownPos;
@@ -162,10 +164,18 @@ public:
     {
         return focus;
     }
+    
     static void setFocusView(View *view)
     {
         activate(view);
     }
+    
+    static void setKeyboardFocusComponent(Component *c)
+    {
+        keyboardFocusComponent = c;
+    }
+
+    static Component * getKeyboardFocusComponent() { return keyboardFocusComponent; }
 }
 ; // end Desktop
 

@@ -664,6 +664,7 @@ void View::lMouseDown(const iXY &pos)
     }
 
     focusComponent = 0;
+    Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
     ComponentsIterator i;
@@ -757,6 +758,7 @@ void View::lMouseDouble(const iXY &pos)
 void View::rMouseDown(const iXY &pos)
 {
     focusComponent = 0;
+    Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
     ComponentsIterator i;

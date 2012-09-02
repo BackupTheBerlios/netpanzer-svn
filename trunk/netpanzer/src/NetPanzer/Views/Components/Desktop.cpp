@@ -32,6 +32,7 @@ float     Desktop::totalMouseDownTime   = 0.0;
 float     Desktop::currentMouseDownTime = 0.0;
 std::vector<View*> Desktop::views;
 View     *Desktop::focus;
+Component *Desktop::keyboardFocusComponent = 0;
 int       Desktop::mouseActions;
 iXY       Desktop::lMouseDownPos;
 iXY       Desktop::rMouseDownPos;
@@ -283,7 +284,12 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
         effActions = mouseView->getMouseActions(mousePos-mouseView->min);
     }
 
-    if (focus != 0) {
+    if ( keyboardFocusComponent )
+    {
+        keyboardFocusComponent->handleKeyboard();
+        KeyboardInterface::flushCharBuffer();
+    }
+    else if (focus != 0) {
         focus->processEvents();
         KeyboardInterface::flushCharBuffer();
     }

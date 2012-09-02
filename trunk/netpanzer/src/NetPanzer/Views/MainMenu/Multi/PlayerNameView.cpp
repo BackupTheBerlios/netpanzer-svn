@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerNameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Views/Components/InputField.hpp"
 
 // PlayerNameView
 //---------------------------------------------------------------------------
@@ -53,12 +54,20 @@ PlayerNameView::~PlayerNameView()
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
 {
-    playerName.init(GameConfig::player_name->c_str(), INPUT_FIELD_CHARACTERS, getSizeX()-16);
-    playerName.setString(*GameConfig::player_name);
-    cInputField* input 
-        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE+2), &playerName, "", true, INPUT_FIELD_CHARACTERS);
-    input->setTextAction(textChanged);
-    input->setExcludedCharacters("\\");
+    playerName = new InputField();
+    playerName->setLocation(iXY(BORDER_SPACE, BORDER_SPACE));
+    playerName->setSize(getSizeX()-20, 16);
+    playerName->setMaxTextLength(INPUT_FIELD_CHARACTERS * 2); // XXX *2 for testing only
+    playerName->setText(*GameConfig::player_name);
+
+    add(playerName);
+    
+//    playerName.init(GameConfig::player_name->c_str(), INPUT_FIELD_CHARACTERS, getSizeX()-16);
+//    playerName.setString(*GameConfig::player_name);
+//    cInputField* input 
+//        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE+2), &playerName, "", true, INPUT_FIELD_CHARACTERS);
+//    input->setTextAction(textChanged);
+//    input->setExcludedCharacters("\\");
 } // end PlayerNameView::init
 
 // doDraw
@@ -73,6 +82,6 @@ void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
 
 void PlayerNameView::textChanged(cInputField* input)
 {
-    GameConfig::player_name->assign( input->getDestString() );
+//    GameConfig::player_name->assign( input->getDestString() );
 }
 

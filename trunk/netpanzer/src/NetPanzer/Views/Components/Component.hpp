@@ -112,6 +112,8 @@ public:
     
     virtual void render() = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
+    virtual void handleKeyboard() {}
+    
 private:
     Component(const Component&);
     void operator=(const Component&);

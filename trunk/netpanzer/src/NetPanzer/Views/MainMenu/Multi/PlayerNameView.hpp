@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 
+class InputField;
+
 //---------------------------------------------------------------------------
 class PlayerNameView : public View
 {
@@ -39,7 +41,7 @@ private:
     // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
     enum { INPUT_FIELD_CHARACTERS = 15 };
 
-    cInputFieldString playerName;
+    InputField* playerName;
 }; // end PlayerNameView
 
 #endif // end __PlayerNameView_hpp__
