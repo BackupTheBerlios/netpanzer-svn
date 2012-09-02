@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Actions/Action.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -129,9 +131,6 @@ ChatView::ChatView() : GameTemplateView()
     
     add(input);
     
-    
-//    ChatString.init("", 100, getSizeX()-5);
-//    input = addInputField(iXY(2, getSizeY()-16), &ChatString, "", true, 100);
 }
 
 void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
@@ -143,23 +142,18 @@ void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
 
 void ChatView::processEvents()
 {
-    if (KeyboardInterface::getKeyPressed(SDLK_RETURN)||
-            KeyboardInterface::getKeyPressed(SDLK_KP_ENTER))
+    if ( (KeyboardInterface::getKeyPressed(SDLK_RETURN) || KeyboardInterface::getKeyPressed(SDLK_KP_ENTER) )
+         && Desktop::getKeyboardFocusComponent() == input )
     {
         if ( input->getText().length() != 0 )
         {
             const NPString& msg = input->getText();
-            if (msg[0] == '/')
-            {
-                if (!msg.compare(0,5,"/all "))
-                {
-                    ChatInterface::say(msg.substr(5));
-                }
-            }
-            else
+
+            if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
             {
                 ChatInterface::teamsay(msg);
             }
+            
             input->setText("");
         }
     }
@@ -219,6 +213,13 @@ void ChatView::minimizeChat()
     HideWindow = true;
     bHideWindow->disable();
     bShowWindow->enable();
+    
+    if ( Desktop::getKeyboardFocusComponent() == input )
+    {
+        Desktop::setKeyboardFocusComponent(0);
+    }
+    
+    removeComponent(input);
 
     resize(500, 17);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
@@ -232,6 +233,8 @@ void ChatView::restoreChat()
 
     resize(500, 150);
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    
+    add(input);
 }
 
 void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
