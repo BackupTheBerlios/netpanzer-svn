@@ -42,6 +42,7 @@ public:
     void setText(const std::string& text)
     {
         this->text = text;
+        fixCursorPos();
     }
 
     const std::string& getText() const { return text; }
@@ -53,6 +54,7 @@ public:
     }
 
     void setMaxTextLength(int max_length) { max_chars = max_length; }
+    void setExcludedChars(const std::string& excluded_chars) { this->excluded_chars = excluded_chars; }
     
     virtual void handleKeyboard();
 
@@ -65,12 +67,14 @@ private:
     int max_chars;
     int text_display_start;
     std::string text;
+    std::string excluded_chars;
 
     int last_pressed_key;
     bool was_special_key;
     NTimer key_repeat_timer;
 
     void checkRepeatKey();
+    void fixCursorPos();
 
 };
 

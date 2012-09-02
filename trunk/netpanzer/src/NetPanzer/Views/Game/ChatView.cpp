@@ -120,9 +120,18 @@ ChatView::ChatView() : GameTemplateView()
     ChatList->setColor(0);
     ChatList->setAutoScroll(true);
     add(ChatList);
-    ChatString.init("", 100, getSizeX()-5);
-    input = addInputField(iXY(2, getSizeY()-16), &ChatString, "", true, 100);
-    input->setExcludedCharacters("\\�`�");
+    
+    input = new InputField();
+    input->setLocation(2,getSizeY()-16);
+    input->setSize(getSizeX()-5,16);
+    input->setMaxTextLength(100);
+    input->setExcludedChars("\\�`�");
+    
+    add(input);
+    
+    
+//    ChatString.init("", 100, getSizeX()-5);
+//    input = addInputField(iXY(2, getSizeY()-16), &ChatString, "", true, 100);
 }
 
 void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
@@ -137,9 +146,9 @@ void ChatView::processEvents()
     if (KeyboardInterface::getKeyPressed(SDLK_RETURN)||
             KeyboardInterface::getKeyPressed(SDLK_KP_ENTER))
     {
-        if (strlen(input->getDestString())!= 0)
+        if ( input->getText().length() != 0 )
         {
-            std::string msg = input->getDestString();
+            const NPString& msg = input->getText();
             if (msg[0] == '/')
             {
                 if (!msg.compare(0,5,"/all "))
@@ -151,7 +160,7 @@ void ChatView::processEvents()
             {
                 ChatInterface::teamsay(msg);
             }
-            input->clearString();
+            input->setText("");
         }
     }
 #ifdef WIN32
@@ -170,7 +179,7 @@ void ChatView::processEvents()
             {
                 if (isprint(*pntchr))
                 {
-                    input->addChar(*pntchr);
+                    input->handleNormalKey(*pntchr);
                     count++;
                 }
                 pntchr++;
@@ -245,7 +254,7 @@ void ChatView::checkResolution(iXY oldResolution, iXY newResolution)
 void ChatView::doActivate()
 {
     Desktop::setActiveView(this);
-    View::selectedInputField = View::findInputFieldContaining(input->getPos());
+//    View::selectedInputField = View::findInputFieldContaining(input->getPos());
 }
 
 void ChatView::clear()

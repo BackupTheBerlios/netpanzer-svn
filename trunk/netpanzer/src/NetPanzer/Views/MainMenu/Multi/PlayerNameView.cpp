@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/Components/InputField.hpp"
 
+enum { BORDER_SPACE           =  4 };    
+// irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
+enum { INPUT_FIELD_CHARACTERS = 15 };
+
 // PlayerNameView
 //---------------------------------------------------------------------------
 PlayerNameView::PlayerNameView() : View()
@@ -46,10 +50,6 @@ PlayerNameView::PlayerNameView() : View()
     init();
 } // end PlayerNameView::PlayerNameView
 
-PlayerNameView::~PlayerNameView()
-{
-}
-
 // init
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
@@ -58,30 +58,9 @@ void PlayerNameView::init()
     playerName->setLocation(iXY(BORDER_SPACE, BORDER_SPACE));
     playerName->setSize(getSizeX()-20, 16);
     playerName->setMaxTextLength(INPUT_FIELD_CHARACTERS * 2); // XXX *2 for testing only
+    playerName->setExcludedChars("\\");
     playerName->setText(*GameConfig::player_name);
 
     add(playerName);
     
-//    playerName.init(GameConfig::player_name->c_str(), INPUT_FIELD_CHARACTERS, getSizeX()-16);
-//    playerName.setString(*GameConfig::player_name);
-//    cInputField* input 
-//        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE+2), &playerName, "", true, INPUT_FIELD_CHARACTERS);
-//    input->setTextAction(textChanged);
-//    input->setExcludedCharacters("\\");
 } // end PlayerNameView::init
-
-// doDraw
-//---------------------------------------------------------------------------
-void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    //iRect r(getViewRect());
-    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-
-    View::doDraw(viewArea, clientArea);
-} // end PlayerNameView::doDraw
-
-void PlayerNameView::textChanged(cInputField* input)
-{
-//    GameConfig::player_name->assign( input->getDestString() );
-}
-

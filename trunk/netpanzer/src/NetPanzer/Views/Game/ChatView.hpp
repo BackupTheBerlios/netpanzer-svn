@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __CHATVIEW_HPP__
 
 #include "Views/Components/tChatBox.hpp"
-#include "Views/Components/cInputField.hpp"
+#include "Views/Components/InputField.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tHScrollBar.hpp"
 #include "Views/Game/GameTemplateView.hpp"
@@ -36,8 +36,7 @@ private:
     tHScrollBar * hsbChat;
     Button * bHideWindow;
     Button * bShowWindow;
-    cInputField* input;
-    cInputFieldString ChatString;
+    InputField * input;
     bool HideWindow;
     
 public:

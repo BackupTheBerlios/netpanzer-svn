@@ -19,19 +19,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __IPAddressView_h__
 
 #include "Views/Components/View.hpp"
+#include "Views/Components/InputField.hpp"
 #include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class IPAddressView : public View
 {
 public:
- static cInputFieldString szServer;
-	
- IPAddressView();
+    IPAddressView();
 
- void Init();
-
- virtual void doDraw(Surface &windowArea, Surface &clientArea); 
+    const NPString& getSelectedServerIp() const { return serverIP->getText(); }
+    void setSelectedServerIp(const NPString& ip) { serverIP->setText(ip); }
+    
+private:
+    InputField * serverIP;
+    
 }; // end IPAddressView
 
 #endif // end __IPAddressView_h__

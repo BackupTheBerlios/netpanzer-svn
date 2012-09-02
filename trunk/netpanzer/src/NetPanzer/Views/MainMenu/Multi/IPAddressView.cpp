@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-cInputFieldString IPAddressView::szServer;
-
 // IPAddressView
 //---------------------------------------------------------------------------
 IPAddressView::IPAddressView() : View()
@@ -40,21 +38,15 @@ IPAddressView::IPAddressView() : View()
     iXY  area_size = iXY(
             31 * 8 + 16,
             Surface::getFontHeight() + 4 + 8);
+    
     resizeClientArea(area_size);
 
-    Init();
+    serverIP = new InputField();
+    serverIP->setLocation(iXY(8, 3));
+    serverIP->setSize(255, 16);
+    serverIP->setMaxTextLength(255);
+    serverIP->setText("");
+
+    add(serverIP);
+    
 } // end IPAddressView constructor
-
-void IPAddressView::Init()
-{
-    szServer.init("", 256, getSizeX()-24);
-    addInputField(iXY(8, 3), &szServer, "", true, 255);
-} // end IPAddressView::init
-
-// doDraw
-//---------------------------------------------------------------------------
-void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    View::doDraw(viewArea, clientArea);
-} // end IPAddressView::doDraw
-

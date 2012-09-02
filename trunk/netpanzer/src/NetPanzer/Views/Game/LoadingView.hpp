@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/InputField.hpp"
 #include "2D/Surface.hpp"
 #include <list>
 
@@ -56,7 +57,7 @@ public:
     void setNeedPassword(bool need_password);
     bool doesNeedPassword() const { return need_password; }
     
-    const char * getPassword() { return password_str.getString(); }
+    const char * getPassword() { return password->getText().c_str(); }
 
 private:
     static std::list<NPString> lines;
@@ -65,8 +66,7 @@ private:
     Surface backgroundSurface;
     Surface surface;
     bool need_password;
-    cInputFieldString password_str;
-    cInputField * password_field;
+    InputField * password;
     Button * okButton;
     Label * passwordLabel;
 };

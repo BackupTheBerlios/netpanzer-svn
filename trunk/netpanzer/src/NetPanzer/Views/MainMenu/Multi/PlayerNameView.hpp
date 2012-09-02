@@ -19,28 +19,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __PlayerNameView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "Views/Components/InputField.hpp"
 #include "2D/Surface.hpp"
-
-class InputField;
 
 //---------------------------------------------------------------------------
 class PlayerNameView : public View
 {
 public:
     PlayerNameView();
-    virtual ~PlayerNameView();
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
     void init();
+    
+    const NPString& getSelectedName() { return playerName->getText(); }
 
 private:
-    static void textChanged(cInputField* input);
-    
-    enum { BORDER_SPACE           =  4 };    
-    // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
-    enum { INPUT_FIELD_CHARACTERS = 15 };
-
     InputField* playerName;
 }; // end PlayerNameView
 

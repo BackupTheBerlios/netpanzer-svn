@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
-#include "cInputField.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 #include "Component.hpp"
@@ -53,8 +52,6 @@ public:
     ComponentList components;
     
     Component *focusComponent;
-
-    std::vector<cInputField*> inputFields;
 
     enum
     {
@@ -127,13 +124,6 @@ protected:
     void  setSubTitle(const char *subTitle);
     void  drawTitle(Surface &windowArea);
 
-    // Input Field Functions
-    cInputField* addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected, const int maxCharCount);
-    void removeInputField(cInputField * cif);
-    int  findInputFieldContaining(const iXY &pos);
-    void drawInputFields(Surface &clientArea);
-
-
     /////////////////////////////////
     void draw(Surface& drawon);
     void showStatus(const char *string);
@@ -178,7 +168,7 @@ protected:
         resizeClientArea(iXY(x, y));
     }
 
-    virtual void processEvents();
+    virtual void processEvents() {}
 
     int moveAreaHeight;
     int borderSize;

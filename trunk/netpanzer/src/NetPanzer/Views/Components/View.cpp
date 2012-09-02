@@ -75,11 +75,6 @@ View::View(const iXY &pos, const iXY &size, const char *title)
 //---------------------------------------------------------------------------
 View::~View()
 {
-    std::vector<cInputField*>::iterator f;
-    for(f = inputFields.begin(); f != inputFields.end(); f++) {
-        delete *f;
-    }
-    
     free(title);
     free(subTitle);
     free(searchName);
@@ -394,8 +389,6 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
         drawStatus(clientArea);
     }
 
-    drawInputFields(clientArea);
-
     // Draw all non-selected components.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++) {
@@ -659,10 +652,6 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void View::lMouseDown(const iXY &pos)
 {
-    if (selectedInputField < 0) {
-        selectedInputField = findInputFieldContaining(pos);
-    }
-
     focusComponent = 0;
     Desktop::setKeyboardFocusComponent(0);
 
@@ -915,22 +904,6 @@ void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
     //}
 } // end scrollBarMove
 
-
-// drawInputFields
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::drawInputFields(Surface &clientArea)
-{
-    for (size_t num = 0; num < inputFields.size(); num++) {
-        if (num == (size_t) selectedInputField) {
-            inputFields[num]->drawHighlighted(clientArea);
-        } else {
-            inputFields[num]->draw(clientArea);
-        }
-    }
-} // end drawInputFields
-
 // setSearchName
 //---------------------------------------------------------------------------
 // Purpose: Sets the title of the window.
@@ -1029,22 +1002,6 @@ void View::drawStatus(Surface &dest)
         s.bltString(pos, pos, statusText, Color::black);
     }
 } // end View::drawStatus
-
-// findInputFieldContaining
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-int View::findInputFieldContaining(const iXY &pos)
-{
-    assert(this != 0);
-
-    for(size_t num = 0; num < inputFields.size(); num++) {
-        if (inputFields[num]->contains(pos)) {
-            return num;
-        }
-    }
-    return -1;
-} // end findInputFieldContaining
 
 // checkResolution
 //---------------------------------------------------------------------------
@@ -1192,60 +1149,6 @@ void View::setActive(const bool &newStatus)
     if (newStatus == true) status |=  STATUS_ACTIVE;
     else                   status &= ~STATUS_ACTIVE;
 } // end setActive
-
-// processEvents
-//---------------------------------------------------------------------------
-void View::processEvents(void)
-{
-    if (selectedInputField >= 0) {
-        int shit;
-        while (KeyboardInterface::getChar(shit)) {
-            // Check for extended code.
-            if (shit == 0) {
-                if (KeyboardInterface::getChar(shit)) {
-                    inputFields[selectedInputField]->addExtendedChar(shit);
-                } else {
-                    throw Exception("ERROR: Expecting extended char code.");
-                }
-            } else {
-                inputFields[selectedInputField]->addChar(shit);
-            }
-        }
-    }
-} // end processEvents
-
-// addInputField
-//---------------------------------------------------------------------------
-cInputField* View::addInputField(
-    const iXY &pos,
-    cInputFieldString *string,
-    const char *excludedCharacters,
-    const bool &isSelected,
-    const int maxCharCount)
-{
-    cInputField* inputfield = new cInputField;
-
-    inputfield->setPos(pos);
-    inputfield->setInputFieldString(string);
-    inputfield->setExcludedCharacters(excludedCharacters);
-//    inputfield->setmaxChar(maxCharCount); wtf,  already assigned on string !!
-    inputFields.push_back(inputfield);
-
-    if (isSelected) {
-        selectedInputField = inputFields.size() - 1;
-    }
-
-    return inputfield;
-} // end addInputField
-
-void View::removeInputField(cInputField *cif)
-{
-    if ( cif )
-    {
-        inputFields.erase(std::remove(inputFields.begin(), inputFields.end(), cif), inputFields.end());
-        delete cif;
-    }
-}
 
 //---------------------------------------------------------------------------
 void View::add(DEFAULT_VIEW_BUTTON button)

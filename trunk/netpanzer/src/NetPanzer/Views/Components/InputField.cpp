@@ -30,7 +30,6 @@ InputField::InputField()
     this->max_chars = 50;
     this->text_display_start = 0;
     this->cursor_pos = 0;
-    this->text.clear();
 
     this->last_pressed_key = 0;
     this->was_special_key = false;
@@ -127,7 +126,7 @@ void InputField::handleKeyboard()
 
 void InputField::handleNormalKey(int key)
 {
-    if ( text.length() < max_chars )
+    if ( text.length() < max_chars && excluded_chars.find(key) == std::string::npos )
     {
         text.insert(cursor_pos,1,key);
         ++cursor_pos;
@@ -193,11 +192,7 @@ void InputField::handleSpecialKey(int key)
 
         case SDLK_END:
             cursor_pos = text.length();
-            text_display_start = 0;
-            while ( (((cursor_pos - text_display_start) * 8) + 8) > size.x -2 )
-            {
-                ++text_display_start;
-            }
+            fixCursorPos();
             break;
 
         default:
@@ -225,6 +220,19 @@ void InputField::checkRepeatKey()
         else
         {
             last_pressed_key = 0;
+        }
+    }
+}
+
+void InputField::fixCursorPos()
+{
+    if ( cursor_pos > this->text.length() )
+    {
+        cursor_pos = this->text.length();
+        text_display_start = 0;
+        while ( (((cursor_pos - text_display_start) * 8) + 8) > size.x -2 )
+        {
+            ++text_display_start;
         }
     }
 }

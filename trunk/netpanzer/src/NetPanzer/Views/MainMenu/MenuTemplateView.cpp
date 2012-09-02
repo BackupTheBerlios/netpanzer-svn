@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerGameManager.hpp"
 
 #include "Actions/Action.hpp"
+#include "Multi/PlayerNameView.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -183,6 +184,8 @@ public:
     
     void execute()
     {
+        GameConfig::player_name->assign(((PlayerNameView*)Desktop::getView("PlayerNameView"))->getSelectedName());
+        
         if ( GameConfig::player_name->length() == 0 )
             return;
 
@@ -193,8 +196,9 @@ public:
             return;
         }
 
-        if (  gameconfig->hostorjoin == _game_session_join
-           && strcmp(IPAddressView::szServer.getString(), "") == 0 )
+        const NPString& serv_ip = ((IPAddressView*)Desktop::getView("IPAddressView"))->getSelectedServerIp();
+        
+        if ( (gameconfig->hostorjoin == _game_session_join) && (serv_ip.length() == 0) )
         {
             return;
         }
@@ -204,8 +208,7 @@ public:
 
         if ( gameconfig->hostorjoin == _game_session_join )
         {
-            gameconfig->serverConnect = IPAddressView::szServer.getString();
-            IPAddressView::szServer.setString("");
+            gameconfig->serverConnect = serv_ip;
         }
 
         serverlistview->endQuery();

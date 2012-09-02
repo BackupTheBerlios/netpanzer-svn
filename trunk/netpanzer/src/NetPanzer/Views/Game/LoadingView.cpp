@@ -25,6 +25,7 @@
 #include "Particles/ParticleInterface.hpp"
 
 #include "Actions/Action.hpp"
+#include "Views/Components/InputField.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
@@ -74,7 +75,11 @@ LoadingView::init()
     setVisible(false);
     setBordered(false);
     need_password = false;
-    password_str.init("", 31,31);
+    
+    password = new InputField();
+    password->setLocation(175+88, 80);
+    password->setSize(32 * 8, 16);
+    password->setMaxTextLength(31);
 
     resize(800, 600);
 
@@ -145,16 +150,16 @@ LoadingView::setNeedPassword(bool need_password)
         this->need_password = need_password;
         if ( need_password )
         {
-            password_field = addInputField(iXY(175+88, 80), &password_str, "", true, 31);
+            password->setText("");
+            add(password);
             add(okButton);
             add(passwordLabel);
         }
         else
         {
-            removeInputField(password_field);
+            removeComponent(password);
             removeComponent(okButton);
             removeComponent(passwordLabel);
-            password_field = 0;
         }
     }
 }

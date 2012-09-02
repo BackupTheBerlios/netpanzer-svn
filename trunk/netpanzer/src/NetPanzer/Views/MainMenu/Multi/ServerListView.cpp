@@ -161,7 +161,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
             
             Uint8 textcolor = Color::white;
             
-            if (servaddr.str()==IPAddressView::szServer.getString()) {
+            if (servaddr.str()==((IPAddressView*)Desktop::getView("IPAddressView"))->getSelectedServerIp()) {
                 textcolor = Color::yellow;
                 clientArea.fillRect(
                     iRect(0,y,clientArea.getWidth(),y+Surface::getFontHeight()),
@@ -203,7 +203,7 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     const masterserver::ServerInfo& server = *(serverlist[listpos]);
     std::stringstream addr;
     addr << server.address << ':' << server.port;
-    IPAddressView::szServer.setString(addr.str());
+    ((IPAddressView*)Desktop::getView("IPAddressView"))->setSelectedServerIp(addr.str());
 
     LoadingView * lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
     if ( lv )
