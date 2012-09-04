@@ -1,16 +1,16 @@
 /*
 Copyright (C) 2003 Ivo Danihelka <ivo@danihelka.net>
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -70,7 +70,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/GFlagSelectionView.hpp"
-#include "Views/Game/GTeamView.hpp"
 #include "Views/Game/PrepareTeam.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
@@ -136,7 +135,7 @@ void PlayerGameManager::initializeSoundSubSystem()
 {
     delete sound;
     sound = 0;
-    
+
     LOGGER.info("Initializing sound system.");
     try {
         if ( GameConfig::sound_enable )
@@ -176,7 +175,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new HelpScrollView());
 
     Desktop::add(new ChatView());
-    Desktop::add(new GTeamView());
     Desktop::add(new PrepareTeam());
 
     LoadingView *lv = new LoadingView();
@@ -196,7 +194,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new ServerListView());
 
     Desktop::add(new MenuTemplateView());
-    
+
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MenuTemplateView", true);
     Desktop::setVisibility("MainView", true);
@@ -277,7 +275,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
-    
+
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
@@ -324,7 +322,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         LoadingView::loadError();
         return;
     }
-    
+
     // refresh views
     LoadingView::update( "Launching Server ... (100%) " );
     graphicsLoop();
@@ -333,7 +331,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     LoadingView::append( "Loading Game Data ..." );
     graphicsLoop();
-    
+
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
     const char* mapname = GameConfig::game_map->c_str();
 
@@ -397,16 +395,16 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     LoadingView::update( "Initializing Game Logic ... (100%) " );
     graphicsLoop();
-    
+
     LoadingView::append( "Spawning Player ..." );
     graphicsLoop();
-    
+
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
-    
+
     LoadingView::update( "Spawning Player ... (100%)" );
-    
+
     graphicsLoop();
 
     wait.changePeriod( 3 );
@@ -507,7 +505,7 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView")) 
+    if (Desktop::getVisible("GameView"))
     {
 
         if (KeyboardInterface::getKeyState( SDLK_LALT ) ||

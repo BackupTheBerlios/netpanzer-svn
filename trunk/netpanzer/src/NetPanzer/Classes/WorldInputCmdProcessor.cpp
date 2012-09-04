@@ -332,18 +332,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
             Desktop::toggleVisibility( "GFlagSelectionView" );
         }
     }
-    
-    if ( KeyboardInterface::getKeyPressed(SDLK_t) )
-    {
-        if (GameConfig::game_teammode)
-            Desktop::toggleVisibility( "GTeamView" );
-    }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_m) )
     {
         Desktop::toggleVisibility( "MiniMapView" );
     }
-    
+
     if ( KeyboardInterface::getKeyPressed(SDLK_o) )
     {
         toggleDisplayOutpostNames();
@@ -378,19 +372,19 @@ WorldInputCmdProcessor::evaluateKeyCommands()
        && ! Desktop::getVisible("GFlagSelectionView") ) {
         Desktop::toggleVisibility( "HelpScrollView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
         Desktop::toggleVisibility( "RankView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
         Desktop::toggleVisibility( "DesktopView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
         Desktop::toggleVisibility( "CodeStatsView" );
     }
-    
+
     if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
         //  DEBUG VIEW
         Desktop::toggleVisibility( "LibView" );
@@ -518,7 +512,7 @@ void
 WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
     getManualControlStatus();
-    
+
     evaluateGroupingKeys();
 
     evaluateKeyCommands();
@@ -628,7 +622,7 @@ void WorldInputCmdProcessor::evalLeftMButtonDownEvents(const MouseEvent &event)
     }
 
     unsigned char click_status;
-    
+
     click_status = getCursorStatus(world_pos);
     switch(click_status)
     {
@@ -659,7 +653,7 @@ void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
         && abs(box_release.y - box_press.y) > 3)
         {
             return;
-        } 
+        }
     }
 
     if (outpost_goal_selection != OBJECTIVE_NONE )
