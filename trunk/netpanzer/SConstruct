@@ -284,7 +284,7 @@ MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
 ################################################################
 
 npdirs = """
-    Bot Classes Classes/AI Classes/Network Core Interfaces Network
+    Actions Bot Classes Classes/AI Classes/Network Core Interfaces Network
     Objectives Particles PowerUps Resources Scripts System Units Weapons
     Views Views/Components Views/Game Views/MainMenu Views/MainMenu/Multi
     Views/MainMenu/Multi/MasterServer Views/MainMenu/Options

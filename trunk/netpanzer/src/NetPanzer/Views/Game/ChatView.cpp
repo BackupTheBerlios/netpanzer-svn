@@ -140,22 +140,19 @@ ChatView::ChatView() : GameTemplateView()
     
     HideWindow = false;
 
-    iRect r(0, 15, getSizeX()-15, getSizeY()-31);
+    iRect r(0, 15, getSizeX()-15, getSizeY()-17);
     ChatList = new tChatBox(r, 0);
     vsbChat = new tVScrollBar();
-    hsbChat = new tHScrollBar();
     add(vsbChat);
-    add(hsbChat);
     ChatList->setVscrollBar(vsbChat);
-    ChatList->setHscrollBar(hsbChat);
     ChatList->setColor(0);
     ChatList->setAutoScroll(true);
     add(ChatList);
     
     input = new InputField();
     input->setLocation(2 + 16,getSizeY()-16);
-    input->setSize(getSizeX()-5,16);
-    input->setMaxTextLength(100);
+    input->setSize(getSizeX()-(5 + 17),16);
+    input->setMaxTextLength(500);
     input->setExcludedChars("\\�`�");
     
     add(input);
@@ -318,12 +315,6 @@ void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *
 void ChatView::checkResolution(iXY oldResolution, iXY newResolution)
 {
     moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
-}
-
-void ChatView::doActivate()
-{
-    Desktop::setActiveView(this);
-//    View::selectedInputField = View::findInputFieldContaining(input->getPos());
 }
 
 void ChatView::clear()

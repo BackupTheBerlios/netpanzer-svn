@@ -24,30 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
 
-#include "Actions/Action.hpp"
-
-
-class ExitNetPanzerAction : public Action
-{
-public:
-    ExitNetPanzerAction() : Action(false) {}
-    void execute()
-    {
-        GameManager::drawTextCenteredOnScreen("Exiting", Color::white);
-        GameManager::exitNetPanzer();
-    }
-};
-
-class HideView : public Action
-{
-public:
-    View * view;
-    HideView(View * view) : Action(false), view(view) {}
-    void execute()
-    {
-        Desktop::setVisibility(view->getSearchName(), false);
-    }
-};
+#include "Actions/ActionManager.hpp"
 
 // AreYouSureExitView
 //---------------------------------------------------------------------------
@@ -72,9 +49,9 @@ void AreYouSureExitView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createTextButton( "YES", iXY(x, y), 137, new ExitNetPanzerAction()));
+    add( Button::createTextButton( "YES", iXY(x, y), 137, ActionManager::getAction("quit")));
     x += 141 + 10;
-    add( Button::createTextButton( "NO", iXY(x, y), 137, new HideView(this)));
+    add( Button::createTextButton( "NO", iXY(x, y), 137, ActionManager::getAction("hide_confirmexit")));
     loaded = true;
 } // end AreYouSureExitView::init
 

@@ -21,7 +21,7 @@
 /** This functions iterates throgh the SDL event queue.
  * It returns true if a quit message has been received, otherwise false.
  */
-bool handleSDLEvents();
+void handleSDLEvents();
 
 #endif
 

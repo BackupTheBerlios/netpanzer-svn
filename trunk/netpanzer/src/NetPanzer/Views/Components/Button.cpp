@@ -142,6 +142,11 @@ Button::createTextButton( const NPString& label,
     b->setAction(action);
     b->setTextColors(componentInActiveTextColor, componentFocusTextColor, componentActiveTextColor, componentInActiveTextColor);
     b->setStateOffset(Button::BPRESSED, 1, 1);
+    
+    if ( ! action )
+    {
+        LOGGER.warning("No action defined for button '%s'", label.c_str());
+    }
     return b;
 }
 

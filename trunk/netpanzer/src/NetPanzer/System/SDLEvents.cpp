@@ -26,6 +26,7 @@
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Util/Log.hpp"
+#include "Actions/ActionManager.hpp"
 
 static SDLKey key_ascii_conversion[] =
 {
@@ -79,7 +80,7 @@ static SDLKey translate_key(SDL_keysym *keysym)
     return key;
 }
 
-bool handleSDLEvents()
+void handleSDLEvents()
 {
     static SDL_Event event;
 
@@ -87,7 +88,7 @@ bool handleSDLEvents()
     while(SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT:
-            return true;
+            ActionManager::runAction("quit");
             break;
         case SDL_MOUSEBUTTONDOWN:
             MouseInterface::onMouseButtonDown(&event.button);
@@ -141,6 +142,4 @@ bool handleSDLEvents()
             break;
         }
     }
-
-    return false;
 }

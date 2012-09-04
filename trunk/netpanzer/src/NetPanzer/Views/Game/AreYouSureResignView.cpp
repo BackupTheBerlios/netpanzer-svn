@@ -30,59 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
-#include "Actions/Action.hpp"
-
-class ResignGameAction : public Action
-{
-public:
-    ResignGameAction() : Action(false) {}
-    void execute()
-    {
-        if(gameconfig->quickConnect == true) {
-            GameManager::exitNetPanzer();
-            return;
-        }
-
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-        // Vlad put all code in here for shutdown.
-        //----------------------
-        GameManager::quitNetPanzerGame();
-        //----------------------
-
-        // Swap to the menu resolution.
-        //GameManager::setVideoMode(iXY(640, 480), false);
-
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-        // Must remove the gameView first so that the initButtons detects that
-        // and loads the correct buttons.
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MenuTemplateView", true);
-        Desktop::setVisibility("MainView", true);
-        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-
-        View *v = Desktop::getView("OptionsView");
-
-        if (v != 0) 
-        {
-            ((OptionsTemplateView *)v)->initButtons();
-            ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-        }
-
-    }
-};
-
-class HideView : public Action
-{
-public:
-    View * view;
-    HideView(View * view) : Action(false), view(view) {}
-    void execute()
-    {
-        Desktop::setVisibility(view->getSearchName(), false);
-    }
-};
+#include "Actions/ActionManager.hpp"
 
 // AreYouSureResignView
 //---------------------------------------------------------------------------
@@ -107,9 +55,9 @@ void AreYouSureResignView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createTextButton( "YES", iXY(x, y), 137, new ResignGameAction()));
+    add( Button::createTextButton( "YES", iXY(x, y), 137, ActionManager::getAction("disconnect")));
     x += 141 + 10;
-    add( Button::createTextButton( "NO", iXY(x, y), 137, new HideView(this)));
+    add( Button::createTextButton( "NO", iXY(x, y), 137, ActionManager::getAction("hide_confirmdisconnect")));
     loaded = true;
 } // end AreYouSureResignView::init
 

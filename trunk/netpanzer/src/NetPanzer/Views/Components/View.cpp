@@ -89,7 +89,6 @@ void View::reset()
     min.zero();
     max.zero();
     status                =  0;
-    selectedInputField    = -1;
     searchName            = 0;
     title                 = 0;
     subTitle              = 0;
@@ -374,9 +373,7 @@ void View::deactivate()
     setActive(false);
 
     doDeactivate();
-
-    selectedInputField    = -1;
-
+    
 } // end View::deactivate
 
 // doDraw
@@ -1149,14 +1146,3 @@ void View::setActive(const bool &newStatus)
     if (newStatus == true) status |=  STATUS_ACTIVE;
     else                   status &= ~STATUS_ACTIVE;
 } // end setActive
-
-//---------------------------------------------------------------------------
-void View::add(DEFAULT_VIEW_BUTTON button)
-{
-    if (button == CLOSE_VIEW_BUTTON) {}
-    else if (button == MINMAX_VIEW_BUTTON) {}
-    else {
-        assert(false);
-    }
-}
-

@@ -48,6 +48,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
+#include "Actions/ActionManager.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -315,6 +316,8 @@ int netpanzer_main(int argc, char** argv)
 {
     network::NetworkManager::initialize();
     
+    ActionManager::initialize();
+    
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");
@@ -351,6 +354,7 @@ int netpanzer_main(int argc, char** argv)
 #endif
     
     ScriptManager::close();
+    ActionManager::deinitialize();
     network::NetworkManager::cleanUp();
     return 0;
 }

@@ -32,18 +32,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace std;
 
-enum DEFAULT_VIEW_BUTTON
-{
-    CLOSE_VIEW_BUTTON,
-    MINMAX_VIEW_BUTTON
-};
-
 class View : public iRect, public StateChangedCallback
 {
     friend class Desktop;
 public:
     void add(Component *Component);
-    void add(DEFAULT_VIEW_BUTTON button);
 
 public:
     typedef list<Component *> ComponentList;
@@ -53,22 +46,11 @@ public:
     
     Component *focusComponent;
 
-    enum
-    {
-        MAX_WINDOW_CLIENT_XSIZE = 632
-    };
-    enum
-    {
-        MAX_WINDOW_CLIENT_YSIZE = 458
-    };
-
 protected:
-    virtual void     actionPerformed(mMouseEvent )
-    {}
+    virtual void     actionPerformed(mMouseEvent ) {}
     Surface*         getViewArea(Surface& dest);
     virtual Surface* getClientArea(Surface& dest);
 
-    int              selectedInputField;
     char            *searchName;
     char            *title;
     char            *subTitle;

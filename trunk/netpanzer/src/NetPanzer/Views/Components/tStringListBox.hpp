@@ -32,6 +32,7 @@ class DataItem
 {
 public:
     std::string text;
+    int num_lines;
     void * Data;
 };
 
@@ -47,19 +48,27 @@ private:
     
     tVScrollBar *VScrollBar;
     tHScrollBar *HScrollBar;
+    
     int StartItem;
+    int StartSubLine;
     int StartWidth;
+    
     int MaxItemView;
     int SelectedItem;
     int MaxItemWidth;
+    
+    int TotalLines;
+    int TotalPosition;
+    
     bool AutoScroll;
+    bool AutoWrap;
+    
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
 public:
 
     tStringListBox(iRect rect, StateChangedCallback* newcallback = 0);
-    virtual ~tStringListBox()
-    {}
+    virtual ~tStringListBox() {}
 
     virtual void setColor(PIX newColor);
     virtual void setStateChangedCallback(StateChangedCallback* newcallback)
@@ -72,17 +81,23 @@ public:
     virtual int getMaxItemWidth(int Index);
     virtual int getSelectedItem();
     virtual std::string getTextItem();
-    virtual void Add(const std::string S);
-    virtual void AddData(const std::string S, void * D);
+    
+    virtual void Add(const std::string& S) { AddData(S, 0); }
+    virtual void AddData(const std::string& S, void * D);
+    
     virtual void Clear(){List.clear();dirty = true;}
     virtual void Delete(int Index);
     //virtual void Sort(){sort(List.begin(), List.end());dirty = true;}
     virtual int IndexOf(const std::string S);
     virtual int Count(){return List.size();}
-    virtual void onPaint(Surface &dst, int Index);
+    virtual void onPaint(Surface &dst, int Index, int SubLine);
     virtual void setLocation(int x, int y);
     virtual void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     virtual void setAutoScroll(bool Value){AutoScroll = Value;}
+    
+    void setAutoWrap(bool autowrap);
+    
+    virtual int getNumLines( int width, const DataItem& data) { return 1; }
 }; 
 
 #endif 

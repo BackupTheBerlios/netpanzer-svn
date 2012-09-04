@@ -28,27 +28,42 @@ int tChatBox::getMaxItemWidth(int Index)
     return Surface::getTextLength(List[Index].text)+34;
 }
 
-void tChatBox::onPaint(Surface &dst, int Index)
+void tChatBox::onPaint(Surface &dst, int Index, int SubLine)
 {
-    int StartX = 3;
+    int StartX = 0;
+    PIX color = ctTexteNormal;
+    int StartChar = 0;
+    int NumPrintableChars = dst.getWidth() / 8;
+    
+    StartChar = SubLine * NumPrintableChars; // XXX not checking for out of bounds
+    
     ChatMessage *MsgData = (ChatMessage*)(List[Index].Data);
     if (MsgData)
     {
+        color = MsgData->Color;
+        
         if (MsgData->IsFlag)
         {
-            StartX = 23;
-            Surface * flag = 0;
-            flag = ResourceManager::getFlag(MsgData->FlagIndex);
-            if (flag)
+            if ( ! SubLine )
             {
-                flag->blt(dst, 1, 0);
-                dst.bltString(StartX , 4, List[Index].text.c_str(), MsgData->Color);
+                StartX = 24;
+                Surface * flag = 0;
+                flag = ResourceManager::getFlag(MsgData->FlagIndex);
+                if (flag)
+                {
+                    flag->blt(dst, 0, 0);
+                }
+                
+                NumPrintableChars -= 3;
             }
-            else dst.bltString(StartX , 4, List[Index].text.c_str(), MsgData->Color);
+            else
+            {
+                StartChar -= 3;
+            }
         } 
-        else dst.bltString(StartX , 4, List[Index].text.c_str(), MsgData->Color);
     }
-    else dst.bltString(StartX , 4, List[Index].text.c_str(), ctTexteNormal);
+    
+    dst.bltStringLen(StartX , 4, List[Index].text.c_str() + StartChar, NumPrintableChars, color);
 }
 
 void tChatBox::AddChat(std::string msg, PIX color, bool isflag, FlagID flagindex)
@@ -62,3 +77,22 @@ void tChatBox::AddChat(std::string msg, PIX color, bool isflag, FlagID flagindex
     AddData(msg, Datamsg);
 }
 
+int tChatBox::getNumLines(int width, const DataItem& data)
+{
+    int len = data.text.size() * 8;
+    
+    bool hasFlag = data.Data ? ((ChatMessage*)data.Data)->IsFlag : false;
+    
+    if ( hasFlag )
+    {
+        len += 3 * 8; // 3 more chars for the flag
+    }
+    
+    int nlines = len / width;
+    if ( len % width )
+    {
+        nlines += 1;
+    }
+    
+    return nlines;
+}

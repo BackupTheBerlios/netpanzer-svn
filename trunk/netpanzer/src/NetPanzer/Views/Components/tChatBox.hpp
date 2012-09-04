@@ -34,9 +34,12 @@ class tChatBox : public tStringListBox
 public:
     tChatBox(iRect rect, StateChangedCallback* newcallback)
         : tStringListBox(rect, newcallback)
-    {    }
+    {
+        setAutoWrap(true);
+    }
+        
     virtual int getMaxItemWidth(int Index);
-    virtual void onPaint(Surface &dst, int Index);
+    virtual void onPaint(Surface &dst, int Index, int SubLine);
     virtual void AddChat(std::string msg, PIX color, bool isflag, FlagID flagindex);
     virtual void Clear()
     {
@@ -49,6 +52,9 @@ public:
         List.clear();
         dirty = true;
     }
+    
+    int getNumLines( int width, const DataItem& data);
+    
 };
 
 #endif

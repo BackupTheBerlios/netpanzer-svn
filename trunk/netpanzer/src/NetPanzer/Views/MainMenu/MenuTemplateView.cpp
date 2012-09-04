@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Actions/Action.hpp"
 #include "Multi/PlayerNameView.hpp"
+#include "Actions/ActionManager.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -126,18 +127,6 @@ public:
         Desktop::setVisibility("MenuTemplateView", true);
         Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
         ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-    }
-};
-
-class ExitNetPanzerAction : public Action
-{
-public:
-    ExitNetPanzerAction() : Action(false) {}
-    
-    void execute()
-    {
-        Desktop::setVisibilityAllWindows(false);
-        GameManager::exitNetPanzer();
     }
 };
 
@@ -303,7 +292,7 @@ void MenuTemplateView::initPreGameOptionButtons()
     add( createMenuButton( "Host",           hostPos,    false, new ShowHostViewAction()) );
     add( createMenuButton( "Options",        optionsPos, false, new ShowOptionsViewAction()) );
     add( createMenuButton( "Help",           helpPos,    false, new ShowHelpViewAction()) );
-    add( createMenuButton( "Exit netPanzer", exitPos,    false, new ExitNetPanzerAction()) );
+    add( createMenuButton( "Exit netPanzer", exitPos,    false, ActionManager::getAction("quit")) );
     
     playButton = createMenuButton( "Play", iXY(-100, 0), true, new PlayButtonClickedAction());
     add( playButton );

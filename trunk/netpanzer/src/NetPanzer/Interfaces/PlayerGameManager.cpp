@@ -104,6 +104,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Bot/Bot.hpp"
 
 #include "Scripts/ScriptManager.hpp"
+#include "Actions/ActionManager.hpp"
 
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
@@ -238,6 +239,7 @@ void PlayerGameManager::graphicsLoop()
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()
 {
+    ActionManager::addGUIActions();
     initializeWindowSubSystem();
     return true;
 }
@@ -461,13 +463,7 @@ bool PlayerGameManager::mainLoop()
     if ( heartbeat )
         heartbeat->checkHeartbeat();
 
-    // handle SDL Events
-    if(handleSDLEvents())
-    {
-        // We got SDL_Quit, lets disconnect nicely.
-        GameManager::exitNetPanzer();
-        return false;
-    }
+    handleSDLEvents();
 
     if ( NetworkState::getNetworkStatus() == _network_state_server )
     {

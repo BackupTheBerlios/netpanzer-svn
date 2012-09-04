@@ -1398,6 +1398,24 @@ void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
     }
 } // end Surface::bltString
 
+// bltStringLen
+//---------------------------------------------------------------------------
+// Purpose: Blits the specified string of text to the screen by making
+//          calls to blitChar for each character of the string. Does not
+//          handle wrapping.
+//---------------------------------------------------------------------------
+void Surface::bltStringLen(int x, int y, const char * str, int len, const Uint8 &color)
+{
+    for (int index = 0; (index < len) && str[index] != 0; index++) {
+        // Don't attempt blank spaces.
+        if (str[index] == 32) {
+            continue;
+        }
+
+        bltChar8x8(x + (index << 3), y, str[index], color);
+    }
+} // end Surface::bltStringLen
+
 // bltStringShadowed
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
