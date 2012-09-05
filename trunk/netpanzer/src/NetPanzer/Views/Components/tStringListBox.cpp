@@ -47,12 +47,19 @@ void tStringListBox::actionPerformed(const mMouseEvent &me)
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
         (me.getModifiers() & InputEvent::BUTTON1_MASK)) 
     {
-        int tmpSelected = (me.getY()-(position.y+3))/ItemHeight;
-        if ((tmpSelected+StartItem) < (int)List.size())
+        int SelectedLine = (me.getY()-(position.y+4))/ItemHeight;
+        SelectedItem = StartItem;
+        int TmpSubLine = StartSubLine;
+        
+        while ( SelectedLine-- && SelectedItem < List.size() )
         {
-            SelectedItem = tmpSelected+StartItem;
-            dirty = true;
+            if ( ++TmpSubLine >= List[SelectedItem].num_lines )
+            {
+                SelectedItem += 1;
+                TmpSubLine = 0;
+            }
         }
+        dirty = true;
     }
 }
 
@@ -167,10 +174,10 @@ void tStringListBox::render()
     while ( (row < max_size_y) && (item_num < List.size()) )
     {
         RowPaint.fill(background);
-//        if (SelectedItem == i)
-//        {
-//            RowPaint.fill(ctTexteOver);
-//        }
+        if (SelectedItem == item_num)
+        {
+            RowPaint.fill(ctTexteOver);
+        }
         onPaint(RowPaint, item_num, subline_num);
         
         iRect r(StartWidth, 0, StartWidth+(size.x-6), ItemHeight);

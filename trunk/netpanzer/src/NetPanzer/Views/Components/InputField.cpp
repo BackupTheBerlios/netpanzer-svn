@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/KeyboardInterface.hpp"
 #include "SDL.h"
 
+#ifdef WIN32
+    #include <windows.h>
+#endif
+
 InputField::InputField()
 {
     this->has_focus = false;
@@ -111,7 +115,31 @@ void InputField::handleKeyboard()
             if (KeyboardInterface::getChar(kchar))
             {
                 was_special_key = true;
-                handleSpecialKey(kchar);
+#ifdef WIN32
+                bool ctrl_pressed = KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL);
+                if (  ctrl_pressed && kchar == SDLK_v )
+                {
+                    OpenClipboard(NULL);
+                    HANDLE clip = GetClipboardData(CF_TEXT);
+                    CloseClipboard();
+                    if (clip)
+                    {
+                        char* pntchr = (char*)clip;
+                        int count = 0;
+                        while ((*pntchr != 0) && (count < 150))
+                        {
+                            if (isprint(*pntchr))
+                            {
+                                handleNormalKey(*pntchr);
+                                count++;
+                            }
+                            pntchr++;
+                        }
+                    }
+                }
+                else
+#endif // WIN32
+                    handleSpecialKey(kchar);
             }
         }
         else

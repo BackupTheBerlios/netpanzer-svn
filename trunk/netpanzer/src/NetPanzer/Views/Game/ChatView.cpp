@@ -213,56 +213,29 @@ void ChatView::processEvents()
                 input->setText("");
             }
         }
-    #ifdef WIN32
-        else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
-                   || KeyboardInterface::getKeyState(SDLK_RCTRL))
-                  && (KeyboardInterface::getKeyPressed(SDLK_v) ))
-        {
-            OpenClipboard(NULL);
-            HANDLE clip = GetClipboardData(CF_TEXT);
-            CloseClipboard();
-            if (clip)
-            {
-                char* pntchr = (char*)clip;
-                int count = 0;
-                while ((*pntchr != 0) && (count < 150))
-                {
-                    if (isprint(*pntchr))
-                    {
-                        input->handleNormalKey(*pntchr);
-                        count++;
-                    }
-                    pntchr++;
-                }
-            }
-        }
-        else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL)
-                   || KeyboardInterface::getKeyState(SDLK_RCTRL))
+    }
+#ifdef WIN32
+    else if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
                   && (KeyboardInterface::getKeyPressed(SDLK_c) ))
+    {
+        std::string str = ChatList->getTextItem();
+        if (str != "")
         {
-            std::string str = ChatList->getTextItem();
-            if (str != "")
+            if(OpenClipboard(NULL))
             {
-                if(OpenClipboard(NULL))
-                {
-                    int pos = str.find_first_of(':')+2;
-                    std::string chaine = str.substr(pos);
-                    HGLOBAL hText = GlobalAlloc(GMEM_DDESHARE, chaine.length()+1);
-                    char * pText = (char*)GlobalLock(hText);
-                    strcpy(pText, chaine.c_str());
-                    GlobalUnlock(hText);
-                    EmptyClipboard();
-                    SetClipboardData(CF_TEXT, hText);
-                    CloseClipboard();
-                }
+                int pos = str.find_first_of(':')+2;
+                std::string chaine = str.substr(pos);
+                HGLOBAL hText = GlobalAlloc(GMEM_DDESHARE, chaine.length()+1);
+                char * pText = (char*)GlobalLock(hText);
+                strcpy(pText, chaine.c_str());
+                GlobalUnlock(hText);
+                EmptyClipboard();
+                SetClipboardData(CF_TEXT, hText);
+                CloseClipboard();
             }
-        }
-    #endif
-        else
-        {
-            View::processEvents();
         }
     }
+#endif
     else
     {
         COMMAND_PROCESSOR.process(false);
