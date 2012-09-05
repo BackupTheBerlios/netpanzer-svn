@@ -82,6 +82,8 @@ public:
     virtual int getSelectedItem();
     virtual std::string getTextItem();
     
+    int getNumVisibleLines() { return MaxItemView; }
+    
     virtual void Add(const std::string& S) { AddData(S, 0); }
     virtual void AddData(const std::string& S, void * D);
     

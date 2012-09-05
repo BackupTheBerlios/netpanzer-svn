@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 
+#define bSize (15)
+
 void tHScrollBar::initScrollBar()
 {
     Surface bitmap;

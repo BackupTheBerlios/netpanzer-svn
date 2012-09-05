@@ -16,10 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
+
+#define bSize (15)
 
 void tVScrollBar::initScrollBar()
 {
@@ -105,9 +106,12 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
         dirty = true;
     }
 
+    int bar_min = position.y+bSize+RisePos;
+    int bar_max = bar_min + bSize;
+    
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
     {
-        if (me.getY() < (position.y+bSize+RisePos)) 
+        if ( me.getY() < bar_min ) 
         {
             if (Position-LargeChange > Min) setPosition(Position-LargeChange);
             else setPosition(Min);
@@ -115,7 +119,7 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
                 callback->stateChanged(this);
             return;
         }
-        if (me.getY() > (position.y+bSize+RisePos+bSize))
+        else if ( me.getY() > bar_max )
         {
             if (Position+LargeChange < Max) setPosition(Position+LargeChange);
             else setPosition(Max);
@@ -123,7 +127,52 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
                 callback->stateChanged(this);
             return;
         }
+        else // clicked on the bar
+        {
+            bRisestate = PRESSED;
+        }
     }
+    
+    if ( (bRisestate == PRESSED) && (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED) )
+    {
+        int scroll_begin = position.y+bSize;
+        int scroll_end = scroll_begin + (size.y - (bSize * 2));
+        int mouse_y = me.getY();
+        if ( mouse_y < scroll_begin )
+        {
+            mouse_y = scroll_begin;
+        }
+        else if ( mouse_y > scroll_end )
+        {
+            mouse_y = scroll_end;
+        }
+        
+        int base_y = mouse_y - (position.y+bSize);
+        int total_size = size.y-(bSize * 2);
+        
+        int new_pos = 0;
+        if ( base_y > 0 )
+        {
+            new_pos = ( base_y * (Max-Min))/total_size;
+        }
+        
+        if ( new_pos < 0 )
+        {
+            new_pos = 0;
+        }
+        else if ( new_pos > (Max-Min) )
+        {
+            new_pos = Max-Min;
+        }
+        
+        if ( Position != (Min + new_pos) )
+        {
+            setPosition(Min + new_pos);
+            if(callback) callback->stateChanged(this);
+        }
+    }
+    
+    
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
             || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
     {
@@ -151,7 +200,7 @@ void tVScrollBar::render()
     else if (bUpstate == OVER)
     {
         bUpOver.bltTrans(surface, 0, 0);
-    } 
+    }
     else
     {
         bUpNormal.bltTrans(surface, 0, 0);
@@ -169,7 +218,8 @@ void tVScrollBar::render()
     {
         bDownNormal.bltTrans(surface, 0, size.y-bSize);
     }
-    if (bRisestate == OVER)
+    
+    if ( (bRisestate == OVER) || (bRisestate == PRESSED) )
     {
         bRiseOver.bltTrans(surface, 0,  bSize+RisePos);
     } 
@@ -185,8 +235,14 @@ void tVScrollBar::setPosition(int newPosition)
     Position = newPosition;
 
     int R = Max - Min;
-    if (R == 0) RisePos = 0;
-    else RisePos = ((Position-Min) * (size.y-(bSize*3))) / R+1 ;
+    if (R == 0)
+    {
+        RisePos = 0;
+    }
+    else
+    {
+        RisePos = ((Position-Min) * (size.y-(bSize*3))) / R+1; // XXX / R+1 or (R+1) it is different...
+    }
     dirty = true;
 }
 

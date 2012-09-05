@@ -144,6 +144,7 @@ ChatView::ChatView() : GameTemplateView()
     ChatList = new tChatBox(r, 0);
     vsbChat = new tVScrollBar();
     add(vsbChat);
+    vsbChat->setLargeChange(ChatList->getNumVisibleLines() -1);
     ChatList->setVscrollBar(vsbChat);
     ChatList->setColor(0);
     ChatList->setAutoScroll(true);
