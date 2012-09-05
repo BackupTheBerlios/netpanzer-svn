@@ -43,7 +43,6 @@ public:
     static void update(const NPString& text);
     static void append(const NPString& text);
     static void loadFinish();
-    static void loadError();
     static void show();
     static void hide();
 

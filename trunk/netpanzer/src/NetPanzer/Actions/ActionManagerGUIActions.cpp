@@ -28,10 +28,12 @@ void ActionManager::addGUIActions()
     if ( gameconfig->quickConnect )
     {
         addAction("disconnect", getAction("quit"));
+        addAction("loaderror",  getAction("quit"));
     }
     else
     {
         addAction("disconnect", new DisconnectAction());
+        addAction("loaderror",  getAction("disconnect"));
     }
     
     addAction("hide_confirmexit", new HideViewAction("AreYouSureExitView"));

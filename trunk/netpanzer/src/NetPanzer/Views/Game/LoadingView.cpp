@@ -26,28 +26,10 @@
 
 #include "Actions/Action.hpp"
 #include "Views/Components/InputField.hpp"
+#include "Actions/ActionManager.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
-
-class AbortLoadingAction : public Action
-{
-public:
-    AbortLoadingAction() : Action(false) {}
-    void execute()
-    {
-        if(gameconfig->quickConnect)
-        {
-            GameManager::exitNetPanzer();
-            return;
-        }
-        GameManager::quitNetPanzerGame();
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MenuTemplateView", true);
-        Desktop::setVisibility("MainView", true);
-        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-    }
-};
 
 class BeginPasswordConnectAction : public Action
 {
@@ -83,8 +65,11 @@ LoadingView::init()
 
     resize(800, 600);
 
-    add( Button::createTextButton("Abort", iXY(340, 15), 100, new AbortLoadingAction()));
-
+    Action * onAbort = ( gameconfig->quickConnect )
+                       ? ActionManager::getAction("quit")
+                       : ActionManager::getAction("disconnect");
+    
+    add( Button::createTextButton("Abort", iXY(340, 15), 100, onAbort));
 
     okButton = Button::createTextButton("Enter", iXY(340,100), 100, new BeginPasswordConnectAction(this));
     
@@ -216,23 +201,6 @@ LoadingView::loadFinish()
     {
         Desktop::setVisibility("GFlagSelectionView", true);
         Desktop::setActiveView("GFlagSelectionView");
-    }
-}
-
-void
-LoadingView::loadError()
-{
-    if ( gameconfig->quickConnect )
-    {
-        GameManager::exitNetPanzer();
-    }
-    else if ( Desktop::getVisible("LoadingView") )
-    {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MenuTemplateView", true);
-        Desktop::setVisibility("MainView", true);
-        ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
-        GameManager::quitNetPanzerGame();
     }
 }
 

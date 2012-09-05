@@ -321,7 +321,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         wait.changePeriod( 4 );
         while( !wait.count() );
 
-        LoadingView::loadError();
+        ActionManager::runAction("loaderror");
         return;
     }
 
@@ -341,7 +341,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         GameManager::startGameMapLoad(mapname, 20);
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s", mapname, e.what());
-        LoadingView::loadError();
+        ActionManager::runAction("loaderror");
         return;
     }
 
@@ -382,7 +382,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         SERVER->closeSession();
 
         GameControlRulesDaemon::setStateServerIdle();
-        LoadingView::loadError();
+        ActionManager::runAction("loaderror");
         return;
     }
 

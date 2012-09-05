@@ -610,14 +610,6 @@ void GameManager::setNetPanzerGameOptions()
     // nothing
 }
 
-// ******************************************************************
-void GameManager::exitNetPanzer()
-{
-    quitNetPanzerGame();
-
-    gamemanager->stopMainLoop();
-}
-
 void GameManager::quitNetPanzerGame()
 {
     if ( NetworkState::status == _network_state_client ) {

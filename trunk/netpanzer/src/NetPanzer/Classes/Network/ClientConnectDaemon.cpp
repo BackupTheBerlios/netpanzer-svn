@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 
 #include "System/Sound.hpp"
+#include "Actions/ActionManager.hpp"
 
 enum { _connect_state_idle = 0,
        _connect_state_waiting_link,
@@ -452,8 +453,9 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
             }
             break;
         case _connect_state_connect_failure : {
-                if ( failure_display_timer.count() == true ) {
-                    LoadingView::loadError();
+                if ( failure_display_timer.count() == true )
+                {
+                    ActionManager::runAction("loaderror");
                     connection_state = _connect_state_idle;
                 }
             }

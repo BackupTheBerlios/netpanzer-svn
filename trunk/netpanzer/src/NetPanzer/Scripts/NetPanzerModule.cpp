@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/FileSystem.hpp"
+#include "Actions/ActionManager.hpp"
 
 #include <sstream>
 
@@ -77,7 +78,7 @@ static int npmodule_scriptmessage (lua_State *L)
 
 static int npmodule_quit (lua_State *L)
 {
-    GameManager::exitNetPanzer();
+    ActionManager::runAction("quit");
     return 0;
 }
 

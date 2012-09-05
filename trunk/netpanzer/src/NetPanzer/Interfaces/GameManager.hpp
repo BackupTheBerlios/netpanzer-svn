@@ -79,8 +79,6 @@ public:
     static ConnectMesgServerGameSettings* getServerGameSetup();
 
 public:
-    static void exitNetPanzer();
-
     static void quitNetPanzerGame();
 
     static void setNetPanzerGameOptions();

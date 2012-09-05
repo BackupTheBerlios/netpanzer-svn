@@ -38,16 +38,26 @@ void ActionManager::deinitialize()
 {
     if ( actions )
     {
-        std::map<NPString, Action*>::iterator i = actions->begin();
+        Action * a;
+        std::map<NPString, Action*>::iterator i;
         
-        while ( i != actions->end() )
+        for ( i = actions->begin(); i != actions->end(); i = actions->begin() )
         {
-            delete i->second;
-            i++;
+            a = i->second;
+            for ( ; i != actions->end() ; )
+            {
+                if ( i->second == a )
+                {
+                    actions->erase(i++);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+            delete a;
         }
-        
-        actions->clear();
-        
+
         delete actions;
         actions = 0;
     }
