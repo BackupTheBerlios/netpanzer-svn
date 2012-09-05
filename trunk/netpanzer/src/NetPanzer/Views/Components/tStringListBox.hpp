@@ -76,6 +76,8 @@ public:
         callback = newcallback;
     }
     virtual void setVscrollBar(tVScrollBar *newVScrollBar);
+    tVScrollBar * getVscrollBar() { return VScrollBar; }
+    
     virtual void setHscrollBar(tHScrollBar *newHScrollBar);
     virtual void stateChanged(Component* source);
     virtual int getMaxItemWidth(int Index);

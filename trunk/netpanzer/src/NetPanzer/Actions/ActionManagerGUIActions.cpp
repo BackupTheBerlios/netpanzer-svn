@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "HideViewAction.hpp"
 #include "DisconnectAction.hpp"
+#include "ChatPageUpAction.hpp"
+#include "ChatPageDownAction.hpp"
 
 void ActionManager::addGUIActions()
 {
@@ -38,5 +40,8 @@ void ActionManager::addGUIActions()
     
     addAction("hide_confirmexit", new HideViewAction("AreYouSureExitView"));
     addAction("hide_confirmdisconnect", new HideViewAction("AreYouSureResignView"));
+    
+    addAction("chat_pgup", new ChatPageUpAction());
+    addAction("chat_pgdown", new ChatPageDownAction());
     
 }

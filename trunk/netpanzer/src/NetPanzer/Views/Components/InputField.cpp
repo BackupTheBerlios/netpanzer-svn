@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "SDL.h"
+#include "Actions/ActionManager.hpp"
 
 #ifdef WIN32
     #include <windows.h>
@@ -224,6 +225,14 @@ void InputField::handleSpecialKey(int key)
         case SDLK_END:
             cursor_pos = text.length();
             fixCursorPos();
+            break;
+            
+        case SDLK_PAGEUP:
+            ActionManager::runAction("chat_pgup");
+            break;
+            
+        case SDLK_PAGEDOWN:
+            ActionManager::runAction("chat_pgdown");
             break;
 
         default:

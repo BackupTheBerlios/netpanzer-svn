@@ -60,6 +60,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 #include "Views/Game/ChatView.hpp"
+#include "Actions/ActionManager.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
@@ -435,6 +436,18 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
     	WorldViewInterface::scroll_left( 15 );
     }
+    
+    if ( KeyboardInterface::getKeyPressed( SDLK_PAGEUP ) )
+    {
+        ActionManager::runAction("chat_pgup");
+    }
+    
+    if ( KeyboardInterface::getKeyPressed( SDLK_PAGEDOWN ) )
+    {
+        ActionManager::runAction("chat_pgdown");
+    }
+    
+    
 }
 
 void

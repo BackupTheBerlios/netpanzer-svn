@@ -65,6 +65,8 @@ public:
     
     void switchChatMode();
     
+    tChatBox * getChatBox() { return ChatList; }
+    
 };
 
 #endif

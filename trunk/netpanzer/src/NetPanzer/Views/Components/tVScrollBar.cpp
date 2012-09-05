@@ -244,6 +244,8 @@ void tVScrollBar::setPosition(int newPosition)
         RisePos = ((Position-Min) * (size.y-(bSize*3))) / R+1; // XXX / R+1 or (R+1) it is different...
     }
     dirty = true;
+    
+    if(callback) callback->stateChanged(this);
 }
 
 void tVScrollBar::setMax(int newMax)
