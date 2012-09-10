@@ -736,30 +736,6 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
 
 // ******************************************************************
 
-void UnitInterface::unitSyncMessage(const NetMessage *net_message)
-{
-    const UnitIniSyncMessage* sync_message 
-        = (const UnitIniSyncMessage *) net_message;
-
-    try {
-        std::map<UnitID, UnitBase*>::iterator uit = units.find(sync_message->getUnitID());
-        if ( uit != units.end() ) {
-            LOGGER.warning("UnitInterface::unitSyncMessage() Received an existing unit [%d]",
-                            sync_message->getUnitID());
-            return;
-        }
-        UnitBase* unit = newUnit(sync_message->unit_type,
-                iXY(sync_message->getLocX(), sync_message->getLocY()),
-                sync_message->getPlayerID(), sync_message->getUnitID());
-        unit->in_sync_flag = false;
-        addNewUnit(unit);
-    } catch(std::exception& e) {
-        LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't sync unit '%s'", e.what());
-    }
-}
-
-// ******************************************************************
-
 void UnitInterface::unitOpcodeMessage(const NetMessage *net_message, size_t size)
 {
     UnitOpcodeDecoder decoder;
@@ -830,9 +806,6 @@ void UnitInterface::unitSyncIntegrityCheckMessage(const NetMessage* )
 void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size)
 {
     switch(net_message->message_id)  {
-        case _net_message_id_ini_sync_mesg:
-            unitSyncMessage(net_message);
-            break;
 
         case _net_message_id_opcode_mesg:
             unitOpcodeMessage(net_message, size);

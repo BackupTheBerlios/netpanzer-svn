@@ -30,50 +30,6 @@ enum { _threat_level_all_clear,
        _threat_level_defending
      };
 
-#ifdef MSVC
-#pragma pack(1)
-#endif
-
-class NetworkUnitState
-{
-public:
-    NetworkUnitState()
-    { }
-
-private:
-    Uint8     unit_type;
-
-    Sint32     location_x;
-    Sint32     location_y;
-    Sint32     bbox_min_x;
-    Sint32     bbox_min_y;
-    Sint32     bbox_max_x;
-    Sint32     bbox_max_y;
-    
-    NetworkAngleInt body_angle;
-    NetworkAngleInt turret_angle;
-
-    Uint16    orientation;
-    Uint16    speed_rate;
-    Uint16    speed_factor;
-
-    Uint16    reload_time;
-    Sint16     max_hit_points;
-    Sint16     hit_points;
-    Uint16    damage_factor;
-    Uint32    weapon_range;
-    Uint32    defend_range;
-
-    Uint8 threat_level;
-    Uint8 lifecycle_state;
-
-    friend class UnitState;
-} __attribute__((packed));
-
-#ifdef MSVC
-#pragma pack()
-#endif
-
 class UnitState
 {
 public:
@@ -111,9 +67,10 @@ public:
 
     int percentDamageInt();
     float percentDamageFloat();
-
-    NetworkUnitState getNetworkUnitState() const;
-    void setFromNetworkUnitState(const NetworkUnitState& state);
+    
+private:
+    UnitState(const UnitState&);
+    void operator=(const UnitState&);
 };
 
 #endif

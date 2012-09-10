@@ -164,7 +164,6 @@ protected:
         opcode_encoder.encode(opcode);
     }
 
-    static void unitSyncMessage(const NetMessage *net_message );
     static void unitOpcodeMessage(const NetMessage *net_message, size_t size);
     static void unitDestroyMessage(const NetMessage *net_message );
     static void unitCreateMessage(const NetMessage *net_message );

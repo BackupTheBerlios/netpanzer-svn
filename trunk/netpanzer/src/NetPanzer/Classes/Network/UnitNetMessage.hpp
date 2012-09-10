@@ -54,55 +54,6 @@ public:
     }
 } __attribute__((packed));
 
-
-class UnitIniSyncMessage : public NetMessage
-{
-public:
-    Uint8 unit_type;
-private:
-    PlayerID player_id;
-    Uint16 unit_id;
-    Uint32 location_x;
-    Uint32 location_y;
-public:
-    NetworkUnitState unit_state;
-
-    UnitIniSyncMessage(Uint8 unit_type, PlayerID player_id, UnitID unit_id,
-        Uint32 location_x, Uint32 location_y)
-    {
-        message_class = _net_message_class_unit;
-        message_id = _net_message_id_ini_sync_mesg;
-        this->unit_type = unit_type;
-        //this->player_id = htol16(player_id);
-        this->player_id = player_id;
-        this->unit_id = htol16(unit_id);
-        this->location_x = htol32(location_x);
-        this->location_y = htol32(location_y);
-    }
-      
-    unsigned short realSize() const
-    {
-        return( sizeof( UnitIniSyncMessage ) );
-    }
-    Uint32 getLocX() const
-    {
-        return ltoh32(location_x);
-    }
-    Uint32 getLocY() const
-    {
-        return ltoh32(location_y);
-    }
-
-    UnitID getUnitID() const
-    {
-        return ltoh16(unit_id);
-    }
-    PlayerID getPlayerID() const
-    {
-        return player_id;
-    }
-} __attribute__((packed));
-
 // ** NOTE: A big, mother fucking HACK
 
 class UnitRemoteDestroy : public NetMessage
