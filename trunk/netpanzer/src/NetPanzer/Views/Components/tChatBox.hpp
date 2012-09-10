@@ -58,8 +58,7 @@ public:
             ChatMessage *MsgData = (ChatMessage*)(f->Data);
             delete MsgData;
         }
-        List.clear();
-        dirty = true;
+        tStringListBox::Clear();
     }
     
     int getNumLines( int width, const DataItem& data);

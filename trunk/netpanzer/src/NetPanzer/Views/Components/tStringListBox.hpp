@@ -90,7 +90,7 @@ public:
     virtual void AddData(const std::string& S, void * D);
     virtual void deleteData(const DataItem& data) { /* to be overriden */}
     
-    virtual void Clear(){List.clear();dirty = true;}
+    virtual void Clear(){List.clear();dirty = true; SelectedItem = List.end(); StartItem=List.end(); }
     virtual int Count(){return List.size();}
     virtual void onPaint(Surface &dst, const DataItem& data, int SubLine);
     virtual void setLocation(int x, int y);
