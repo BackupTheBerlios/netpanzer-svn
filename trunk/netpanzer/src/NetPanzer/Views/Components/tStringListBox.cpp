@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 
+#define MAX_CHAT_LINES (2000)
+
 tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
 {
     VScrollBar = 0;
@@ -29,13 +31,13 @@ tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
     setLocation(rect.min);
     setSize(rect.getSizeX(), rect.getSizeY());
     background = ctWindowsbackground;
-    StartItem = 0;
+    StartItem = List.end();
     StartSubLine = 0;
     StartWidth = 0;
     TotalLines = 0;
     TotalPosition = 0;
     MaxItemWidth = size.x;
-    SelectedItem = -1;
+    SelectedItem = List.end();
     MaxItemView = (size.y-5)/ItemHeight;
     AutoScroll = false;
     AutoWrap = false;
@@ -51,11 +53,13 @@ void tStringListBox::actionPerformed(const mMouseEvent &me)
         SelectedItem = StartItem;
         int TmpSubLine = StartSubLine;
         
-        while ( SelectedLine-- && SelectedItem < List.size() )
+        SelectedItem = StartItem;
+        
+        while ( SelectedLine-- && SelectedItem != List.end() )
         {
-            if ( ++TmpSubLine >= List[SelectedItem].num_lines )
+            if ( ++TmpSubLine >= (*SelectedItem).num_lines )
             {
-                SelectedItem += 1;
+                SelectedItem++;
                 TmpSubLine = 0;
             }
         }
@@ -63,20 +67,18 @@ void tStringListBox::actionPerformed(const mMouseEvent &me)
     }
 }
 
-int tStringListBox::getSelectedItem()
-{
-    return SelectedItem;
-}
-
 std::string tStringListBox::getTextItem()
 {
-    if (SelectedItem < 0) return "";
-    else return List[SelectedItem].text;
+    if ( SelectedItem == List.end() )
+    {
+        return "";
+    }
+    return (*SelectedItem).text;
 }
 
-int tStringListBox::getMaxItemWidth(int Index)
+int tStringListBox::getMaxItemWidth(const DataItem& data)
 {
-    return Surface::getTextLength(List[Index].text)+10;
+    return Surface::getTextLength(data.text)+10;
 }
 
 void tStringListBox::AddData(const std::string& S, void * D)
@@ -88,10 +90,40 @@ void tStringListBox::AddData(const std::string& S, void * D)
     data.Data = D;
     data.num_lines = getNumLines(DisplaySize, data);
     List.push_back(data);
+
+    if ( List.size() > MAX_CHAT_LINES )
+    {
+        bool was_first = StartItem == List.begin();
+        bool was_selected = SelectedItem == List.begin();
+        
+        const DataItem& d = (*List.begin());
+        
+        TotalLines -= d.num_lines;
+        TotalPosition = std::max(0, TotalPosition - d.num_lines);
+        
+        deleteData(d);
+        
+        List.pop_front();
+        
+        if ( was_first )
+        {
+            StartItem = List.begin();
+        }
+        
+        if ( was_selected )
+        {
+            SelectedItem = List.end();
+        }
+    }
+    
+    if ( StartItem == List.end() )
+    {
+        StartItem = List.begin();
+    }
     
     TotalLines += data.num_lines;
     
-    int HSize = getMaxItemWidth(List.size()-1);
+    int HSize = getMaxItemWidth(data);
     
     if (MaxItemWidth < HSize)
     {
@@ -100,7 +132,6 @@ void tStringListBox::AddData(const std::string& S, void * D)
     
     if (VScrollBar)
     {
-//        VScrollBar->setMax(List.size()-MaxItemView);
         VScrollBar->setMax(TotalLines-MaxItemView);
     }
     
@@ -121,8 +152,8 @@ void tStringListBox::AddData(const std::string& S, void * D)
             {
                 if ( (--StartSubLine) < 0 )
                 {
-                    StartItem -= 1;
-                    StartSubLine = List[StartItem].num_lines - 1;
+                    StartItem--;
+                    StartSubLine = (*StartItem).num_lines - 1;
                 }
                 TotalPosition -= 1;
             }
@@ -131,15 +162,14 @@ void tStringListBox::AddData(const std::string& S, void * D)
         {
             while ( TotalPosition < new_pos )
             {
-                if ( (++StartSubLine) >= List[StartItem].num_lines )
+                if ( (++StartSubLine) >= (*StartItem).num_lines )
                 {
-                    StartItem += 1;
+                    StartItem++;
                     StartSubLine = 0;
                 }
                 TotalPosition += 1;
             }
         }
-//        StartItem = VScrollBar->getPosition();
     }
     
     dirty = true;
@@ -149,9 +179,6 @@ void tStringListBox::render()
 {
     surface.fill(background);
     surface.drawRect(surface.getRect(), ctWindowsBorder);
-    int MaxItem = MaxItemView-StartItem;
-    if ( (StartItem+MaxItemView) > (int)List.size()) MaxItem  = List.size();
-    else MaxItem = StartItem+MaxItemView;
     int row = 4;
     
     int maxw = 0;
@@ -167,18 +194,19 @@ void tStringListBox::render()
     Surface RowPaint(maxw, ItemHeight, 1);
     Surface Bitmap(size.x-6, ItemHeight, 1);
     
-    int item_num = StartItem;
+    std::list<DataItem>::iterator item = StartItem;
     int subline_num = StartSubLine;
     int max_size_y = size.y - ItemHeight;
     
-    while ( (row < max_size_y) && (item_num < List.size()) )
+    while ( (row < max_size_y) && (item != List.end()) )
     {
         RowPaint.fill(background);
-        if (SelectedItem == item_num)
+        if ( SelectedItem == item )
         {
             RowPaint.fill(ctTexteOver);
         }
-        onPaint(RowPaint, item_num, subline_num);
+        
+        onPaint(RowPaint, *item, subline_num);
         
         iRect r(StartWidth, 0, StartWidth+(size.x-6), ItemHeight);
         Bitmap.grab(RowPaint, r);
@@ -186,17 +214,17 @@ void tStringListBox::render()
         
         row += ItemHeight;
         subline_num += 1;
-        if ( subline_num >= List[item_num].num_lines )
+        if ( subline_num >= (*item).num_lines )
         {
             subline_num = 0;
-            item_num += 1;
+            item++;
         }
     }
 }
 
-void tStringListBox::onPaint(Surface &dst, int Index, int SubLine)
+void tStringListBox::onPaint(Surface &dst, const DataItem& data, int SubLine)
 {
-    dst.bltString(1 , 4, List[Index].text.c_str(), ctTexteNormal);
+    dst.bltString(1 , 4, data.text.c_str(), ctTexteNormal);
 }
 
 void tStringListBox::setColor(PIX newColor)
@@ -234,9 +262,6 @@ void tStringListBox::stateChanged(Component* source)
 {
     if (source == VScrollBar)
     {
-        
-//        StartItem = VScrollBar->getPosition();
-        
         int new_pos = VScrollBar->getPosition();
         
         if ( new_pos < TotalPosition )
@@ -245,8 +270,8 @@ void tStringListBox::stateChanged(Component* source)
             {
                 if ( (--StartSubLine) < 0 )
                 {
-                    StartItem -= 1;
-                    StartSubLine = List[StartItem].num_lines - 1;
+                    StartItem--;
+                    StartSubLine = (*StartItem).num_lines - 1;
                 }
                 TotalPosition -= 1;
             }
@@ -255,9 +280,9 @@ void tStringListBox::stateChanged(Component* source)
         {
             while ( TotalPosition < new_pos )
             {
-                if ( (++StartSubLine) >= List[StartItem].num_lines )
+                if ( (++StartSubLine) >= (*StartItem).num_lines )
                 {
-                    StartItem += 1;
+                    StartItem++;
                     StartSubLine = 0;
                 }
                 TotalPosition += 1;
@@ -271,24 +296,6 @@ void tStringListBox::stateChanged(Component* source)
         StartWidth = HScrollBar->getPosition();
         dirty = true;
     }
-}
-
-void tStringListBox::Delete(int Index)
-{
-    if (Index > (int)List.size())
-    {
-        List.erase(List.begin()+Index);
-        dirty = true;
-    }
-}
-
-int tStringListBox::IndexOf(const std::string S)
-{
-    for (int i = 0; i < (int)List.size(); ++i)
-    {
-        if (S == List[i].text) return i;
-    }
-    return -1;
 }
 
 void tStringListBox::setLocation(int x, int y)
@@ -317,7 +324,7 @@ void tStringListBox::setAutoWrap(bool autowrap)
             int DisplaySize = size.x - 6;
             int c;
             
-            std::vector<DataItem>::iterator i = List.begin();
+            std::list<DataItem>::iterator i = List.begin();
             while ( i != List.end() )
             {
                 c = getNumLines( DisplaySize, *i);

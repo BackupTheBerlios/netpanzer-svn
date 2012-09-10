@@ -32,8 +32,8 @@ private:
 public:
     tPlayerStateBox(iRect rect, StateChangedCallback* newcallback);
 
-    virtual int getMaxItemWidth(int Index);
-    virtual void onPaint(Surface &dst, int Index);
+    virtual int getMaxItemWidth(const DataItem& data);
+    virtual void onPaint(Surface &dst, const DataItem& data);
     void UpdateState(bool ForceUpdate);
     void setDrawFlags(bool df);
     void setShowTeam(Uint8 Team_Number);

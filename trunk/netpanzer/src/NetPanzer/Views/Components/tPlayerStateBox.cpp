@@ -34,19 +34,19 @@ tPlayerStateBox::tPlayerStateBox(iRect rect, StateChangedCallback* newcallback)
     TeamNumber = 0;
 }
 
-int tPlayerStateBox::getMaxItemWidth(int Index)
+int tPlayerStateBox::getMaxItemWidth(const DataItem& data)
 {
     if (DrawFlags)
-        return Surface::getTextLength(List[Index].text)+34;
+        return Surface::getTextLength(data.text)+34;
     else
-        return Surface::getTextLength(List[Index].text)+10;
+        return Surface::getTextLength(data.text)+10;
 }
 
-void tPlayerStateBox::onPaint(Surface &dst, int Index)
+void tPlayerStateBox::onPaint(Surface &dst, const DataItem& data)
 {
     char statBuf[256];
     int StartX = 1;
-    PlayerState *state = (PlayerState*)(List[Index].Data);
+    PlayerState *state = (PlayerState*)(data.Data);
     if (DrawFlags)
     {
         Surface * flag = 0;

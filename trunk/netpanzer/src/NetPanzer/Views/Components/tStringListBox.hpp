@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __tStringListBox_hpp__
 #define __tStringListBox_hpp__
 
-#include <vector>
+//#include <vector>
+#include <list>
 #include <string>
 #include "Component.hpp"
 #include "MouseEvent.hpp"
@@ -39,7 +40,7 @@ public:
 class tStringListBox : public Component, public StateChangedCallback
 {
 protected:
-    std::vector<DataItem> List;
+    std::list<DataItem> List;
 
 private:
     StateChangedCallback* callback;
@@ -49,12 +50,12 @@ private:
     tVScrollBar *VScrollBar;
     tHScrollBar *HScrollBar;
     
-    int StartItem;
+    std::list<DataItem>::iterator StartItem;
     int StartSubLine;
     int StartWidth;
     
     int MaxItemView;
-    int SelectedItem;
+    std::list<DataItem>::iterator SelectedItem;
     int MaxItemWidth;
     
     int TotalLines;
@@ -80,21 +81,18 @@ public:
     
     virtual void setHscrollBar(tHScrollBar *newHScrollBar);
     virtual void stateChanged(Component* source);
-    virtual int getMaxItemWidth(int Index);
-    virtual int getSelectedItem();
+    virtual int getMaxItemWidth(const DataItem& data);
     virtual std::string getTextItem();
     
     int getNumVisibleLines() { return MaxItemView; }
     
     virtual void Add(const std::string& S) { AddData(S, 0); }
     virtual void AddData(const std::string& S, void * D);
+    virtual void deleteData(const DataItem& data) { /* to be overriden */}
     
     virtual void Clear(){List.clear();dirty = true;}
-    virtual void Delete(int Index);
-    //virtual void Sort(){sort(List.begin(), List.end());dirty = true;}
-    virtual int IndexOf(const std::string S);
     virtual int Count(){return List.size();}
-    virtual void onPaint(Surface &dst, int Index, int SubLine);
+    virtual void onPaint(Surface &dst, const DataItem& data, int SubLine);
     virtual void setLocation(int x, int y);
     virtual void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     virtual void setAutoScroll(bool Value){AutoScroll = Value;}

@@ -38,12 +38,21 @@ public:
         setAutoWrap(true);
     }
         
-    virtual int getMaxItemWidth(int Index);
-    virtual void onPaint(Surface &dst, int Index, int SubLine);
+    virtual int getMaxItemWidth(const DataItem& data);
+    virtual void onPaint(Surface &dst, const DataItem& data, int SubLine);
     virtual void AddChat(std::string msg, PIX color, bool isflag, FlagID flagindex);
+    void deleteData(const DataItem& data)
+    {
+        ChatMessage *MsgData = (ChatMessage*)(data.Data);
+        if ( MsgData )
+        {
+            delete MsgData;
+        }
+    }
+    
     virtual void Clear()
     {
-        std::vector<DataItem>::iterator f;
+        std::list<DataItem>::iterator f;
         for (f = List.begin(); f != List.end(); f++)
         {
             ChatMessage *MsgData = (ChatMessage*)(f->Data);

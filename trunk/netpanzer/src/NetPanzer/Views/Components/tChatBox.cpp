@@ -23,12 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 
-int tChatBox::getMaxItemWidth(int Index)
+int tChatBox::getMaxItemWidth(const DataItem& data)
 {
-    return Surface::getTextLength(List[Index].text)+34;
+    return Surface::getTextLength(data.text)+34;
 }
 
-void tChatBox::onPaint(Surface &dst, int Index, int SubLine)
+void tChatBox::onPaint(Surface &dst, const DataItem& data, int SubLine)
 {
     int StartX = 0;
     PIX color = ctTexteNormal;
@@ -37,7 +37,7 @@ void tChatBox::onPaint(Surface &dst, int Index, int SubLine)
     
     StartChar = SubLine * NumPrintableChars; // XXX not checking for out of bounds
     
-    ChatMessage *MsgData = (ChatMessage*)(List[Index].Data);
+    ChatMessage *MsgData = (ChatMessage*)(data.Data);
     if (MsgData)
     {
         color = MsgData->Color;
@@ -63,7 +63,7 @@ void tChatBox::onPaint(Surface &dst, int Index, int SubLine)
         } 
     }
     
-    dst.bltStringLen(StartX , 4, List[Index].text.c_str() + StartChar, NumPrintableChars, color);
+    dst.bltStringLen(StartX , 4, data.text.c_str() + StartChar, NumPrintableChars, color);
 }
 
 void tChatBox::AddChat(std::string msg, PIX color, bool isflag, FlagID flagindex)
