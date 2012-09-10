@@ -216,9 +216,9 @@ static void chatMessageRequest(const NetPacket* packet)
 
         } // ** switch
 
-        // TODO add unitcolor
-//        ConsoleInterface::postMessage(color, true, player_state->getFlag(),
-//                                      "%s: %s", player_state->getName().c_str(), text.c_str());
+        
+        LOGGER.debug("C: %s: %s", player_state->getName().c_str(), text.c_str());
+        
         ChatView *v = (ChatView*) Desktop::getView("ChatView");
         if (v)
             v->postMessage(color, true, player_state->getFlag(),
