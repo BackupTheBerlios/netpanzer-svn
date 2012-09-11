@@ -126,46 +126,6 @@ public:
 }
 __attribute__((packed));
 
-class UMesgWeaponHit : public UnitMessage
-{
-private:
-    Uint16 owner_id;
-    Sint32  hit_location_x;
-    Sint32  hit_location_y;
-    Uint16 damage_factor;
-        
-public:
-    void setOwnerUnitID(UnitID id)
-    {
-        owner_id = htol16(id);
-    }
-
-    UnitID getOwnerUnitID() const
-    {
-        return ltoh16(owner_id);
-    }
-
-    void setHitLocation(const iXY& point)
-    {
-        hit_location_x = htol32(point.x);
-        hit_location_y = htol32(point.y);
-    }
-
-    iXY getHitLocation() const
-    {
-        return iXY(ltoh32(hit_location_x), ltoh32(hit_location_y));
-    }
-
-    void setDamageFactor(Uint16 damage_factor)
-    {
-        this->damage_factor = htol16(damage_factor);
-    }
-    Uint16 getDamageFactor() const
-    {
-        return ltoh16(damage_factor);
-    }
-} __attribute__((packed));
-
 class UMesgEndLifeCycleUpdate : public UnitMessage
 {
 private:
@@ -193,41 +153,6 @@ public:
     UnitID getDestroyer() const
     {
         return ltoh16(destroyer);
-    }
-}
-__attribute__((packed));
-
-enum { _select_box_allie_visibility,
-       _select_box_flag_visiblity,
-       _select_box_is_allied
-     };
-
-class UMesgUpdateSelectBoxInfo : public UnitMessage
-{
-public:
-    Uint8 request_type;
-    Uint8 allie_flag_visiblity;
-    Uint8 flag_visiblity;
-    Uint8 allied_state;
-
-    void set(unsigned char request, bool state_value)
-    {
-        message_id = _umesg_update_select_box_info;
-        request_type = request;
-        switch( request ) {
-        case _select_box_allie_visibility :
-            allie_flag_visiblity = state_value;
-            break;
-
-        case _select_box_flag_visiblity :
-            flag_visiblity = state_value;
-            break;
-
-        case _select_box_is_allied :
-            allied_state = state_value;
-            break;
-
-        } // ** switch
     }
 }
 __attribute__((packed));

@@ -75,8 +75,10 @@ void Weapon::fsmFlight( void )
 {
     bool end_cycle = false;
 
-    do {
-        switch( fsmFlight_state ) {
+    do
+    {
+        switch( fsmFlight_state )
+        {
             case _fsmFlight_idle:
                 end_cycle = true;
                 break;
@@ -88,16 +90,10 @@ void Weapon::fsmFlight( void )
                 end_cycle = true;
                 break;
 
-            case _fsmFlight_on_target: {
-                UMesgWeaponHit weapon_hit;
-
-                if (NetworkState::status == _network_state_server) {
-                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
-                    weapon_hit.message_id = _umesg_weapon_hit;
-                    weapon_hit.setOwnerUnitID(owner_id);
-                    weapon_hit.setHitLocation(location);
-                    weapon_hit.setDamageFactor(damage_factor);
-                    UnitInterface::sendMessage( &weapon_hit );
+            case _fsmFlight_on_target:
+                if (NetworkState::status == _network_state_server)
+                {
+                    UnitInterface::weaponHit(owner_id, location, damage_factor);
                 }
 
                 fsmFlight_state = _fsmFlight_idle;
@@ -107,11 +103,9 @@ void Weapon::fsmFlight( void )
                 sound->playSound("hit_target");
 
                 // **  Particle Shit
-                iXY loc = iXY( location.x, location.y );
-                ParticleInterface::addMiss(loc, Weapon::owner_type_id);
+                ParticleInterface::addMiss(location, Weapon::owner_type_id);
                 end_cycle = true;
                 break;
-            }
         }
     } while ( end_cycle == false );
 }

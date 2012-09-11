@@ -102,6 +102,8 @@ public:
 
     static UnitBase* getUnit(UnitID unit_id);
 
+    static void weaponHit(const UnitID from_unit, const iXY& location, const Uint16 damage_factor);
+    
     static void processNetPacket(const NetPacket* packet);
     static void sendMessage(const UnitMessage* message,
             const PlayerState* player = 0);

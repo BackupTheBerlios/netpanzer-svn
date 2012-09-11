@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 
+#include "Types/iXY.hpp"
 #include "ArrayUtil/BoundBox.hpp"
 #include "Types/Angle.hpp"
-
 #include "UnitLifecycles.hpp"
 
 enum { _threat_level_all_clear,

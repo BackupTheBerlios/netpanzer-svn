@@ -1929,14 +1929,9 @@ void Vehicle::messageAICommand(const UnitMessage* message)
 }
 
 
-void Vehicle::messageWeaponHit(const UnitMessage *message)
+void Vehicle::weaponHit(const UnitID from_unit, const Uint16 damage_factor)
 {
-    const UMesgWeaponHit *weapon_hit = (const UMesgWeaponHit *) message;
-
-    if (!unit_state.bounds(weapon_hit->getHitLocation()))
-        return;
-
-    unit_state.hit_points -= weapon_hit->getDamageFactor();
+    unit_state.hit_points -= damage_factor;
     unit_state.threat_level = _threat_level_under_attack;
     threat_level_under_attack_timer.changePeriod(
             GameConfig::interface_attacknotificationtime);
@@ -1953,42 +1948,13 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
         external_ai_event = _external_event_pending_unit_destruct;
 
         UMesgEndLifeCycleUpdate lifecycle_update;
-        lifecycle_update.set(id, weapon_hit->getOwnerUnitID(),
-                unit_state.unit_type);
+        lifecycle_update.set(id, from_unit, unit_state.unit_type);
         UnitInterface::sendMessage(&lifecycle_update);
 
         // ** Note: Temp
         iXY current_map_loc;
         MapInterface::pointXYtoMapXY(unit_state.location, current_map_loc);
         UnitBlackBoard::unmarkUnitLoc(current_map_loc);
-    }
-}
-
-void Vehicle::messageSelectBoxUpdate(const UnitMessage* message)
-{
-    const UMesgUpdateSelectBoxInfo *select_box_update
-        = (const UMesgUpdateSelectBoxInfo *) message;
-
-    switch (select_box_update->request_type)
-    {
-        case _select_box_allie_visibility:
-        {
-            select_info_box.setAllieIcon(select_box_update->allie_flag_visiblity );
-            break;
-        }
-        break;
-
-        case _select_box_flag_visiblity:
-        {
-            select_info_box.setFlagIcon( select_box_update->flag_visiblity );
-            break;
-        }
-
-        case _select_box_is_allied:
-        {
-            select_info_box.setAllieState( select_box_update->allied_state );
-            break;
-        }
     }
 }
 
@@ -2012,14 +1978,6 @@ void Vehicle::processMessage(const UnitMessage* message)
     {
         case _umesg_ai_command:
             messageAICommand(message);
-            break;
-
-        case _umesg_weapon_hit:
-            messageWeaponHit(message);
-            break;
-
-        case _umesg_update_select_box_info:
-            messageSelectBoxUpdate(message);
             break;
 
         case _umesg_self_destruct:

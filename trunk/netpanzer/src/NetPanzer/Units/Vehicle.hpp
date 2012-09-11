@@ -234,8 +234,7 @@ protected:
     void setCommandManualFire(const UMesgAICommand* message);
 
     void messageAICommand(const UnitMessage* message);
-    void messageWeaponHit(const UnitMessage* message);
-    void messageSelectBoxUpdate(const UnitMessage* message);
+    void weaponHit(const UnitID from_unit, const Uint16 damage_factor);
     void messageSelfDestruct(const UnitMessage* message);
     
     void setUnitProperties( unsigned char utype );

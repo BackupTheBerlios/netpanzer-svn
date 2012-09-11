@@ -848,3 +848,17 @@ void UnitInterface::destroyPlayerUnits(PlayerID player_id)
     }
 }
 
+void UnitInterface::weaponHit(  const UnitID from_unit,
+                                const iXY& location,
+                                const Uint16 damage_factor)
+{
+    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+    {
+        UnitBase* unit = i->second;
+        if ( unit->unit_state.bounds(location) )
+        {
+            unit->weaponHit( from_unit, damage_factor);
+        }
+    }
+}
+

@@ -46,6 +46,8 @@ public:
     virtual void syncUnit() = 0;
     virtual void offloadGraphics(SpriteSorter& ) = 0;
     virtual void soundSelected() = 0;
+    
+    virtual void weaponHit(const UnitID from_unit, const Uint16 damage_factor) = 0;
 
     bool isWeaponInRange(const iXY& loc) const
     {
