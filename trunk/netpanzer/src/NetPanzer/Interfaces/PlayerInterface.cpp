@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/VoteManager.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -672,11 +673,20 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
     case _net_message_id_player_team_score_sync :
         TeamManager::receiveScores(message);
         break;
+    
+    case _net_message_id_player_vote_request :
+        VoteManager::netMessageReceiveRequestVote(message, packet->fromPlayer);
+        break;
+    
+    case _net_message_id_player_vote :
+        VoteManager::netMessageVoteRequest(message);
+        break;
 
     case _net_message_id_player_flagtimer_update :
         const PlayerFlagTimerUpdate* pftu = (const PlayerFlagTimerUpdate*)message;
         gameconfig->game_changeflagtime = pftu->getflagtimer();
         break;
+    
     }
 }
  

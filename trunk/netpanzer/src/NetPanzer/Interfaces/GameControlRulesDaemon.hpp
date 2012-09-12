@@ -66,6 +66,7 @@ public:
     static void setDedicatedServer();
 
     static void forceMapChange(std::string map);
+    static void forceEndRound();
 
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();

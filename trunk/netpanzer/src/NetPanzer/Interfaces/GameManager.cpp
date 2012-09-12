@@ -209,7 +209,7 @@ void GameManager::reinitializeGameLogic()
 bool GameManager::resetGameLogic()
 {
     PlayerInterface::reset();
-    TeamManager::reset();
+    if (GameConfig::game_teammode) TeamManager::reset();
     UnitInterface::reset();
     UnitBlackBoard::initializeBlackBoard();
     PathScheduler::initialize();

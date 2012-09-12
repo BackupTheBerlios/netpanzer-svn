@@ -281,9 +281,9 @@ void GameControlRulesDaemon::mapCycleFsmServer()
  
                 GameManager::dedicatedLoadGameMap(
                     GameConfig::game_map->c_str());
- 
+
                 GameManager::resetGameLogic();
- 
+
                 map_cycle_fsm_server_map_load_timer.changePeriod(_MAP_CYCLE_MAP_LOAD_WAIT_PERIOD);
                 map_cycle_fsm_server_map_load_timer.reset();
                 map_cycle_fsm_server_state = _map_cycle_server_state_wait_for_client_map_load;
@@ -455,6 +455,15 @@ void GameControlRulesDaemon::forceMapChange(std::string _nextmap)
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
     GameControlRulesDaemon::game_state = _game_state_completed;
 }
+
+void GameControlRulesDaemon::forceEndRound()
+{
+    PlayerInterface::lockPlayerStats();
+ 
+    map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
+    GameControlRulesDaemon::game_state = _game_state_completed;
+}
+
  
 void GameControlRulesDaemon::checkGameRules()
 {

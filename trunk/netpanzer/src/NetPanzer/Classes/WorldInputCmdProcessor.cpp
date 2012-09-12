@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
+#include "Interfaces/VoteManager.hpp"
 
 #include "Units/UnitInterface.hpp"
 
@@ -347,6 +348,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if ( KeyboardInterface::getKeyPressed(SDLK_f) )
     {
         GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
+    }
+    
+    if ( KeyboardInterface::getKeyPressed(SDLK_v) )
+    {
+        //if (GameConfig::game_teammode)
+            VoteManager::playerSendRequestVote(1);
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )

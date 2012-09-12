@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/InfoSocket.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/VoteManager.hpp"
 
 #include "Units/UnitProfileInterface.hpp"
 
@@ -211,6 +212,10 @@ DedicatedGameManager::mainLoop()
                 }
             }
 
+        }
+        if (VoteManager::checkVoteTimer())
+        {
+            VoteManager::checkPlayersVote();
         }
     }
     return BaseGameManager::mainLoop();
