@@ -56,9 +56,10 @@ public:
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     virtual void processEvents();
     void init();
-    
+
     void changeTeam();
     void playerReady();
+    void resetReady();
 };
 
 #endif // PREPARETEAM_HPP

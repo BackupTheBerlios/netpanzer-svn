@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -53,7 +53,7 @@ Button::setAction(Action* action)
     {
         delete clickAction;
     }
-    
+
     clickAction = action;
 }
 
@@ -62,6 +62,8 @@ void
 Button::render()
 {
     surface.fill(0);
+    dirty = false;
+    if (!visible) return;
     if ( bimage.getNumFrames() == 1 )
     {
         bimage.bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y);
@@ -73,24 +75,23 @@ Button::render()
     }
     else
     {
-        surface.fill(componentBodyColor);        
+        surface.fill(componentBodyColor);
     }
 
     if ( borders[bstate][0]|extraBorder ) // only 1 | (binary or)
     {
         surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
     }
-   
+
     if ( label.length() )
     {
         Surface text;
         text.renderText( label.c_str(), textColors[bstate], 0);
         // blit centered and transparent
         text.bltTrans(surface, ((surface.getWidth()/2) - (text.getWidth()/2))+state_offset[bstate].x,
-                      ((surface.getHeight()/2) - (text.getHeight()/2))+state_offset[bstate].y);        
+                      ((surface.getHeight()/2) - (text.getHeight()/2))+state_offset[bstate].y);
     }
-   
-    dirty = false;
+
 }
 
 // actionPerformed
@@ -98,11 +99,11 @@ Button::render()
 void
 Button::actionPerformed(const mMouseEvent &me)
 {
-    if ( bstate == BDISABLED )
+    if ( bstate == BDISABLED || !visible)
     {
         return;
     }
-        
+
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
                 || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
     {
@@ -142,7 +143,7 @@ Button::createTextButton( const NPString& label,
     b->setAction(action);
     b->setTextColors(componentInActiveTextColor, componentFocusTextColor, componentActiveTextColor, componentInActiveTextColor);
     b->setStateOffset(Button::BPRESSED, 1, 1);
-    
+
     if ( ! action )
     {
         LOGGER.warning("No action defined for button '%s'", label.c_str());
@@ -158,7 +159,7 @@ Button::createNewSpecialButton(    const NPString& label,
 {
     Surface bitmap;
     bitmap.loadBMP(itButton);
-    
+
     Surface bstart;
     bstart.grab(bitmap, iRect(0, 0, 15, bitmap.getHeight()));
     Surface bend;
@@ -176,14 +177,14 @@ Button::createNewSpecialButton(    const NPString& label,
         bmiddle.blt(spbutton,15+(msize*i),0);
     }
     bend.blt(spbutton,spbutton.getWidth()-15,0);
-    
+
     Button *b = new Button();
     b->setImage(spbutton);
     b->setLabel(label);
     b->setLocation(loc);
     b->setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);
     b->setStateOffset(Button::BPRESSED, 1, 1);
-    
+
     b->setAction(action);
 
     return b;

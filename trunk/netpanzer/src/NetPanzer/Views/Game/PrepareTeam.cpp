@@ -69,7 +69,7 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     menuImage.loadBMP("pics/backgrounds/menus/menu/canon.bmp");
     vsImage.loadBMP("pics/backgrounds/menus/menu/vs.bmp");
 
-    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2), 
+    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2),
            (screen->getHeight()/2) - ( menuImage.getHeight()/1.5));
     resize(menuImage.getWidth(), menuImage.getHeight()+300);
     menuImageXY.x = 0;
@@ -89,13 +89,13 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     secondrect.min.y = firstrect.min.y;
     secondrect.max.x = rect.max.x-20;
     secondrect.max.y = firstrect.max.y;
-    
+
     changebutton = Button::createNewSpecialButton( " >> ",
                                                    iXY(firstrect.max.x+29, (firstrect.min.y+50)),
                                                    (secondrect.min.x-firstrect.max.x)-39,
                                                    new ChangeTeamAction(this));
     add(changebutton);
-    
+
     readybutton = Button::createNewSpecialButton( "Ready",
                                                   iXY(firstrect.max.x+29, (firstrect.min.y+85)),
                                                   (secondrect.min.x-firstrect.max.x)-39,
@@ -120,7 +120,7 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
 
 void PrepareTeam::init()
 {
-    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2), 
+    moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2),
            (screen->getHeight()/3) - ( menuImage.getHeight()));
     resize(menuImage.getWidth(), menuImage.getHeight()+300);
     menuImageXY.x = 0;
@@ -140,7 +140,7 @@ void PrepareTeam::init()
     secondrect.min.y = firstrect.min.y;
     secondrect.max.x = rect.max.x-25;
     secondrect.max.y = firstrect.max.y;
-    
+
     changebutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+50)));
     readybutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+85)));
     StateTeam1->setLocation(firstrect.min);
@@ -208,8 +208,8 @@ void PrepareTeam::DrawInfo(Surface &dest)
     snprintf(statBuf, sizeof(statBuf), "Name: %-20s", MapInterface::getMap()->getName().c_str());
     dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
     start.y+= 13;
-    snprintf(statBuf, sizeof(statBuf), "Players: %i/%i",  
-             PlayerInterface::getActivePlayerCount(), 
+    snprintf(statBuf, sizeof(statBuf), "Players: %i/%i",
+             PlayerInterface::getActivePlayerCount(),
              GameConfig::game_maxplayers);
     dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
     snprintf(statBuf, sizeof(statBuf), "Objectives: %i", (int) ObjectiveInterface::getObjectiveCount());
@@ -293,4 +293,10 @@ void PrepareTeam::playerReady()
     TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
     changebutton->disable();
     readybutton->disable();
+}
+
+void PrepareTeam::resetReady()
+{
+    changebutton->enable();
+    readybutton->enable();
 }

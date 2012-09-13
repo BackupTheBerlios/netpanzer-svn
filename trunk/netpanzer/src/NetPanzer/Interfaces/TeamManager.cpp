@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/StringUtil.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/Game/PrepareTeam.hpp"
 
 Team       * TeamManager::Teams_lists = 0;
 Uint8        TeamManager::max_Teams = 0;
@@ -147,6 +149,11 @@ void TeamManager::reset()
 {
     resetPlayerReady();
     resetTeamStats();
+    PrepareTeam *v = (PrepareTeam*)Desktop::getView("PrepareTeam");
+    if ( v )
+    {
+        v->resetReady();
+    }
 }
 
 void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
@@ -418,7 +425,7 @@ void TeamManager::receiveScores(const NetMessage* message)
 {
     const TeamScoreSync* score_Sync
     = (const TeamScoreSync *) message;
-    
+
     if (score_Sync->TeamID < max_Teams)
         Teams_lists[score_Sync->TeamID].syncScore(score_Sync->getKills(), score_Sync->getLosses());
 }
@@ -427,13 +434,13 @@ void TeamManager::netMessageChangeTeamRequest(const NetMessage* message)
 {
     const PlayerTeamRequest* changeTeamRequest
     = (const PlayerTeamRequest *) message;
-    
+
     switch(changeTeamRequest->request_type)
     {
     case change_team_request :
         serverrequestchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
         break;
- 
+
     case change_team_Accepted:
         PlayerchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
         break;
@@ -443,18 +450,18 @@ void TeamManager::netMessageReadyRequest(const NetMessage* message)
 {
     const PlayerReadyRequest* ReadyRequest
     = (const PlayerReadyRequest *) message;
-    
+
     switch(ReadyRequest->request_type)
     {
     case ready_request :
         ServerRequestReady(ReadyRequest->getPlayerIndex());
         break;
- 
+
     case change_team_Accepted:
         PlayerRequestReadyAccepted(ReadyRequest->getPlayerIndex());
         break;
     }
-    
+
 }
 
 
