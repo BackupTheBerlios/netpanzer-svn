@@ -328,8 +328,11 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
         }
 
-        sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-        LoadingView::update( str_buf );
+        if ( GameControlRulesDaemon::execution_mode != _execution_mode_dedicated_server )
+        {
+            sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+            LoadingView::update( str_buf );
+        }
     }
     break;
 
@@ -380,8 +383,11 @@ void GameControlRulesDaemon::mapCycleFsmServer()
         SERVER->broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
 
         PlayerInterface::unlockPlayerStats();
-        LoadingView::loadFinish();
 
+        if ( GameControlRulesDaemon::execution_mode != _execution_mode_dedicated_server )
+        {
+            LoadingView::loadFinish();
+        }
         GameControlCycleRespawnAck respawn_ack_mesg;
         SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
 
@@ -408,7 +414,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
     case _map_cycle_server_prepare_team :
     {
-        if (cooldown.count() || TeamManager::CheckisPlayerReady())
+       if (cooldown.count() || TeamManager::CheckisPlayerReady())
         {
             TeamManager::BalancedTeam();
             GameControlCycleTeamStart team_start_mesg;

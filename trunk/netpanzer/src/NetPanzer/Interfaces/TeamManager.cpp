@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
+#include "Classes/Network/NetworkState.hpp"
 #include "Util/Log.hpp"
 #include "Util/StringUtil.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -150,10 +151,13 @@ void TeamManager::reset()
 {
     resetPlayerReady();
     resetTeamStats();
-    PrepareTeam *v = (PrepareTeam*)Desktop::getView("PrepareTeam");
-    if ( v )
+    if ( NetworkState::status == _network_state_client )
     {
-        v->resetReady();
+        PrepareTeam *v = (PrepareTeam*)Desktop::getView("PrepareTeam");
+        if ( v )
+        {
+            v->resetReady();
+        }
     }
 }
 
@@ -482,7 +486,6 @@ void TeamManager::serversayToTeam(const Uint8 teamID, const NPString& message)
 
 void TeamManager::sendMessageToTeam(const Uint8 teamID, NetMessage* message, size_t size)
 {
-    LOGGER.warning("sendmessage to team %d", teamID);
     PlayerID player_id;
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
@@ -491,7 +494,6 @@ void TeamManager::sendMessageToTeam(const Uint8 teamID, NetMessage* message, siz
             if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
             {
                 SERVER->sendMessage(player_id, message, size);
-                LOGGER.warning("sendmessage to %d", player_id);
             }
         }
     }

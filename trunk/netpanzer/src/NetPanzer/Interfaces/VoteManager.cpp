@@ -173,16 +173,16 @@ void VoteManager::checkPlayersVote()
     }
     char buff[100];
 
-    no_vote = (players_in_vote-yes_vote)*100/players_in_vote;
-    yes_vote = (players_in_vote-no_vote)*100/players_in_vote;
+    int no_percent = ((players_in_vote-yes_vote)*100)/players_in_vote;
+    int yes_percent = ((players_in_vote-no_vote)*100)/players_in_vote;
 
-    sprintf(buff, "%d %% players has voted YES, %d %% has voted NO", yes_vote, no_vote);
+    sprintf(buff, "%d %% players has voted YES, %d %% has voted NO", yes_percent, no_percent);
     if (GameConfig::game_teammode)
         TeamManager::serversayToTeam(vote_team, buff);
     else
         ChatInterface::serversay(buff);
     vote_in_progress = false;
-    //if (yes_vote > 80) executeVoteAction();
+    if (yes_percent > 80) executeVoteAction();
 }
 
 void VoteManager::playerVote(Uint8 responce)
