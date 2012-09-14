@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/Team.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
+#include "Interfaces/ChatInterface.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -464,7 +465,37 @@ void TeamManager::netMessageReadyRequest(const NetMessage* message)
 
 }
 
+void TeamManager::serversayToTeam(const Uint8 teamID, const NPString& message)
+{
+    PlayerID player_id;
+    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        if (PlayerInterface::getPlayer(player_id)->isActive())
+        {
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
+            {
+                ChatInterface::serversayTo(player_id, message);
+            }
+        }
+    }
+}
 
+void TeamManager::sendMessageToTeam(const Uint8 teamID, NetMessage* message, size_t size)
+{
+    LOGGER.warning("sendmessage to team %d", teamID);
+    PlayerID player_id;
+    for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
+    {
+        if (PlayerInterface::getPlayer(player_id)->isActive())
+        {
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
+            {
+                SERVER->sendMessage(player_id, message, size);
+                LOGGER.warning("sendmessage to %d", player_id);
+            }
+        }
+    }
+}
 
 
 

@@ -19,21 +19,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetMessage.hpp"
 #include "Util/Timer.hpp"
 
+enum { surrender_vote,
+       kick_player_vote,
+       unassigned_vote
+     };
+
+enum { vote_yes,
+       vote_no,
+       vote_nothing
+     };
+
+
 class VoteManager
 {
 protected:
     static Uint8 type_vote;
     static bool vote_in_progress;
-    static bool *player_vote;
+    static Uint8 *player_vote;
     static Uint8 vote_counter;
+    static Uint8 players_in_vote;
     static Timer voteTimer;
+    static Uint8 vote_team;
 public:
     static bool checkVoteTimer();
     static void checkPlayersVote();
     static void executeVoteAction();
     static void resetVote();
     static void startVote(Uint8 type);
-    static void playerVote(bool responce);
+    static void playerVote(Uint8 responce);
     static void playerSendRequestVote(Uint8 type);
     static void serverSendRequestVote();
     static void netMessageReceiveRequestVote(const NetMessage* message, PlayerID playerid);

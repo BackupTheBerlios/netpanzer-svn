@@ -349,11 +349,11 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
         GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
     }
-    
+
     if ( KeyboardInterface::getKeyPressed(SDLK_v) )
     {
         //if (GameConfig::game_teammode)
-            VoteManager::playerSendRequestVote(1);
+            VoteManager::playerSendRequestVote(surrender_vote);
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )
@@ -443,18 +443,18 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
     	WorldViewInterface::scroll_left( 15 );
     }
-    
+
     if ( KeyboardInterface::getKeyPressed( SDLK_PAGEUP ) )
     {
         ActionManager::runAction("chat_pgup");
     }
-    
+
     if ( KeyboardInterface::getKeyPressed( SDLK_PAGEDOWN ) )
     {
         ActionManager::runAction("chat_pgdown");
     }
-    
-    
+
+
 }
 
 void

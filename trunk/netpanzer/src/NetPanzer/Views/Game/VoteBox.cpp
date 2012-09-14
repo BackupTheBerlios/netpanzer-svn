@@ -28,10 +28,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class YesNoAction : public Action
 {
 private:
-    bool result;
+    Uint8 result;
 public:
 //    VoteBox * view;
-    YesNoAction(bool value) : Action(false){result = value;}
+    YesNoAction(Uint8 value) : Action(false){result = value;}
     void execute()
     {
         VoteManager::playerVote(result);
@@ -55,11 +55,11 @@ VoteBox::VoteBox(NPString msg) : GameTemplateView()
     add(Button::createNewSpecialButton("Yes",
                                        iXY(sizex/2-55, 35),
                                        50,
-                                       new YesNoAction(true)));
+                                       new YesNoAction(vote_yes)));
     add(Button::createNewSpecialButton("No",
                                        iXY(sizex/2+5, 35),
                                        50,
-                                       new YesNoAction(false)));
+                                       new YesNoAction(vote_no)));
     LOGGER.warning("VoteBox %s", msg.c_str());
 }
 
@@ -74,6 +74,6 @@ void VoteBox::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.bltString(getClientRect().getSizeX()/2-50, getClientRect().getSizeY()-12,statBuf, Color::yellow);
 
     View::doDraw(viewArea, clientArea);
-    if (VoteManager::checkVoteTimer()) 
-        VoteManager::playerVote(false);
+    if (VoteManager::checkVoteTimer())
+        VoteManager::playerVote(vote_nothing);
 }

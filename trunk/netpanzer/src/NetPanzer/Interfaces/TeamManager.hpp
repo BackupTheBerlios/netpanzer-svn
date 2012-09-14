@@ -55,7 +55,7 @@ public:
     static void resetTeamStats();
     static void sendScores();
     static void receiveScores(const NetMessage* message);
-    
+
     static Uint8 getTeamWin();
     static const std::string& getTeamName( Uint8 team_id );
     static bool testRuleScoreLimit( long score_limit );
@@ -75,6 +75,8 @@ public:
 
     static void netMessageChangeTeamRequest(const NetMessage* message);
     static void netMessageReadyRequest(const NetMessage* message);
+    static void serversayToTeam(const Uint8 teamID, const NPString& message);
+    static void sendMessageToTeam(const Uint8 teamID, NetMessage* message, size_t size);
 
 };
 
