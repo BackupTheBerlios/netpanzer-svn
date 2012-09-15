@@ -35,12 +35,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define TABLE_BORDER_START (HEADER_HEIGHT+TABLE_BORDER)
 #define TABLE_START (HEADER_HEIGHT + TABLE_BORDER)
 
-#define ALLY_START 4
-
 #define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
 
 static const char * table_header =
-    "      Name                 Frags Deaths Points Objs.";
+    "          Name                 Frags Deaths Points Objs.";
 
 static const char * stats_format = "%-20s%6i%7i%7i%6i";
 
@@ -161,8 +159,11 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     cur_line_pos += ENTRY_HEIGHT;
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
-    int FLAG_START = RectStates.min.x+5;
-    int NAME_START = RectStates.min.x+27;
+    int ALLY_START = RectStates.min.x+4;
+    int COLOR_START = ALLY_START+20;
+    int FLAG_START = COLOR_START+15;
+    int NAME_START = FLAG_START+25;
+
     
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i)
@@ -201,7 +202,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             }
         }
 
-        colorImage.bltTransColor(dest, 52+5, flag_pos, state->getColor());
+        colorImage.bltTransColor(dest, COLOR_START, flag_pos, state->getColor());
 
         cur_line_pos += ENTRY_HEIGHT;
         flag_pos += ENTRY_HEIGHT;
