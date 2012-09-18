@@ -156,11 +156,6 @@ void VoteManager::executeVoteAction()
 
 void VoteManager::checkPlayersVote()
 {
-    if (GameConfig::game_teammode)
-        TeamManager::serversayToTeam(vote_team, "Vote is end");
-    else
-        ChatInterface::serversay("Vote is end");
-
     Uint8 yes_vote = 0, no_vote = 0;
 
     for ( int i = 0; i < PlayerInterface::getMaxPlayers(); i++ )
@@ -178,9 +173,16 @@ void VoteManager::checkPlayersVote()
 
     sprintf(buff, "%d %% players has voted YES, %d %% has voted NO", yes_percent, no_percent);
     if (GameConfig::game_teammode)
+    {
         TeamManager::serversayToTeam(vote_team, buff);
-    else
+        sprintf(buff, "%s team has accepted surrendering. Round is over",
+                TeamManager::getTeamName(vote_team).c_str());
         ChatInterface::serversay(buff);
+    }
+    else
+    {
+        ChatInterface::serversay(buff);
+    }
     vote_in_progress = false;
     if (yes_percent > 80) executeVoteAction();
 }

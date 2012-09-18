@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -115,12 +115,12 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
         Surface text;
         text.renderText(string, color, 0);
         screen->lock();
-    
+
         screen->fill(0);
         int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
         int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
         text.blt(*screen,x,y);
-    
+
         screen->unlock();
         screen->copyToVideoFlip();
 }
@@ -183,7 +183,7 @@ void GameManager::setVideoMode()
         // not black)
         drawTextCenteredOnScreen("Please wait... generating palettes", 255);
     }
-    
+
 }
 
 // ******************************************************************
@@ -264,24 +264,27 @@ void GameManager::finishGameMapLoad()
     std::string temp_path = map_path;
     temp_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
-    
-    int total_clouds = (MapInterface::getWidth() * MapInterface::getHeight()) / baseTileCountPerCloud;
-    //total_clouds += something_to_add;
-    
-    int cloud_count = 0;
-    
-    switch ( GameConfig::game_cloudcoverage )
+
+    if (GameConfig::game_cloudcoverage > 0)
     {
-        case 1: cloud_count = total_clouds * brokenPercentOfBase; break;
-        case 2: cloud_count = total_clouds * partlyCloudyPercentOfBase; break;
-        case 3: cloud_count = total_clouds * overcastPercentOfBase; break;
-        case 4: cloud_count = total_clouds * extremelyCloudyPercentOfBase; break;
-        default:
-            cloud_count = total_clouds * clearPercentOfBase;
-            
+        int total_clouds = (MapInterface::getWidth() * MapInterface::getHeight()) / baseTileCountPerCloud;
+        //total_clouds += something_to_add;
+
+        int cloud_count = 0;
+
+        switch ( GameConfig::game_cloudcoverage )
+        {
+            case 1: cloud_count = total_clouds * brokenPercentOfBase; break;
+            case 2: cloud_count = total_clouds * partlyCloudyPercentOfBase; break;
+            case 3: cloud_count = total_clouds * overcastPercentOfBase; break;
+            case 4: cloud_count = total_clouds * extremelyCloudyPercentOfBase; break;
+            default:
+                cloud_count = total_clouds * clearPercentOfBase;
+
+        }
+
+        ParticleInterface::addCloudParticle(cloud_count);
     }
-    
-    ParticleInterface::addCloudParticle(cloud_count);
     Physics::wind.setVelocity(GameConfig::game_windspeed, 107);
 }
 
@@ -307,7 +310,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "TeamMode: "     << (GameConfig::game_teammode ? "yes" : "no") << "\n"
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
-    
+
     map_path = "maps/";
     map_path.append(map_name);
 
@@ -330,7 +333,7 @@ void GameManager::spawnPlayer( PlayerID player )
     {
         spawn_point = TeamManager::getPlayerSpawnPoint(player);
     }
-    else 
+    else
     {
         spawn_point = MapInterface::getFreeSpawnPoint();
     }
@@ -387,7 +390,7 @@ void GameManager::netMessageViewControl(const NetMessage* message)
 // ******************************************************************
 void GameManager::netMessageConnectAlert(const NetMessage* message)
 {
-    const SystemConnectAlert *connect_alert 
+    const SystemConnectAlert *connect_alert
         = (const SystemConnectAlert*) message;
     PlayerState *player_state = 0;
 
@@ -406,7 +409,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
                 TeamManager::addPlayerinTeam(connect_alert->getPlayerID(), connect_alert->getTeamID());
                 ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
                                         "%s has joined the game in team %s.",
-                                        player_state->getName().c_str(), 
+                                        player_state->getName().c_str(),
                                         TeamManager::getTeamName(player_state->getTeamID()).c_str());
             } else
             {
@@ -417,7 +420,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
             break;
 
-        case _connect_alert_mesg_disconnect: 
+        case _connect_alert_mesg_disconnect:
             if (GameConfig::game_teammode)
             {
                 TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
@@ -463,7 +466,7 @@ void GameManager::netMessageResetGameLogic(const NetMessage* )
 
 ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 {
-    ConnectMesgServerGameSettings* game_setup 
+    ConnectMesgServerGameSettings* game_setup
         = new ConnectMesgServerGameSettings();
 
     game_setup->setMaxPlayers(GameConfig::game_maxplayers);
@@ -620,7 +623,7 @@ void GameManager::quitNetPanzerGame()
         SERVER->closeSession();
 
         // hacky...
-        PlayerGameManager* playerGameManager 
+        PlayerGameManager* playerGameManager
             = dynamic_cast<PlayerGameManager*>(gamemanager);
         if(playerGameManager)
             playerGameManager->quitGame();
