@@ -209,6 +209,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
         Desktop::setVisibility("PrepareTeam", false);
         map_cycle_fsm_client_state = _map_cycle_client_idle;
         setStateServerInProgress();
+        GameManager::startGameTimer();
         return;
     }
     break;
@@ -421,6 +422,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             SERVER->broadcastMessage(&team_start_mesg, sizeof(GameControlCycleTeamStart));
             TeamManager::SpawnTeams();
             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
+            GameManager::startGameTimer();
             setStateServerInProgress();
         }
     }
@@ -500,6 +502,9 @@ void GameControlRulesDaemon::checkGameRules()
             {
                 if (TeamManager::testRuleScoreLimit( GameConfig::game_fraglimit ))
                     onFraglimitGameCompleted();
+                int game_minutes = GameManager::getGameTime() / 60;
+                if( game_minutes >= GameConfig::game_timelimit )
+                    onTimelimitGameCompleted();
             }
             else
             {
@@ -517,6 +522,10 @@ void GameControlRulesDaemon::checkGameRules()
             {
                 if (TeamManager::testRuleObjectiveRatio( ratio ))
                     onObjectiveGameCompleted();
+                int game_minutes = GameManager::getGameTime() / 60;
+                if( game_minutes >= GameConfig::game_timelimit )
+                    onTimelimitGameCompleted();
+                LOGGER.warning("%d", (int)GameManager::getGameTime() / 60);
             }
             else
             {

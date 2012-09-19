@@ -49,7 +49,7 @@ InfoBar::draw(Surface &dest)
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
-    
+   
     snprintf(buf, sizeof(buf),
              format,
 //             "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
@@ -69,8 +69,10 @@ InfoBar::draw(Surface &dest)
              
              (int)GameManager::getGameTime() / 3600,
              (int)(GameManager::getGameTime() / 60) % 60,
-             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit / 60:0,
-             (GameConfig::game_gametype == _gametype_timelimit)?GameConfig::game_timelimit % 60:0,
+             (GameConfig::game_gametype == _gametype_timelimit ||
+              GameConfig::game_teammode == true)?GameConfig::game_timelimit / 60:0,
+             (GameConfig::game_gametype == _gametype_timelimit ||
+              GameConfig::game_teammode == true)?GameConfig::game_timelimit % 60:0,
              
              TimerInterface::getFPSAvg()
              );

@@ -352,8 +352,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_v) )
     {
-        //if (GameConfig::game_teammode)
-            VoteManager::playerSendRequestVote(surrender_vote);
+        VoteManager::playerSendRequestVote(surrender_vote);
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )
