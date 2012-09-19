@@ -171,20 +171,26 @@ void VoteManager::checkPlayersVote()
     int no_percent = ((players_in_vote-yes_vote)*100)/players_in_vote;
     int yes_percent = ((players_in_vote-no_vote)*100)/players_in_vote;
 
+    bool accepted_vote = ( yes_percent > 80 );
+
     sprintf(buff, "%d %% players has voted YES, %d %% has voted NO", yes_percent, no_percent);
-    if (GameConfig::game_teammode)
+
+    if ( GameConfig::game_teammode )
     {
         TeamManager::serversayToTeam(vote_team, buff);
-        sprintf(buff, "%s team has accepted surrendering. Round is over",
-                TeamManager::getTeamName(vote_team).c_str());
-        ChatInterface::serversay(buff);
+        if ( accepted_vote )
+        {
+            sprintf(buff, "%s team has accepted surrendering. Round is over",
+                    TeamManager::getTeamName(vote_team).c_str());
+            ChatInterface::serversay(buff);
+        }
     }
     else
     {
         ChatInterface::serversay(buff);
     }
     vote_in_progress = false;
-    if (yes_percent > 80) executeVoteAction();
+    if ( accepted_vote ) executeVoteAction();
 }
 
 void VoteManager::playerVote(Uint8 responce)

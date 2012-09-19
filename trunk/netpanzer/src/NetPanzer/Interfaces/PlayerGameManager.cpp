@@ -68,6 +68,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/ServerListView.hpp"
 
 #include "Views/Game/RankView.hpp"
+#include "Views/Game/RankTeam.hpp"
 #include "Views/Game/EndRoundView.hpp"
 #include "Views/Game/GFlagSelectionView.hpp"
 #include "Views/Game/PrepareTeam.hpp"
@@ -167,6 +168,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 {
     Desktop::add(new GameView());
     Desktop::add(new RankView());
+    Desktop::add(new RankTeam());
     Desktop::add(new EndRoundView());
     Desktop::add(new GFlagSelectionView());
     Desktop::add(new VehicleSelectionView());

@@ -381,8 +381,12 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         Desktop::toggleVisibility( "HelpScrollView" );
     }
 
-    if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
-        Desktop::toggleVisibility( "RankView" );
+    if (KeyboardInterface::getKeyPressed(SDLK_TAB) )
+    {
+        if (GameConfig::game_teammode)
+            Desktop::toggleVisibility( "RankTeam" );
+        else
+            Desktop::toggleVisibility( "RankView" );
     }
 
     if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
