@@ -303,8 +303,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 }
                 catch(std::exception& e)
                 {
-                    LoadingView::append(
-                        "Error while loading map:");
+                    LoadingView::append("Error while loading map:");
                     LoadingView::append(e.what());
                     map_cycle_fsm_server_state = _map_cycle_server_state_idle;
                     return;
@@ -525,7 +524,6 @@ void GameControlRulesDaemon::checkGameRules()
                 int game_minutes = GameManager::getGameTime() / 60;
                 if( game_minutes >= GameConfig::game_timelimit )
                     onTimelimitGameCompleted();
-                LOGGER.warning("%d", (int)GameManager::getGameTime() / 60);
             }
             else
             {

@@ -74,7 +74,7 @@ bool TeamManager::isPlayerReady(PlayerID player_id)
 void TeamManager::initialize(const Uint8 _max_teams)
 {
     char txtBuf[256];
-    Uint8 colorsteam[4] = {Color::yellow, 208, Color::green, Color::cyan};
+    Uint8 colorsteam[4] = {Color::yellow, 197, Color::green, Color::cyan};
     max_Teams = _max_teams;
 
     delete[] Teams_lists;
@@ -421,7 +421,7 @@ void TeamManager::sendScores()
     TeamScoreSync score_Sync;
     for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
     {
-        score_Sync.set( getKills(team_id), getLosses(team_id), team_id);
+        score_Sync.set(team_id, getKills(team_id), getLosses(team_id));
         SERVER->broadcastMessage(&score_Sync, sizeof(TeamScoreSync));
     }
 }

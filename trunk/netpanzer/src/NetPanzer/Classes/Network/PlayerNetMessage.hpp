@@ -327,7 +327,7 @@ public:
 
     void setLosses(short Losses)
     {
-        TeamKills = Losses;
+        TeamLosses = Losses;
     }
     short getLosses() const
     {
