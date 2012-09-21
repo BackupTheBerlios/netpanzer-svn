@@ -352,7 +352,8 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_v) )
     {
-        VoteManager::playerSendRequestVote(surrender_vote);
+        if (!Desktop::getVisible("PrepareTeam") && !Desktop::getVisible("GFlagSelectionView"))
+            VoteManager::playerSendRequestVote(surrender_vote);
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )
