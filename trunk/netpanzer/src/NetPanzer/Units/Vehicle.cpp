@@ -1942,7 +1942,8 @@ void Vehicle::weaponHit(const UnitID from_unit, const Uint16 damage_factor)
     update_state_opcode.setHitPoints(unit_state.hit_points);
     UnitInterface::sendOpcode( &update_state_opcode );
 
-    if ( unit_state.hit_points <= 0 )
+    if ( (unit_state.hit_points <= 0) &&
+         (unit_state.lifecycle_state == _UNIT_LIFECYCLE_ACTIVE) )
     {
         unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
         external_ai_event = _external_event_pending_unit_destruct;

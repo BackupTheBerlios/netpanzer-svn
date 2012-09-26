@@ -255,6 +255,7 @@ void PlayerInterface::unLock()
 void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
                               UnitType unit_type)
 {
+    if (GameControlRulesDaemon::getGameState() == _game_state_completed) return;
     SDL_mutexP(mutex);
     by_player->incKills( unit_type );
     on_player->incLosses( unit_type );
@@ -652,7 +653,6 @@ void PlayerInterface::processNetMessage(const NetPacket* packet)
         break;
 
     case _net_message_id_player_score_update :
-        if (GameControlRulesDaemon::getGameState() != _game_state_completed)
             netMessageScoreUpdate(message);
         break;
 
