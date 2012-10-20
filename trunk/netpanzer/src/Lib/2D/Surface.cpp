@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
 
 This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,10 @@ using std::swap;
 using std::min;
 using std::max;
 
-extern char staticFont[8192];
-#define FONT_HEIGHT 8
+extern char staticNewFont[15280];
+#define FONT_HEIGHT 10
 #define FONT_WIDTH 8
-#define FONT_MAXCHAR 127
+#define FONT_MAXCHAR 191
 
 // orderCoords
 //---------------------------------------------------------------------------
@@ -1290,18 +1290,13 @@ PIX Surface::getAverageColor()
 //---------------------------------------------------------------------------
 void initFont()
 {
-    ascii8x8.create(8, 8, 128);
+    ascii8x8.create(FONT_WIDTH, FONT_HEIGHT, FONT_MAXCHAR);
 
-    for ( int c = 0; c < 128; c++) {
+    for ( int c = 0; c < FONT_MAXCHAR; c++) {
         ascii8x8.setFrame(c);
-        char * fptr = (char *)&staticFont + (c * FONT_WIDTH);
+        char * fptr = (char *)&staticNewFont+ (c * (FONT_WIDTH*FONT_HEIGHT));
         PIX * dptr = ascii8x8.getMem();
-        int n = FONT_HEIGHT;
-        do {
-            memcpy(dptr,fptr,FONT_WIDTH);
-            dptr += FONT_WIDTH;
-            fptr += FONT_WIDTH*128;
-        } while (--n);
+        memcpy(dptr,fptr,(FONT_WIDTH*FONT_HEIGHT));
     }
 } // Surface::initFont
 
@@ -1353,9 +1348,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
         PIX * dptr = getFrame0() + (line * (int)getPitch());
         const char * pstr = str;
         for ( unsigned char c = *pstr; c; c= *(++pstr)) {
-            if ( c >=128 ) c = ' ';
-
-            char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
+            c-=32;
+            if ( c >=FONT_MAXCHAR ) c = ' ';
+             char * fptr = staticNewFont + (c*(FONT_HEIGHT*FONT_WIDTH))+FONT_WIDTH*line;
             PIX * eptr = dptr+FONT_WIDTH;
             do {
                 *(dptr++) = *(fptr++)?color:bgcolor;
@@ -1373,9 +1368,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 //---------------------------------------------------------------------------
 void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
 {
+    if (character > 31) character-=32;
     if (character >= ascii8x8.getNumFrames())
         return;
-
     ascii8x8.setFrame(character);
     ascii8x8.bltTransColor(*this, x, y, color);
 } // end Surface::bltChar8x8

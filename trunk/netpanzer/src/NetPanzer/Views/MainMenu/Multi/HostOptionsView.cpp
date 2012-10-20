@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "HostOptionsView.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Particles/ParticleSystemGlobals.hpp"
 #include "MapSelectionView.hpp"
@@ -49,23 +50,23 @@ void HostOptionsView::updateGameConfigCloudCoverage()
     switch (cloudCoverageCount)
     {
         case 1:
-            cloudCoverageString = "Broken";
+            cloudCoverageString = _("Broken");
             GameConfig::game_cloudcoverage = cloudCoverageCount;
             break;
         case 2:
-            cloudCoverageString = "Partly Cloudy";
+            cloudCoverageString = _("Partly Cloudy");
             GameConfig::game_cloudcoverage = cloudCoverageCount;
             break;
         case 3:
-            cloudCoverageString = "Overcast";
+            cloudCoverageString = _("Overcast");
             GameConfig::game_cloudcoverage = cloudCoverageCount;
             break;
         case 4:
-            cloudCoverageString = "Extremely Cloudy";
+            cloudCoverageString = _("Extremely Cloudy");
             GameConfig::game_cloudcoverage = cloudCoverageCount;
             break;
         default:
-            cloudCoverageString = "Clear";
+            cloudCoverageString = _("Clear");
             GameConfig::game_cloudcoverage = 0;
             break;
     }
@@ -97,22 +98,22 @@ static const char * getGameTypeString()
 {
     switch ( GameConfig::game_gametype ) {
     case _gametype_objective: {
-            return( "Objective" );
+            return( _("Objective") );
         }
         break;
 
     case _gametype_fraglimit : {
-            return( "Time Limit" );
+            return( _("Time Limit") );
         }
         break;
 
     case _gametype_timelimit : {
-            return( "Frag Limit" );
+            return( _("Frag Limit") );
         }
         break;
 
     }
-    return( "Unknown" );
+    return( _("Unknown") );
 }
 
 
@@ -144,27 +145,27 @@ void HostOptionsView::updateWindSpeedString()
 
     switch (windSpeed) {
     case 0: {
-            windSpeedString = "Calm";
+            windSpeedString = _("Calm");
             GameConfig::game_windspeed = int(calmWindSpeed);
         }
         break;
     case 1: {
-            windSpeedString = "Breezy";
+            windSpeedString = _("Breezy");
             GameConfig::game_windspeed = int(breezyWindSpeed);
         }
         break;
     case 2: {
-            windSpeedString = "Brisk Winds";
+            windSpeedString = _("Brisk Winds");
             GameConfig::game_windspeed = int(briskWindSpeed);
         }
         break;
     case 3: {
-            windSpeedString = "Heavy Winds";
+            windSpeedString = _("Heavy Winds");
             GameConfig::game_windspeed = int(heavyWindSpeed);
         }
         break;
     case 4: {
-            windSpeedString = "Typhoon";
+            windSpeedString = _("Typhoon");
             GameConfig::game_windspeed = int(typhoonWindSpeed);
         }
         break;
@@ -184,7 +185,7 @@ static int getObjectiveCapturePercent()
 HostOptionsView::HostOptionsView() : RMouseHackView()
 {
     setSearchName("HostOptionsView");
-    setTitle("Host Options");
+    setTitle(_("Host Options"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -205,7 +206,7 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
     drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
 
     clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
-                    "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                    _("Note: Use the right mouse button to accomplish fast mouse clicking."),
                     windowTextColor);
 
     View::doDraw(viewArea, clientArea);
@@ -243,7 +244,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     
     iXY p(pos);
     
-    addConfRow(p, "Max Players",
+    addConfRow(p, _("Max Players"),
                    new ChangeIntVarAction<GameConfig::game_maxplayers, 2, 16>(-1),
                    new ChangeIntVarAction<GameConfig::game_maxplayers, 2, 16>(1) );
 //    addConfRow(p, "Max Players", new ChangePlayerCountAction(-1), new ChangePlayerCountAction(1) );
@@ -251,27 +252,27 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     p.y += yOffset;
     y += yOffset;
 
-    addConfRow(p, "Game Max Unit Count",
+    addConfRow(p, _("Game Max Unit Count"),
                    new ChangeIntVarAction<GameConfig::game_maxunits, 2, 1000>(-5),
                    new ChangeIntVarAction<GameConfig::game_maxunits, 2, 1000>(5) );
 
     p.y += yOffset;
     y += yOffset;
     
-    addConfRow(p, "Objective Capture Percent",
+    addConfRow(p, _("Objective Capture Percent"),
                    new ChangeIntVarAction<GameConfig::game_occupationpercentage, 5, 100>(-5),
                    new ChangeIntVarAction<GameConfig::game_occupationpercentage, 5, 100>(5) );
     
     p.y += yOffset;
     y += yOffset;
 
-    addConfRow(p, "Time Limit",
+    addConfRow(p, _("Time Limit"),
                    new ChangeIntVarAction<GameConfig::game_timelimit, 5, 240>(-5),
                    new ChangeIntVarAction<GameConfig::game_timelimit, 5, 240>(5) );
     p.y += yOffset;
     y += yOffset;
     
-    addConfRow(p, "Frag Limit",
+    addConfRow(p, _("Frag Limit"),
                    new ChangeIntVarAction<GameConfig::game_fraglimit, 5, 1000>(-5),
                    new ChangeIntVarAction<GameConfig::game_fraglimit, 5, 1000>(5) );
     
@@ -281,46 +282,46 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     const int minWidth = 150;
     int xChoiceOffset = 2;
 
-    choiceGameType.setLabel("Game Type");
-    choiceGameType.addItem("Objective");
-    choiceGameType.addItem("Frag Limit");
-    choiceGameType.addItem("Time Limit");
+    choiceGameType.setLabel(_("Game Type"));
+    choiceGameType.addItem(_("Objective"));
+    choiceGameType.addItem(_("Frag Limit"));
+    choiceGameType.addItem(_("Time Limit"));
     choiceGameType.setMinWidth(minWidth);
     choiceGameType.setLocation(xChoiceOffset, 100);
     choiceGameType.select( getGameTypeString() );
     add(&choiceGameType);
     xChoiceOffset += minWidth + 123;
 
-    choiceCloudCoverage.setLabel("Cloud Coverage");
-    choiceCloudCoverage.addItem("Clear");
-    choiceCloudCoverage.addItem("Broken");
-    choiceCloudCoverage.addItem("Partly Cloudy");
-    choiceCloudCoverage.addItem("Overcast");
-    choiceCloudCoverage.addItem("Extremely Cloudy");
+    choiceCloudCoverage.setLabel(_("Cloud Coverage"));
+    choiceCloudCoverage.addItem(_("Clear"));
+    choiceCloudCoverage.addItem(_("Broken"));
+    choiceCloudCoverage.addItem(_("Partly Cloudy"));
+    choiceCloudCoverage.addItem(_("Overcast"));
+    choiceCloudCoverage.addItem(_("Extremely Cloudy"));
     choiceCloudCoverage.setMinWidth(minWidth);
     choiceCloudCoverage.setLocation(xChoiceOffset, 100);
     choiceCloudCoverage.select(cloudCoverageCount);
     add(&choiceCloudCoverage);
     xChoiceOffset += minWidth + 13;
 
-    choiceWindSpeed.setLabel("Wind Speed");
-    choiceWindSpeed.addItem("Calm");
-    choiceWindSpeed.addItem("Breezy");
-    choiceWindSpeed.addItem("Brisk");
-    choiceWindSpeed.addItem("Heavy");
-    choiceWindSpeed.addItem("Typhoon");
+    choiceWindSpeed.setLabel(_("Wind Speed"));
+    choiceWindSpeed.addItem(_("Calm"));
+    choiceWindSpeed.addItem(_("Breezy"));
+    choiceWindSpeed.addItem(_("Brisk Winds"));
+    choiceWindSpeed.addItem(_("Heavy Winds"));
+    choiceWindSpeed.addItem(_("Typhoon"));
     choiceWindSpeed.setMinWidth(minWidth);
     choiceWindSpeed.setLocation(xChoiceOffset, 100);
     choiceWindSpeed.select(windSpeed);
     add(&choiceWindSpeed);
     xChoiceOffset += minWidth + 10;
 
-    checkPublic.setLabel("Public");
+    checkPublic.setLabel(_("Public"));
     checkPublic.setState(GameConfig::server_public);
     checkPublic.setLocation(2, 125);
     add(&checkPublic);
 
-    checkPowerUp.setLabel("PowerUps");
+    checkPowerUp.setLabel(_("PowerUps"));
     checkPowerUp.setState(GameConfig::game_powerups);
     checkPowerUp.setLocation(120, 125);
     add(&checkPowerUp);
@@ -352,7 +353,9 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    sprintf(strBuf, "%d - %d max per player", getCurMaxUnitCount(), getCurMaxUnitCount() / getCurMaxPlayersCount());
+    sprintf(strBuf, "%d - %d %s", getCurMaxUnitCount(), 
+            getCurMaxUnitCount() / getCurMaxPlayersCount(), 
+            _("max per player"));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
     
@@ -365,9 +368,10 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     {
         int objectiveCount = m->objectiveCount;
         sprintf(strBuf, "%d%% - %d of %d", getObjectiveCapturePercent(),
-                int(float(objectiveCount) * (float(getObjectiveCapturePercent()) / 100.0f) + 0.999), objectiveCount);
+                int(float(objectiveCount) * (float(getObjectiveCapturePercent()) / 100.0f) + 0.999),
+                objectiveCount);
     } else {
-        sprintf(strBuf, "Map Data Needed");
+        sprintf(strBuf,"%s", _("Map Data Needed"));
     }
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
@@ -382,7 +386,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    sprintf(strBuf, "%d Frags", getFragLimit() );
+    sprintf(strBuf, "%d %s", getFragLimit(), _("Frags") );
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
 

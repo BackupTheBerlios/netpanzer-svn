@@ -20,13 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IPAddressView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
+#include "Interfaces/StrManager.hpp"
 
 // IPAddressView
 //---------------------------------------------------------------------------
 IPAddressView::IPAddressView() : View()
 {
     setSearchName("IPAddressView");
-    setTitle("Server IP Address");
+    setTitle(_("Server IP Address"));
     setSubTitle("");
 
     setAllowResize(false);

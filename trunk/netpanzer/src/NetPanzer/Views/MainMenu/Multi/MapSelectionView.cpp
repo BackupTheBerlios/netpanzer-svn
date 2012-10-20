@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include "MapSelectionView.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
 #include "Classes/MapFile.hpp"
@@ -66,7 +67,7 @@ public:
 MapSelectionView::MapSelectionView() : RMouseHackView()
 {
     setSearchName("MapSelectionView");
-    setTitle("Map Selection");
+    setTitle(_("Map Selection"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -100,7 +101,7 @@ void MapSelectionView::init()
 
     add( Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, -1)));
     pos.x += arrowButtonWidth + 2;
-    add( Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, 1)));
+    add( Button::createTextButton( ">", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, 1)));
 
     loadMaps();
     HostOptionsView::updateWindSpeedString();
@@ -120,9 +121,9 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         int result = loadMaps();
 
         if (result == 0) {
-            clientArea.bltStringCenter("No Maps Found", Color::white);
+            clientArea.bltStringCenter(_("No Maps Found"), Color::white);
         } else if (result == 1) {
-            clientArea.bltStringCenter("Outpost file error", Color::white);
+            clientArea.bltStringCenter(_("Outpost file error"), Color::white);
         }
     }
 
@@ -269,17 +270,17 @@ void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
 
     const int yOffset = 15;
 
-    sprintf(strBuf, "Name:       %s", mapList[curMap]->name.c_str());
+    sprintf(strBuf, "%-11s: %s", _("Name"), mapList[curMap]->name.c_str());
     dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     int sizeX = (mapList[curMap]->cells.y * 32) / 800;
     int sizeY = (mapList[curMap]->cells.x * 32) / 600;
-    sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
+    sprintf(strBuf, "%-11s: %d x %d", _("Size"),sizeX, sizeY);
     dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
-    sprintf(strBuf, "Objectives: %d", mapList[curMap]->objectiveCount);
+    sprintf(strBuf, "%-11s: %d", _("Objectives"),mapList[curMap]->objectiveCount);
     dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
 
 } // end MapSelectionView::drawMapInfo

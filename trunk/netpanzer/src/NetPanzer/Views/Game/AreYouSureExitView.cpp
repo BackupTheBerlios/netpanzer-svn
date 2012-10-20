@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Actions/ActionManager.hpp"
 
@@ -31,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
 {
     setSearchName("AreYouSureExitView");
-    setTitle("Exit netPanzer");
+    setTitle(_("Exit netPanzer"));
     setSubTitle("");
     loaded = false;
 	} // end AreYouSureExitView::AreYouSureExitView
@@ -49,9 +50,9 @@ void AreYouSureExitView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createTextButton( "YES", iXY(x, y), 137, ActionManager::getAction("quit")));
+    add( Button::createTextButton( _("YES"), iXY(x, y), 137, ActionManager::getAction("quit")));
     x += 141 + 10;
-    add( Button::createTextButton( "NO", iXY(x, y), 137, ActionManager::getAction("hide_confirmexit")));
+    add( Button::createTextButton( _("NO"), iXY(x, y), 137, ActionManager::getAction("hide_confirmexit")));
     loaded = true;
 } // end AreYouSureExitView::init
 
@@ -62,7 +63,7 @@ void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
     viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
+    viewArea.bltStringCenter(_("Are you sure you wish to exit netPanzer?"), Color::white);
 
     View::doDraw(viewArea, clientArea);
 } // end AreYouSureExitView::doDraw

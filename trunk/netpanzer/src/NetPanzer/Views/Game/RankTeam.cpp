@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Views/Theme.hpp"
 
@@ -34,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 RankTeam::RankTeam() : GameTemplateView()
 {
     setSearchName("RankTeam");
-    setTitle("Round stats");
+    setTitle(_("Round stats"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -91,19 +92,27 @@ static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
     int y = rect.min.y+5;
 
     dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
-    snprintf(statBuf, sizeof(statBuf), "%5i Points", state->getTotal());
+    snprintf(statBuf, sizeof(statBuf), "%5i %s", 
+             state->getTotal(),
+             _("Points"));
     dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
     y += 10;
     dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
     y += 5;
-    snprintf(statBuf, sizeof(statBuf), " Frags: %5i", state->getKills());
+    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+             _("Frags"), 
+             state->getKills());
     dest.bltString(x, y, statBuf, ctTexteNormal);
     y += 12;
-    snprintf(statBuf, sizeof(statBuf), "deaths: %5i", state->getLosses());
+    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+             _("deaths"), 
+             state->getLosses());
     dest.bltString(x, y, statBuf, ctTexteNormal);
     x += 120;
     y = rect.min.y+20;
-    snprintf(statBuf, sizeof(statBuf), "Objectives: %5i", state->getObjectivesHeld());
+    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+             _("Objectives"),
+             state->getObjectivesHeld());
     dest.bltString(x, y, statBuf, ctTexteNormal);
 }
 
@@ -113,17 +122,25 @@ static void DrawTeamHeader(Surface& dest, const Uint8 team, int x, int y)
     int color = TeamManager::getTeamColor(team);
     int row = y;
     TeamManager::drawFlag( team, dest, x+10, row );
-    snprintf(statBuf, sizeof(statBuf), "Team %s", TeamManager::getTeamName(team).c_str());
+    snprintf(statBuf, sizeof(statBuf), "%s %s", 
+             _("Team"),
+             TeamManager::getTeamName(team).c_str());
     dest.bltString(x+30, row+7, statBuf, color);
 
     row+=25;
-    snprintf(statBuf, sizeof(statBuf), "     frags: %8i", TeamManager::getKills(team));
+    snprintf(statBuf, sizeof(statBuf), "%12s: %8i", 
+             _("Frags"),
+             TeamManager::getKills(team));
     dest.bltString(x+10, row, statBuf, color);
     row+=15;
-    snprintf(statBuf, sizeof(statBuf), "    deaths: %8i", TeamManager::getLosses(team));
+    snprintf(statBuf, sizeof(statBuf), "%12s: %8i", 
+             _("deaths"),
+             TeamManager::getLosses(team));
     dest.bltString(x+10, row, statBuf, color);
     row+=15;
-    snprintf(statBuf, sizeof(statBuf), "Objectives: %8i", TeamManager::getObjectivesHeld(team));
+    snprintf(statBuf, sizeof(statBuf), "%12s: %8i", 
+             _("Objectives"),
+             TeamManager::getObjectivesHeld(team));
     dest.bltString(x+10, row, statBuf, color);
 }
 

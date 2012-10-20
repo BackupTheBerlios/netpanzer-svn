@@ -96,6 +96,7 @@ int       GameConfig::interface_scrollrate = 1000;
 int       GameConfig::interface_rankposition_x = 100;
 int       GameConfig::interface_rankposition_y = 100;
 int       GameConfig::interface_viewdrawbackgroundmode = (int)VIEW_BACKGROUND_DARK_GRAY_BLEND;
+NPString* GameConfig::interface_language = 0;
 
 int       GameConfig::server_port = NETPANZER_DEFAULT_PORT_TCP;
 NPString* GameConfig::server_bindaddress = 0;
@@ -156,6 +157,7 @@ static const ScriptVarBindRecord interface_getters[] =
     { "rankposition_x",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
     { "viewdrawbackgroundmode", GETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
+    { "language",               GETSVTYPE_STRING,  &GameConfig::interface_language},
     {0,0}
 };
 
@@ -172,6 +174,7 @@ static const ScriptVarBindRecord interface_setters[] =
     { "rankposition_x",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
     { "viewdrawbackgroundmode", SETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
+    { "language",               SETSVTYPE_STRING,  &GameConfig::interface_language},
     {0,0}
 };
 
@@ -382,9 +385,9 @@ void GameConfig::registerScript(const NPString& table_name)
                                        "ConfigVideoMetaTable",
                                        video_getters, video_setters);
 
-    ScriptManager::bindStaticVariables(table_name + ".interface",
-                                       "ConfigInterfaceMetaTable",
-                                       interface_getters, interface_setters);
+//    ScriptManager::bindStaticVariables(table_name + ".interface",
+//                                       "ConfigInterfaceMetaTable",
+//                                       interface_getters, interface_setters);
 
     ScriptManager::bindStaticVariables(table_name + ".game",
                                        "ConfigGameMetaTable",

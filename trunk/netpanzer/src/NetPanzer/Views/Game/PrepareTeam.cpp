@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 
 #include "Actions/Action.hpp"
@@ -59,7 +60,7 @@ public:
 PrepareTeam::PrepareTeam() : GameTemplateView()
 {
     setSearchName("PrepareTeam");
-    setTitle("Prepare Team");
+    setTitle(_("Prepare Team"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -96,7 +97,7 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
                                                    new ChangeTeamAction(this));
     add(changebutton);
 
-    readybutton = Button::createNewSpecialButton( "Ready",
+    readybutton = Button::createNewSpecialButton( _("Ready"),
                                                   iXY(firstrect.max.x+29, (firstrect.min.y+85)),
                                                   (secondrect.min.x-firstrect.max.x)-39,
                                                   new PlayerReadyAction(this));
@@ -173,15 +174,15 @@ void PrepareTeam::DrawInfo(Surface &dest)
     char statBuf[256];
     if (GameControlRulesDaemon::getTeamCD() < 1)
     {
-        dest.bltString(start.x-5 , rect.min.y-5, "Get ready, the battle will begin...", ctTexteNormal);
+        dest.bltString(start.x-5 , rect.min.y-5, _("Get ready, the battle will begin..."), ctTexteNormal);
     }
     else
     {
         snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
         dest.bltString(firstrect.max.x+60 , firstrect.min.y+5, statBuf, ctTexteNormal);
     }
-    dest.bltString(start.x , start.y, "Game:", ctTexteNormal);
-    dest.bltString(start.x+nextx , start.y, "Map:", ctTexteNormal);
+    dest.bltString(start.x , start.y, _("Game"), ctTexteNormal);
+    dest.bltString(start.x+nextx , start.y, _("Map"), ctTexteNormal);
     start.y+= 10;
     dest.drawLine(start.x, start.y, start.x+100, start.y, ctTexteNormal);
     dest.drawLine(start.x+nextx, start.y, start.x+nextx+100, start.y,ctTexteNormal);
@@ -190,32 +191,37 @@ void PrepareTeam::DrawInfo(Surface &dest)
     {
     case  _gametype_timelimit:
     {
-        snprintf(statBuf, sizeof(statBuf), "Time limit: %i", GameConfig::game_timelimit);
+        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Time Limit"), GameConfig::game_timelimit);
         break;
     }
     case _gametype_fraglimit:
     {
-        snprintf(statBuf, sizeof(statBuf), "Frag limit: %i", GameConfig::game_fraglimit);
+        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Frag Limit"), GameConfig::game_fraglimit);
         break;
     }
     case _gametype_objective:
     {
-        snprintf(statBuf, sizeof(statBuf), "Objective: %i", GameConfig::game_occupationpercentage);
+        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Objective"), GameConfig::game_occupationpercentage);
         break;
     }
     }
     dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
-    snprintf(statBuf, sizeof(statBuf), "Name: %-20s", MapInterface::getMap()->getName().c_str());
+    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", _("Name"), MapInterface::getMap()->getName().c_str());
     dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
     start.y+= 13;
-    snprintf(statBuf, sizeof(statBuf), "Players: %i/%i",
+    snprintf(statBuf, sizeof(statBuf), "%s: %i/%i",
+             _("Players"),
              PlayerInterface::getActivePlayerCount(),
              GameConfig::game_maxplayers);
     dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
-    snprintf(statBuf, sizeof(statBuf), "Objectives: %i", (int) ObjectiveInterface::getObjectiveCount());
+    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
+             _("Objectives"), 
+             (int) ObjectiveInterface::getObjectiveCount());
     dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
     start.y+= 13;
-    snprintf(statBuf, sizeof(statBuf), "Units: %i", GameConfig::game_maxunits/GameConfig::game_maxplayers);
+    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
+             _("Units"),
+             GameConfig::game_maxunits/GameConfig::game_maxplayers);
     dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
 }
 
@@ -234,11 +240,15 @@ void PrepareTeam::drawTeams(Surface &dest)
     char statBuf[256];
 
     int cur_line_pos = rect.min.y +10;
-    snprintf(statBuf, sizeof(statBuf), "Team: %-20s", TeamManager::getTeamName(0).c_str());
+    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
+             _("Team"),
+             TeamManager::getTeamName(0).c_str());
     dest.bltString(firstrect.min.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(0));
     TeamManager::drawFlag(0, dest, firstrect.min.x+10, cur_line_pos-2);
 
-    snprintf(statBuf, sizeof(statBuf), "Team: %-20s", TeamManager::getTeamName(1).c_str());
+    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
+             _("Team"),
+             TeamManager::getTeamName(1).c_str());
     dest.bltString(secondrect.min.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(1));
     TeamManager::drawFlag(1, dest, secondrect.min.x+10, cur_line_pos-2);
 

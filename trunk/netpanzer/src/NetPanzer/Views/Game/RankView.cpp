@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -50,8 +51,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
 
-static const char * table_header =
-        "      Name                 Frags Deaths Points Objs.";
+char table_header[256];// =
+//        "      Name                 Frags Deaths Points Objs.";
 
 static const char * stats_format = "%-20s%6i%7i%7i%6i";
 
@@ -60,7 +61,7 @@ static const char * stats_format = "%-20s%6i%7i%7i%6i";
 RankView::RankView() : GameTemplateView()
 {
     setSearchName("RankView");
-    setTitle("Rankings");
+    setTitle(_("Rankings"));
     setSubTitle(" - TAB");
 
     setAllowResize(false);
@@ -75,7 +76,12 @@ RankView::RankView() : GameTemplateView()
     colorImage.loadBMP("pics/default/playerColor.bmp");
 
     selected_line = -1;
-
+    snprintf(table_header, sizeof(table_header), "    %-20s %6s %7s %7s %6s", 
+             _("Name"),
+             _("Frags"),
+             _("Deaths"),
+             _("Points"),
+             _("Objs"));
 } // end RankView::RankView
 
 // doDraw

@@ -15,6 +15,7 @@
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
@@ -48,7 +49,7 @@ void
 LoadingView::init()
 {
     setSearchName("LoadingView");
-    setTitle("Loading Progress");
+    setTitle(_("Loading Progress"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -69,11 +70,11 @@ LoadingView::init()
                        ? ActionManager::getAction("quit")
                        : ActionManager::getAction("disconnect");
     
-    add( Button::createTextButton("Abort", iXY(340, 15), 100, onAbort));
+    add( Button::createTextButton(_("Abort"), iXY(340, 15), 100, onAbort));
 
-    okButton = Button::createTextButton("Enter", iXY(340,100), 100, new BeginPasswordConnectAction(this));
+    okButton = Button::createTextButton(_("Enter"), iXY(340,100), 100, new BeginPasswordConnectAction(this));
     
-    passwordLabel = new Label(340, 68, "Game Password", Color::white);
+    passwordLabel = new Label(340, 68, _("Game Password"), Color::white);
 
 }
 

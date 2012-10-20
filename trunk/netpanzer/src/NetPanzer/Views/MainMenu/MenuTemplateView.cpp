@@ -16,32 +16,30 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
+#include "2D/PackedSurface.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/Components/ViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/StrManager.hpp"
+#include "Interfaces/PlayerGameManager.hpp"
 #include "System/Sound.hpp"
-#include "Views/Components/ViewGlobals.hpp"
-#include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Particles/RadarPingParticle2D.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
-#include "2D/PackedSurface.hpp"
-#include "Interfaces/GameManager.hpp"
 #include "Util/Exception.hpp"
-#include "Views/GameViewGlobals.hpp"
 #include "Multi/ServerListView.hpp"
-
 #include "Multi/MapSelectionView.hpp"
 #include "Multi/IPAddressView.hpp"
+#include "Multi/PlayerNameView.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "Interfaces/PlayerGameManager.hpp"
 
 #include "Actions/Action.hpp"
-#include "Multi/PlayerNameView.hpp"
 #include "Actions/ActionManager.hpp"
 
 #ifndef PACKAGE_VERSION
@@ -287,14 +285,19 @@ MenuTemplateView::MenuTemplateView() : RMouseHackView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    add( createMenuButton( "Main",           mainPos,    false, new ShowMainViewAction()) );
-    add( createMenuButton( "Join",           joinPos,    false, new ShowJoinViewAction()) );
-    add( createMenuButton( "Host",           hostPos,    false, new ShowHostViewAction()) );
-    add( createMenuButton( "Options",        optionsPos, false, new ShowOptionsViewAction()) );
-    add( createMenuButton( "Help",           helpPos,    false, new ShowHelpViewAction()) );
-    add( createMenuButton( "Exit netPanzer", exitPos,    false, ActionManager::getAction("quit")) );
+    add( createMenuButton( _("Main"),           mainPos,    false, new ShowMainViewAction()) );
+    joinPos.x = mainPos.x + Surface::getTextLength(_("Main"))+22;
+    add( createMenuButton( _("Join"),           joinPos,    false, new ShowJoinViewAction()) );
+    hostPos.x = joinPos.x + Surface::getTextLength(_("Join"))+22;
+    add( createMenuButton( _("Host"),           hostPos,    false, new ShowHostViewAction()) );
+    optionsPos.x = hostPos.x + Surface::getTextLength(_("Host"))+22;
+    add( createMenuButton( _("Options"),        optionsPos, false, new ShowOptionsViewAction()) );
+    helpPos.x = optionsPos.x + Surface::getTextLength(_("Options"))+22;
+    add( createMenuButton( _("Help"),           helpPos,    false, new ShowHelpViewAction()) );
+    exitPos.x = MenuRect.max.x - Surface::getTextLength(_("Exit netPanzer"))-25;
+    add( createMenuButton( _("Exit netPanzer"), exitPos,    false, ActionManager::getAction("quit")) );
     
-    playButton = createMenuButton( "Play", iXY(-100, 0), true, new PlayButtonClickedAction());
+    playButton = createMenuButton( _("Play"), iXY(-150, 0), true, new PlayButtonClickedAction());
     add( playButton );
 } // end MenuTemplateView::initPreGameOptionButtons
 
@@ -304,15 +307,15 @@ void MenuTemplateView::initInGameOptionButtons()
 {
     if(!gameconfig->quickConnect)
     {
-        add( createMenuButton( "Resign",          resignPos, false, new OpenResignGameViewAction()) );
-        add( createMenuButton( "Exit netPanzer",  exitPos,   false, new OpenExitConfirmWindowAction()) );
+        add( createMenuButton( _("Resign"),          resignPos, false, new OpenResignGameViewAction()) );
+        add( createMenuButton( _("Exit netPanzer"),  exitPos,   false, new OpenExitConfirmWindowAction()) );
     }
     else
     {
-        add( createMenuButton( "Resign",          exitPos,   false, new OpenResignGameViewAction()) );
+        add( createMenuButton( _("Resign"),          exitPos,   false, new OpenResignGameViewAction()) );
     }
 
-    add( createMenuButton( "Close Options", returnToGamePos, false, new CloseOptionsWindowAction()) );
+    add( createMenuButton( _("Close Options"), returnToGamePos, false, new CloseOptionsWindowAction()) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons

@@ -21,6 +21,7 @@
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -251,7 +252,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
 
     if ( chat_mesg->message_scope == _chat_mesg_scope_server )
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("Server: %s"),
                                       text.c_str());
         return;
     }
@@ -346,7 +347,7 @@ void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
 
     if ( PlayerInterface::isLocalPlayer(player) )
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("Server: %s"),
                                       message.c_str());
     }
     else

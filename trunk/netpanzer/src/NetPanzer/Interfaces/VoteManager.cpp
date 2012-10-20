@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -51,7 +52,7 @@ void VoteManager::netMessageVoteRequest(const NetMessage* message)
         vote_counter--;
         player_vote[ voteplayer->getPlayerIndex() ] = voteplayer->player_vote;
         char buff[100];
-        sprintf(buff, "player %s has voted, waiting %d votes",
+        sprintf(buff, _("player %s has voted, waiting %d votes"),
                 PlayerInterface::getPlayer(voteplayer->getPlayerIndex())->getName().c_str(),
                 vote_counter);
         if (GameConfig::game_teammode)

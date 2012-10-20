@@ -36,6 +36,7 @@ protected:
     tVScrollBar *VscrollBar;
     tHScrollBar *HscrollBar;
     tStringListBox *HelpBox;
+    void addhelpcmd(NPString cmd, NPString help);
 
 public:
     HelpScrollView();

@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
 #include "Interfaces/TileInterface.hpp"
@@ -278,7 +279,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     GameConfig::game_teammode = false;
     LoadingView::show();
     // refresh the view in each append
-    LoadingView::append( "Launching Server ..." );
+    LoadingView::append( _("Launching Server...") );
 
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
@@ -318,7 +319,7 @@ void PlayerGameManager::hostMultiPlayerGame()
             }
         }
     } catch(std::exception& e) {
-        LoadingView::append( "SERVER LAUNCH FAILED" );
+        LoadingView::append( _("SERVER LAUNCH FAILED") );
         LoadingView::append(e.what());
         wait.changePeriod( 4 );
         while( !wait.count() );
@@ -328,12 +329,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     }
 
     // refresh views
-    LoadingView::update( "Launching Server ... (100%) " );
+    LoadingView::update( NPString(_("Launching Server..."))+"(100%)" );
     graphicsLoop();
     GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
 
-    LoadingView::append( "Loading Game Data ..." );
+    LoadingView::append( _("Loading Game Data") );
     graphicsLoop();
 
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
@@ -353,7 +354,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     ObjectiveInterface::resetLogic();
 
     while( GameManager::gameMapLoad( &percent_complete ) == true ) {
-        sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
+        sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
         LoadingView::update( strbuf );
         graphicsLoop();
     }
@@ -361,8 +362,8 @@ void PlayerGameManager::hostMultiPlayerGame()
     UnitProfileInterface::loadUnitProfiles();
     if ( UnitProfileInterface::getNumUnitTypes() == 0 )
     {
-        LoadingView::append( "ERROR loading unit profiles, check your configuration" );
-        LoadingView::append( "game.unit_profiles is: " + *GameConfig::game_unit_profiles );
+        LoadingView::append( _("ERROR unit profiles") );
+        LoadingView::append( _("game.unit_profiles")+ *GameConfig::game_unit_profiles );
         graphicsLoop();
         SDL_Delay(5000);
         if ( infosocket )
@@ -388,26 +389,26 @@ void PlayerGameManager::hostMultiPlayerGame()
         return;
     }
 
-    sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
+    sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
     LoadingView::update( strbuf );
     graphicsLoop();
 
 
-    LoadingView::append( "Initializing Game Logic ..." );
+    LoadingView::append( _("Initializing Game Logic") );
     graphicsLoop();
     GameManager::reinitializeGameLogic();
 
-    LoadingView::update( "Initializing Game Logic ... (100%) " );
+    LoadingView::update( NPString(_("Initializing Game Logic"))+" (100%)" );
     graphicsLoop();
 
-    LoadingView::append( "Spawning Player ..." );
+    LoadingView::append( _("Spawning Player") );
     graphicsLoop();
 
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
 
-    LoadingView::update( "Spawning Player ... (100%)" );
+    LoadingView::update( NPString(_("Spawning Player"))+" (100%)" );
 
     graphicsLoop();
 

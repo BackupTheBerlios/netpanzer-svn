@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/VoteManager.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -103,13 +104,13 @@ static void handleAllianceMessage(const int type,
             if ( PlayerInterface::isSingleAllied(player_state->getID(), local_player) )
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "You accepted %s alliance request.",
+                                              _("You accepted %s alliance request."),
                                               player_state->getName().c_str());
             }
             else
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "You request alliance with %s.",
+                                              _("You request alliance with %s."),
                                               player_state->getName().c_str());
             }
         }
@@ -119,13 +120,13 @@ static void handleAllianceMessage(const int type,
             if ( PlayerInterface::isSingleAllied( local_player, player_state->getID()) )
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "%s accepted your alliance request.",
+                                              _("%s accepted your alliance request."),
                                               player_state->getName().c_str());
             }
             else
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "%s request to ally with you.",
+                                              _("%s request to ally with you."),
                                               player_state->getName().c_str());
             }
         }
@@ -140,13 +141,13 @@ static void handleAllianceMessage(const int type,
             if ( PlayerInterface::isSingleAllied(player_state->getID(), local_player) )
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "You broke the alliance with %s.",
+                                              _("You broke the alliance with %s."),
                                               player_state->getName().c_str());
             }
             else
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "You cancel your alliance request with %s.",
+                                              _("You cancel your alliance request with %s."),
                                               player_state->getName().c_str());
             }
         }
@@ -156,13 +157,13 @@ static void handleAllianceMessage(const int type,
             if ( PlayerInterface::isSingleAllied( local_player, player_state->getID()) )
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "%s broke the alliance with you.",
+                                              _("%s broke the alliance with you."),
                                               player_state->getName().c_str());
             }
             else
             {
                 ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                              "%s cancelled the alliance request with you.",
+                                              _("%s cancelled the alliance request with you."),
                                               player_state->getName().c_str());
             }
         }

@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
@@ -158,7 +159,7 @@ void toggleDisplayOutpostNames( void )
 VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 {
     setSearchName("VehicleSelectionView");
-    setTitle("Unit Production");
+    setTitle(_("Unit Production"));
     setSubTitle("");
 
     setAllowResize(false);
@@ -177,12 +178,12 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     iXY pos(0 ,2);
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Static Display:", Color::white) );
+    add( new Label( pos.x+2, pos.y+2, _("Static Display"), Color::white) );
 
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonStaticDisplay )
         buttonStaticDisplay = new Button();
-    buttonStaticDisplay->setLabel("On");
+    buttonStaticDisplay->setLabel(_("On"));
     buttonStaticDisplay->setLocation(pos.x, pos.y);
     buttonStaticDisplay->setSize( 100, 14);
     buttonStaticDisplay->setNormalBorder();
@@ -190,13 +191,13 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += yOffset+2;
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Power:", Color::white) );
+    add( new Label( pos.x+2, pos.y+2, _("Power"), Color::white) );
 
     pos.x = getClientRect().getSizeX() - 102;
     if ( !buttonPower )
         buttonPower = new Button();
     
-    buttonPower->setLabel("Off");
+    buttonPower->setLabel(_("Off"));
     buttonPower->setLocation(pos.x,pos.y);
     buttonPower->setSize( 100, 14);
     buttonPower->setNormalBorder();
@@ -204,23 +205,22 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += yOffset+5;
 
     // XXX hardcoded for now
-    int CHAR_XPIX = 8;
-    
+   
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Production:", Color::white) );
-    productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
+    add( new Label( pos.x+2, pos.y+2, _("Production"), Color::white) );
+    productionUnitPos.x = 100;
     productionUnitPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Time:        ", Color::white) );
-    timeRequiredPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
+    add( new Label( pos.x+2, pos.y+2, _("Time"), Color::white) );
+    timeRequiredPos.x = productionUnitPos.x;
     timeRequiredPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, "Unit Built:   ", Color::white) );
-    unitsBuiltPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
+    add( new Label( pos.x+2, pos.y+2, _("UnitBuilt"), Color::white) );
+    unitsBuiltPos.x = productionUnitPos.x;
     unitsBuiltPos.y = pos.y + 2;
     pos.y += yOffset;
 
@@ -274,7 +274,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     if ( !buttonOk )
         buttonOk = new Button();
     
-    buttonOk->setLabel("Close");
+    buttonOk->setLabel(_("Close"));
     buttonOk->setLocation(pos.x,pos.y);
     buttonOk->setSize(100, 14);
     buttonOk->setNormalBorder();
@@ -402,11 +402,9 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     }
     else
     {
-        sprintf(strBuf, "power off");
+        sprintf(strBuf, "%s", _("power off"));
         clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
                                 strBuf, color);
-
-        sprintf(strBuf, "power off");
         clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
                                 strBuf, color);
     }
@@ -496,13 +494,15 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
     {
         char strBuf[256];
         int rtime = getUnitRegenTime(highlightedUnitType);
-        snprintf(strBuf, sizeof(strBuf)-1, "%s - Build Time: %01d:%02d",
-                 getUnitName(highlightedUnitType), rtime / 60, rtime % 60);
+        snprintf(strBuf, sizeof(strBuf)-1, "%s - %s: %01d:%02d",
+                 getUnitName(highlightedUnitType),
+                 _("Build Time"),
+                 rtime / 60, rtime % 60);
         showStatus(strBuf);
     }
     else
     {
-        showStatus("Select a unit for production");
+        showStatus(_("Select a unit for production"));
     }
 
 } // end VehicleSelectionView::mouseMove

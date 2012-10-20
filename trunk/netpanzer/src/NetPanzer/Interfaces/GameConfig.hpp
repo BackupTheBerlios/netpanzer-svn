@@ -188,6 +188,7 @@ public:
     static int       interface_rankposition_x;
     static int       interface_rankposition_y;
     static int       interface_viewdrawbackgroundmode;
+    static NPString* interface_language;
 
     // radar settings
     static int       radar_playerunitcolor;

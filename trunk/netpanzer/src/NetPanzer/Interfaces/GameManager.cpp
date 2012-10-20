@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
 #include "Interfaces/TileInterface.hpp"
@@ -176,12 +177,15 @@ void GameManager::setVideoMode()
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
     loadPalette("netp");
-
+    if (GameConfig::interface_language->length() != 0)
+    {
+        loadPOFile(*GameConfig::interface_language);
+    }
     if(old_res == iXY(0,0)) {
         // users can get annoyed when they see a black screen for half a minute
         // so we display something here... (we're just hoping that palette1 is
         // not black)
-        drawTextCenteredOnScreen("Please wait... generating palettes", 255);
+        drawTextCenteredOnScreen(_("Please wait... generating palettes"), 255);
     }
 
 }
@@ -408,14 +412,13 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
             {
                 TeamManager::addPlayerinTeam(connect_alert->getPlayerID(), connect_alert->getTeamID());
                 ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                        "%s has joined the game in team %s.",
+                                        _("%s has joined the game in team %s."),
                                         player_state->getName().c_str(),
                                         TeamManager::getTeamName(player_state->getTeamID()).c_str());
             } else
             {
                  ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                        "%s has joined the game.",
-                                        player_state->getName().c_str());
+                                        _("%s has joined the game."), player_state->getName().c_str());
             }
 
             break;
@@ -426,8 +429,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
                 TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
             }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                        "%s has left the game.",
-                                        player_state->getName().c_str());
+                                        _("%s has left the game."), player_state->getName().c_str());
             break;
 
         case _connect_alert_mesg_client_drop:
@@ -436,8 +438,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
                 TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
             }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                    "Connection to %s has been unexpectedly broken.",
-                    player_state->getName().c_str());
+                    _("Connection to %s has been unexpectedly broken."), player_state->getName().c_str());
             break;
 
         case _connect_alert_mesg_client_kicked:
@@ -446,8 +447,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
                 TeamManager::removePlayer(connect_alert->getPlayerID(), connect_alert->getTeamID());
             }
             ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                "Player %s was kicked.",
-                player_state->getName().c_str());
+                _("Player %s was kicked"), player_state->getName().c_str());
             break;
 
         default:

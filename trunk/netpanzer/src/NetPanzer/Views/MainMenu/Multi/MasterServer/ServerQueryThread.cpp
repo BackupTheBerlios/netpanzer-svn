@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include "Util/Exception.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Util/StringTokenizer.hpp"
 #include "Util/StreamTokenizer.hpp"
@@ -402,17 +403,17 @@ ServerQueryThread::getStateMessage() const
 {
     switch(state) {
         case STATE_NOSERVERS:
-            return "No Masterservers configured";
+            return _("No Masterservers configured");
         case STATE_QUERYMASTERSERVER:
-            return "Querying Masterserver";
+            return _("Querying Masterserver");
         case STATE_ERROR:
-            return "No response from Masterserver";
+            return _("No response from Masterserver");
         case STATE_QUERYSERVERS:
         case STATE_DONE:
-            return "No servers found";
+            return _("No servers found");
     }
 
-    return "Querying Masterserver";
+    return _("Querying Masterserver");
 }
 
 } // masterserver

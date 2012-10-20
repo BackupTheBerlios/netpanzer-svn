@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerNameView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Views/Components/InputField.hpp"
 
 enum { BORDER_SPACE           =  4 };    
@@ -33,7 +34,7 @@ enum { INPUT_FIELD_CHARACTERS = 15 };
 PlayerNameView::PlayerNameView() : View()
 {
     setSearchName("PlayerNameView");
-    setTitle("Player Name");
+    setTitle(_("Player Name"));
     setSubTitle("");
 
     setAllowResize(false);

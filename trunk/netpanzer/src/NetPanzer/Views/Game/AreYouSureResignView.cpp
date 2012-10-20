@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Button.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/Particle2D.hpp"
 #include "System/Sound.hpp"
@@ -37,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 AreYouSureResignView::AreYouSureResignView() : SpecialButtonView()
 {
     setSearchName("AreYouSureResignView");
-    setTitle("Resign");
+    setTitle(_("Resign"));
     setSubTitle("");
     loaded = false;
 	} // end AreYouSureResignView::AreYouSureResignView
@@ -55,9 +56,9 @@ void AreYouSureResignView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = getClientRect().getSize().y/2 + 30;
-    add( Button::createTextButton( "YES", iXY(x, y), 137, ActionManager::getAction("disconnect")));
+    add( Button::createTextButton( _("YES"), iXY(x, y), 137, ActionManager::getAction("disconnect")));
     x += 141 + 10;
-    add( Button::createTextButton( "NO", iXY(x, y), 137, ActionManager::getAction("hide_confirmdisconnect")));
+    add( Button::createTextButton( _("NO"), iXY(x, y), 137, ActionManager::getAction("hide_confirmdisconnect")));
     loaded = true;
 } // end AreYouSureResignView::init
 
@@ -68,7 +69,7 @@ void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
     viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenter("Are you sure you wish to Resign?", Color::white);
+    viewArea.bltStringCenter(_("Are you sure you wish to Resign?"), Color::white);
 
     View::doDraw(viewArea, clientArea);
 } // end AreYouSureResignView::doDraw

@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // XXX ultrahack
 #include "Classes/ScreenSurface.hpp"
 #include "Views/Components/Desktop.hpp"
-
+#include "Interfaces/StrManager.hpp"
 #include "Views/Game/LoadingView.hpp"
 #include "Actions/Action.hpp"
 
@@ -47,9 +47,11 @@ public:
 ServerListView::ServerListView()
     : queryThread(0)
 {
+    char str_buf[256];
     setSearchName("ServerListView");
-    setTitle("Servers");
-    setSubTitle(" Name                         Players/max     Map          Ping   ");
+    setTitle(_("Servers"));
+    sprintf( str_buf, "%12s %12s %12s %12s", _("Name"), _("Players/max"), _("Map"), _("Ping") );
+    setSubTitle(str_buf);
 
     moveTo(bodyTextRect.min + iXY(0, 205));
     resizeClientArea(bodyTextRect.max - bodyTextRect.min - iXY(5,220));
@@ -58,7 +60,7 @@ ServerListView::ServerListView()
     setAllowMove(false);
     setVisible(false);
 
-    add( Button::createTextButton( "Refresh",
+    add( Button::createTextButton( _("Refresh"),
                                    iXY(getClientRect().getSizeX()-82, getClientRect().getSizeY() - Surface::getFontHeight() * 2),
                                    80,  new RefreshServerListAction()));
     
@@ -128,7 +130,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         if ( queryThread ) {
             msg = queryThread->getStateMessage();
         } else {
-            msg = "Resolving masterserver address";
+            msg = _("Resolving masterserver address");
         }
         clientArea.bltString(0, 0, msg, Color::white);
         View::doDraw(windowArea, clientArea);
@@ -142,10 +144,10 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "querying...", Color::gray);
+            clientArea.bltString(140, y, _("querying..."), Color::gray);
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "timeout", Color::gray);
+            clientArea.bltString(140, y, _("timeout"), Color::gray);
         } else if(server.protocol != NETPANZER_PROTOCOL_VERSION) {
             clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
             clientArea.bltString(140, y, getNetpanzerProtocolMessage(server.protocol), Color::gray);
