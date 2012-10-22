@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 
 lua_State * ScriptManager::luavm = 0;
 int ScriptManager::previous_top = 0;
@@ -270,17 +271,17 @@ ScriptManager::runUserCommand(const NPString& str)
 
             if ( lua_pcall(luavm, 1, 0, 0) != 0 )
             {
-                ConsoleInterface::postMessage(Color::cyan, false, 0, "Error running user command '%s': %s", str.c_str(), lua_tostring(luavm, -1));
+                ConsoleInterface::postMessage(Color::cyan, false, 0, "%s '%s': %s", _("Error running user command"), str.c_str(), lua_tostring(luavm, -1));
             }
         }
         else
         {
-            ConsoleInterface::postMessage(Color::cyan, false, 0, "User command '%s' not found", str.c_str());
+            ConsoleInterface::postMessage(Color::cyan, false, 0, _("User command '%s' not found"), str.c_str());
         }
     }
     else
     {
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "There is no defined UserCommands");
+        ConsoleInterface::postMessage(Color::cyan, false, 0, _("There is no defined UserCommands"));
     }
 
     lua_settop(luavm, luatop);
@@ -310,17 +311,17 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
         {
             if ( ! GameConfig::game_adminpass || GameConfig::game_adminpass->empty() )
             {
-                ChatInterface::serversayTo(runPlayer, "Remote admin is disabled.");
+                ChatInterface::serversayTo(runPlayer, _("Remote admin is disabled."));
             }
             else if ( GameConfig::game_adminpass->compare(params) == 0 )
             {
                 PlayerInterface::setAdmin(runPlayer, true);
-                ChatInterface::serversayTo(runPlayer, "You are admin!");
+                ChatInterface::serversayTo(runPlayer, _("You are admin!"));
             }
             else
             {
                 // XXX a limit on retries is needed... some other day will do.
-                ChatInterface::serversayTo(runPlayer, "Wrong password.");
+                ChatInterface::serversayTo(runPlayer, _("Wrong password."));
             }
 
         }
@@ -329,7 +330,7 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
             if ( ! PlayerInterface::isLocalPlayer(runPlayer) && command == "adminlogout" )
             {
                 PlayerInterface::setAdmin(runPlayer, false);
-                ChatInterface::serversayTo(runPlayer, "You are admin no more.");
+                ChatInterface::serversayTo(runPlayer, _("You are admin no more."));
             }
             else
             {
@@ -342,7 +343,7 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
                     if ( lua_pcall(luavm, 2, 0, 0) != 0 )
                     {
                         std::stringstream errormsg;
-                        errormsg << "Error running server command '"
+                        errormsg << _("Error running server command '")
                                  << str << "': "
                                  << lua_tostring(luavm, -1);
                         ChatInterface::serversayTo(runPlayer, errormsg.str());
@@ -351,19 +352,19 @@ ScriptManager::runServerCommand(const NPString& str, PlayerID runPlayer)
                 else
                 {
                     std::stringstream errormsg;
-                    errormsg << "Server command '" << str << "' not found";
+                    errormsg << _("Server command '") << str << _("' not found");
                     ChatInterface::serversayTo(runPlayer, errormsg.str());
                 }
             }
         }
         else
         {
-            ChatInterface::serversayTo(runPlayer, "You need to be admin.");
+            ChatInterface::serversayTo(runPlayer, _("You need to be admin."));
         }
     }
     else
     {
-        ChatInterface::serversayTo(runPlayer, "There is no defined ServerCommands");
+        ChatInterface::serversayTo(runPlayer, _("There is no defined ServerCommands"));
     }
 
     lua_settop(luavm, luatop);

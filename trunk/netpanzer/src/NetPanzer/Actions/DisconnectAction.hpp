@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "2D/Color.hpp"
 
 
@@ -39,11 +40,11 @@ public:
         MenuTemplateView * menuview = (MenuTemplateView*)Desktop::getView("MenuTemplateView");
         OptionsTemplateView * optionsview  = (OptionsTemplateView*)Desktop::getView("OptionsView");
         
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+        GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
 
         GameManager::quitNetPanzerGame();
 
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
+        GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
 
         if ( menuview )
         {

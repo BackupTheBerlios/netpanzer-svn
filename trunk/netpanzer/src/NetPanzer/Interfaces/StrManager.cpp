@@ -15,18 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
- 
+
 #include <fstream>
- 
+
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Interfaces/StrManager.hpp"
- 
+
 typedef std::map<NPString, NPString> t_tblLanguage;
 static t_tblLanguage tblLanguage;
 static bool isLngLoaded = false;
- 
- 
+
+
 std::string UTF8ToUnicode(const std::string text)
 {
     std::string UTF8;
@@ -36,14 +36,14 @@ std::string UTF8ToUnicode(const std::string text)
         int count;
         int utf8;
         char c = text[pos++];
- 
- 
+
+
         if (!(c & 0x80))
         {
             UTF8 += c;// ascii
             continue;
         }
- 
+
         if ((c & 0xE0) == 0xC0)
         {
             utf8 = (c & 0x1F);
@@ -74,7 +74,7 @@ std::string UTF8ToUnicode(const std::string text)
             LOGGER.debug("Invalid utf8");
             continue;
         }
- 
+
         while (count--)
         {
             c = text[pos++];
@@ -88,50 +88,56 @@ std::string UTF8ToUnicode(const std::string text)
         }
         UTF8 += utf8-34;
     }
-    LOGGER.warning("UTF8ToUnicode %s", UTF8.c_str());
     return UTF8;
 }
- 
+
 void loadPOFile(const NPString& fileName)
 {
     NPString nplFile = "Languages/"+fileName;
     std::ifstream in(nplFile.c_str());
-    enum { EMPTY, MSGID, MSGSTR } state;
+    enum { EMPTY, MSGID, MULTIMSGID, MSGSTR, MULTIMSGSTR } state;
     NPString msgid, msgstr;
     state = EMPTY;
- 
+
     if (!in.is_open())
     {
         LOGGER.warning("Language not found: %s\n", nplFile.c_str());
         return;
     }
     LOGGER.warning("Loading language %s\n", nplFile.c_str());
- 
+
     while(!in.eof())
     {
         NPString line, currmsg;
         getline(in, line);
         const char *c = line.c_str();
- 
+
         while(isspace(*c) && *c != 0)
         {
             c++;
         };
         if( (*c == 0) || (*c =='#') )
             continue; // skip blank lines or comment
- 
+
         if (!strncmp(c, "msgid ", 6))
         {
+            if ((state == MSGSTR || state == MULTIMSGSTR) && !msgid.empty())
+            {
+                if (msgstr.empty())
+                    tblLanguage[msgid] = msgid;
+                else
+                    tblLanguage[msgid] = UTF8ToUnicode(msgstr);
+            }
             state = MSGID;
             msgid.clear();
         }
- 
+
         if (!strncmp(c, "msgstr ", 7))
         {
             state = MSGSTR;
             msgstr.clear();
         }
- 
+
         while(*c != 0 && *c != '"')
         {
             ++c;
@@ -182,28 +188,30 @@ void loadPOFile(const NPString& fileName)
                 currmsg += *c++;
             }
         }
+
         if (state == MSGID)
         {
             msgid = currmsg;
+            state = MULTIMSGID;
         }
-        if (state == MSGSTR)
+        else if (state == MULTIMSGID)
+        {
+            msgid += currmsg;
+        }
+        else if (state == MSGSTR)
         {
             msgstr = currmsg;
- 
-            if (!msgid.empty())
-            {
-                if (msgstr.empty())
-                    tblLanguage[msgid] = msgid;
-                else
-                    tblLanguage[msgid] = UTF8ToUnicode(msgstr);
-            }
-            state = EMPTY;
+            state = MULTIMSGSTR;
+        }
+        else if (state == MULTIMSGSTR)
+        {
+            msgstr += currmsg;
         }
     }
     isLngLoaded = true;
     in.close();
 }
- 
+
 const char* Translate(const NPString& str)
 {
     if (!isLngLoaded) return str.c_str();
@@ -217,10 +225,10 @@ const char* Translate(const NPString& str)
         return str.c_str();
     }
 }
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+

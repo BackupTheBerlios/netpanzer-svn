@@ -219,7 +219,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += yOffset;
 
     pos.x = 0;
-    add( new Label( pos.x+2, pos.y+2, _("UnitBuilt"), Color::white) );
+    add( new Label( pos.x+2, pos.y+2, _("Unit Built"), Color::white) );
     unitsBuiltPos.x = productionUnitPos.x;
     unitsBuiltPos.y = pos.y + 2;
     pos.y += yOffset;

@@ -380,6 +380,10 @@ void GameConfig::registerScript(const NPString& table_name)
         player_name = new NPString("Player");
     }
 
+    if ( ! interface_language )
+    {
+        interface_language = new NPString("");
+    }
 
     ScriptManager::bindStaticVariables(table_name + ".video",
                                        "ConfigVideoMetaTable",
@@ -434,7 +438,7 @@ GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
     }
 
     player_name->assign(default_player.str());
-
+    
     try
     {
         loadConfig();

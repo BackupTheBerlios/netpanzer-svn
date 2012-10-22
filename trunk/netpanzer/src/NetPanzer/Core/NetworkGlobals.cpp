@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Core/NetworkGlobals.hpp"
+#include "Interfaces/StrManager.hpp"
 #include <cstddef>
 
 struct version_data
@@ -46,13 +47,13 @@ const char * getNetpanzerProtocolMessage(const int protocol)
 
     if ( protocol < older_versions[0].protocol )
     {
-        return "The server is a very old netpanzer version, cannot use";
+        return _("The server is a very old netpanzer version, cannot use");
     }
 
     if ( protocol < older_versions[NUM_OLD_VERSIONS-1].protocol )
     {
-        return "This server is an older development version, cannot use";
+        return _("This server is an older development version, cannot use");
     }
 
-    return "This server is a newer netpanzer, please check http://www.netpanzer.org";
+    return _("This server is a newer netpanzer, please check http://www.netpanzer.org");
 }

@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConnectNetMessage.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
 
 #include "Interfaces/ConsoleInterface.hpp"
@@ -99,7 +100,7 @@ bool NetworkClient::joinServer(const NPString& server_name, const NPString& pass
     {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
-        snprintf(text, 128, "connection error: %s", e.what());
+        snprintf(text, 128, _("connection error: %s"), e.what());
         LoadingView::append(text);
         return false;
     }
