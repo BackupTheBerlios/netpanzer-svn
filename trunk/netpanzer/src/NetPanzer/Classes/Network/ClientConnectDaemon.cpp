@@ -86,7 +86,7 @@ void ClientConnectDaemon::startConnectionProcess( )
     time_out_counter = 0;
     connection_state = _connect_state_waiting_link;
     LoadingView::append("");
-    LoadingView::append(NPString("Conecting to server ") + gameconfig->serverConnect.c_str());
+    LoadingView::append(NPString(_("Connecting to server ")) + gameconfig->serverConnect.c_str());
 }
 
 unsigned char ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)

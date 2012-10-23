@@ -208,7 +208,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
    
     pos.x = 0;
     add( new Label( pos.x+2, pos.y+2, _("Production"), Color::white) );
-    productionUnitPos.x = 100;
+    productionUnitPos.x = 130;
     productionUnitPos.y = pos.y + 2;
     pos.y += yOffset;
 
@@ -440,7 +440,7 @@ const char *VehicleSelectionView::getUnitName(int unitType)
     {
         return p->unitname.c_str();
     }
-    return "Invalid unit type.";
+    return _("Invalid unit type.");
     
  /*   if (unitType == _unit_type_valentine) {
         return "Manta";
@@ -548,11 +548,11 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             {
                 strncpy(strBuf, obj->occupying_player->getName().c_str() , 10);
                 strBuf[10] = 0; // fix runners
-                sprintf(outpostUserNameBuf, "Owner:  %s...", strBuf);
+                sprintf(outpostUserNameBuf, "%s:  %s...", _("Owner"),  strBuf);
             }
             else
             {
-                sprintf(outpostUserNameBuf, "Owner:  %s", obj->occupying_player->getName().c_str() );
+                sprintf(outpostUserNameBuf, "%s:  %s", _("Owner"), obj->occupying_player->getName().c_str() );
             }
         }
         iXY pos(miniProductionRect.min);
@@ -565,11 +565,11 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         {
             strncpy(strBuf, (const char *) obj->name , 7);
             strBuf[7] = 0; // fix runners
-            sprintf(outpostNameBuf, "Outpost:  %s...",  strBuf);
+            sprintf(outpostNameBuf, "%s:  %s...", _("Outpost"),  strBuf);
         }
         else
         {
-            sprintf(outpostNameBuf, "Outpost:  %s", (const char *) obj->name );
+            sprintf(outpostNameBuf, "%s:  %s", _("Outpost"), (const char *) obj->name );
         }
         checkMiniProductionRect(outpostNameBuf);
 
@@ -583,17 +583,17 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 pos.y += 16;
-                dest.bltString(pos.x, pos.y, "Production Off", Color::white);
+                dest.bltString(pos.x, pos.y, _("Production Off"), Color::white);
             }
             else
             {
                 // Objective is on.
 
-                sprintf(productionUnitBuf, "Production: %s", getUnitName(obj->unit_generation_type));
+                sprintf(productionUnitBuf, _("Production: %s"), getUnitName(obj->unit_generation_type));
                 checkMiniProductionRect(productionUnitBuf);
 
                 float tleft = obj->unit_generation_timer.getTimeLeft();
-                sprintf(timeLeftBuf, "Time Left:  %01d:%02d",
+                sprintf(timeLeftBuf, "%s:  %01d:%02d", _("Time Left"),
                         ((int)tleft) / 60,
                         ((int)tleft) % 60);
                 checkMiniProductionRect(timeLeftBuf);
@@ -710,27 +710,27 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
     const int barOffset = 105;
     int       barLength = getClientRect().getSizeX() - barOffset;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Hit Points"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Attack Power"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Attack Range"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Defend Range"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Speed"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, _("Reload Time"), Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
     loc.y += gapSpace;
 }
@@ -748,20 +748,20 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
         if (me.getSource()==buttonStaticDisplay) {
-            if (buttonStaticDisplay->getLabel() == "On") {
-                buttonStaticDisplay->setLabel("Off");
+            if (buttonStaticDisplay->getLabel() == _("On")) {
+                buttonStaticDisplay->setLabel(_("Off"));
             } else {
-                buttonStaticDisplay->setLabel("On");
+                buttonStaticDisplay->setLabel(_("On"));
             }
 
             VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
         }
 
         if (me.getSource()==buttonPower) {
-            if (buttonPower->getLabel() == "On") {
-                buttonPower->setLabel("Off");
+            if (buttonPower->getLabel() == _("On")) {
+                buttonPower->setLabel(_("Off"));
             } else {
-                buttonPower->setLabel("On");
+                buttonPower->setLabel(_("On"));
             }
 
             vsvUnitGenOn = !vsvUnitGenOn;
@@ -781,7 +781,7 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::setPowerOn()
 {
-    buttonPower->setLabel("On");
+    buttonPower->setLabel(_("On"));
 
 } // end VehicleSelectionView::setPowerOn
 
@@ -789,7 +789,7 @@ void VehicleSelectionView::setPowerOn()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::setPowerOff()
 {
-    buttonPower->setLabel("Off");
+    buttonPower->setLabel(_("Off"));
 
 } // end VehicleSelectionView::setPowerOff
 

@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -74,7 +75,7 @@ Objective::changeOwner( PlayerState * new_owner )
         occupying_player->incObjectivesHeld();
 
         ConsoleInterface::postMessage(Color::cyan, false, 0,
-                                      "'%s' has been occupied by '%s'",
+                                      _("'%s' has been occupied by '%s'"),
                                       name, new_owner->getName().c_str() );
     }
     

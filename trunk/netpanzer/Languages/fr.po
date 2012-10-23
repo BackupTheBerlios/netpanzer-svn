@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netPanzer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-22 13:12+0200\n"
-"PO-Revision-Date: 2012-10-22 13:45+0100\n"
+"POT-Creation-Date: 2012-10-22 16:55+0200\n"
+"PO-Revision-Date: 2012-10-23 08:41+0100\n"
 "Last-Translator: Wile64\n"
 "Language-Team: Wile64\n"
 "MIME-Version: 1.0\n"
@@ -19,143 +19,147 @@ msgstr ""
 "X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:102
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:89
+msgid "Connecting to server "
+msgstr "Connexion au serveur "
+
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:103
 msgid "Link to Server Established"
 msgstr "Liaison au serveur établi"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:103
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:104
 #, c-format
 msgid "Protocol Version: %u"
 msgstr "Version du protocole : %u"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:110
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:121
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:129
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:137
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:144
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:151
-msgid "Link to Server FAILED!"
-msgstr "Liaison vers le serveur a échoué!"
-
 #: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:111
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:122
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:130
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:138
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:145
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:152
+msgid "Link to Server FAILED!"
+msgstr "La liaison au serveur a échoué!"
+
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:112
 msgid "Incompatible game:"
 msgstr "Jeu incompatibles :"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:122
-msgid "Server is VERY busy"
-msgstr "Serveur est très occupé"
-
 #: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:123
-msgid "Please try in a few minutes"
-msgstr "S'il vous plaît essayez dans quelques minutes"
+msgid "Server is VERY busy"
+msgstr "Le serveur est très occupé"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:130
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:124
+msgid "Please try in a few minutes"
+msgstr "S'il vous plaît réessayez dans quelques minutes"
+
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:131
 msgid "Your IP is already connected to this server"
 msgstr "Votre adresse IP est déjà connecté à ce serveur"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:131
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:132
 msgid "The server limits multiple connections from same IP"
-msgstr "Le serveur limite les connexions multiples à partir la même IP"
+msgstr "Le serveur limite les connexions multiples à partir de la même IP"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:138
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:139
 msgid "The password for server was wrong."
 msgstr "Le mot de passe du serveur est incorrect."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:145
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:146
 msgid "You are banned in this server"
 msgstr "Vous êtes banni de ce serveur"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:152
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:153
 msgid "Unknown result sent from server"
 msgstr "Résultat inconnu envoyé par le serveur"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:168
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:169
 #, c-format
 msgid "Your Position In Queue is %d "
 msgstr "Votre position dans la file d'attente est %d"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:184
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:419
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:436
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:444
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:187
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:434
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:453
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:463
 msgid "Loading Game Data ..."
 msgstr "Chargement des données du jeu"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:189
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:195
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:193
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:200
 msgid "Synchronizing Player Info ..."
 msgstr "Synchronisation des infos du joueur..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:202
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:207
 msgid "Synchronizing unit profiles..."
 msgstr "Synchronisation des profils unités ..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:207
 #: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:213
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:220
 msgid "Synchronizing Game Elements ..."
 msgstr "Synchronisation des éléments du jeu ..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:220
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:228
 msgid "Game Synchronized"
 msgstr "Jeu synchronisé"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:230
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:238
 msgid "Server has terminated the game"
 msgstr "Le serveur a mis fin à la partie"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:257
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:268
 msgid "Error in server connection"
 msgstr "Erreur dans la connexion au serveur"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:266
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:279
 msgid "Connect Failure: Server Too Busy"
 msgstr "Échec de connexion : Serveur surchargé"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:271
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:336
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:285
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:351
 msgid "Connect Failure: Server Full"
 msgstr "Échec de connexion : Serveur plein"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:276
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:291
 msgid "Connect Failure: You are aready connected"
 msgstr "Échec de connexion : Vous êtes déjà connecté"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:305
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:320
 msgid "Server is not responding..."
 msgstr "Le serveur ne répond pas ..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:310
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:325
 msgid "Connection to server failed..."
 msgstr "La connexion au serveur a échoué ..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:311
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:326
 msgid "it might be older netpanzer or server is down"
 msgstr "Il pourrait être un ancien netPanzer ou le serveur est en panne"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:327
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:342
 msgid "Connecting ..."
 msgstr "Connexion en cours ..."
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:383
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:398
 msgid "Connection To Server Failed"
 msgstr "Échec de la connexion au serveur"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:404
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:419
 #: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:636
 #, c-format
 msgid "MAP %s NOT FOUND!"
 msgstr "CARTE %s INTROUVABLE !"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:411
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:426
 #: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:641
 msgid "MAP TILE SET NOT FOUND!"
-msgstr "ENSEMBLE DE TUILE DE LA CARTE INTROUVABLE !"
+msgstr "LE TILESET POUR LA CARTE INTROUVABLE !"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:412
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:427
 msgid "please download the appropriate tileset"
 msgstr "s'il vous plaît télécharger le tileset appropriée"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:413
+#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:428
 msgid "from www.pyrosoftgames.com"
 msgstr "à partir www.pyrosoftgames.com"
 
@@ -308,6 +312,11 @@ msgstr "%s a annulé la requête d'alliance avec vous."
 #, c-format
 msgid "player %s has voted, waiting %d votes"
 msgstr "joueur %s a voté, en attente de %d votes"
+
+#: NetPanzer\Objectives\Objective.cpp:78
+#, c-format
+msgid "'%s' has been occupied by '%s'"
+msgstr "'%s' est occupé par '%s'"
 
 #: NetPanzer\Scripts\ScriptManager.cpp:274
 msgid "Error running user command"
@@ -467,7 +476,7 @@ msgstr "Ordonne (force / manuel) le tire d'une unité"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:67
 msgid "LMC + Shift, LMC + Ctrl"
-msgstr "CG + Shift, CG + Ctrl"
+msgstr "CG + Maj, CG + Ctrl"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:67
 msgid "Add unit to selection"
@@ -507,7 +516,7 @@ msgstr "Défilement rapide de la carte"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:74
 msgid "Game Related"
-msgstr "Jeu"
+msgstr "Liés au Jeu"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:76
 msgid "LMC + 'A'"
@@ -527,7 +536,7 @@ msgstr "Dans les menus de jeu"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:80
 msgid "Outpost Related"
-msgstr "Usines"
+msgstr "Liés aux Usines"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:82
 msgid "'O'"
@@ -660,7 +669,7 @@ msgstr "Définit le mode pour dessiner le fond d'écran"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:107
 msgid "Mini Map View Related"
-msgstr "Liés à la vue Mini-carte"
+msgstr "Liés à la Mini-carte"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:109
 msgid "RMH + [1 - 7]"
@@ -680,7 +689,7 @@ msgstr "Échelles de taille pour la mini-carte"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:113
 msgid "System Related"
-msgstr "Liées au système"
+msgstr "Liés au système"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:115
 msgid "ALT + Enter"
@@ -704,7 +713,7 @@ msgstr "Scripting"
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:131
 msgid "Server Related"
-msgstr "Liées au Serveur "
+msgstr "Liés au Serveur "
 
 #: NetPanzer\Views\Game\HelpScrollView.cpp:133
 msgid "List of Gameserver available commands"
@@ -921,14 +930,22 @@ msgid "Static Display"
 msgstr "Affichage statique"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:186
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:751
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:754
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:761
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:764
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:784
 msgid "On"
 msgstr "On"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:194
 msgid "Power"
-msgstr "Puissance"
+msgstr "Marche"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:200
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:752
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:762
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:792
 msgid "Off"
 msgstr "Off"
 
@@ -942,7 +959,7 @@ msgstr "Temps"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:222
 msgid "Unit Built"
-msgstr "Unité construite"
+msgstr "Unité total"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:277
 msgid "Close"
@@ -950,15 +967,66 @@ msgstr "Fermer"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:405
 msgid "power off"
-msgstr "éteindre"
+msgstr "éteind"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:443
+msgid "Invalid unit type."
+msgstr "Type d'unité non valide."
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:499
 msgid "Build Time"
-msgstr "Temps de construction"
+msgstr "Fabrication"
 
 #: NetPanzer\Views\Game\VehicleSelectionView.cpp:505
 msgid "Select a unit for production"
 msgstr "Sélectionnez une unité de production"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:551
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:555
+msgid "Owner"
+msgstr "Propriétaire"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:568
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:572
+msgid "Outpost"
+msgstr "Usine"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:586
+msgid "Production Off"
+msgstr "Production Off"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:592
+#, c-format
+msgid "Production: %s"
+msgstr "Production : %s"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:596
+msgid "Time Left"
+msgstr "Temps restant"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:713
+msgid "Hit Points"
+msgstr "Vie"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:717
+msgid "Attack Power"
+msgstr "Puissance"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:721
+msgid "Attack Range"
+msgstr "Portée"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:725
+msgid "Defend Range"
+msgstr "Défense"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:729
+msgid "Speed"
+msgstr "Vitesse"
+
+#: NetPanzer\Views\Game\VehicleSelectionView.cpp:733
+msgid "Reload Time"
+msgstr "Rechargement"
 
 #: NetPanzer\Views\MainMenu\MainMenuView.cpp:73
 #, c-format
@@ -991,7 +1059,7 @@ msgid ""
 "\n"
 "NetPanzer News:"
 msgstr ""
-"Ceci est la version %s de netpanzer, un jeu massivement multijoueur de char de combat.\n"
+"Voici la version %s de netpanzer, un jeu massivement multijoueur de char de combat.\n"
 "Cette application est un logiciel libre sous les termes de la licence Gnu General Public License (GPL). Voir le fichier COPYING pour plus de détails\n"
 "Nous vous ordonnons d'aller sur www.netpanzer.org nous rencontrer dans le forum.\n"
 "\n"
@@ -1085,7 +1153,7 @@ msgstr "Utilisez DirectX"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:220
 msgid "Mini Map Unit Size"
-msgstr "Taille Unité dans la mini carte"
+msgstr "Unités dans mini-carte"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:221
 msgid "Small"
@@ -1109,7 +1177,7 @@ msgstr "SON"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:248
 msgid "Sound Status:"
-msgstr "Status du son :"
+msgstr "Status son :"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:250
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:270
@@ -1127,15 +1195,15 @@ msgstr "Désactivé"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:259
 msgid "Sound Volume:"
-msgstr "Volume du son :"
+msgstr "Volume son :"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:268
 msgid "Music Status:"
-msgstr "Status de la musique"
+msgstr "Status musique :"
 
 #: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:279
 msgid "Music Volume:"
-msgstr "Volume de la musique :"
+msgstr "Volume musique :"
 
 #: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:53
 #: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:297
