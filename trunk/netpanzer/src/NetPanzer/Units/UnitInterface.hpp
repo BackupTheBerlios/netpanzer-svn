@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <map>
 #include "Units/UnitBucketArray.hpp"
-#include "Classes/UnitMessage.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/PlacementMatrix.hpp"
@@ -103,11 +102,8 @@ public:
     static UnitBase* getUnit(UnitID unit_id);
 
     static void weaponHit(const UnitID from_unit, const iXY& location, const Uint16 damage_factor);
-    
-    static void processNetPacket(const NetPacket* packet);
-    static void sendMessage(const UnitMessage* message,
-            const PlayerState* player = 0);
-
+    static void selfDestructUnit(const UnitID unit_id);
+        
     static void updateUnitStatus();
 
     static void offloadGraphics( SpriteSorter &sorter );
@@ -148,9 +144,7 @@ public:
     static unsigned char queryUnitLocationStatus( iXY loc );
 
 protected:
-    // Unit Message Handler Methods
-    static void processManagerMessage(const UnitMessage *message);
-    static void unitManagerMesgEndLifecycle(const UnitMessage *message);
+    static void unitKilled(const UnitBase* unit, const UnitID killer);
 
 protected:
     friend class Vehicle;
@@ -183,6 +177,11 @@ protected:
 public:
     static void processNetMessage(const NetMessage *net_message, size_t size);
     static void destroyPlayerUnits(PlayerID player_id);
+    
+    static void playerCommand_MoveUnit    (const PlayerID player_id, const UnitID unit_id, const iXY& destination);
+    static void playerCommand_AttackUnit  (const PlayerID player_id, const UnitID unit_id, const UnitID enemy_id);
+    static void playerCommand_ManualShoot (const PlayerID player_id, const UnitID unit_id, const iXY& world_point);
+    
 };
 
 #endif // ** _UNITINTERFACE_HPP

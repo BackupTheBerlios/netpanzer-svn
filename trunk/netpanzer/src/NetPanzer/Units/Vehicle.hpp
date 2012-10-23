@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitBase.hpp"
 #include "Util/Timer.hpp"
-#include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitOpcodes.hpp"
 #include "Classes/AI/PathList.hpp"
 
@@ -39,7 +38,6 @@ enum { _control_idle,
 enum { _ai_command_idle,
        _ai_command_move_to_loc,
        _ai_command_attack_unit,
-       _ai_command_manual_move,
        _ai_command_defend_hold };
 
 enum { _aiFsmMoveToLoc_path_generate,
@@ -60,10 +58,6 @@ enum { _aiFsmAttackUnit_path_generate,
 
 enum { _aiFsmDefendHold_search_for_enemy,
        _aiFsmDefendHold_attack_enemy };
-
-enum { _aiFsmManualMove_next_move,
-       _aiFsmManualMove_move_wait,
-       _aiFsmManualMove_check_fsm_transition };
 
 enum { _external_event_null,
        _external_event_pending_unit_destruct };
@@ -90,8 +84,6 @@ protected:
     bool fsm_active_list[ 7 ];
 
     PathList path;
-    bool path_generated;
-    bool critical_ai_section;
     bool ai_fsm_transition_complete;
 
     unsigned short reload_counter;
@@ -110,29 +102,25 @@ protected:
     // ** FSMs and AI FSMs
     unsigned short fsmBodyRotate_rotation;
     long           fsmBodyRotate_goal_angle;
-    void    setFsmBodyRotate( long goal_angle, unsigned short rotation );
+    void setFsmBodyRotate( long goal_angle, unsigned short rotation );
     bool fsmBodyRotate();
 
     unsigned short fsmTurretRotate_rotation;
     long           fsmTurretRotate_goal_angle;
-    void    setFsmTurretRotate( long goal_angle, unsigned short rotation );
+    void setFsmTurretRotate( long goal_angle, unsigned short rotation );
     bool fsmTurretRotate();
 
-    float interpolation_speed;
-    TimeStamp start_move_stamp;
-    TimeStamp end_move_stamp;
-    bool     fsmMove_first_stamp;
-    signed char fsmMove_offset_x;
-    signed char fsmMove_offset_y;
-    unsigned char fsmMove_moves_counter;
-    unsigned char fsmMove_moves_per_square;
+    signed char     fsmMove_offset_x;
+    signed char     fsmMove_offset_y;
+    unsigned char   fsmMove_moves_counter;
+    unsigned char   fsmMove_moves_per_square;
     void setFsmMove( unsigned short orientation );
     bool fsmMove();
 
-    MoveOpcode move_opcode;
-    Timer opcode_move_timer;
-    bool move_opcode_sent;
-    unsigned char fsmMoveMapSquare_movement_type;
+    MoveOpcode      move_opcode;
+    Timer           opcode_move_timer;
+    bool            move_opcode_sent;
+    unsigned char   fsmMoveMapSquare_movement_type;
     void setFsmMoveMapSquare( unsigned long square );
     bool fsmMoveMapSquare();
 
@@ -152,7 +140,6 @@ protected:
     void fsmTurretTrackTarget();
 
     iXY fsmGunneryLocation_target;
-    void setFsmGunneryLocation(const iXY& target );
     void clearFsmGunneryLocation();
     void fsmGunneryLocation();
 
@@ -192,13 +179,6 @@ protected:
     void aiFsmAttackUnit_OnExitCleanUp();
     void aiFsmAttackUnit();
 
-
-    unsigned char aiFsmManualMove_move_orientation;
-    unsigned char aiFsmManualMove_state;
-    iXY aiFsmManualMove_next_loc;
-    iXY aiFsmManualMove_prev_loc;
-    void aiFsmManualMove();
-
     void fireWeapon( iXY &target_loc );
     virtual unsigned short launchProjectile();
     virtual void soundSelected();
@@ -224,27 +204,29 @@ protected:
     void processOpcodeQueue();
 
     // ** Message Handlers
-    UMesgAICommand pending_AI_comm_mesg;
-    bool	     pending_AI_comm;
+    
+    iXY             pending_moveToLocation;
+    UnitID          pending_enemyUnit;
+    unsigned char   pending_command; 
+    bool	    pending_AI_comm;
     void checkPendingAICommStatus();
 
-    void setCommandMoveToLoc(const UMesgAICommand* message);
-    void setCommandAttackUnit(const UMesgAICommand* message);
-    void setCommandManualMove(const UMesgAICommand* message);
-    void setCommandManualFire(const UMesgAICommand* message);
+    void setCommandMoveToLoc();
+    void setCommandAttackUnit();
 
-    void messageAICommand(const UnitMessage* message);
-    void weaponHit(const UnitID from_unit, const Uint16 damage_factor);
-    void messageSelfDestruct(const UnitMessage* message);
+    bool weaponHit(const UnitID from_unit, const Uint16 damage_factor);
     
     void setUnitProperties( unsigned char utype );
 
+    void moveToLoc(const iXY& loc);
+    void attackUnit(const UnitID unit_id);
+    void manualShoot(const iXY& loc);
+    void selfDestruct();
+    
 public:
     Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc);
 
     virtual void updateState();
-
-    virtual void processMessage(const UnitMessage* message);
 
     virtual void evalCommandOpcode(const UnitOpcode* opcode);
 

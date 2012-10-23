@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
-#include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -46,6 +45,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/ClientSocket.hpp"
 
 #include "Units/UnitProfileInterface.hpp"
+
+#include "Network/PlayerRequests/ChangeObjectiveOutLocationRequest.hpp"
+#include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
+
+class ObjectiveOutLocSync : public ChangeObjectiveOutLocationRequest
+{
+public:
+    ObjectiveOutLocSync()
+    {
+        message_class = _net_message_class_objective;
+        message_id = _net_message_id_objective_outloc_sync;
+    }
+} __attribute__((packed));
+
+class ObjectiveWorkingSync : public ChangeObjectiveGenerationRequest
+{
+public:
+    ObjectiveWorkingSync()
+    {
+        message_class = _net_message_class_objective;
+        message_id = _net_message_id_objective_working_sync;
+    }
+} __attribute__((packed));
 
 Objective** ObjectiveInterface::objective_list = 0;
 int ObjectiveInterface::num_objectives = 0;
@@ -180,107 +202,69 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
     }
 }
 
-/**
- * Only used in server, when received a packet from a player.
- */
 void
-ObjectiveInterface::serverHandleNetPacket(const NetPacket* packet)
+ObjectiveInterface::playerRequest_setGeneration(const PlayerID player_id, const ObjectiveID objective_id, const Uint8 unit_type, const bool active)
 {
-    const PlayerState* player = PlayerInterface::getPlayer(packet->fromPlayer);
-    if ( !player )
+    if ( objective_id >= num_objectives )
     {
-        LOGGER.warning("Couldn't find player for packet %u.",
-                packet->fromPlayer);
+        LOGGER.warning("OISH_CGU CHEAT Player %u sent invalid objective_id %u, max is %u",
+                       player_id, objective_id, num_objectives);
         return;
     }
 
-    const NetMessage* message = packet->getNetMessage();
-
-    switch(message->message_id)
+    if ( objective_list[objective_id]->occupying_player->getID() != player_id )
     {
-        case _net_message_id_change_generating_unit:
-        {
-            const ObjectiveChangeGeneratingUnit* msg =
-                (const ObjectiveChangeGeneratingUnit*) message;
-
-            ObjectiveID obj_id = msg->getObjectiveId();
-            if ( obj_id >= num_objectives )
-            {
-                LOGGER.warning("OISH_CGU CHEAT Player %u sent invalid objective_id %u, max is %u",
-                               player->getID(), obj_id, num_objectives);
-                break;
-            }
-
-            if ( objective_list[obj_id]->occupying_player != player )
-            {
-                LOGGER.warning("OISH_CGU CHEAT Player %u doesn't own objective %u",
-                               player->getID(),
-                               obj_id);
-                break;
-            }
-
-            if ( msg->unit_type >= UnitProfileInterface::getNumUnitTypes() )
-            {
-                LOGGER.warning("OISH_CGU CHEAT Player %u sent invalid unit type %u, max is %u",
-                               player->getID(),
-                               msg->unit_type,
-                               UnitProfileInterface::getNumUnitTypes());
-                break;
-            }
-
-            objective_list[obj_id]->changeUnitGeneration(msg->unit_gen_on, msg->unit_type);
-
-            if ( packet->fromClient )
-            {
-                packet->fromClient->sendMessage(msg, sizeof(ObjectiveChangeGeneratingUnit));
-            }
-
-            break;
-        }
-
-        case _net_message_id_change_output_location:
-        {
-            const ObjectiveChangeOutputLocation* msg =
-                (const ObjectiveChangeOutputLocation*) message;
-
-            ObjectiveID obj_id = msg->getObjectiveId();
-            if ( obj_id >= num_objectives )
-            {
-                LOGGER.warning("OISH_COL CHEAT Player %u sent invalid objective_id %u, max is %u",
-                               player->getID(), obj_id, num_objectives);
-                break;
-            }
-
-            Uint32 map_x = msg->getMapX();
-            Uint32 map_y = msg->getMapY();
-
-            if ( map_x >= MapInterface::getWidth()
-                 || map_y >= MapInterface::getHeight() )
-            {
-                LOGGER.warning("OISH_COL CHEAT Player %u sent invalid map location %u,%u; max is %u,%u",
-                               player->getID(),
-                               map_x, map_y,
-                               (unsigned int)MapInterface::getWidth(),
-                               (unsigned int)MapInterface::getHeight());
-                break;
-            }
-
-            objective_list[obj_id]->unit_collection_loc.x = map_x;
-            objective_list[obj_id]->unit_collection_loc.y = map_y;
-
-            if ( packet->fromClient )
-            {
-                packet->fromClient->sendMessage(msg, sizeof(ObjectiveChangeOutputLocation));
-            }
-
-            break;
-        }
-
-        default:
-            LOGGER.warning("OISH CHEAT Player %u sent unknown message type %u",
-                           player->getID(),
-                           message->message_id);
+        LOGGER.warning("OISH_CGU CHEAT Player %u doesn't own objective %u",
+                       player_id, objective_id);
+        return;
     }
+
+    if ( unit_type >= UnitProfileInterface::getNumUnitTypes() )
+    {
+        LOGGER.warning("OISH_CGU CHEAT Player %u sent invalid unit type %u, max is %u",
+                       player_id,
+                       unit_type,
+                       UnitProfileInterface::getNumUnitTypes());
+        return;
+    }
+
+    objective_list[objective_id]->changeUnitGeneration(active, unit_type);
+
+    ObjectiveWorkingSync msg;
+    msg.setObjectiveId(objective_id);
+    msg.unit_type = unit_type;
+    msg.unit_gen_on = active;
+    
+    SERVER->sendMessage(player_id, &msg, sizeof(msg));
+}
+
+
+void ObjectiveInterface::playerRequest_setOutputLoc(const PlayerID player_id, const ObjectiveID objective_id, const iXY& location)
+{
+    if ( objective_id >= num_objectives )
+    {
+        LOGGER.warning("OISH_COL CHEAT Player %u sent invalid objective_id %u, max is %u",
+                       player_id, objective_id, num_objectives);
+        return;
+    }
+
+    if ( location.x >= MapInterface::getWidth()
+         || location.y >= MapInterface::getHeight() )
+    {
+        LOGGER.warning("OISH_COL CHEAT Player %u sent invalid map location %u,%u; max is %u,%u",
+                       player_id,
+                       location.x, location.y,
+                       (unsigned int)MapInterface::getWidth(),
+                       (unsigned int)MapInterface::getHeight());
+        return;
+    }
+
+    objective_list[objective_id]->unit_collection_loc = location;
+
+    ObjectiveOutLocSync msg;
+    msg.setObjectiveId(objective_id);
+    msg.setMapPos(location);
+    SERVER->sendMessage(player_id, &msg, sizeof(msg));
 }
 
 void
@@ -345,10 +329,10 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
             break;
         }
 
-        case _net_message_id_change_generating_unit:
+        case _net_message_id_objective_working_sync:
         {
-            const ObjectiveChangeGeneratingUnit* msg =
-                (const ObjectiveChangeGeneratingUnit*) message;
+            const ObjectiveWorkingSync* msg =
+                (const ObjectiveWorkingSync*) message;
 
             ObjectiveID obj_id = msg->getObjectiveId();
             if ( obj_id >= num_objectives )
@@ -371,10 +355,10 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
             break;
         }
 
-        case _net_message_id_change_output_location:
+        case _net_message_id_objective_outloc_sync:
         {
-            const ObjectiveChangeOutputLocation* msg =
-                (const ObjectiveChangeOutputLocation*) message;
+            const ObjectiveOutLocSync* msg =
+                (const ObjectiveOutLocSync*) message;
 
             ObjectiveID obj_id = msg->getObjectiveId();
             if ( obj_id >= num_objectives )
@@ -384,52 +368,25 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
                 break;
             }
 
-            Uint32 map_x = msg->getMapX();
-            Uint32 map_y = msg->getMapY();
-
-            if ( map_x >= MapInterface::getWidth()
-                 || map_y >= MapInterface::getHeight() )
+            iXY location = msg->getMapPos();
+            
+            if ( location.x >= MapInterface::getWidth()
+                 || location.y >= MapInterface::getHeight() )
             {
                 LOGGER.warning("OICH_COL CHEAT SERVER sent invalid map location %u,%u; max is %u,%u",
-                               map_x, map_y,
+                               location.x, location.y,
                                (unsigned int)MapInterface::getWidth(),
                                (unsigned int)MapInterface::getHeight());
                 break;
             }
 
-            objective_list[obj_id]->unit_collection_loc.x = msg->getMapX();
-            objective_list[obj_id]->unit_collection_loc.y = msg->getMapY();
-
+            objective_list[obj_id]->unit_collection_loc = location;
             break;
         }
         
         default:
             LOGGER.warning("OICH CHEAT SERVER sent unknown message type %u",
                            message->message_id);
-    }
-}
-
-void
-ObjectiveInterface::sendChangeGeneratingUnit(ObjectiveID objective_id, Uint8 unit_type, bool active)
-{
-    if ( objective_id < num_objectives && unit_type < UnitProfileInterface::getNumUnitTypes() )
-    {
-        ObjectiveChangeGeneratingUnit msg;
-        msg.set( objective_id, unit_type, active );
-        CLIENT->sendMessage(&msg, sizeof(msg));
-    }
-}
-
-void
-ObjectiveInterface::sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x, Uint32 map_y)
-{
-    if ( objective_id < num_objectives
-         && map_x < MapInterface::getWidth()
-         && map_y < MapInterface::getHeight() )
-    {
-        ObjectiveChangeOutputLocation msg;
-        msg.set( objective_id, map_x, map_y );
-        CLIENT->sendMessage(&msg, sizeof(msg));
     }
 }
 

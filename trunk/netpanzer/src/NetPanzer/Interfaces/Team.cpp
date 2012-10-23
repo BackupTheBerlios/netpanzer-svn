@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2012 Netpanzer Team. (www.netpanzer.org), Laurent Jacques
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "2D/Surface.hpp"
 
-void Team::initialize(const Uint8 id)
+void Team::initialize(const TeamID id)
 {
     teamID = id;
     resetStats();
@@ -57,7 +57,7 @@ void Team::addPlayer(PlayerID new_player)
         if (state->isActive())
         {
             if (state->getTeamID() == teamID
-                && (player_id != new_player))
+                && (player_id != new_player)) 
             {
                 PlayerInterface::allyplayers( player_id, new_player);
             }
@@ -72,7 +72,7 @@ void Team::removePlayer(PlayerID old_player)
     {
         if (PlayerInterface::getPlayer(player_id)->isActive())
         {
-            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
             {
                 PlayerInterface::unallyplayers( old_player, player_id);
             }
@@ -93,7 +93,7 @@ PlayerID Team::countPlayers() const
     {
         if (PlayerInterface::getPlayer(player_id)->isActive())
         {
-            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
             {
                 count++;
             }
@@ -107,12 +107,12 @@ PlayerID Team::getrandomplayer() const
     PlayerID count = 0;
     PlayerID player_id, result =0;
     Uint8 player = rand()%countPlayers();
-
+    
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
         if (PlayerInterface::getPlayer(player_id)->isActive())
         {
-            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID)
+            if (PlayerInterface::getPlayer(player_id)->getTeamID() == teamID) 
             {
                 if (count == player) return player_id;
                 count++;
@@ -147,13 +147,13 @@ short Team::getTeamObjective() const
 {
     short TeamObjective = 0;
     PlayerID player_id;
-
+    
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
         PlayerState* state = PlayerInterface::getPlayer(player_id);
         if (state->isActive())
         {
-            if (state->getTeamID() == teamID)
+            if (state->getTeamID() == teamID) 
             {
                 TeamObjective += state->getObjectivesHeld();
             }

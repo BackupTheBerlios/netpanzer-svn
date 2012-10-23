@@ -42,28 +42,6 @@ VoteBox *votebox;
 
 const char *VoteStrings[1] = {"Surrendering vote, you choose surrendering?\0"};
 
-void VoteManager::netMessageVoteRequest(const NetMessage* message)
-{
-    const PlayerSendVote* voteplayer
-    = (const PlayerSendVote *) message;
-
-    if (vote_in_progress)
-    {
-        vote_counter--;
-        player_vote[ voteplayer->getPlayerIndex() ] = voteplayer->player_vote;
-        char buff[100];
-        sprintf(buff, _("player %s has voted, waiting %d votes"),
-                PlayerInterface::getPlayer(voteplayer->getPlayerIndex())->getName().c_str(),
-                vote_counter);
-        if (GameConfig::game_teammode)
-            TeamManager::serversayToTeam(vote_team, buff);
-        else
-            ChatInterface::serversay(buff);
-        if (vote_counter < 1)
-            checkPlayersVote();
-    }
-}
-
 void VoteManager::startVote(Uint8 type)
 {
     vote_in_progress = true;
@@ -75,34 +53,15 @@ void VoteManager::startVote(Uint8 type)
     players_in_vote = vote_counter;
 }
 
-void VoteManager::netMessageReceiveRequestVote(const NetMessage* message, PlayerID playerid)
+void VoteManager::netMessageReceiveRequestVote(const NetMessage* message)
 {
     const PlayerVoteRequested* vote_request
     = (const PlayerVoteRequested *) message;
-
-    if ( NetworkState::status == _network_state_server )
-    {
-        if (vote_in_progress) return;
-        resetVote();
-        vote_team = PlayerInterface::getPlayer(playerid)->getTeamID();
-        startVote(vote_request->vote_type);
-        serverSendRequestVote();
-        char buff[100];
-        sprintf(buff, "Player %s request vote",
-                PlayerInterface::getPlayer(playerid)->getName().c_str());
-        if (GameConfig::game_teammode)
-            TeamManager::serversayToTeam(vote_team, buff);
-        else
-            ChatInterface::serversay(buff);
-    }
-    else
-    {
-        resetVote();
-        startVote(vote_request->vote_type);
-        votebox = new VoteBox(VoteStrings[type_vote]);
-        Desktop::add(votebox);
-        Desktop::setVisibility("votebox", true);
-    }
+    
+    votebox = new VoteBox(VoteStrings[vote_request->vote_type]);
+    
+    Desktop::add(votebox);
+    Desktop::setVisibility("votebox", true);
 }
 
 void VoteManager::resetVote()
@@ -110,10 +69,12 @@ void VoteManager::resetVote()
     vote_in_progress = false;
     type_vote = unassigned_vote;
     delete[] player_vote;
+    
     if (votebox)
     {
         Desktop::remove(votebox);
     }
+    
     player_vote = new Uint8 [PlayerInterface::getMaxPlayers()];
     for ( int i = 0; i < PlayerInterface::getMaxPlayers(); i++ )
     {
@@ -121,18 +82,12 @@ void VoteManager::resetVote()
     }
     if ( NetworkState::status == _network_state_server )
         voteTimer.changePeriod(70);// more time for prevent some client retard (lag)
-        else
+    else
         voteTimer.changePeriod(60);
+    
     voteTimer.reset();
     players_in_vote = 0;
     vote_team = 0xFF;
-}
-
-void VoteManager::playerSendRequestVote(Uint8 type)
-{
-    PlayerVoteRequested vote_request;
-    vote_request.set(type);
-    CLIENT->sendMessage(&vote_request, sizeof(PlayerVoteRequested));
 }
 
 void VoteManager::serverSendRequestVote()
@@ -220,3 +175,55 @@ int VoteManager::getTimer()
     return (int) voteTimer.getTimeLeft();
 }
 
+void VoteManager::playerRequest_startSurrenderVote(const PlayerID player_id)
+{
+    if (vote_in_progress)
+    {
+        return;
+    }
+    
+    resetVote();
+    
+    vote_team = PlayerInterface::getPlayer(player_id)->getTeamID();
+    
+    startVote(surrender_vote);
+    
+    serverSendRequestVote();
+    
+    char buff[100];
+    sprintf(buff, "Player %s request vote",
+            PlayerInterface::getPlayer(player_id)->getName().c_str());
+    
+    if (GameConfig::game_teammode)
+        TeamManager::serversayToTeam(vote_team, buff);
+    else
+        ChatInterface::serversay(buff);
+}
+
+void VoteManager::playerRequest_voteSelected(const PlayerID player_id, Uint8 selected_vote)
+{
+    if (vote_in_progress)
+    {
+        vote_counter--;
+        player_vote[ player_id ] = selected_vote;
+        
+        char buff[100];
+        sprintf(buff, "player %s has voted, waiting %d votes",
+                PlayerInterface::getPlayer(player_id)->getName().c_str(),
+                vote_counter);
+        
+        if (GameConfig::game_teammode)
+        {
+            TeamManager::serversayToTeam(vote_team, buff);
+        }
+        else
+        {
+            ChatInterface::serversay(buff);
+        }
+        
+        if (vote_counter < 1)
+        {
+            checkPlayersVote();
+        }
+    }
+}

@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
-#include "TerminalNetMesg.hpp"
 #include "Units/UnitOpcodes.hpp"
 
 #include "NetPacketDebugger.hpp"
@@ -74,7 +73,7 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
             logUnitMessage(*log, message);
             break;
         }
-        case _net_message_class_terminal:
+        case _net_message_class_player_commands:
         {
             logTerminalMessage(*log, message);
             break;
@@ -104,13 +103,6 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
 
     log->flags(std::ios::hex);
     log->fill('0');
-//    Uint8* data = (Uint8 *) message;
-//    for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
-//        if ((i%4) == 0)
-//            *log << " ";
-//        log->width(2);
-//        *log << (int) data[i];
-//    }
     log->flags(std::ios::dec);
     *log << std::endl;
 }
@@ -118,23 +110,7 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
 void NetPacketDebugger::logMultiMessage(std::ostream& log,
         const NetMessage* message)
 {
-//    MultiMessage* mmessage = (MultiMessage*) message;
-    
     log << "multimessage:\n";
-//    size_t index = 0;
-//    for(int i=0; i<mmessage->message_count; i++) {
-//        if(index + mmessage->getHeaderSize() >= message->getSize()) {
-//            log << "****Incorrect multi message!!!\n";
-//            log << "Index: " << index << " HeaderSize: "
-//                << mmessage->getHeaderSize() << " MessageSize: "
-//                << message->getSize() << std::endl;
-//            return;
-//        }
-//        NetMessage* submessage = (NetMessage*) (mmessage->data + index);
-//        index += submessage->getSize();
-
-//        logMessage("  M", submessage);
-//    }
 }
 
 void NetPacketDebugger::logConnectMessage(std::ostream& log,
@@ -195,54 +171,6 @@ void NetPacketDebugger::logTerminalMessage(std::ostream& log,
 {
     log << "Terminal/";
     switch(message->message_id) {
-        case _net_message_id_term_unit_cmd:
-        {
-            TerminalUnitCmdRequest* unitcmd 
-                = (TerminalUnitCmdRequest*) message;
-            const UMesgAICommand& cmd = unitcmd->comm_request;
-            log << "UnitCmd: ";
-            logAICommand(log, cmd);
-            break;
-        }
-        default:
-        {
-            log << "?";
-            break;
-        }
-    }
-}
-
-void NetPacketDebugger::logAICommand(std::ostream& log,
-        const UMesgAICommand& cmd)
-{
-    switch(cmd.command) {
-        case _command_move_to_loc:
-        {
-            log << "move to:" 
-                << cmd.getGoalLoc().x << "," << cmd.getGoalLoc().y;
-            break;
-        }
-        case _command_attack_unit:
-        {
-            log << "Attack: " << cmd.getTargetUnitID();
-            break;
-        }
-        case _command_start_manual_move:
-        {
-            log << "mmove: O:" << cmd.manual_move_orientation;
-            break;
-        }
-        case _command_stop_manual_move:
-        {
-            log << "stop mm";
-            break;
-        }
-        case _command_manual_fire:
-        {
-            log << "MFire: " << cmd.getTargetLoc().x 
-                << "," << cmd.getTargetLoc().y;
-            break;
-        }
         default:
         {
             log << "?";

@@ -26,7 +26,6 @@ class ServerMessageRouter
 protected:
     static NetPacket temp_packet;
     static NetMessageDecoder message_decoder;
-    static void processTerminalPacket(const NetPacket* packet);
 
 public:
     static void initialize();

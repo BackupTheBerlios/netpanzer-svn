@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "BulletWeapon.hpp"
-#include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"

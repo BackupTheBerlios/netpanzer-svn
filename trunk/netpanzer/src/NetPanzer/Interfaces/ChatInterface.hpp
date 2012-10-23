@@ -26,13 +26,15 @@ class NetMessage;
 class ChatInterface
 {
 public:
-    static void processChatMessages(const NetPacket* packet);
     static void clientHandleChatMessage(const NetMessage* message, size_t size);
 
     static void say(const NPString& message);
     static void teamsay(const NPString& message);
     static void serversay(const NPString& message);
     static void serversayTo(const PlayerID player, const NPString& message);
+    
+    static void playerRequest_chat(const PlayerID player_id, const NPString& message);
+    static void playerRequest_teamChat(const PlayerID player_id, const NPString& message);
 };
 
 #endif // ** _CHATINTERFACE_HPP

@@ -90,7 +90,30 @@ public:
     virtual void AddData(const std::string& S, void * D);
     virtual void deleteData(const DataItem& data) { /* to be overriden */}
     
-    virtual void Clear(){List.clear();dirty = true; SelectedItem = List.end(); StartItem=List.end(); }
+    virtual void Clear()
+    {
+        List.clear();
+        dirty = true;
+        SelectedItem = List.end();
+        StartItem = List.end();
+        StartSubLine = 0;
+        TotalLines = 0;
+        TotalPosition = 0;
+        MaxItemWidth = size.x;
+        
+        if (VScrollBar)
+        {
+            VScrollBar->setPosition(0);
+            VScrollBar->setMax(0);
+        }
+
+        if (HScrollBar)
+        {
+            HScrollBar->setPosition(0);
+            HScrollBar->setMax(MaxItemWidth);
+        }
+    }
+    
     virtual int Count(){return List.size();}
     virtual void onPaint(Surface &dst, const DataItem& data, int SubLine);
     virtual void setLocation(int x, int y);

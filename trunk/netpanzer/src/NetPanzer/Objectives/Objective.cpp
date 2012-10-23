@@ -33,8 +33,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
-#include "Classes/UnitMessageTypes.hpp"
-
 
 Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
 {
@@ -193,12 +191,11 @@ Objective::generateUnits()
 
             if ( unit != 0 )
             {
-                UnitRemoteCreate create_mesg(unit->player->getID(),
+                UnitRemoteCreate create_mesg(unit->player_id,
                         unit->id, gen_loc.x, gen_loc.y,
                         unit_generation_type);
                 SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
-                UMesgAICommand ai_command;
                 PlacementMatrix placement_matrix;
                 iXY collection_loc, loc;
 
@@ -207,9 +204,7 @@ Objective::generateUnits()
                 placement_matrix.reset( collection_loc );
                 placement_matrix.getNextEmptyLoc( &loc );
 
-                ai_command.setHeader( unit->id, _umesg_flag_unique );
-                ai_command.setMoveToLoc( loc );
-                UnitInterface::sendMessage( &ai_command );
+                UnitInterface::playerCommand_MoveUnit( unit->player_id, unit->id, loc );
             }
         } // ** if
     } // ** if

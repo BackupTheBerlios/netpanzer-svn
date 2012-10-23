@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Classes/Network/NetworkClient.hpp"
-#include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 
 #include "Views/GameViewGlobals.hpp"
@@ -32,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 
 #include "2D/Palette.hpp"
+#include "Network/PlayerRequests/ChangeFlagRequest.hpp"
 
 #include <vector>
 #include <string>
@@ -62,12 +62,12 @@ public:
             bimage.frameToBuffer(GameConfig::player_flag_data,
                                  sizeof(GameConfig::player_flag_data));
 
-            UpdatePlayerFlag upf;
-            memcpy(upf.player_flag,
+            ChangeFlagRequest req;
+            memcpy(req.player_flag,
                    GameConfig::player_flag_data,
                    sizeof(GameConfig::player_flag_data));
 
-            CLIENT->sendMessage(&upf, sizeof(upf));
+            CLIENT->sendMessage(&req, sizeof(req));
 
             Desktop::setVisibility("GFlagSelectionView", false);
             COMMAND_PROCESSOR.Flagtimer.reset();

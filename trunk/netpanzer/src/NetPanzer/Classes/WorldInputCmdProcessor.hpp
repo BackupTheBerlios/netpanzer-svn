@@ -64,8 +64,6 @@ protected:
 
     void getManualControlStatus();
 
-    void sendManualMoveCommand(unsigned char orientation,
-                                bool start_stop);
     void sendManualFireCommand(const iXY &world_pos);
     void sendMoveCommand(const iXY &world_pos);
     void sendAttackCommand(const iXY &world_pos);

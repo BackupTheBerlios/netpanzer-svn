@@ -40,10 +40,17 @@ typedef Uint16 ObjectiveID;
 #define OBJECTIVE_NONE 0xffff
 
 typedef Uint16 UnitID;
+#define UnitID_toPortable(a) htol16(a)
+#define UnitID_fromPortable(a) ltoh16(a)
 
 typedef Uint8 FlagID;
 #define FLAG_WIDTH 20
 #define FLAG_HEIGHT 14
+
+typedef Uint8 TeamID;
+#define MIN_TEAM_ID (0)
+#define MAX_TEAM_ID (0xfe)
+#define INVALID_TEAM_ID (0xff)
 
 #ifndef __TEST_PLAYERID__
     typedef Uint8 PlayerID;

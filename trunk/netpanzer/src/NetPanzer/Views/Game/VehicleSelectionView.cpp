@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "VehicleSelectionView.hpp"
 
-#include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 
@@ -45,6 +44,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 
+#include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
+
 int vsvSelectedUnit   = 0;
 int vsvUnitGenOn      = true;
 bool changeMade       = false;
@@ -56,9 +57,12 @@ static void sendOutpostStatus()
         return;
     }
     
-    ObjectiveInterface::sendChangeGeneratingUnit(CURRENT_SELECTED_OUTPOST_ID,
-                                                 (char)vsvSelectedUnit,
-                                                 vsvUnitGenOn);
+    ChangeObjectiveGenerationRequest req;
+    req.setObjectiveId(CURRENT_SELECTED_OUTPOST_ID);
+    req.unit_type = vsvSelectedUnit;
+    req.unit_gen_on = vsvUnitGenOn;
+    
+    CLIENT->sendMessage(&req, sizeof(req));
 }
 
 static void bOK()

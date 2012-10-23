@@ -37,8 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
 
-#include "Classes/UnitMessageTypes.hpp"
-#include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetMessageEncoder.hpp"
@@ -62,6 +60,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Scripts/ScriptManager.hpp"
 #include "Views/Game/ChatView.hpp"
 #include "Actions/ActionManager.hpp"
+
+#include "Network/PlayerRequests/AttackUnitRequest.hpp"
+#include "Network/PlayerRequests/ManualFireRequest.hpp"
+#include "Network/PlayerRequests/MoveUnitRequest.hpp"
+#include "Network/PlayerRequests/ChangeObjectiveOutLocationRequest.hpp"
+#include "Network/PlayerRequests/AllianceRequest.hpp"
+#include "Network/PlayerRequests/BreakAllianceRequest.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
@@ -223,16 +228,16 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     if ( UnitInterface::queryUnitAtMapLoc(map_loc, &unit_id) )
     {
         UnitBase * unit = UnitInterface::getUnit(unit_id);
-        if ( unit->player->getID() == PlayerInterface::getLocalPlayerIndex() )
+        if ( unit->player_id == PlayerInterface::getLocalPlayerIndex() )
         {
             return _cursor_player_unit;
         }
         // XXX ALLY
-        if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
+        if ( ! PlayerInterface::isAllied(unit->player_id, PlayerInterface::getLocalPlayerIndex() ) )
         {
             if ( KeyboardInterface::getKeyState(SDLK_a) && !GameConfig::game_teammode )
             {
-                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
+                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player_id ) )
                 {
                     return _cursor_break_allie;
                 }
@@ -352,8 +357,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_v) )
     {
-        if (!Desktop::getVisible("PrepareTeam") && !Desktop::getVisible("GFlagSelectionView"))
-            VoteManager::playerSendRequestVote(surrender_vote);
+        ActionManager::runAction("startvote_surrender");
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )
@@ -469,7 +473,7 @@ WorldInputCmdProcessor::jumpLastAttackedUnit()
             i != units.end(); ++i)
     {
         UnitBase* unit = i->second;
-        if(unit->player != PlayerInterface::getLocalPlayer())
+        if(unit->player_id != PlayerInterface::getLocalPlayerIndex())
             continue;
 
         if (unit->unit_state.threat_level == _threat_level_under_attack)
@@ -695,9 +699,10 @@ void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
         }
         else
         {
-            ObjectiveInterface::sendChangeOutputLocation(outpost_goal_selection,
-                                                         MapInterface::pointXtoMapX(world_pos.x),
-                                                         MapInterface::pointYtoMapY(world_pos.y));
+            ChangeObjectiveOutLocationRequest msg;
+            msg.setObjectiveId(outpost_goal_selection);
+            msg.setMapPos(iXY(MapInterface::pointXtoMapX(world_pos.x), MapInterface::pointYtoMapY(world_pos.y)));
+            CLIENT->sendMessage(&msg, sizeof(msg));
         }
         outpost_goal_selection = OBJECTIVE_NONE;
         return;
@@ -809,8 +814,8 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     size_t id_list_size;
     UnitBase *unit_ptr;
 
-    TerminalUnitCmdRequest msg;
-
+    MoveUnitRequest req;
+    
     id_list_size = working_list.unit_list.size();
 
     if ( id_list_size == 0 )
@@ -830,17 +835,16 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
             if ( unit_ptr->unit_state.select == true )
             {
                 matrix.getNextEmptyLoc( &map_pos );
-                msg.comm_request.setHeader( unit_ptr->id,
-                                            _umesg_flag_unique );
-
-                msg.comm_request.setMoveToLoc( map_pos );
-
-                if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                
+                req.setUnitId(unit_ptr->id);
+                req.setMapPos(map_pos);
+                
+                if ( !encoder.encodeMessage(&req, sizeof(req)) )
                 {
                     CLIENT->sendMessage(encoder.getEncodedMessage(),
                                         encoder.getEncodedLen());
                     encoder.resetEncoder();
-                    encoder.encodeMessage(&msg, sizeof(msg));
+                    encoder.encodeMessage(&req, sizeof(req));
                 }
             }
         }
@@ -860,7 +864,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 void
 WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 {
-    TerminalUnitCmdRequest msg;
+    AttackUnitRequest req;
 
     UnitBase *target_ptr;
 
@@ -887,16 +891,15 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
             {
                 if ( unit_ptr->unit_state.select == true )
                 {
-                    msg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
-                    msg.comm_request.setTargetUnit(target_ptr->id);
+                    req.setUnitId(unit_ptr->id);
+                    req.setEnemyId(target_ptr->id);
 
-                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                    if ( !encoder.encodeMessage(&req, sizeof(req)) )
                     {
                         CLIENT->sendMessage(encoder.getEncodedMessage(),
                                             encoder.getEncodedLen());
                         encoder.resetEncoder();
-                        encoder.encodeMessage(&msg, sizeof(msg));
+                        encoder.encodeMessage(&req, sizeof(req));
                     }
                 }
             }
@@ -914,56 +917,6 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 }
 
 void
-WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
-        bool start_stop)
-{
-    TerminalUnitCmdRequest msg;
-    size_t id_list_index;
-    size_t id_list_size;
-    UnitBase *unit_ptr;
-
-    if ( working_list.unit_list.size() > 0 ) {
-        id_list_size = working_list.unit_list.size();
-
-        NetMessageEncoder encoder;
-
-        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
-        {
-            unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
-            if ( unit_ptr != 0 ) {
-                if ( unit_ptr->unit_state.select == true )
-                {
-                    msg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
-                    if ( start_stop == true )
-                    {
-                        msg.comm_request.setStartManualMove( orientation );
-                    }
-                    else
-                    {
-                        msg.comm_request.setStopManualMove();
-                    }
-
-                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
-                    {
-                        CLIENT->sendMessage(encoder.getEncodedMessage(),
-                                            encoder.getEncodedLen());
-                        encoder.resetEncoder();
-                        encoder.encodeMessage(&msg, sizeof(msg));
-                    }
-                }
-            }
-        }
-
-        if ( ! encoder.isEmpty() )
-        {
-            CLIENT->sendMessage(encoder.getEncodedMessage(),
-                                encoder.getEncodedLen());
-        }
-    }
-}
-
-void
 WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
     if ( !actionTimer.isTimeOut() )
@@ -973,7 +926,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 
     actionTimer.reset();
 
-    TerminalUnitCmdRequest msg;
+    ManualFireRequest req;
 
     size_t id_list_index;
     size_t id_list_size;
@@ -989,16 +942,15 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    msg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
-                    msg.comm_request.setManualFire(world_pos);
+                    req.setUnitId(unit_ptr->id);
+                    req.setMapPos(world_pos);
 
-                    if ( !encoder.encodeMessage(&msg, sizeof(msg)) )
+                    if ( !encoder.encodeMessage(&req, sizeof(req)) )
                     {
                         CLIENT->sendMessage(encoder.getEncodedMessage(),
                                             encoder.getEncodedLen());
                         encoder.resetEncoder();
-                        encoder.encodeMessage(&msg, sizeof(msg));
+                        encoder.encodeMessage(&req, sizeof(req));
                     }
                 }
             }
@@ -1022,22 +974,22 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
 
     target_list.selectTarget(world_pos);
 
-    if ( target_list.isSelected() == true ) {
+    if ( target_list.isSelected() == true )
+    {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        Uint8 type;
-        if ( make_break ) {
-            type = _player_make_alliance;
-        } else {
-            type = _player_break_alliance;
+        if ( make_break )
+        {
+            AllianceRequest req;
+            req.with_player_id = target_ptr->player_id;
+            CLIENT->sendMessage( &req, sizeof(req));
         }
-
-        // XXX ALLY
-        PlayerAllianceRequest allie_request;
-        allie_request.set(PlayerInterface::getLocalPlayerIndex(),
-                target_ptr->player->getID(), type);
-
-        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+        else
+        {
+            BreakAllianceRequest req;
+            req.with_player_id = target_ptr->player_id;
+            CLIENT->sendMessage( &req, sizeof(req));
+        }
     }
 }
 

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DisconnectAction.hpp"
 #include "ChatPageUpAction.hpp"
 #include "ChatPageDownAction.hpp"
+#include "StartSurrenderVoteAction.hpp"
 
 void ActionManager::addGUIActions()
 {
@@ -43,5 +44,7 @@ void ActionManager::addGUIActions()
     
     addAction("chat_pgup", new ChatPageUpAction());
     addAction("chat_pgdown", new ChatPageDownAction());
+    
+    addAction("startvote_surrender", new StartSurrenderVoteAction());
     
 }

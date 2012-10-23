@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Team
 {
 protected:
-    Uint8 teamID;
+    TeamID teamID;
     std::string name;
     Surface Flag;
     Uint8 teamColor;
@@ -35,7 +35,7 @@ protected:
     bool stats_locked;
 
 public:
-    void initialize(const Uint8 id);
+    void initialize(const TeamID id);
 
     void setName(const std::string& newname);
     const std::string& getName() const;
@@ -44,7 +44,7 @@ public:
     void addPlayer(PlayerID player_id);
     void removePlayer(PlayerID player_id);
     void cleanUp();
-    Uint8 getID() const { return teamID; }
+    TeamID getID() const { return teamID; }
     PlayerID countPlayers() const;
     PlayerID getrandomplayer() const;
     void loadFlag(const char *fileName);

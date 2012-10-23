@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/WorldInputCmdProcessor.hpp"
 
 #include "Views/Components/Label.hpp"
+#include "Network/PlayerRequests/BreakAllianceRequest.hpp"
+#include "Network/PlayerRequests/AllianceRequest.hpp"
 
 #define HEADER_HEIGHT 24
 #define ENTRY_HEIGHT 20
@@ -235,18 +237,18 @@ void RankView::lMouseDown(const iXY& pos)
             unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
             if ( destplayer != localplayer )
             {
-                PlayerAllianceRequest allie_request;
-
                 if ( PlayerInterface::isSingleAllied(localplayer, destplayer) )
                 {
-                    allie_request.set( localplayer, destplayer, _player_break_alliance);
+                    BreakAllianceRequest req;
+                    req.with_player_id = destplayer;
+                    CLIENT->sendMessage(&req, sizeof(req));
                 }
                 else
                 {
-                    allie_request.set( localplayer, destplayer, _player_make_alliance);
+                    AllianceRequest req;
+                    req.with_player_id = destplayer;
+                    CLIENT->sendMessage(&req, sizeof(req));
                 }
-
-                CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
             }
         }
     }

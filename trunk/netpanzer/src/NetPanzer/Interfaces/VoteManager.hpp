@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef __VOTEMANAGER_HPP__
+#define __VOTEMANAGER_HPP__
+
 #include "Classes/Network/NetMessage.hpp"
 #include "Util/Timer.hpp"
 
@@ -47,9 +50,12 @@ public:
     static void resetVote();
     static void startVote(Uint8 type);
     static void playerVote(Uint8 responce);
-    static void playerSendRequestVote(Uint8 type);
     static void serverSendRequestVote();
-    static void netMessageReceiveRequestVote(const NetMessage* message, PlayerID playerid);
-    static void netMessageVoteRequest(const NetMessage* message);
+    static void netMessageReceiveRequestVote(const NetMessage* message);
     static int getTimer();
+    
+    static void playerRequest_startSurrenderVote(const PlayerID player_id);
+    static void playerRequest_voteSelected(const PlayerID player_id, Uint8 selected_vote);
 };
+
+#endif

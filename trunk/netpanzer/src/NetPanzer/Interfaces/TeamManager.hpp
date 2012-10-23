@@ -30,13 +30,13 @@ protected:
 public:
 
     static void initialize(const Uint8 _max_teams);
-    static Uint8 getTeamColor(Uint8 team_id);
+    static Uint8 getTeamColor(TeamID team_id);
     static void reset();
     static void addPlayer(PlayerID player_id);
-    static void addPlayerinTeam(PlayerID player_id, Uint8 team_id);
+    static void addPlayerinTeam(PlayerID player_id, TeamID team_id);
     static void BalancedTeam();
-    static void removePlayer(PlayerID player_id, Uint8 team_id);
-    static int CountPlayerinTeam(Uint8 team_id);
+    static void removePlayer(PlayerID player_id, TeamID team_id);
+    static int CountPlayerinTeam(TeamID team_id);
     static void cleanUp();
 
     static PlayerID getMaxteams()
@@ -45,11 +45,11 @@ public:
     }
     static iXY getPlayerSpawnPoint(PlayerID player_id);
 
-    static short getKills( Uint8 team_id );
-    static short getLosses( Uint8 team_id );
-    static short getObjectivesHeld( Uint8 team_id );
-    static void incKills( Uint8 team_id );
-    static void incLosses( Uint8 team_id );
+    static short getKills( TeamID team_id );
+    static short getLosses( TeamID team_id );
+    static short getObjectivesHeld( TeamID team_id );
+    static void incKills( TeamID team_id );
+    static void incLosses( TeamID team_id );
     static void lockTeamStats();
     static void unlockTeamStats();
     static void resetTeamStats();
@@ -57,27 +57,29 @@ public:
     static void receiveScores(const NetMessage* message);
 
     static Uint8 getTeamWin();
-    static const std::string& getTeamName( Uint8 team_id );
+    static const std::string& getTeamName( TeamID team_id );
     static bool testRuleScoreLimit( long score_limit );
     static bool testRuleObjectiveRatio( float precentage );
-    static void drawFlag( Uint8 team_id, Surface &dest, int x, int y);
+    static void drawFlag( TeamID team_id, Surface &dest, int x, int y);
 
-    static void PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam);
-    static void serverrequestchangeTeam(PlayerID player_id, Uint8 team_idx);
-    static void PlayerchangeTeam(PlayerID player_id, Uint8 team_idx);
+    static void PlayerrequestchangeTeam(PlayerID player_id, TeamID newteam);
+    static void PlayerchangeTeam(PlayerID player_id, TeamID team_idx);
     static void SpawnTeams();
 
     static bool CheckisPlayerReady();
     static bool isPlayerReady(PlayerID player_id);
-    static void PlayerRequestReady(PlayerID player_id);
-    static void ServerRequestReady(PlayerID player_id);
     static void PlayerRequestReadyAccepted(PlayerID player_id);
 
     static void netMessageChangeTeamRequest(const NetMessage* message);
-    static void netMessageReadyRequest(const NetMessage* message);
-    static void serversayToTeam(const Uint8 teamID, const NPString& message);
-    static void sendMessageToTeam(const Uint8 teamID, NetMessage* message, size_t size);
+    static void serversayToTeam(const TeamID teamID, const NPString& message);
+    static void sendMessageToTeam(const TeamID teamID, NetMessage* message, size_t size);
 
+    static void playerRequest_ready(const PlayerID player_id);
+    static void playerRequest_changeTeam(const PlayerID player_id, const TeamID team_id);
+    
+    static void handlePlayerTeamUpdate(const PlayerID player_id, const TeamID team_id);
+    static void handlePlayerReadyUpdate(const PlayerID player_id);
+    
 };
 
 #endif // ** _TEAMMANAGER_HPP

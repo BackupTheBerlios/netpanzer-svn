@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Classes/UnitMessageTypes.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
@@ -100,9 +99,7 @@ void UnitPowerUp::powerUpReload( UnitState *unit_state)
 
 void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 {
-    UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader( unit_id, _umesg_flag_unique );
-    UnitInterface::sendMessage( &self_destruct );
+    UnitInterface::selfDestructUnit( unit_id );
 }
 
 static const char * powerupTypeToString( int type )
@@ -172,12 +169,12 @@ void UnitPowerUp::onHit( UnitID unit_id )
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set(ID, unit->player->getID(), unit_powerup_type);
+    hit_mesg.set(ID, unit->player_id, unit_powerup_type);
     SERVER->broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    if(unit->player == PlayerInterface::getLocalPlayer())
+    if(unit->player_id == PlayerInterface::getLocalPlayerIndex())
     {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP", 
                                       powerupTypeToString( unit_powerup_type ) );

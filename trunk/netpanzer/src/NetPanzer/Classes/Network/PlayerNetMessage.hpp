@@ -21,19 +21,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "NetMessage.hpp"
 
+#include "Network/PlayerRequests/ChangeFlagRequest.hpp"
+
 enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_flag,
        _net_message_id_player_update_flag,
        _net_message_id_player_sync_state,
        _net_message_id_player_score_update,
-       _net_message_id_player_alliance_request,
-       _net_message_id_player_alliance_update,
        _net_message_id_player_flagtimer_update,
-       _net_message_id_player_changeteam_request,
-       _net_message_id_player_ready_request,
+       _net_message_id_team_change_update,
+       _net_message_id_player_ready_update,
        _net_message_id_player_team_score_sync,
        _net_message_id_player_vote_request,
-       _net_message_id_player_vote
+       _net_message_id_player_vote,
+       _net_message_id_alliance_created_update,
+       _net_message_id_alliance_broken_update
      };
 
 #ifdef MSVC
@@ -71,33 +73,6 @@ public:
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_sync_state;
-    }
-}
-__attribute__((packed));
-
-class PlayerFlagSync : public NetMessage
-{
-public:
-    PlayerID player_id;
-    Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
-
-    PlayerFlagSync()
-    {
-        message_class = _net_message_class_player;
-        message_id = _net_message_id_player_sync_flag;
-    }
-}
-__attribute__((packed));
-
-class UpdatePlayerFlag : public NetMessage
-{
-public:
-    Uint8 player_flag[FLAG_WIDTH*FLAG_HEIGHT];
-
-    UpdatePlayerFlag()
-    {
-        message_class = _net_message_class_player;
-        message_id = _net_message_id_player_update_flag;
     }
 }
 __attribute__((packed));
@@ -143,75 +118,16 @@ public:
 }
 __attribute__((packed));
 
-enum { _player_make_alliance,
-       _player_break_alliance
-     };
-
-class PlayerAllianceRequest : public NetMessage
+class PlayerFlagSync : public ChangeFlagRequest
 {
-private:
-    PlayerID allie_by_player_index;
-    PlayerID allie_with_player_index;
 public:
-    Uint8  alliance_request_type;
-
-    PlayerAllianceRequest()
+    PlayerID player_id;
+    PlayerFlagSync()
     {
         message_class = _net_message_class_player;
-        message_id = _net_message_id_player_alliance_request;
+        message_id = _net_message_id_player_sync_flag;
     }
-
-    void set(PlayerID allie_by_player_index, PlayerID allie_with_player_index,
-            Uint8 alliance_request_type)
-    {
-        this->allie_by_player_index = allie_by_player_index;
-        this->allie_with_player_index = allie_with_player_index;
-        this->alliance_request_type = alliance_request_type;
-    }
-    PlayerID getAllieByPlayerIndex() const
-    {
-        return allie_by_player_index;
-    }
-    PlayerID getAllieWithPlayerIndex() const
-    {
-        return allie_with_player_index;
-    }
-}
-__attribute__((packed));
-
-
-class PlayerAllianceUpdate : public NetMessage
-{
-private:
-    PlayerID allie_by_player_index;
-    PlayerID allie_with_player_index;
-public:
-    Uint8  alliance_update_type;
-
-    PlayerAllianceUpdate()
-    {
-        message_class = _net_message_class_player;
-        message_id = _net_message_id_player_alliance_update;
-    }
-
-    void set(PlayerID by_player_index, PlayerID with_player_index,
-            Uint8 update_type )
-    {
-        allie_by_player_index = by_player_index;
-        allie_with_player_index = with_player_index;
-        alliance_update_type = update_type;
-    }
-
-    Uint16 getAllieByPlayerIndex() const
-    {
-        return allie_by_player_index;
-    }
-    Uint16 getAllieWithPlayerIndex() const
-    {
-        return allie_with_player_index;
-    }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class PlayerFlagTimerUpdate : public NetMessage
 {
@@ -236,64 +152,35 @@ enum { change_team_request,
        change_team_Accepted
      };
 
-class PlayerTeamRequest : public NetMessage
+class PlayerTeamUpdate : public NetMessage
 {
-private:
-    PlayerID player_index;
-    Uint8 team_index;
 public:
-    Uint8  request_type;
+    PlayerID player_id;
+    TeamID team_id;
 
-    PlayerTeamRequest()
+    PlayerTeamUpdate()
     {
         message_class = _net_message_class_player;
-        message_id = _net_message_id_player_changeteam_request;
+        message_id = _net_message_id_team_change_update;
     }
 
-    void set(PlayerID player_idx, Uint8 team_idx, Uint8 type_request)
-    {
-        this->player_index = player_idx;
-        this->team_index = team_idx;
-        this->request_type = type_request;
-    }
-    PlayerID getPlayerIndex() const
-    {
-        return player_index;
-    }
-    Uint8 gettoteamindex() const
-    {
-        return team_index;
-    }
 }
 __attribute__((packed));
 
 enum { ready_request,
        ready_Accepted};
 
-class PlayerReadyRequest : public NetMessage
+class PlayerReadyUpdate : public NetMessage
 {
-private:
-    PlayerID player_index;
 public:
-    Uint8  request_type;
+    PlayerID player_id;
 
-    PlayerReadyRequest()
+    PlayerReadyUpdate()
     {
         message_class = _net_message_class_player;
-        message_id = _net_message_id_player_ready_request;
+        message_id = _net_message_id_player_ready_update;
     }
-
-    void set(PlayerID player_idx, Uint8 type_request)
-    {
-        this->player_index = player_idx;
-        this->request_type = type_request;
-    }
-    PlayerID getPlayerIndex() const
-    {
-        return player_index;
-    }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class TeamScoreSync : public NetMessage
 {

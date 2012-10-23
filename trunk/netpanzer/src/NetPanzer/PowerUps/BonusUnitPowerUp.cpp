@@ -46,7 +46,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
     sound->playPowerUpSound();
 
-    PlayerID own_player = UnitInterface::getUnit(unit_id)->player->getID();
+    PlayerID own_player = UnitInterface::getUnit(unit_id)->player_id;
 
     placement_matrix.reset( map_loc );
 
@@ -64,7 +64,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
         if ( new_unit != 0 )
         {
-            UnitRemoteCreate create_mesg(new_unit->player->getID(),
+            UnitRemoteCreate create_mesg(new_unit->player_id,
                     new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
             SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }

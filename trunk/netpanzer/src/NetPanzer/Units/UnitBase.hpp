@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "Units/UnitState.hpp"
 
-class UnitMessage;
 class UnitOpcode;
 class SpriteSorter;
 class PlayerState;
@@ -29,26 +28,29 @@ class PlayerState;
 class UnitBase
 {
 public:
-    PlayerState* player;
+    PlayerID     player_id;
     UnitID       id;
     UnitState    unit_state;
     bool         in_sync_flag;
 
-    UnitBase(PlayerState* newPlayer, UnitID newId)
-        : player(newPlayer), id(newId)
+    UnitBase(PlayerID player_id, UnitID newId)
+        : player_id(player_id), id(newId)
     { }
     virtual ~UnitBase()
     { }
 
-    virtual void processMessage(const UnitMessage* ) = 0;
     virtual void evalCommandOpcode(const UnitOpcode* ) = 0;
     virtual void updateState() = 0;
     virtual void syncUnit() = 0;
     virtual void offloadGraphics(SpriteSorter& ) = 0;
     virtual void soundSelected() = 0;
     
-    virtual void weaponHit(const UnitID from_unit, const Uint16 damage_factor) = 0;
-
+    virtual void moveToLoc(const iXY& loc) = 0;
+    virtual void attackUnit(const UnitID unit_id) = 0;
+    virtual void manualShoot(const iXY& loc) = 0;
+    
+    virtual bool weaponHit(const UnitID from_unit, const Uint16 damage_factor) = 0;
+    virtual void selfDestruct() = 0;
     bool isWeaponInRange(const iXY& loc) const
     {
         int x = loc.x - unit_state.location.x;

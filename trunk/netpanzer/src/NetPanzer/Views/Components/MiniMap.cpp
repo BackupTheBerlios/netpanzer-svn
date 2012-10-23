@@ -223,7 +223,7 @@ MiniMap::drawUnits(Surface &dest)
         iXY map_loc = iXY( int(float(unit_state.location.x/32) / xratio)+position.x,
                            int(float(unit_state.location.y/32) / yratio)+position.y);
 
-        if ( unit->player->getID() == PlayerInterface::getLocalPlayerIndex())
+        if ( unit->player_id == PlayerInterface::getLocalPlayerIndex())
         {
             if ( unit_state.threat_level == _threat_level_under_attack )
             {
@@ -254,13 +254,13 @@ MiniMap::drawUnits(Surface &dest)
             }
         }
         // XXX ALLY
-        else if (PlayerInterface::isAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID()))
+        else if (PlayerInterface::isAllied(PlayerInterface::getLocalPlayerIndex(), unit->player_id))
         {
             color = gameconfig->getAlliedRadarUnitColor();
         }
         else if ( EnemyRadarPowerUp::isRadarActive() )
         {
-            color = unit->player->getColor();
+            color = PlayerInterface::getPlayer(unit->player_id)->getColor();
         }
         else
         {

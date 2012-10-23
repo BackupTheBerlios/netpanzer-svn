@@ -141,14 +141,22 @@ protected:
     static void netMessageConnectID(const NetMessage *message );
     static void netMessageSyncState(const NetMessage *message );
     static void netMessageScoreUpdate(const NetMessage *message );
-    static void netMessageAllianceRequest(const NetMessage *message );
-    static void netMessageAllianceUpdate(const NetMessage *message );
 
     static void netMessageChangeTeamRequest(const NetMessage* message);
 
 public:
     static void processNetMessage(const NetPacket *packet );
     static void disconnectPlayerCleanup( PlayerID player_id );
+    
+    static void playerRequest_changeFlag(const PlayerID player_id, const Uint8* data);
+    static void playerRequest_allianceRequest(const PlayerID player_id, const PlayerID with_player_id);
+    static void playerRequest_breakAlliance(const PlayerID player_id, const PlayerID with_player_id);
+    static void playerRequest_ready(const PlayerID player_id);
+    
+
+private:
+    static void handleAllianceCreatedUpdate(const PlayerID by_player, const PlayerID with_player);
+    static void handleAllianceBrokenUpdate(const PlayerID by_player, const PlayerID with_player);
 };
 
 #endif // ** _PLAYERINTERFACE_HP

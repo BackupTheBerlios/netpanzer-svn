@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 
 #include "NetworkInterface.hpp"
-#include "NetworkReturnCodes.hpp"
 #include "Network/ClientSocket.hpp"
 
 #include "Util/Timer.hpp"

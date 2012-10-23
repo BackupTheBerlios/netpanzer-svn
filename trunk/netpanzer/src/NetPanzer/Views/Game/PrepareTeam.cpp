@@ -34,6 +34,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 
 #include "Actions/Action.hpp"
+#include "Network/PlayerRequests/PlayerReadyRequest.hpp"
+#include "Network/PlayerRequests/ChangeTeamRequest.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 
 class ChangeTeamAction : public Action
 {
@@ -286,21 +289,27 @@ void PrepareTeam::processEvents()
 
 void PrepareTeam::changeTeam()
 {
+    ChangeTeamRequest req;
+    
     if (PlayerInterface::getLocalPlayer()->getTeamID() == 0)
     {
-        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 1);
+        req.team_id = 1;
         changebutton->setLabel(" << ");
     }
     else
     {
-        TeamManager::PlayerrequestchangeTeam(PlayerInterface::getLocalPlayerIndex(), 0);
+        req.team_id = 0;
         changebutton->setLabel(" >> ");
     }
+    
+    CLIENT->sendMessage(&req, sizeof(req));
 }
 
 void PrepareTeam::playerReady()
 {
-    TeamManager::PlayerRequestReady(PlayerInterface::getLocalPlayerIndex());
+    PlayerReadyRequest req;
+    CLIENT->sendMessage( &req, sizeof(req));
+
     changebutton->disable();
     readybutton->disable();
 }

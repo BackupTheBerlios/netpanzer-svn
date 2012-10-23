@@ -36,6 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
+#include "Network/TCPSocket.hpp"
+#include "Core/NetworkGlobals.hpp"
 
 NetworkServer* SERVER = 0;
 
@@ -111,7 +113,7 @@ NetworkServer::hostSession()
                                         true, true ); // tcp for binding
         
         socket = new TCPListenSocket(addr, this);
-
+        
     }
     catch(...)
     {

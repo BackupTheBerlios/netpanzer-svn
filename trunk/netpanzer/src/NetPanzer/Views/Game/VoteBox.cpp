@@ -41,25 +41,33 @@ public:
 VoteBox::VoteBox(NPString msg) : GameTemplateView()
 {
     int sizex = Surface::getTextLength(msg)+20;
+    
     if (sizex < 200) sizex = 200;
+    
     moveTo(iXY((screen->getWidth()/2)-(sizex/2), screen->getHeight()/2-150));
     resize(iXY(sizex, 75));
+    
     setSearchName("votebox");
     setTitle("Message");
     setSubTitle("");
+    
     setAllowResize(false);
     setAllowMove(true);
     setVisible(false);
     setBordered(false);
+    
     add( new Label(10, 12, msg, Color::cyan));
+    
     add(Button::createNewSpecialButton("Yes",
                                        iXY(sizex/2-55, 35),
                                        50,
                                        new YesNoAction(vote_yes)));
+    
     add(Button::createNewSpecialButton("No",
                                        iXY(sizex/2+5, 35),
                                        50,
                                        new YesNoAction(vote_no)));
+    
     LOGGER.warning("VoteBox %s", msg.c_str());
 }
 
@@ -74,6 +82,7 @@ void VoteBox::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.bltString(getClientRect().getSizeX()/2-50, getClientRect().getSizeY()-12,statBuf, Color::yellow);
 
     View::doDraw(viewArea, clientArea);
+    
     if (VoteManager::checkVoteTimer())
         VoteManager::playerVote(vote_nothing);
 }

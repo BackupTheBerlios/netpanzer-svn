@@ -25,12 +25,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ChatInterface.hpp"
+#include "Interfaces/TeamManager.hpp"
 
-#include "TerminalNetMesg.hpp"
+#include "NetMessage.hpp"
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 #include "PlayerNetMessage.hpp"
 #include "Util/Log.hpp"
+
+#include "Network/PlayerRequests/PlayerRequests.hpp"
+#include "Network/PlayerRequests/AttackUnitRequest.hpp"
+#include "Network/PlayerRequests/ManualFireRequest.hpp"
+#include "Network/PlayerRequests/MoveUnitRequest.hpp"
+#include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
+#include "Network/PlayerRequests/ChangeObjectiveOutLocationRequest.hpp"
+#include "Network/PlayerRequests/ChatRequest.hpp"
+#include "Network/PlayerRequests/TeamChatRequest.hpp"
+#include "Network/PlayerRequests/ChangeFlagRequest.hpp"
+#include "Network/PlayerRequests/AllianceRequest.hpp"
+#include "Network/PlayerRequests/BreakAllianceRequest.hpp"
+#include "Network/PlayerRequests/ChangeTeamRequest.hpp"
+#include "Interfaces/VoteManager.hpp"
+#include "Network/PlayerRequests/VoteSelectedRequest.hpp"
 
 
 NetPacket ServerMessageRouter::temp_packet;
@@ -44,19 +60,107 @@ void ServerMessageRouter::cleanUp()
 {
 }
 
-void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
+static void processPlayerCommands(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
-    switch(message->message_id) {
-        case _net_message_id_term_unit_cmd:
-            UnitInterface::processNetPacket(packet);
+    
+    switch ( message->message_id )
+    {
+        case PlayerRequests::MOVE_UNIT :
+            UnitInterface::playerCommand_MoveUnit( packet->fromPlayer,
+                                        ((MoveUnitRequest*)message)->getUnitId(),
+                                        ((MoveUnitRequest*)message)->getMapPos());
             break;
-
-        default:
-            LOGGER.warning("unnown Terminal Message (id %d, player %u)",
-                    message->message_id, packet->fromPlayer);
+            
+        case PlayerRequests::ATTACK_UNIT :
+            UnitInterface::playerCommand_AttackUnit( packet->fromPlayer,
+                                        ((AttackUnitRequest*)message)->getUnitId(),
+                                        ((AttackUnitRequest*)message)->getEnemyId());
+            break;
+            
+        case PlayerRequests::MANUAL_FIRE :
+            UnitInterface::playerCommand_ManualShoot( packet->fromPlayer,
+                                        ((ManualFireRequest*)message)->getUnitId(),
+                                        ((ManualFireRequest*)message)->getMapPos());
+            break;
+            
+        case PlayerRequests::CHANGE_OBJECTIVE_GENERATION :
+            ObjectiveInterface::playerRequest_setGeneration(packet->fromPlayer,
+                                        ((ChangeObjectiveGenerationRequest*)message)->getObjectiveId(),
+                                        ((ChangeObjectiveGenerationRequest*)message)->unit_type,
+                                        ((ChangeObjectiveGenerationRequest*)message)->unit_gen_on);
+            break;
+            
+        case PlayerRequests::CHANGE_OBJECTIVE_OUTLOC :
+            ObjectiveInterface::playerRequest_setOutputLoc(packet->fromPlayer,
+                                        ((ChangeObjectiveOutLocationRequest*)message)->getObjectiveId(),
+                                        ((ChangeObjectiveOutLocationRequest*)message)->getMapPos());
+            break;
+            
+        case PlayerRequests::CHAT :
+            if ( packet->size > sizeof(NetMessage) )
+            {
+                NPString text;
+                ((ChatRequest*)message)->getText(packet->size, text);
+                ChatInterface::playerRequest_chat(packet->fromPlayer, text);
+            }
+            else
+            {
+                LOGGER.warning("Player %d sent empty chat request", packet->fromPlayer);
+            }
+            break;
+            
+        case PlayerRequests::TEAM_CHAT :
+            if ( packet->size > sizeof(NetMessage) )
+            {
+                NPString text;
+                ((TeamChatRequest*)message)->getText(packet->size, text);
+                ChatInterface::playerRequest_teamChat(packet->fromPlayer, text);
+            }
+            else
+            {
+                LOGGER.warning("Player %d sent empty team chat request", packet->fromPlayer);
+            }
+            break;
+            
+        case PlayerRequests::CHANGE_FLAG :
+            PlayerInterface::playerRequest_changeFlag(packet->fromPlayer,
+                                        ((ChangeFlagRequest*)message)->player_flag);
+                                         
+            break;
+            
+        case PlayerRequests::ALLIANCE_REQUEST :
+            PlayerInterface::playerRequest_allianceRequest(packet->fromPlayer,
+                                        ((AllianceRequest*)message)->with_player_id);
+                                         
+            break;
+            
+        case PlayerRequests::BREAK_ALLIANCE :
+            PlayerInterface::playerRequest_breakAlliance(packet->fromPlayer,
+                                        ((BreakAllianceRequest*)message)->with_player_id);
+                                         
+            break;
+            
+        case PlayerRequests::PLAYER_READY :
+            TeamManager::playerRequest_ready(packet->fromPlayer);
+            break;
+            
+        case PlayerRequests::CHANGE_TEAM :
+            TeamManager::playerRequest_changeTeam(packet->fromPlayer,
+                                        ((ChangeTeamRequest*)message)->team_id);
+            break;
+            
+        case PlayerRequests::STARTSURRENDER_VOTE :
+            VoteManager::playerRequest_startSurrenderVote(packet->fromPlayer);
+            break;
+            
+        case PlayerRequests::VOTE_SELECTED :
+            VoteManager::playerRequest_voteSelected(packet->fromPlayer,
+                                        ((VoteSelectedRequest*)message)->vote_selected);
+            break;
     }
 }
+
 
 void ServerMessageRouter::routePacket(const NetPacket* packet)
 {
@@ -64,44 +168,16 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
     PlayerState * player = PlayerInterface::getPlayer(packet->fromPlayer);
 
     switch (message->message_class) {
-        case _net_message_class_terminal:
+        case _net_message_class_player_commands:
             if ( player )
             {
                 player->resetAutokick();
             }
-            processTerminalPacket(packet);
-            break;
-
-        case _net_message_class_objective:
-            ObjectiveInterface::serverHandleNetPacket(packet);
-            break;
-
-        case _net_message_class_system:
-            if ( player )
-            {
-                player->resetAutokick();
-            }
-            GameManager::processSystemMessage(message);
-            break;
-            
-        case _net_message_class_chat:
-            if ( player )
-            {
-                player->resetAutokick();
-            }
-            ChatInterface::processChatMessages(packet);
+            processPlayerCommands(packet);
             break;
 
         case _net_message_class_connect:
             ServerConnectDaemon::processNetPacket(packet);
-            break;
-
-        case _net_message_class_player:
-            if ( player )
-            {
-                player->resetAutokick();
-            }
-            PlayerInterface::processNetMessage(packet);
             break;
 
         default:

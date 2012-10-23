@@ -37,16 +37,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/Console.hpp"
 #include "Units/UnitOpcodeDecoder.hpp"
 
-#include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetPacket.hpp"
-#include "Classes/Network/TerminalNetMesg.hpp"
 
 #include "System/Sound.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Log.hpp"
 #include "UnitBlackBoard.hpp"
-
 
 //UnitList * UnitInterface::unit_lists;
 UnitInterface::Units UnitInterface::units;
@@ -119,60 +116,44 @@ UnitInterface::reset()
 }
 
 void
-UnitInterface::processNetPacket(const NetPacket* packet)
+UnitInterface::playerCommand_MoveUnit(const PlayerID player_id, const UnitID unit_id, const iXY& destination)
 {
-    const NetMessage* message = packet->getNetMessage();
-    const TerminalUnitCmdRequest* terminal_command =
-        (const TerminalUnitCmdRequest*) message;
-
-    const PlayerState* player 
-        = PlayerInterface::getPlayer(packet->fromPlayer);
-    if(player == 0)
-    {
-        LOGGER.warning("UnitInterface: Player not found '%u'?!?",
-                packet->fromPlayer);
-        return;
-    }
+    UnitBase * unit = getUnit(unit_id);
     
-    sendMessage(&(terminal_command->comm_request) , player);
+    if ( unit )
+    {
+        if ( unit->player_id == player_id )
+        {
+            unit->moveToLoc(destination);
+        }
+    }
 }
 
 void
-UnitInterface::sendMessage(const UnitMessage* message,const PlayerState* player)
+UnitInterface::playerCommand_AttackUnit(const PlayerID player_id, const UnitID unit_id, const UnitID enemy_id)
 {
-    if (message->isFlagged(_umesg_flag_unique)) {
-        UnitBase* unit = getUnit(message->getUnitID());
-        if(unit == 0)
-            return;
-        if(player && unit->player != player) {
-            LOGGER.warning(
-                "Terminal request for unit (%u) not owned by player (%u).\n",
-                unit->id, player->getID());
-            return;
+    UnitBase * unit = getUnit(unit_id);
+    
+    if ( unit )
+    {
+        if ( unit->player_id == player_id )
+        {
+            unit->attackUnit(unit_id);
         }
-                    
-        unit->processMessage(message);
-    } else if (message->isFlagged( _umesg_flag_broadcast) ) {
-        if(message->message_id != _umesg_weapon_hit) {
-            LOGGER.warning("Broadcast flag only allowed for weapon hit.");
-            if(player) {
-                LOGGER.warning("from player %u.\n", player->getID());
-            }
-            return;
+    }
+}
+
+void
+UnitInterface::playerCommand_ManualShoot(const PlayerID player_id, const UnitID unit_id, const iXY& world_point)
+{
+    UnitBase * unit = getUnit(unit_id);
+    
+    if ( unit )
+    {
+        if ( unit->player_id == player_id )
+        {
+            unit->manualShoot(world_point);
         }
-            
-        for(Units::iterator i = units.begin(); i != units.end(); ++i) {
-            UnitBase* unit = i->second;
-            unit->processMessage(message);
-        }
-    } else if (message->isFlagged( _umesg_flag_manager_request) ) {
-        if(player) {
-            LOGGER.warning(
-                    "UnitManagerMessage sent out by player %u not allowed.",
-                    player->getID());
-            return;
-        }
-  	processManagerMessage(message);
     }
 }
 
@@ -194,7 +175,7 @@ void UnitInterface::removeUnit(Units::iterator i)
     unit_bucket_array.deleteUnitBucketPointer(unit->id, 
             unit->unit_state.location );
     PlayerUnitList& plist =
-        playerUnitLists[unit->player->getID()];
+        playerUnitLists[unit->player_id];
     
     PlayerUnitList::iterator pi
         = std::find(plist.begin(), plist.end(), unit);
@@ -310,7 +291,7 @@ void UnitInterface::addNewUnit(UnitBase *unit)
 {
     units.insert(std::make_pair(unit->id, unit));
    
-    Uint16 player_index = unit->player->getID();
+    Uint16 player_index = unit->player_id;
     playerUnitLists[player_index].push_back(unit);
 
     unit_bucket_array.addUnit(unit);
@@ -399,7 +380,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
             unit_placement_matrix.getNextEmptyLoc( &next_loc );
             unit = createUnit(unit_type_index, next_loc, player_id);
             if (unit == 0) return;
-            UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
+            UnitRemoteCreate create_mesg(unit->player_id, unit->id,
                     next_loc.x, next_loc.y, unit->unit_state.unit_type);
             if ( !encoder.encodeMessage(&create_mesg, sizeof(create_mesg)) )
             {
@@ -431,10 +412,10 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
             continue;
 
         if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
+                && unit->player_id == player_id)
             continue;
         if(search_flags == _search_player
-                && unit->player->getID() != player_id)
+                && unit->player_id != player_id)
             continue;
 
         working_list.push_back(unit->id);
@@ -453,10 +434,10 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
             continue;
 
         if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
+                && unit->player_id == player_id)
             continue;
         if(search_flags == _search_player
-                && unit->player->getID() != player_id)
+                && unit->player_id != player_id)
             continue;
 
         working_list.push_back(unit->id);
@@ -466,7 +447,7 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
 PlayerState *
 UnitInterface::querySinglePlayerInArea(const iRect& rect)
 {
-    PlayerState* player = 0;
+    PlayerID player_id = INVALID_PLAYER_ID;
     for ( Units::iterator i = units.begin(); i != units.end(); ++i )
     {
         UnitBase* unit = i->second;
@@ -475,13 +456,13 @@ UnitInterface::querySinglePlayerInArea(const iRect& rect)
             continue;
         }
 
-        if ( player && unit->player != player )
+        if ( player_id != INVALID_PLAYER_ID && unit->player_id != player_id )
         {
             return 0;
         }
-        player = unit->player;
+        player_id = unit->player_id;
     }
-    return player;
+    return (player_id == INVALID_PLAYER_ID) ? 0 : PlayerInterface::getPlayer(player_id);
 }
 
 /****************************************************************************/
@@ -497,10 +478,10 @@ bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr,
         UnitBase* unit = i->second;
 
         if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
+                && unit->player_id == player_id)
             continue;
         if(search_flags == _search_player
-                && unit->player->getID() != player_id)
+                && unit->player_id != player_id)
             continue;
 
         iXY delta;
@@ -588,7 +569,7 @@ bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
-        PlayerID unitPlayerID = unit->player->getID();
+        PlayerID unitPlayerID = unit->player_id;
         
         if(unitPlayerID == player_index
                 || PlayerInterface::isAllied(player_index, unitPlayerID) // XXX ALLY
@@ -639,11 +620,11 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
     if(!unit) {
         return _no_unit_found;
     }
-    if(unit->player->getID() == player_id) {
+    if(unit->player_id == player_id) {
         return _unit_player;
     }
     // XXX ALLY
-    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
+    if(PlayerInterface::isAllied(player_id, unit->player_id)) {
         return _unit_allied;
     }
 
@@ -672,63 +653,47 @@ bool UnitInterface::queryUnitAtMapLoc(iXY map_loc, UnitID *queary_unit_id)
 
 // ******************************************************************
 
-void UnitInterface::processManagerMessage(const UnitMessage* message)
+void UnitInterface::unitKilled(const UnitBase* unit, const UnitID killer)
 {
-    switch(message->message_id) {
-        case _umesg_end_lifecycle:
-            unitManagerMesgEndLifecycle(message);
-            break;
-        default:
-            LOGGER.warning("Unknown unit Manage Message type (%u).",
-                    message->message_id);
-#ifdef DEBUG
-            assert(false);
-#endif
-    }
-}
-
-// ******************************************************************
-
-void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
-{
-    const UMesgEndLifeCycleUpdate *lifecycle_update
-        = (const UMesgEndLifeCycleUpdate *) message;
-
-    UnitBase* unit1 = getUnit(lifecycle_update->getDestroyer());
-    UnitBase* unit2 = getUnit(lifecycle_update->getDestroyed());
-    if(unit1 == 0 || unit2 == 0) {
+    UnitBase* unit2 = getUnit(killer);
+    if ( ! unit2 )
+    {
         LOGGER.warning(
-                "Unit in EndLifeCycle message doesn't exist anymore"
-                "(u1: %u u2: %u)", lifecycle_update->getDestroyer(),
-                lifecycle_update->getDestroyed());
+                "Killer Unit in EndLifeCycle message doesn't exist anymore(u1: %u u2: %u)",
+                unit->id, killer);
         return;
     }
-    PlayerState* player1 = unit1->player;
-    PlayerState* player2 = unit2->player;
+    
+    PlayerState* player1 = PlayerInterface::getPlayer(unit->player_id);
+    PlayerState* player2 = PlayerInterface::getPlayer(unit2->player_id);
 
-    int unittype1 = unit1->unit_state.unit_type;
-    const std::string& unitname1 = 
-        UnitProfileInterface::getUnitProfile(unittype1)->unitname;
+    int unittype1 = unit->unit_state.unit_type;
+    const std::string& unitname1 = UnitProfileInterface::getUnitProfile(unittype1)->unitname;
+    
     int unittype2 = unit2->unit_state.unit_type;
-    const std::string& unitname2 =
-        UnitProfileInterface::getUnitProfile(unittype2)->unitname;
-    if(Console::server) {
+    const std::string& unitname2 = UnitProfileInterface::getUnitProfile(unittype2)->unitname;
+    
+    if(Console::server)
+    {
         *Console::server << "'" << player1->getName() << "' killed a '"
             << unitname2 << "' from '" << player2->getName() 
             << "' with his '" << unitname1 << "'." << std::endl;
     }
 
     // killing team own units doesn't give score
-    if (GameConfig::game_teammode && (player1->getTeamID() == player2->getTeamID())) return;
-    // killing own units doesn't give score
-    if( (player1 != player2) ) 
+    if (GameConfig::game_teammode && (player1->getTeamID() == player2->getTeamID()))
     {
-        PlayerInterface::setKill(unit1->player, unit2->player,
-                (UnitType) lifecycle_update->unit_type);
+        return;
+    }
+    
+    // killing own units doesn't give score
+    if( player1 != player2 ) 
+    {
+        PlayerInterface::setKill(player1, player2, (UnitType) unittype1);
         
         PlayerScoreUpdate score_update;
-        score_update.set(player1->getID(), player2->getID(),
-                (UnitType) lifecycle_update->unit_type);
+        score_update.set(player1->getID(), player2->getID(), (UnitType) unittype1);
+        
         SERVER->broadcastMessage(&score_update, sizeof(PlayerScoreUpdate));
     }
 }
@@ -835,16 +800,23 @@ void UnitInterface::processNetMessage(const NetMessage* net_message, size_t size
 
 // ******************************************************************
 
+void UnitInterface::selfDestructUnit(const UnitID unit_id)
+{
+    UnitBase * unit = getUnit(unit_id);
+    if ( unit )
+    {
+        unit->selfDestruct();
+    }
+}
+
 void UnitInterface::destroyPlayerUnits(PlayerID player_id)
 {
-    UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader(0, _umesg_flag_unique);
-
     PlayerUnitList& unitlist = playerUnitLists[player_id];
     for(PlayerUnitList::iterator i = unitlist.begin();
-            i != unitlist.end(); ++i) {
+            i != unitlist.end(); ++i)
+    {
         UnitBase* unit = *i;
-        unit->processMessage(&self_destruct);
+        unit->selfDestruct();
     }
 }
 
@@ -857,7 +829,10 @@ void UnitInterface::weaponHit(  const UnitID from_unit,
         UnitBase* unit = i->second;
         if ( unit->unit_state.bounds(location) )
         {
-            unit->weaponHit( from_unit, damage_factor);
+            if ( unit->weaponHit( from_unit, damage_factor) )
+            {
+                unitKilled(unit, from_unit);
+            }
         }
     }
 }

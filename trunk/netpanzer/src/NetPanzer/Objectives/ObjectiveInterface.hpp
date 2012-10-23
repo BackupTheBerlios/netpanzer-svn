@@ -42,11 +42,10 @@ public:
 
     static void loadObjectiveList( const char *file_path );
 
-    static void serverHandleNetPacket(const NetPacket* packet);
+    static void playerRequest_setGeneration(const PlayerID player_id, const ObjectiveID objective_id, const Uint8 unit_type, const bool active);
+    static void playerRequest_setOutputLoc(const PlayerID player_id, const ObjectiveID objective_id, const iXY& location);
+    
     static void clientHandleNetMessage(const NetMessage* message);
-
-    static void sendChangeGeneratingUnit(ObjectiveID objective_id, Uint8 unit_type, bool active);
-    static void sendChangeOutputLocation(ObjectiveID objective_id, Uint32 map_x, Uint32 map_y);
 
     static void updateObjectiveStatus();
 

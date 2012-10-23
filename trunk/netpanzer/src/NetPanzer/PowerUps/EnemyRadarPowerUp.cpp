@@ -66,13 +66,13 @@ EnemyRadarPowerUp::onHit(UnitID unit_id)
 
     UnitBase* unit = UnitInterface::getUnit(unit_id);
 
-    if(unit->player == PlayerInterface::getLocalPlayer())
+    if(unit->player_id == PlayerInterface::getLocalPlayerIndex())
     {
         ActivateRadar();
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( ID, unit->player->getID());
+    hit_mesg.set( ID, unit->player_id);
     SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;

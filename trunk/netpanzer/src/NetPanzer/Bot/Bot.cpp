@@ -24,11 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlacementMatrix.hpp"
 #include "Units/UnitBase.hpp"
 #include "Objectives/Objective.hpp"
-#include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Util/Log.hpp"
+
+#include "Network/PlayerRequests/MoveUnitRequest.hpp"
+#include "Network/PlayerRequests/AttackUnitRequest.hpp"
+#include "Network/PlayerRequests/ManualFireRequest.hpp"
+#include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
+
 
 Bot *Bot::s_bot = 0;
 //-----------------------------------------------------------------
@@ -56,11 +61,11 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     matrix.reset(map_pos);
     matrix.getNextEmptyLoc(&map_pos);
 
-    TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
-    comm_mesg.comm_request.setMoveToLoc(map_pos);
+    MoveUnitRequest comm_mesg;
+    comm_mesg.setUnitId(unit->id);
+    comm_mesg.setMapPos(map_pos);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
+    CLIENT->sendMessage(&comm_mesg, sizeof(comm_mesg));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
     LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
@@ -72,11 +77,11 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
     assert(unit != 0);
     assert(enemyUnit != 0);
 
-    TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
-    comm_mesg.comm_request.setTargetUnit(enemyUnit->id);
+    AttackUnitRequest comm_mesg;
+    comm_mesg.setUnitId(unit->id);
+    comm_mesg.setEnemyId(enemyUnit->id);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
+    CLIENT->sendMessage(&comm_mesg, sizeof(comm_mesg));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
     LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
@@ -87,11 +92,11 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
 {
     assert(unit != 0);
 
-    TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
-    comm_mesg.comm_request.setManualFire(world_pos);
+    ManualFireRequest comm_mesg;
+    comm_mesg.setUnitId(unit->id);
+    comm_mesg.setMapPos(world_pos);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
+    CLIENT->sendMessage(&comm_mesg, sizeof(comm_mesg));
     //NOTE: manual fire is not special unit task,
     // unit can move and fire simultanous
 }
@@ -102,6 +107,11 @@ Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
     LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
                  outpostID, selectedProduce);
 
-    ObjectiveInterface::sendChangeGeneratingUnit(outpostID, selectedProduce, true);
- }
+    ChangeObjectiveGenerationRequest req;
+    req.setObjectiveId(outpostID);
+    req.unit_type = selectedProduce;
+    req.unit_gen_on = 1;
+    
+    CLIENT->sendMessage(&req, sizeof(req));
+}
 

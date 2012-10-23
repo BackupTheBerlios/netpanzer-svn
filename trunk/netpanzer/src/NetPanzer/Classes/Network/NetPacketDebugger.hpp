@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class NetMessage;
 class NetPacket;
-class UMesgAICommand;
 
 class NetPacketDebugger
 {
@@ -32,7 +31,6 @@ public:
 
 private:
     static void logTerminalMessage(std::ostream& stream, const NetMessage* message);
-    static void logAICommand(std::ostream& str, const UMesgAICommand& command);
     static void logMultiMessage(std::ostream& str, const NetMessage* message);
     static void logUnitMessage(std::ostream& log, const NetMessage* message);
     static void logUnitOpcodeMessage(std::ostream& log, const NetMessage* message);

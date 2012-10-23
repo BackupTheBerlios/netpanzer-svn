@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/Objective.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Game/PrepareTeam.hpp"
+#include "Network/PlayerRequests/PlayerReadyRequest.hpp"
 
 Team       * TeamManager::Teams_lists = 0;
 Uint8        TeamManager::max_Teams = 0;
@@ -90,14 +91,14 @@ void TeamManager::initialize(const Uint8 _max_teams)
     for ( int team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].initialize(team_id);
-        if (team_id < (Uint8) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
+        if (team_id < (TeamID) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
         snprintf(txtBuf, sizeof(txtBuf), "pics/default/team-%d.bmp", team_id+1);
         Teams_lists[ team_id ].loadFlag(txtBuf);
         Teams_lists[ team_id ].setColor(colorsteam[team_id]);
     }
 }
 
-Uint8 TeamManager::getTeamColor(Uint8 team_id)
+Uint8 TeamManager::getTeamColor(TeamID team_id)
 {
     return Teams_lists[ team_id ].getColor();
 }
@@ -117,7 +118,7 @@ void TeamManager::addPlayer(PlayerID player_id)
     Teams_lists[ lowTeam ].addPlayer(player_id);
 }
 
-int TeamManager::CountPlayerinTeam(Uint8 team_id)
+int TeamManager::CountPlayerinTeam(TeamID team_id)
 {
     return Teams_lists[ team_id ].countPlayers();
 }
@@ -141,9 +142,10 @@ void TeamManager::BalancedTeam()
             highTeam = team_id;
         }
     }
+    
     if ((maxPlayers - minPlayers) > 1)
     {
-        serverrequestchangeTeam(Teams_lists[ highTeam ].getrandomplayer(), lowTeam);
+        playerRequest_changeTeam(Teams_lists[ highTeam ].getrandomplayer(), lowTeam);
     }
 }
 
@@ -161,19 +163,19 @@ void TeamManager::reset()
     }
 }
 
-void TeamManager::addPlayerinTeam(PlayerID player_id, Uint8 team_id)
+void TeamManager::addPlayerinTeam(PlayerID player_id, TeamID team_id)
 {
     Teams_lists[ team_id ].addPlayer(player_id);
 }
 
-void TeamManager::removePlayer(PlayerID player_id, Uint8 team_id)
+void TeamManager::removePlayer(PlayerID player_id, TeamID team_id)
 {
     Teams_lists[ team_id ].removePlayer(player_id);
 }
 
 void TeamManager::cleanUp()
 {
-    Uint8 team_id;
+    TeamID team_id;
     for ( team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].cleanUp();
@@ -185,7 +187,7 @@ void TeamManager::cleanUp()
 
 iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
 {
-    Uint8 Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
+    TeamID Team_id = PlayerInterface::getPlayer(player_id)->getTeamID();
 
     iXY spawn_point;
     switch (Team_id)
@@ -204,7 +206,7 @@ iXY TeamManager::getPlayerSpawnPoint(PlayerID player_id)
 
 void TeamManager::lockTeamStats()
 {
-    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for ( TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].lockStats();
     }
@@ -212,7 +214,7 @@ void TeamManager::lockTeamStats()
 
 void TeamManager::unlockTeamStats()
 {
-    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for ( TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].unlockStats();
     }
@@ -220,48 +222,48 @@ void TeamManager::unlockTeamStats()
 
 void TeamManager::resetTeamStats()
 {
-    for ( Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for ( TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         Teams_lists[ team_id ].resetStats();
     }
 }
 
-short TeamManager::getKills(  Uint8 team_id )
+short TeamManager::getKills(  TeamID team_id )
 {
     return Teams_lists[team_id].getKills();
 }
 
-short TeamManager::getLosses(  Uint8 team_id )
+short TeamManager::getLosses(  TeamID team_id )
 {
     return Teams_lists[team_id].getLosses();
 }
 
-void TeamManager::incKills( Uint8 team_id )
+void TeamManager::incKills( TeamID team_id )
 {
     Teams_lists[team_id].incKills();
 }
 
-void TeamManager::incLosses( Uint8 team_id )
+void TeamManager::incLosses( TeamID team_id )
 {
     Teams_lists[team_id].incLosses();
 }
 
-short TeamManager::getObjectivesHeld( Uint8 team_id )
+short TeamManager::getObjectivesHeld( TeamID team_id )
 {
     return Teams_lists[team_id].getTeamObjective();
 }
 
-Uint8 TeamManager::getTeamWin()
+TeamID TeamManager::getTeamWin()
 {
     long Score = 0;
-    Uint8 teamWin = 0;
+    TeamID teamWin = 0;
     unsigned char game_type = GameConfig::game_gametype;
 
     switch (game_type)
     {
     case _gametype_fraglimit:
     case _gametype_timelimit:
-        for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+        for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
         {
             if (Score < Teams_lists[team_id].getKills())
             {
@@ -271,7 +273,7 @@ Uint8 TeamManager::getTeamWin()
         }
         break;
     case _gametype_objective:
-        for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+        for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
         {
             if (Score < Teams_lists[team_id].getTeamObjective())
             {
@@ -284,19 +286,19 @@ Uint8 TeamManager::getTeamWin()
     return teamWin;
 }
 
-const std::string& TeamManager::getTeamName( Uint8 team_id )
+const std::string& TeamManager::getTeamName( TeamID team_id )
 {
     return Teams_lists[team_id].getName();
 }
 
-void TeamManager::drawFlag(Uint8 team_id, Surface& dest, int x, int y)
+void TeamManager::drawFlag(TeamID team_id, Surface& dest, int x, int y)
 {
     Teams_lists[team_id].drawFlag(dest, x, y);
 }
 
 bool TeamManager::testRuleScoreLimit( long score_limit )
 {
-    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         if ( Teams_lists[team_id].getKills() >= score_limit )
             return( true );
@@ -308,7 +310,7 @@ bool TeamManager::testRuleObjectiveRatio( float precentage )
 {
     ObjectiveID max_objectives = ObjectiveInterface::getObjectiveLimit();
 
-    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         if ( Teams_lists[team_id].getTeamObjective() >= max_objectives )
         {
@@ -316,74 +318,6 @@ bool TeamManager::testRuleObjectiveRatio( float precentage )
         }
     }
     return false;
-}
-
-void TeamManager::PlayerrequestchangeTeam(PlayerID player_id, Uint8 newteam)
-{
-    PlayerTeamRequest Changeteam_request;
-    Changeteam_request.set(player_id, newteam, change_team_request);
-    CLIENT->sendMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
-}
-
-void TeamManager::serverrequestchangeTeam(PlayerID player_id, Uint8 newteam)
-{
-    Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
-
-    if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
-    {
-        if (((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
-        {
-            Teams_lists[current_team].removePlayer(player_id);
-            Teams_lists[newteam].addPlayer(player_id);
-            PlayerTeamRequest Changeteam_request;
-            Changeteam_request.set(player_id, newteam, change_team_Accepted);
-            SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
-        }
-    }
-    else
-    {
-        if ( (Teams_lists[newteam].countPlayers() < Teams_lists[current_team].countPlayers())
-                && ((PlayerInterface::getMaxPlayers()/2) > Teams_lists[newteam].countPlayers()))
-        {
-            Teams_lists[current_team].removePlayer(player_id);
-            Teams_lists[newteam].addPlayer(player_id);
-            PlayerTeamRequest Changeteam_request;
-            Changeteam_request.set(player_id, newteam, change_team_Accepted);
-            SERVER->broadcastMessage( &Changeteam_request, sizeof(PlayerTeamRequest));
-            ObjectiveInterface::disownPlayerObjectives(player_id);
-            UnitInterface::destroyPlayerUnits(player_id);
-            GameManager::spawnPlayer( player_id );
-        }
-    }
-}
-
-void TeamManager::PlayerchangeTeam(PlayerID player_id, Uint8 team_idx)
-{
-    Uint8 current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
-
-    Teams_lists[current_team].removePlayer(player_id);
-    Teams_lists[team_idx].addPlayer(player_id);
-
-    if (GameControlRulesDaemon::getGameState() != _game_state_prepare_team)
-        ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                      "%s has changed to team %s.",
-                                      PlayerInterface::getPlayer(player_id)->getName().c_str(),
-                                      Teams_lists[team_idx].getName().c_str());
-}
-
-void TeamManager::PlayerRequestReady(PlayerID player_id)
-{
-    PlayerReadyRequest Ready_request;
-    Ready_request.set(player_id, ready_request);
-    CLIENT->sendMessage( &Ready_request, sizeof(PlayerReadyRequest));
-}
-
-void TeamManager::ServerRequestReady(PlayerID player_id)
-{
-    setReady(player_id);
-    PlayerReadyRequest Ready_request;
-    Ready_request.set(player_id, ready_Accepted);
-    SERVER->broadcastMessage( &Ready_request, sizeof(PlayerReadyRequest));
 }
 
 bool TeamManager::CheckisPlayerReady()
@@ -419,7 +353,7 @@ void TeamManager::SpawnTeams()
 void TeamManager::sendScores()
 {
     TeamScoreSync score_Sync;
-    for (Uint8 team_id = 0; team_id < max_Teams; ++team_id )
+    for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
     {
         score_Sync.set(team_id, getKills(team_id), getLosses(team_id));
         SERVER->broadcastMessage(&score_Sync, sizeof(TeamScoreSync));
@@ -435,41 +369,7 @@ void TeamManager::receiveScores(const NetMessage* message)
         Teams_lists[score_Sync->TeamID].syncScore(score_Sync->getKills(), score_Sync->getLosses());
 }
 
-void TeamManager::netMessageChangeTeamRequest(const NetMessage* message)
-{
-    const PlayerTeamRequest* changeTeamRequest
-    = (const PlayerTeamRequest *) message;
-
-    switch(changeTeamRequest->request_type)
-    {
-    case change_team_request :
-        serverrequestchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
-        break;
-
-    case change_team_Accepted:
-        PlayerchangeTeam(changeTeamRequest->getPlayerIndex(),changeTeamRequest->gettoteamindex());
-        break;
-    }
-}
-void TeamManager::netMessageReadyRequest(const NetMessage* message)
-{
-    const PlayerReadyRequest* ReadyRequest
-    = (const PlayerReadyRequest *) message;
-
-    switch(ReadyRequest->request_type)
-    {
-    case ready_request :
-        ServerRequestReady(ReadyRequest->getPlayerIndex());
-        break;
-
-    case change_team_Accepted:
-        PlayerRequestReadyAccepted(ReadyRequest->getPlayerIndex());
-        break;
-    }
-
-}
-
-void TeamManager::serversayToTeam(const Uint8 teamID, const NPString& message)
+void TeamManager::serversayToTeam(const TeamID teamID, const NPString& message)
 {
     PlayerID player_id;
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
@@ -484,7 +384,7 @@ void TeamManager::serversayToTeam(const Uint8 teamID, const NPString& message)
     }
 }
 
-void TeamManager::sendMessageToTeam(const Uint8 teamID, NetMessage* message, size_t size)
+void TeamManager::sendMessageToTeam(const TeamID teamID, NetMessage* message, size_t size)
 {
     PlayerID player_id;
     for ( player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
@@ -499,6 +399,71 @@ void TeamManager::sendMessageToTeam(const Uint8 teamID, NetMessage* message, siz
     }
 }
 
+void TeamManager::playerRequest_ready(const PlayerID player_id)
+{
+    setReady(player_id);
+    
+    PlayerReadyUpdate msg;
+    msg.player_id = player_id;
+    SERVER->broadcastMessage( &msg, sizeof(msg));
+}
 
+void TeamManager::playerRequest_changeTeam(const PlayerID player_id, const TeamID team_id)
+{
+    TeamID current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
 
+    if (GameControlRulesDaemon::getGameState() == _game_state_prepare_team)
+    {
+        if (((PlayerInterface::getMaxPlayers()/2) > Teams_lists[team_id].countPlayers()))
+        {
+            Teams_lists[current_team].removePlayer(player_id);
+            Teams_lists[team_id].addPlayer(player_id);
+            
+            PlayerTeamUpdate upd;
+            upd.player_id = player_id;
+            upd.team_id = team_id;
+            
+            SERVER->broadcastMessage( &upd, sizeof(upd));
+        }
+    }
+    else
+    {
+        if ( (Teams_lists[team_id].countPlayers() < Teams_lists[current_team].countPlayers())
+                && ((PlayerInterface::getMaxPlayers()/2) > Teams_lists[team_id].countPlayers()))
+        {
+            Teams_lists[current_team].removePlayer(player_id);
+            Teams_lists[team_id].addPlayer(player_id);
+            
+            PlayerTeamUpdate upd;
+            upd.player_id = player_id;
+            upd.team_id = team_id;
+            
+            SERVER->broadcastMessage( &upd, sizeof(upd));
+            
+            ObjectiveInterface::disownPlayerObjectives(player_id);
+            UnitInterface::destroyPlayerUnits(player_id);
+            GameManager::spawnPlayer( player_id );
+        }
+    }
+}
 
+void TeamManager::handlePlayerTeamUpdate(const PlayerID player_id, const TeamID team_id)
+{
+    TeamID current_team = PlayerInterface::getPlayer(player_id)->getTeamID();
+
+    Teams_lists[current_team].removePlayer(player_id);
+    Teams_lists[team_id].addPlayer(player_id);
+
+    if (GameControlRulesDaemon::getGameState() != _game_state_prepare_team)
+    {
+        ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                      "%s has changed to team %s.",
+                                      PlayerInterface::getPlayer(player_id)->getName().c_str(),
+                                      Teams_lists[team_id].getName().c_str());
+    }
+}
+
+void TeamManager::handlePlayerReadyUpdate(const PlayerID player_id)
+{
+    setReady(player_id);
+}
