@@ -669,13 +669,13 @@ void PlayerInterface::handleAllianceCreatedUpdate(const PlayerID by_player, cons
         if ( PlayerInterface::isSingleAllied(with_player, by_player) )
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "You accepted %s alliance request.",
+                                          _("You accepted %s alliance request."),
                                           player_state->getName().c_str());
         }
         else
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "You request alliance with %s.",
+                                          _("You request alliance with %s."),
                                           player_state->getName().c_str());
         }
     }
@@ -685,13 +685,13 @@ void PlayerInterface::handleAllianceCreatedUpdate(const PlayerID by_player, cons
         if ( PlayerInterface::isSingleAllied( with_player, by_player) )
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "%s accepted your alliance request.",
+                                          _("%s accepted your alliance request."),
                                           player_state->getName().c_str());
         }
         else
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "%s request to ally with you.",
+                                          _("%s request to ally with you."),
                                           player_state->getName().c_str());
         }
     }
@@ -709,13 +709,13 @@ void PlayerInterface::handleAllianceBrokenUpdate(const PlayerID by_player, const
         if ( PlayerInterface::isSingleAllied(with_player, by_player) )
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "You broke the alliance with %s.",
+                                          _("You broke the alliance with %s."),
                                           player_state->getName().c_str());
         }
         else
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "You cancel your alliance request with %s.",
+                                          _("You cancel your alliance request with %s."),
                                           player_state->getName().c_str());
         }
     }
@@ -725,13 +725,13 @@ void PlayerInterface::handleAllianceBrokenUpdate(const PlayerID by_player, const
         if ( PlayerInterface::isSingleAllied( with_player, by_player) )
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "%s broke the alliance with you.",
+                                          _("%s broke the alliance with you."),
                                           player_state->getName().c_str());
         }
         else
         {
             ConsoleInterface::postMessage(Color::yellow, false, 0,
-                                          "%s canceled the alliance request with you.",
+                                          _("%s canceled the alliance request with you."),
                                           player_state->getName().c_str());
         }
     }

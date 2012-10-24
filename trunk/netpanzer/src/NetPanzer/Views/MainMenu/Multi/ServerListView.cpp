@@ -50,7 +50,7 @@ ServerListView::ServerListView()
     char str_buf[256];
     setSearchName("ServerListView");
     setTitle(_("Servers"));
-    sprintf( str_buf, "%12s %12s %12s %12s", _("Name"), _("Players/max"), _("Map"), _("Ping") );
+    sprintf( str_buf, " %-25s %-14s %-12s %10s", _("Name"), _("Players/max"), _("Map"), _("Ping") );
     setSubTitle(str_buf);
 
     moveTo(bodyTextRect.min + iXY(0, 205));

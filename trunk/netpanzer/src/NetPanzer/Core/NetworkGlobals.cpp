@@ -28,9 +28,9 @@ struct version_data
 
 struct version_data older_versions[] =
 {
-    (struct version_data){ 1019, "This server requires older netpanzer 0.8.2" },
-    (struct version_data){ 1030, "This server requires older netpanzer 0.8.3" },
-    (struct version_data){ 1105, "This server requires older netpanzer 0.8.4" } // this is valid for future
+    (struct version_data){ 1019, "0.8.2" },
+    (struct version_data){ 1030, "0.8.3" },
+    (struct version_data){ 1105, "0.8.4" } // this is valid for future
 };
 
 #define NUM_OLD_VERSIONS (sizeof(older_versions)/sizeof(version_data))
@@ -41,7 +41,10 @@ const char * getNetpanzerProtocolMessage(const int protocol)
     {
         if ( older_versions[n].protocol == protocol )
         {
-            return older_versions[n].text;
+            char old[128];
+            snprintf(old, sizeof(old),_("This server requires older netpanzer %s"), older_versions[n].text);
+
+            return old;
         }
     }
 

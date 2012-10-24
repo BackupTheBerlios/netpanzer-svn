@@ -26,19 +26,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/StrManager.hpp"
 
 
 static const PIX titles_color = 206; // #6d78c1 more or less "slate blue"
-static const char* titles =
-        "game              units           frags             objs.           time               FPS";
 
 static const PIX format_color = 249; // #d9d9ff
 static const char* format =
-        "     %10s         %3d/%-3d         %4d/%-4d         %3d/%-3d        %02d:%02d/%02d:%02d       %.2f";
+        "     %10s         %3d/%-3d         %4d/%-4d         %3d/%-3d         %02d:%02d/%02d:%02d       %.2f";
 
 static const PIX bars_color = 185; // #6f906d
 static const char* bars =
-        "                |               |                 |               |                  |";
+        "                |               |                 |               |                   |";
 
 
 
@@ -49,7 +48,11 @@ InfoBar::draw(Surface &dest)
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
-   
+    char titles[512];
+    snprintf(titles, sizeof(titles)," %-16s %-15s %-17s %-15s %-19s %s",
+             _("game"), _("units"), _("frags"), _("objs."), _("time"), _("FPS")
+             );
+
     snprintf(buf, sizeof(buf),
              format,
 //             "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",

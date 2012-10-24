@@ -75,7 +75,7 @@ public:
     
     unsigned int setText(const NPString& text)
     {
-        unsigned int text_len = std::min(text.size(), (unsigned int)MAX_CHAT_LENGTH);
+        unsigned int text_len = std::min((unsigned int)text.size(), (unsigned int)MAX_CHAT_LENGTH);
         text.copy(message_text, text_len);
         
         return text_len + CHATMESG_HEADSIZE;

@@ -8,1020 +8,1033 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 08:50+0200\n"
+"POT-Creation-Date: 2012-10-24 22:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:89
+#: Actions/DisconnectAction.hpp:43 Actions/DisconnectAction.hpp:47
+msgid "Loading Main View..."
+msgstr ""
+
+#: Classes/Network/ClientConnectDaemon.cpp:89
 msgid "Connecting to server "
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:103
+#: Classes/Network/ClientConnectDaemon.cpp:103
 msgid "Link to Server Established"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:104
+#: Classes/Network/ClientConnectDaemon.cpp:104
 #, c-format
 msgid "Protocol Version: %u"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:111
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:122
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:130
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:138
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:145
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:152
+#: Classes/Network/ClientConnectDaemon.cpp:111
+#: Classes/Network/ClientConnectDaemon.cpp:122
+#: Classes/Network/ClientConnectDaemon.cpp:130
+#: Classes/Network/ClientConnectDaemon.cpp:138
+#: Classes/Network/ClientConnectDaemon.cpp:145
+#: Classes/Network/ClientConnectDaemon.cpp:152
 msgid "Link to Server FAILED!"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:112
+#: Classes/Network/ClientConnectDaemon.cpp:112
 msgid "Incompatible game:"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:123
+#: Classes/Network/ClientConnectDaemon.cpp:123
 msgid "Server is VERY busy"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:124
+#: Classes/Network/ClientConnectDaemon.cpp:124
 msgid "Please try in a few minutes"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:131
+#: Classes/Network/ClientConnectDaemon.cpp:131
 msgid "Your IP is already connected to this server"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:132
+#: Classes/Network/ClientConnectDaemon.cpp:132
 msgid "The server limits multiple connections from same IP"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:139
+#: Classes/Network/ClientConnectDaemon.cpp:139
 msgid "The password for server was wrong."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:146
+#: Classes/Network/ClientConnectDaemon.cpp:146
 msgid "You are banned in this server"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:153
+#: Classes/Network/ClientConnectDaemon.cpp:153
 msgid "Unknown result sent from server"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:169
+#: Classes/Network/ClientConnectDaemon.cpp:169
 #, c-format
 msgid "Your Position In Queue is %d "
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:187
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:434
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:453
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:463
+#: Classes/Network/ClientConnectDaemon.cpp:187
+#: Classes/Network/ClientConnectDaemon.cpp:434
+#: Classes/Network/ClientConnectDaemon.cpp:453
+#: Classes/Network/ClientConnectDaemon.cpp:463
 msgid "Loading Game Data ..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:193
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:200
+#: Classes/Network/ClientConnectDaemon.cpp:193
+#: Classes/Network/ClientConnectDaemon.cpp:200
 msgid "Synchronizing Player Info ..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:207
+#: Classes/Network/ClientConnectDaemon.cpp:207
 msgid "Synchronizing unit profiles..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:213
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:220
+#: Classes/Network/ClientConnectDaemon.cpp:213
+#: Classes/Network/ClientConnectDaemon.cpp:220
 msgid "Synchronizing Game Elements ..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:228
+#: Classes/Network/ClientConnectDaemon.cpp:228
 msgid "Game Synchronized"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:238
+#: Classes/Network/ClientConnectDaemon.cpp:238
 msgid "Server has terminated the game"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:268
+#: Classes/Network/ClientConnectDaemon.cpp:268
 msgid "Error in server connection"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:279
+#: Classes/Network/ClientConnectDaemon.cpp:279
 msgid "Connect Failure: Server Too Busy"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:285
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:351
+#: Classes/Network/ClientConnectDaemon.cpp:285
+#: Classes/Network/ClientConnectDaemon.cpp:351
 msgid "Connect Failure: Server Full"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:291
+#: Classes/Network/ClientConnectDaemon.cpp:291
 msgid "Connect Failure: You are aready connected"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:320
+#: Classes/Network/ClientConnectDaemon.cpp:320
 msgid "Server is not responding..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:325
+#: Classes/Network/ClientConnectDaemon.cpp:325
 msgid "Connection to server failed..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:326
+#: Classes/Network/ClientConnectDaemon.cpp:326
 msgid "it might be older netpanzer or server is down"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:342
+#: Classes/Network/ClientConnectDaemon.cpp:342
 msgid "Connecting ..."
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:398
+#: Classes/Network/ClientConnectDaemon.cpp:398
 msgid "Connection To Server Failed"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:419
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:636
+#: Classes/Network/ClientConnectDaemon.cpp:419
+#: Interfaces/GameControlRulesDaemon.cpp:636
 #, c-format
 msgid "MAP %s NOT FOUND!"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:426
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:641
+#: Classes/Network/ClientConnectDaemon.cpp:426
+#: Interfaces/GameControlRulesDaemon.cpp:641
 msgid "MAP TILE SET NOT FOUND!"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:427
+#: Classes/Network/ClientConnectDaemon.cpp:427
 msgid "please download the appropriate tileset"
 msgstr ""
 
-#: NetPanzer\Classes\Network\ClientConnectDaemon.cpp:428
+#: Classes/Network/ClientConnectDaemon.cpp:428
 msgid "from www.pyrosoftgames.com"
 msgstr ""
 
-#: NetPanzer\Classes\Network\NetworkClient.cpp:103
+#: Classes/Network/NetworkClient.cpp:103
 #, c-format
 msgid "connection error: %s"
 msgstr ""
 
-#: NetPanzer\Core\NetworkGlobals.cpp:50
+#: Core/NetworkGlobals.cpp:45
+#, c-format
+msgid "This server requires older netpanzer %s"
+msgstr ""
+
+#: Core/NetworkGlobals.cpp:53
 msgid "The server is a very old netpanzer version, cannot use"
 msgstr ""
 
-#: NetPanzer\Core\NetworkGlobals.cpp:55
+#: Core/NetworkGlobals.cpp:58
 msgid "This server is an older development version, cannot use"
 msgstr ""
 
-#: NetPanzer\Core\NetworkGlobals.cpp:58
+#: Core/NetworkGlobals.cpp:61
 msgid "This server is a newer netpanzer, please check http://www.netpanzer.org"
 msgstr ""
 
-#: NetPanzer\Interfaces\ChatInterface.cpp:255
-#: NetPanzer\Interfaces\ChatInterface.cpp:350
+#: Interfaces/ChatInterface.cpp:176
 #, c-format
 msgid "Server: %s"
 msgstr ""
 
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:130
+#: Interfaces/GameControlRulesDaemon.cpp:130
 #, c-format
 msgid "Next Map '%s'."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:133
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:162
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:169
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:334
+#: Interfaces/GameControlRulesDaemon.cpp:133
+#: Interfaces/GameControlRulesDaemon.cpp:162
+#: Interfaces/GameControlRulesDaemon.cpp:169
+#: Interfaces/GameControlRulesDaemon.cpp:334
 msgid "Loading Game Map..."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:141
+#: Interfaces/GameControlRulesDaemon.cpp:141
 msgid "Error while loading map:"
 msgstr ""
 
-#: NetPanzer\Interfaces\GameControlRulesDaemon.cpp:165
+#: Interfaces/GameControlRulesDaemon.cpp:165
 msgid "Waiting to respawn..."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:188
+#: Interfaces/GameManager.cpp:188
 msgid "Please wait... generating palettes"
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:415
+#: Interfaces/GameManager.cpp:415
 #, c-format
 msgid "%s has joined the game in team %s."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:421
+#: Interfaces/GameManager.cpp:421
 #, c-format
 msgid "%s has joined the game."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:432
+#: Interfaces/GameManager.cpp:432
 #, c-format
 msgid "%s has left the game."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:441
+#: Interfaces/GameManager.cpp:441
 #, c-format
 msgid "Connection to %s has been unexpectedly broken."
 msgstr ""
 
-#: NetPanzer\Interfaces\GameManager.cpp:450
+#: Interfaces/GameManager.cpp:450
 #, c-format
 msgid "Player %s was kicked"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:282
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:332
+#: Interfaces/PlayerGameManager.cpp:282 Interfaces/PlayerGameManager.cpp:332
 msgid "Launching Server..."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:322
+#: Interfaces/PlayerGameManager.cpp:322
 msgid "SERVER LAUNCH FAILED"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:337
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:357
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:392
+#: Interfaces/PlayerGameManager.cpp:337 Interfaces/PlayerGameManager.cpp:357
+#: Interfaces/PlayerGameManager.cpp:392
 msgid "Loading Game Data"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:365
+#: Interfaces/PlayerGameManager.cpp:365
 msgid "ERROR unit profiles"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:366
+#: Interfaces/PlayerGameManager.cpp:366
 msgid "game.unit_profiles"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:397
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:401
+#: Interfaces/PlayerGameManager.cpp:397 Interfaces/PlayerGameManager.cpp:401
 msgid "Initializing Game Logic"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:404
-#: NetPanzer\Interfaces\PlayerGameManager.cpp:411
+#: Interfaces/PlayerGameManager.cpp:404 Interfaces/PlayerGameManager.cpp:411
 msgid "Spawning Player"
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:107
+#: Interfaces/PlayerInterface.cpp:672
 #, c-format
 msgid "You accepted %s alliance request."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:113
+#: Interfaces/PlayerInterface.cpp:678
 #, c-format
 msgid "You request alliance with %s."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:123
+#: Interfaces/PlayerInterface.cpp:688
 #, c-format
 msgid "%s accepted your alliance request."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:129
+#: Interfaces/PlayerInterface.cpp:694
 #, c-format
 msgid "%s request to ally with you."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:144
+#: Interfaces/PlayerInterface.cpp:712
 #, c-format
 msgid "You broke the alliance with %s."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:150
+#: Interfaces/PlayerInterface.cpp:718
 #, c-format
 msgid "You cancel your alliance request with %s."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:160
+#: Interfaces/PlayerInterface.cpp:728
 #, c-format
 msgid "%s broke the alliance with you."
 msgstr ""
 
-#: NetPanzer\Interfaces\PlayerInterface.cpp:166
+#: Interfaces/PlayerInterface.cpp:734
 #, c-format
-msgid "%s cancelled the alliance request with you."
+msgid "%s canceled the alliance request with you."
 msgstr ""
 
-#: NetPanzer\Interfaces\VoteManager.cpp:55
-#, c-format
-msgid "player %s has voted, waiting %d votes"
-msgstr ""
-
-#: NetPanzer\Objectives\Objective.cpp:78
+#: Objectives/Objective.cpp:76
 #, c-format
 msgid "'%s' has been occupied by '%s'"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:274
+#: Scripts/ScriptManager.cpp:274
 msgid "Error running user command"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:279
+#: Scripts/ScriptManager.cpp:279
 #, c-format
 msgid "User command '%s' not found"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:284
+#: Scripts/ScriptManager.cpp:284
 msgid "There is no defined UserCommands"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:314
+#: Scripts/ScriptManager.cpp:314
 msgid "Remote admin is disabled."
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:319
+#: Scripts/ScriptManager.cpp:319
 msgid "You are admin!"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:324
+#: Scripts/ScriptManager.cpp:324
 msgid "Wrong password."
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:333
+#: Scripts/ScriptManager.cpp:333
 msgid "You are admin no more."
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:346
+#: Scripts/ScriptManager.cpp:346
 msgid "Error running server command '"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:355
+#: Scripts/ScriptManager.cpp:355
 msgid "Server command '"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:355
+#: Scripts/ScriptManager.cpp:355
 msgid "' not found"
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:362
+#: Scripts/ScriptManager.cpp:362
 msgid "You need to be admin."
 msgstr ""
 
-#: NetPanzer\Scripts\ScriptManager.cpp:367
+#: Scripts/ScriptManager.cpp:367
 msgid "There is no defined ServerCommands"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureExitView.cpp:35
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:297
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:298
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:311
+#: Views/Components/InfoBar.cpp:55
+msgid "game"
+msgstr ""
+
+#: Views/Components/InfoBar.cpp:55
+msgid "units"
+msgstr ""
+
+#: Views/Components/InfoBar.cpp:55
+msgid "frags"
+msgstr ""
+
+#: Views/Components/InfoBar.cpp:55
+msgid "objs."
+msgstr ""
+
+#: Views/Components/InfoBar.cpp:55
+msgid "time"
+msgstr ""
+
+#: Views/Components/InfoBar.cpp:55
+msgid "FPS"
+msgstr ""
+
+#: Views/Game/AreYouSureExitView.cpp:35
+#: Views/MainMenu/MenuTemplateView.cpp:297
+#: Views/MainMenu/MenuTemplateView.cpp:298
+#: Views/MainMenu/MenuTemplateView.cpp:311
 msgid "Exit netPanzer"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureExitView.cpp:53
-#: NetPanzer\Views\Game\AreYouSureResignView.cpp:59
+#: Views/Game/AreYouSureExitView.cpp:53 Views/Game/AreYouSureResignView.cpp:59
 msgid "YES"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureExitView.cpp:55
-#: NetPanzer\Views\Game\AreYouSureResignView.cpp:61
+#: Views/Game/AreYouSureExitView.cpp:55 Views/Game/AreYouSureResignView.cpp:61
 msgid "NO"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureExitView.cpp:66
+#: Views/Game/AreYouSureExitView.cpp:66
 msgid "Are you sure you wish to exit netPanzer?"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureResignView.cpp:41
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:310
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:315
+#: Views/Game/AreYouSureResignView.cpp:41
+#: Views/MainMenu/MenuTemplateView.cpp:310
+#: Views/MainMenu/MenuTemplateView.cpp:315
 msgid "Resign"
 msgstr ""
 
-#: NetPanzer\Views\Game\AreYouSureResignView.cpp:72
+#: Views/Game/AreYouSureResignView.cpp:72
 msgid "Are you sure you wish to Resign?"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:36
+#: Views/Game/HelpScrollView.cpp:36
 msgid "Help Information"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:53
+#: Views/Game/HelpScrollView.cpp:53
 msgid "Key"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:55
+#: Views/Game/HelpScrollView.cpp:55
 msgid "LMC ="
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:55
+#: Views/Game/HelpScrollView.cpp:55
 msgid "Left Mouse Click"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:56
+#: Views/Game/HelpScrollView.cpp:56
 msgid "RMC ="
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:56
+#: Views/Game/HelpScrollView.cpp:56
 msgid "Right Mouse Click"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:57
+#: Views/Game/HelpScrollView.cpp:57
 msgid "RMH ="
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:57
+#: Views/Game/HelpScrollView.cpp:57
 msgid "Right Mouse Hold"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:58
+#: Views/Game/HelpScrollView.cpp:58
 msgid "LMH ="
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:58
+#: Views/Game/HelpScrollView.cpp:58
 msgid "Left Mouse Hold"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:61
+#: Views/Game/HelpScrollView.cpp:61
 msgid "Unit Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:63
+#: Views/Game/HelpScrollView.cpp:63
 msgid "LMC"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:63
+#: Views/Game/HelpScrollView.cpp:63
 msgid "Selects a unit"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:64
+#: Views/Game/HelpScrollView.cpp:64
 msgid "LMH"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:64
+#: Views/Game/HelpScrollView.cpp:64
 msgid "Makes a bouding box for unit selection"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:65
+#: Views/Game/HelpScrollView.cpp:65
 msgid "RMC"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:65
+#: Views/Game/HelpScrollView.cpp:65
 msgid "De-selects all selected units"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:66
+#: Views/Game/HelpScrollView.cpp:66
 msgid "LMC + Ctrl"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:66
+#: Views/Game/HelpScrollView.cpp:66
 msgid "Directs (force/manual) fire of a unit"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:67
+#: Views/Game/HelpScrollView.cpp:67
 msgid "LMC + Shift, LMC + Ctrl"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:67
+#: Views/Game/HelpScrollView.cpp:67
 msgid "Add unit to selection"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:68
+#: Views/Game/HelpScrollView.cpp:68
 msgid "Ctrl + [0..9]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:68
+#: Views/Game/HelpScrollView.cpp:68
 msgid "Define a group of units"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:69
+#: Views/Game/HelpScrollView.cpp:69
 msgid "[0..9]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:69
+#: Views/Game/HelpScrollView.cpp:69
 msgid "Recall a group of units"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:70
+#: Views/Game/HelpScrollView.cpp:70
 msgid "[0..9] (2 times)"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:70
+#: Views/Game/HelpScrollView.cpp:70
 msgid "Center view on a group of units"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:71
+#: Views/Game/HelpScrollView.cpp:71
 msgid "RMH"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:71
+#: Views/Game/HelpScrollView.cpp:71
 msgid "Fast map scroll"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:74
+#: Views/Game/HelpScrollView.cpp:74
 msgid "Game Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:76
+#: Views/Game/HelpScrollView.cpp:76
 msgid "LMC + 'A'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:76
+#: Views/Game/HelpScrollView.cpp:76
 msgid "Allies with the clicked unit's team"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:77
+#: Views/Game/HelpScrollView.cpp:77
 msgid "ESC"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:77
+#: Views/Game/HelpScrollView.cpp:77
 msgid "In game menus"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:80
+#: Views/Game/HelpScrollView.cpp:80
 msgid "Outpost Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:82
+#: Views/Game/HelpScrollView.cpp:82
 msgid "'O'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:82
+#: Views/Game/HelpScrollView.cpp:82
 msgid "Toggle outpost names"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:83
+#: Views/Game/HelpScrollView.cpp:83
 msgid "LMC on captured outpost"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:83
+#: Views/Game/HelpScrollView.cpp:83
 msgid "Displays the outpost view"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:84
+#: Views/Game/HelpScrollView.cpp:84
 msgid "mouse drag on captured outpost"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:84
+#: Views/Game/HelpScrollView.cpp:84
 msgid "Select unit spawn point"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:87
+#: Views/Game/HelpScrollView.cpp:87
 msgid "Chat Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:89
-#: NetPanzer\Views\Game\LoadingView.cpp:75
+#: Views/Game/HelpScrollView.cpp:89 Views/Game/LoadingView.cpp:75
 msgid "Enter"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:89
+#: Views/Game/HelpScrollView.cpp:89
 msgid "Send message to all"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:90
+#: Views/Game/HelpScrollView.cpp:90
 msgid "Ctrl + 'A'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:90
+#: Views/Game/HelpScrollView.cpp:90
 msgid "Send message to allies"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:91
+#: Views/Game/HelpScrollView.cpp:91
 msgid "'C'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:91
+#: Views/Game/HelpScrollView.cpp:91
 msgid "Send count down message"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:94
+#: Views/Game/HelpScrollView.cpp:94
 msgid "View Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:96
+#: Views/Game/HelpScrollView.cpp:96
 msgid "F1"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:96
+#: Views/Game/HelpScrollView.cpp:96
 msgid "Help View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:97
+#: Views/Game/HelpScrollView.cpp:97
 msgid "'B'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:97
+#: Views/Game/HelpScrollView.cpp:97
 msgid "Toggle flag selection window"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:98
+#: Views/Game/HelpScrollView.cpp:98
 msgid "'D'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:98
+#: Views/Game/HelpScrollView.cpp:98
 msgid "Damage View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:99
+#: Views/Game/HelpScrollView.cpp:99
 msgid "'F'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:99
+#: Views/Game/HelpScrollView.cpp:99
 msgid "Flag View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:100
+#: Views/Game/HelpScrollView.cpp:100
 msgid "'M'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:100
+#: Views/Game/HelpScrollView.cpp:100
 msgid "Mini Map View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:101
+#: Views/Game/HelpScrollView.cpp:101
 msgid "'N'"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:101
+#: Views/Game/HelpScrollView.cpp:101
 msgid "Name View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:102
+#: Views/Game/HelpScrollView.cpp:102
 msgid "TAB"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:102
+#: Views/Game/HelpScrollView.cpp:102
 msgid "Rank View"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:103
+#: Views/Game/HelpScrollView.cpp:103
 msgid "RMH + mouse movement"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:103
+#: Views/Game/HelpScrollView.cpp:103
 msgid "Moves any view on the screen"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:104
+#: Views/Game/HelpScrollView.cpp:104
 msgid "RMH + [1 - 5]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:104
+#: Views/Game/HelpScrollView.cpp:104
 msgid "Sets the background drawing mode"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:107
+#: Views/Game/HelpScrollView.cpp:107
 msgid "Mini Map View Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:109
+#: Views/Game/HelpScrollView.cpp:109
 msgid "RMH + [1 - 7]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:109
+#: Views/Game/HelpScrollView.cpp:109
 msgid "Sets the blending level of the minimap"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:110
+#: Views/Game/HelpScrollView.cpp:110
 msgid "RMH + [+ or -]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:110
+#: Views/Game/HelpScrollView.cpp:110
 msgid "Scales the size of the minimap"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:113
+#: Views/Game/HelpScrollView.cpp:113
 msgid "System Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:115
+#: Views/Game/HelpScrollView.cpp:115
 msgid "ALT + Enter"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:115
+#: Views/Game/HelpScrollView.cpp:115
 msgid "Toggle Fullscreen/Windowed mode"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:116
+#: Views/Game/HelpScrollView.cpp:116
 msgid "F9"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:116
+#: Views/Game/HelpScrollView.cpp:116
 msgid "BMP screen shot"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:119
+#: Views/Game/HelpScrollView.cpp:119
 msgid "Scripting"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:131
+#: Views/Game/HelpScrollView.cpp:131
 msgid "Server Related"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:133
+#: Views/Game/HelpScrollView.cpp:133
 msgid "List of Gameserver available commands"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:134
+#: Views/Game/HelpScrollView.cpp:134
 msgid "/server adminlogin [password]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:134
+#: Views/Game/HelpScrollView.cpp:134
 msgid "Gameserver admin login"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:135
+#: Views/Game/HelpScrollView.cpp:135
 msgid "/server unitspawnlist [list]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:135
+#: Views/Game/HelpScrollView.cpp:135
 msgid "List/set spawn units (number)"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:136
+#: Views/Game/HelpScrollView.cpp:136
 msgid "/server unitprofiles [list]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:136
+#: Views/Game/HelpScrollView.cpp:136
 msgid "List/set spawn units (types)"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:137
+#: Views/Game/HelpScrollView.cpp:137
 msgid "/server map [map name]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:137
+#: Views/Game/HelpScrollView.cpp:137
 msgid "Restart game with the given map"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:138
+#: Views/Game/HelpScrollView.cpp:138
 msgid "/server autokick [timeout]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:138
+#: Views/Game/HelpScrollView.cpp:138
 msgid "Show/set autokick for inactive players"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:140
+#: Views/Game/HelpScrollView.cpp:140
 msgid "/server flagtimer [timeout]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:140
+#: Views/Game/HelpScrollView.cpp:140
 msgid "Show/set flag change timer"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:141
+#: Views/Game/HelpScrollView.cpp:141
 msgid "/server say [your talk]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:141
+#: Views/Game/HelpScrollView.cpp:141
 msgid "Server say something in chat"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:142
+#: Views/Game/HelpScrollView.cpp:142
 msgid "List players with the assigned number"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:143
+#: Views/Game/HelpScrollView.cpp:143
 msgid "List available profiles"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:144
+#: Views/Game/HelpScrollView.cpp:144
 msgid "/server kick [player number]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:144
+#: Views/Game/HelpScrollView.cpp:144
 msgid "Kick a given player"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:145
+#: Views/Game/HelpScrollView.cpp:145
 msgid "/server baselimit [max bases]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:145
+#: Views/Game/HelpScrollView.cpp:145
 msgid "Show/set the max bases number per player"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:146
+#: Views/Game/HelpScrollView.cpp:146
 msgid "/server gamepass [password]"
 msgstr ""
 
-#: NetPanzer\Views\Game\HelpScrollView.cpp:146
+#: Views/Game/HelpScrollView.cpp:146
 msgid "Show/set game connection password"
 msgstr ""
 
-#: NetPanzer\Views\Game\LoadingView.cpp:52
+#: Views/Game/LoadingView.cpp:52
 msgid "Loading Progress"
 msgstr ""
 
-#: NetPanzer\Views\Game\LoadingView.cpp:73
+#: Views/Game/LoadingView.cpp:73
 msgid "Abort"
 msgstr ""
 
-#: NetPanzer\Views\Game\LoadingView.cpp:77
+#: Views/Game/LoadingView.cpp:77
 msgid "Game Password"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:63
+#: Views/Game/PrepareTeam.cpp:66
 msgid "Prepare Team"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:100
+#: Views/Game/PrepareTeam.cpp:103
 msgid "Ready"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:177
+#: Views/Game/PrepareTeam.cpp:180
 msgid "Get ready, the battle will begin..."
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:184
+#: Views/Game/PrepareTeam.cpp:187
 msgid "Game"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:185
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:53
+#: Views/Game/PrepareTeam.cpp:188 Views/MainMenu/Multi/ServerListView.cpp:53
 msgid "Map"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:194
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:106
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:269
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:288
+#: Views/Game/PrepareTeam.cpp:197 Views/MainMenu/Multi/HostOptionsView.cpp:106
+#: Views/MainMenu/Multi/HostOptionsView.cpp:269
+#: Views/MainMenu/Multi/HostOptionsView.cpp:288
 msgid "Time Limit"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:199
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:111
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:275
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:287
+#: Views/Game/PrepareTeam.cpp:202 Views/MainMenu/Multi/HostOptionsView.cpp:111
+#: Views/MainMenu/Multi/HostOptionsView.cpp:275
+#: Views/MainMenu/Multi/HostOptionsView.cpp:287
 msgid "Frag Limit"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:204
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:101
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:286
+#: Views/Game/PrepareTeam.cpp:207 Views/MainMenu/Multi/HostOptionsView.cpp:101
+#: Views/MainMenu/Multi/HostOptionsView.cpp:286
 msgid "Objective"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:209
-#: NetPanzer\Views\Game\RankView.cpp:80
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:273
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:53
+#: Views/Game/PrepareTeam.cpp:212 Views/Game/RankView.cpp:82
+#: Views/MainMenu/Multi/MapSelectionView.cpp:273
+#: Views/MainMenu/Multi/ServerListView.cpp:53
 msgid "Name"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:213
+#: Views/Game/PrepareTeam.cpp:216
 msgid "Players"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:218
-#: NetPanzer\Views\Game\RankTeam.cpp:114 NetPanzer\Views\Game\RankTeam.cpp:142
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:283
+#: Views/Game/PrepareTeam.cpp:221 Views/Game/RankTeam.cpp:114
+#: Views/Game/RankTeam.cpp:142 Views/MainMenu/Multi/MapSelectionView.cpp:283
 msgid "Objectives"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:223
+#: Views/Game/PrepareTeam.cpp:226
 msgid "Units"
 msgstr ""
 
-#: NetPanzer\Views\Game\PrepareTeam.cpp:244
-#: NetPanzer\Views\Game\PrepareTeam.cpp:250
-#: NetPanzer\Views\Game\RankTeam.cpp:126
+#: Views/Game/PrepareTeam.cpp:247 Views/Game/PrepareTeam.cpp:253
+#: Views/Game/RankTeam.cpp:126
 msgid "Team"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankTeam.cpp:38
+#: Views/Game/RankTeam.cpp:38
 msgid "Round stats"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankTeam.cpp:97 NetPanzer\Views\Game\RankView.cpp:83
+#: Views/Game/RankTeam.cpp:97 Views/Game/RankView.cpp:85
 msgid "Points"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankTeam.cpp:103 NetPanzer\Views\Game\RankTeam.cpp:132
-#: NetPanzer\Views\Game\RankView.cpp:81
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:389
+#: Views/Game/RankTeam.cpp:103 Views/Game/RankTeam.cpp:132
+#: Views/Game/RankView.cpp:83 Views/MainMenu/Multi/HostOptionsView.cpp:389
 msgid "Frags"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankTeam.cpp:108 NetPanzer\Views\Game\RankTeam.cpp:137
+#: Views/Game/RankTeam.cpp:108 Views/Game/RankTeam.cpp:137
 msgid "deaths"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankView.cpp:64
+#: Views/Game/RankView.cpp:66
 msgid "Rankings"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankView.cpp:82
+#: Views/Game/RankView.cpp:84
 msgid "Deaths"
 msgstr ""
 
-#: NetPanzer\Views\Game\RankView.cpp:84
+#: Views/Game/RankView.cpp:86
 msgid "Objs"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:162
+#: Views/Game/VehicleSelectionView.cpp:166
 msgid "Unit Production"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:181
+#: Views/Game/VehicleSelectionView.cpp:185
 msgid "Static Display"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:186
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:751
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:754
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:761
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:764
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:784
+#: Views/Game/VehicleSelectionView.cpp:190
+#: Views/Game/VehicleSelectionView.cpp:755
+#: Views/Game/VehicleSelectionView.cpp:758
+#: Views/Game/VehicleSelectionView.cpp:765
+#: Views/Game/VehicleSelectionView.cpp:768
+#: Views/Game/VehicleSelectionView.cpp:788
 msgid "On"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:194
+#: Views/Game/VehicleSelectionView.cpp:198
 msgid "Power"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:200
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:752
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:762
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:792
+#: Views/Game/VehicleSelectionView.cpp:204
+#: Views/Game/VehicleSelectionView.cpp:756
+#: Views/Game/VehicleSelectionView.cpp:766
+#: Views/Game/VehicleSelectionView.cpp:796
 msgid "Off"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:210
+#: Views/Game/VehicleSelectionView.cpp:214
 msgid "Production"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:216
+#: Views/Game/VehicleSelectionView.cpp:220
 msgid "Time"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:222
+#: Views/Game/VehicleSelectionView.cpp:226
 msgid "Unit Built"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:277
+#: Views/Game/VehicleSelectionView.cpp:281
 msgid "Close"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:405
+#: Views/Game/VehicleSelectionView.cpp:409
 msgid "power off"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:443
+#: Views/Game/VehicleSelectionView.cpp:447
 msgid "Invalid unit type."
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:499
+#: Views/Game/VehicleSelectionView.cpp:503
 msgid "Build Time"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:505
+#: Views/Game/VehicleSelectionView.cpp:509
 msgid "Select a unit for production"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:551
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:555
+#: Views/Game/VehicleSelectionView.cpp:555
+#: Views/Game/VehicleSelectionView.cpp:559
 msgid "Owner"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:568
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:572
+#: Views/Game/VehicleSelectionView.cpp:572
+#: Views/Game/VehicleSelectionView.cpp:576
 msgid "Outpost"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:586
+#: Views/Game/VehicleSelectionView.cpp:590
 msgid "Production Off"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:592
+#: Views/Game/VehicleSelectionView.cpp:596
 #, c-format
 msgid "Production: %s"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:596
+#: Views/Game/VehicleSelectionView.cpp:600
 msgid "Time Left"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:713
+#: Views/Game/VehicleSelectionView.cpp:717
 msgid "Hit Points"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:717
+#: Views/Game/VehicleSelectionView.cpp:721
 msgid "Attack Power"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:721
+#: Views/Game/VehicleSelectionView.cpp:725
 msgid "Attack Range"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:725
+#: Views/Game/VehicleSelectionView.cpp:729
 msgid "Defend Range"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:729
+#: Views/Game/VehicleSelectionView.cpp:733
 msgid "Speed"
 msgstr ""
 
-#: NetPanzer\Views\Game\VehicleSelectionView.cpp:733
+#: Views/Game/VehicleSelectionView.cpp:737
 msgid "Reload Time"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MainMenuView.cpp:73
+#: Views/MainMenu/MainMenuView.cpp:73
 #, c-format
 msgid ""
 "This is NetPanzer version %s, a massively multiplayer tank battle game.\n"
@@ -1054,291 +1067,291 @@ msgid ""
 "NetPanzer News:"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MainMenuView.cpp:87
+#: Views/MainMenu/MainMenuView.cpp:87
 msgid "Loading news..."
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:288
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:289
+#: Views/MainMenu/MenuTemplateView.cpp:288
+#: Views/MainMenu/MenuTemplateView.cpp:289
 msgid "Main"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:290
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:291
+#: Views/MainMenu/MenuTemplateView.cpp:290
+#: Views/MainMenu/MenuTemplateView.cpp:291
 msgid "Join"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:292
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:293
+#: Views/MainMenu/MenuTemplateView.cpp:292
+#: Views/MainMenu/MenuTemplateView.cpp:293
 msgid "Host"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:294
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:295
+#: Views/MainMenu/MenuTemplateView.cpp:294
+#: Views/MainMenu/MenuTemplateView.cpp:295
 msgid "Options"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:296
+#: Views/MainMenu/MenuTemplateView.cpp:296
 msgid "Help"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:300
+#: Views/MainMenu/MenuTemplateView.cpp:300
 msgid "Play"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\MenuTemplateView.cpp:318
+#: Views/MainMenu/MenuTemplateView.cpp:318
 msgid "Close Options"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:152
-msgid "VISUAL"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:156
-msgid "Full screen"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:163
-msgid "Draw All Shadows"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:172
-msgid "Resolution"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:173
-msgid "Current"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:201
-msgid "Blend Smoke"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:211
-msgid "Use DirectX"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:220
-msgid "Mini Map Unit Size"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:221
-msgid "Small"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:222
-msgid "Large"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:231
-msgid "INTERFACE"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:235
-msgid "Scroll Rate:"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:244
-msgid "SOUND"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:248
-msgid "Sound Status:"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:250
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:270
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:405
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:419
-msgid "Enabled"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:250
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:270
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:408
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:427
-msgid "Disabled"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:259
-msgid "Sound Volume:"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:268
-msgid "Music Status:"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\OptionsTemplateView.cpp:279
-msgid "Music Volume:"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:53
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:297
+#: Views/MainMenu/Multi/HostOptionsView.cpp:53
+#: Views/MainMenu/Multi/HostOptionsView.cpp:297
 msgid "Broken"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:57
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:298
+#: Views/MainMenu/Multi/HostOptionsView.cpp:57
+#: Views/MainMenu/Multi/HostOptionsView.cpp:298
 msgid "Partly Cloudy"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:61
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:299
+#: Views/MainMenu/Multi/HostOptionsView.cpp:61
+#: Views/MainMenu/Multi/HostOptionsView.cpp:299
 msgid "Overcast"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:65
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:300
+#: Views/MainMenu/Multi/HostOptionsView.cpp:65
+#: Views/MainMenu/Multi/HostOptionsView.cpp:300
 msgid "Extremely Cloudy"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:69
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:296
+#: Views/MainMenu/Multi/HostOptionsView.cpp:69
+#: Views/MainMenu/Multi/HostOptionsView.cpp:296
 msgid "Clear"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:116
+#: Views/MainMenu/Multi/HostOptionsView.cpp:116
 msgid "Unknown"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:148
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:308
+#: Views/MainMenu/Multi/HostOptionsView.cpp:148
+#: Views/MainMenu/Multi/HostOptionsView.cpp:308
 msgid "Calm"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:153
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:309
+#: Views/MainMenu/Multi/HostOptionsView.cpp:153
+#: Views/MainMenu/Multi/HostOptionsView.cpp:309
 msgid "Breezy"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:158
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:310
+#: Views/MainMenu/Multi/HostOptionsView.cpp:158
+#: Views/MainMenu/Multi/HostOptionsView.cpp:310
 msgid "Brisk Winds"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:163
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:311
+#: Views/MainMenu/Multi/HostOptionsView.cpp:163
+#: Views/MainMenu/Multi/HostOptionsView.cpp:311
 msgid "Heavy Winds"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:168
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:312
+#: Views/MainMenu/Multi/HostOptionsView.cpp:168
+#: Views/MainMenu/Multi/HostOptionsView.cpp:312
 msgid "Typhoon"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:188
+#: Views/MainMenu/Multi/HostOptionsView.cpp:188
 msgid "Host Options"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:209
+#: Views/MainMenu/Multi/HostOptionsView.cpp:209
 msgid "Note: Use the right mouse button to accomplish fast mouse clicking."
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:247
+#: Views/MainMenu/Multi/HostOptionsView.cpp:247
 msgid "Max Players"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:255
+#: Views/MainMenu/Multi/HostOptionsView.cpp:255
 msgid "Game Max Unit Count"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:262
+#: Views/MainMenu/Multi/HostOptionsView.cpp:262
 msgid "Objective Capture Percent"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:285
+#: Views/MainMenu/Multi/HostOptionsView.cpp:285
 msgid "Game Type"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:295
+#: Views/MainMenu/Multi/HostOptionsView.cpp:295
 msgid "Cloud Coverage"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:307
+#: Views/MainMenu/Multi/HostOptionsView.cpp:307
 msgid "Wind Speed"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:319
+#: Views/MainMenu/Multi/HostOptionsView.cpp:319
 msgid "Public"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:324
+#: Views/MainMenu/Multi/HostOptionsView.cpp:324
 msgid "PowerUps"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:358
+#: Views/MainMenu/Multi/HostOptionsView.cpp:358
 msgid "max per player"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp:374
+#: Views/MainMenu/Multi/HostOptionsView.cpp:374
 msgid "Map Data Needed"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\IPAddressView.cpp:30
+#: Views/MainMenu/Multi/IPAddressView.cpp:30
 msgid "Server IP Address"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:70
+#: Views/MainMenu/Multi/MapSelectionView.cpp:70
 msgid "Map Selection"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:124
+#: Views/MainMenu/Multi/MapSelectionView.cpp:124
 msgid "No Maps Found"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:126
+#: Views/MainMenu/Multi/MapSelectionView.cpp:126
 msgid "Outpost file error"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp:279
+#: Views/MainMenu/Multi/MapSelectionView.cpp:279
 msgid "Size"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\PlayerNameView.cpp:37
-msgid "Player Name"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:52
-msgid "Servers"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:53
-msgid "Players/max"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:53
-msgid "Ping"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:63
-msgid "Refresh"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:133
-msgid "Resolving masterserver address"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:147
-msgid "querying..."
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\ServerListView.cpp:150
-msgid "timeout"
-msgstr ""
-
-#: NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp:406
+#: Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp:406
 msgid "No Masterservers configured"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp:408
-#: NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp:416
+#: Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp:408
+#: Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp:416
 msgid "Querying Masterserver"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp:410
+#: Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp:410
 msgid "No response from Masterserver"
 msgstr ""
 
-#: NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp:413
+#: Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp:413
 msgid "No servers found"
+msgstr ""
+
+#: Views/MainMenu/Multi/PlayerNameView.cpp:37
+msgid "Player Name"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:52
+msgid "Servers"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:53
+msgid "Players/max"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:53
+msgid "Ping"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:63
+msgid "Refresh"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:133
+msgid "Resolving masterserver address"
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:147
+msgid "querying..."
+msgstr ""
+
+#: Views/MainMenu/Multi/ServerListView.cpp:150
+msgid "timeout"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:152
+msgid "VISUAL"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:156
+msgid "Full screen"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:163
+msgid "Draw All Shadows"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:172
+msgid "Resolution"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:173
+msgid "Current"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:201
+msgid "Blend Smoke"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:211
+msgid "Use DirectX"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:220
+msgid "Mini Map Unit Size"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:221
+msgid "Small"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:222
+msgid "Large"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:231
+msgid "INTERFACE"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:235
+msgid "Scroll Rate:"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:244
+msgid "SOUND"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:248
+msgid "Sound Status:"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:250
+#: Views/MainMenu/OptionsTemplateView.cpp:270
+#: Views/MainMenu/OptionsTemplateView.cpp:405
+#: Views/MainMenu/OptionsTemplateView.cpp:419
+msgid "Enabled"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:250
+#: Views/MainMenu/OptionsTemplateView.cpp:270
+#: Views/MainMenu/OptionsTemplateView.cpp:408
+#: Views/MainMenu/OptionsTemplateView.cpp:427
+msgid "Disabled"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:259
+msgid "Sound Volume:"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:268
+msgid "Music Status:"
+msgstr ""
+
+#: Views/MainMenu/OptionsTemplateView.cpp:279
+msgid "Music Volume:"
 msgstr ""
