@@ -174,7 +174,7 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                SERVER->kickClient(SERVER->getClientSocketByPlayerIndex(id));
+                SERVER->kickClient(id);
                 break;
         }
         commandqueue.pop();
@@ -207,7 +207,7 @@ DedicatedGameManager::mainLoop()
                     sprintf(chat_string, "Server kicked '%s' due to inactivity",player->getName().c_str());
                     LOGGER.info("DED: %s", chat_string);
                     ChatInterface::serversay(chat_string);
-                    SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i));
+                    SERVER->kickClient((PlayerID)i);
 
                 }
             }

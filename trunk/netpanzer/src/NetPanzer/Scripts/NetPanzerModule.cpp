@@ -91,7 +91,7 @@ static int npmodule_kick (lua_State *L)
     }
     else
     {
-        SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short)n));
+        SERVER->kickClient((PlayerID)n);
     }
     return 0;
 }

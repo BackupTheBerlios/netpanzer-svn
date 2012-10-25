@@ -284,41 +284,56 @@ void PlayerGameManager::hostMultiPlayerGame()
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
-    try {
-    	if (CLIENT) {
-		delete CLIENT;
-		CLIENT=0;
-	}
-	CLIENT = new NetworkClient();
+    try
+    {
+    	if (CLIENT)
+        {
+            delete CLIENT;
+            CLIENT=0;
+        }
+        CLIENT = new NetworkClient();
+        
         SERVER->hostSession();
 
         if ( GameConfig::server_public
              && GameConfig::server_masterservers->size() != 0 )
         {
-            try {
-                if ( infosocket ) {
+            try
+            {
+                if ( infosocket )
+                {
                     delete infosocket;
                     infosocket = 0;
                 }
                 infosocket = new InfoSocket(GameConfig::server_port);
-                if ( heartbeat ) {
+                
+                if ( heartbeat )
+                {
                     delete heartbeat;
                     heartbeat = 0;
                 }
                 heartbeat = new Heartbeat();
-            } catch(std::exception& e) {
+                
+            }
+            catch(std::exception& e)
+            {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
-                if ( infosocket ) {
+                if ( infosocket )
+                {
                     delete infosocket;
                     infosocket = 0;
                 }
-                if ( heartbeat ) {
+                
+                if ( heartbeat )
+                {
                     delete heartbeat;
                     heartbeat = 0;
                 }
             }
         }
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LoadingView::append( _("SERVER LAUNCH FAILED") );
         LoadingView::append(e.what());
         wait.changePeriod( 4 );
@@ -340,9 +355,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     GameConfig::game_map->assign( MapsManager::getNextMap("") );
     const char* mapname = GameConfig::game_map->c_str();
 
-    try {
+    try
+    {
         GameManager::startGameMapLoad(mapname, 20);
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LOGGER.warning("Error while loading map '%s': %s", mapname, e.what());
         ActionManager::runAction("loaderror");
         return;
@@ -353,7 +371,8 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     ObjectiveInterface::resetLogic();
 
-    while( GameManager::gameMapLoad( &percent_complete ) == true ) {
+    while( GameManager::gameMapLoad( &percent_complete ) == true )
+    {
         sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
         LoadingView::update( strbuf );
         graphicsLoop();
@@ -366,16 +385,19 @@ void PlayerGameManager::hostMultiPlayerGame()
         LoadingView::append( _("game.unit_profiles")+ *GameConfig::game_unit_profiles );
         graphicsLoop();
         SDL_Delay(5000);
+        
         if ( infosocket )
         {
             delete infosocket;
             infosocket = 0;
         }
+        
         if ( heartbeat )
         {
             delete heartbeat;
             heartbeat = 0;
         }
+        
         if (CLIENT)
         {
             delete CLIENT;
@@ -422,11 +444,14 @@ void PlayerGameManager::hostMultiPlayerGame()
 
 void PlayerGameManager::quitGame()
 {
-    if ( infosocket ) {
+    if ( infosocket )
+    {
         delete infosocket;
         infosocket = 0;
     }
-    if ( heartbeat ) {
+    
+    if ( heartbeat )
+    {
         delete heartbeat;
         heartbeat = 0;
     }
@@ -490,7 +515,7 @@ bool PlayerGameManager::mainLoop()
                             sprintf(chat_string, "Server kicked '%s' due to inactivity",player->getName().c_str());
                             LOGGER.info("PSE: %s", chat_string);
                             ChatInterface::serversay(chat_string);
-                            SERVER->kickClient(SERVER->getClientSocketByPlayerIndex((unsigned short) i));
+                            SERVER->kickClient((PlayerID)i);
                         }
                     }
                 }

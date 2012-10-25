@@ -55,8 +55,7 @@ enum ConnectionState
     connect_state_sync_flags,
     connect_state_unit_sync,
     connect_state_finish_connect,
-    connect_state_drop_bad_connecting_client,
-    connect_state_drop_bad_client
+    connect_state_drop_bad_connecting_client
 };
 
 bool                connection_lock_state = false;
@@ -238,7 +237,7 @@ public:
 
     virtual T process()
     {
-        return time_out_timer.count() ? connect_state_drop_bad_client : State<T>::state;
+        return time_out_timer.count() ? connect_state_drop_bad_connecting_client : State<T>::state;
     }
 
     virtual T message(const NetMessage* msg)
@@ -767,17 +766,6 @@ public:
     }
 };
 
-template<typename T>
-class StateDropBadClient : public State<T>
-{
-public:
-    virtual T process()
-    {
-        SERVER->dropClient(connect_client);
-        return connect_state_idle;
-    }
-};
-
 static StateMachine<ConnectionState>* fsm = 0;
 
 void ServerConnectDaemon::initialize(unsigned long max_players)
@@ -797,7 +785,6 @@ void ServerConnectDaemon::initialize(unsigned long max_players)
     fsm->addState(new StateUnitSync<ConnectionState>());
     fsm->addState(new StateFinishConnect<ConnectionState>());
     fsm->addState(new StateDropBadConnectingClient<ConnectionState>());
-    fsm->addState(new StateDropBadClient<ConnectionState>());
 
     fsm->enterState(connect_state_idle);
 
@@ -844,7 +831,9 @@ static void netPacketClientJoinRequest(const NetPacket* packet)
     ClientConnectJoinRequestAck join_request_ack;
 
     join_request_ack.setResultCode(_join_request_result_success);
+    
     bool isbad = false;
+    
     NPString pass;
     join_request_mesg->getPassword(pass);
 

@@ -615,10 +615,12 @@ void GameManager::setNetPanzerGameOptions()
 
 void GameManager::quitNetPanzerGame()
 {
-    if ( NetworkState::status == _network_state_client ) {
+    if ( NetworkState::status == _network_state_client )
+    {
         ClientConnectDaemon::shutdownConnectDaemon();
-        CLIENT->partServer();
-    } else {
+    }
+    else
+    {
         ServerConnectDaemon::shutdownConnectDaemon();
         SERVER->closeSession();
 

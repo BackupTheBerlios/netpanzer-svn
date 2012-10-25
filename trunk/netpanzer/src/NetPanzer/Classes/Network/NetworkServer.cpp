@@ -192,24 +192,6 @@ NetworkServer::getPacket(NetPacket* packet)
 }
 
 void
-NetworkServer::dropClient(ClientSocket * client)
-{
-    ClientList::iterator i = client_list.begin(),
-                         e = client_list.end();
-    
-    while ( i != e && *i != client )
-    {
-        ++i;
-    }
-    
-    if ( i != e )
-    {
-        // XXX hack
-        onClientDisconected(client, "dropped");
-    }
-}
-
-void
 NetworkServer::niceDisconnect(ClientSocket * client)
 {
     ClientList::iterator i = client_list.begin(),
@@ -223,31 +205,33 @@ NetworkServer::niceDisconnect(ClientSocket * client)
     if ( i != client_list.end() )
     {
         // XXX hack
+        (*i)->hardClose();
         onClientDisconected(client, 0);
     }
 }
 
 void
-NetworkServer::kickClient(ClientSocket * client)
+NetworkServer::kickClient(const PlayerID index)
 {
     ClientList::iterator i = client_list.begin(),
                          e = client_list.end();
     
-    while ( i != e && *i != client )
+    while ( i != e )
     {
-        ++i;
-    }
-
-    if ( i != e )
-    {
-        // XXX hack
-        PlayerState *p = PlayerInterface::getPlayer(client->getPlayerIndex());
-        if ( p )
+        if ( (*i)->getPlayerIndex() == index )
         {
-            p->setStateKicked();
+            // XXX hack
+            PlayerState *p = PlayerInterface::getPlayer(index);
+            if ( p )
+            {
+                p->setStateKicked();
+            }
+
+            (*i)->hardClose();
+            onClientDisconected(*i, "kicked");
+            return;
         }
-        
-        onClientDisconected(client, "kicked");
+        i++;
     }
 }
 
@@ -411,22 +395,4 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
             TeamManager::BalancedTeam();
         }
     }
-}
-
-ClientSocket *
-NetworkServer::getClientSocketByPlayerIndex ( const PlayerID index )
-{
-    ClientList::iterator i = client_list.begin(),
-                         e = client_list.end();
-    
-    while ( i != e )
-    {
-        if ( (*i)->getPlayerIndex() == index )
-        {
-            return *i;
-        }
-        i++;
-    }
-    
-    return 0;
 }

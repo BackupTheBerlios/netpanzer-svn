@@ -77,6 +77,8 @@ void ClientConnectDaemon::shutdownConnectDaemon()
                         sizeof(ConnectMesgNetPanzerClientDisconnect));
 
     CLIENT->sendRemaining();
+    
+    CLIENT->partServer();
 }
 
 void ClientConnectDaemon::startConnectionProcess( )
