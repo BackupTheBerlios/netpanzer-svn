@@ -257,7 +257,7 @@ SocketBase::doConnect() throw(NetworkException)
 }
 
 int
-SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
+SocketBase::doSend(const void* data, size_t len)
 {
     if ( state == CONNECTED )
     {

@@ -156,7 +156,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
         if ( tempoffset < sizeof(Uint16) )
             break; // no more data
 
-        packetsize=ltoh16(*((Uint16*)tempbuffer));;
+        packetsize=ltoh16(*((Uint16*)tempbuffer));
 
         if ( packetsize < sizeof(NetMessage) )
         {
@@ -219,14 +219,23 @@ ClientSocket::onSocketError(network::TCPSocket *so)
 std::string
 ClientSocket::getFullIPAddress()
 {
-    std::stringstream ip;
-    ip << socket->getAddress().getIP();
-    ip << ':' << socket->getAddress().getPort();
-    return ip.str();
+    if ( socket )
+    {
+        std::stringstream ip;
+        ip << socket->getAddress().getIP()
+           << ':' << socket->getAddress().getPort();
+        return ip.str();
+    }
+    
+    return "not connected";
 }
 
 std::string
 ClientSocket::getIPAddress()
 {
-    return socket->getAddress().getIP();
+    if ( socket )
+    {
+        return socket->getAddress().getIP();
+    }
+    return "not connected";
 }

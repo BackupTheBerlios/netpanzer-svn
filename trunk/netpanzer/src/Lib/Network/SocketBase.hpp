@@ -65,7 +65,7 @@ protected:
     void bindSocket() throw(NetworkException) { bindSocketTo(addr); };
     void doListen() throw(NetworkException);
     void doConnect() throw(NetworkException);
-    int  doSend(const void* data, size_t len) throw(NetworkException);
+    int  doSend(const void* data, size_t len);
     int  doReceive(void* buffer, size_t len) throw(NetworkException);
     int  doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException);
     size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException);

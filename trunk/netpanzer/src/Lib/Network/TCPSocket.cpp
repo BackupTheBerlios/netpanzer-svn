@@ -75,7 +75,7 @@ TCPSocket::destroy()
 }
 
 size_t
-TCPSocket::send(const void* data, size_t size) throw(NetworkException)
+TCPSocket::send(const void* data, size_t size)
 {
     int res = doSend(data,size);
     if (!res && !observer) // disconnected

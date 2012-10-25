@@ -64,8 +64,11 @@ public:
         if ( socket )
         {
             socket->destroy();
+            socket = 0;
         }
     }
+    
+    bool isConnected() const { return socket != 0; }
     
 protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);

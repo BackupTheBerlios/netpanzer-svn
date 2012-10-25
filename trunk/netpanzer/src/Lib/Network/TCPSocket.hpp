@@ -51,7 +51,7 @@ public:
 
     void destroy();
 
-    size_t send(const void* data, size_t datasize) throw(NetworkException);
+    size_t send(const void* data, size_t datasize);
     
 protected:
     ~TCPSocket();

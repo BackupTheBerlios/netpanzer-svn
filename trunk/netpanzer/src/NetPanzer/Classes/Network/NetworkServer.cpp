@@ -55,25 +55,30 @@ NetworkServer::~NetworkServer()
 
 void NetworkServer::resetClientList()
 {
-    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
-            ++i)
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        delete (*i)->client_socket;
         delete *i;
+        i++;
     }
+    
     client_list.clear();
 }
 
 void NetworkServer::cleanUpClientList()
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if( (*i)->wannadie )
+        if( ! (*i)->isConnected() )
         {
-            delete (*i)->client_socket;
             delete (*i);
             i = client_list.erase(i);
+            continue;
         }
         i++;
     }
@@ -81,11 +86,7 @@ void NetworkServer::cleanUpClientList()
 
 bool NetworkServer::addClientToSendList( ClientSocket * client )
 {
-    ServerClientListData *client_data = new ServerClientListData;
-
-    client_data->client_socket = client;
-    client_list.push_back(client_data);
-
+    client_list.push_back(client);
     return true;
 }
 
@@ -136,23 +137,14 @@ NetworkServer::closeSession()
 void
 NetworkServer::broadcastMessage(const NetMessage *message, size_t size)
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if( ! (*i)->wannadie )
-        {
-            try
-            {
-                (*i)->client_socket->sendMessage( message, size);
-            }
-            catch(std::exception& e)
-            {
-                // XXX will it close by itself?
-                LOGGER.warning ("Network broadcast error when sending to player %d: %s",
-                       (*i)->client_socket->getPlayerIndex(), e.what() );
-            }
-        }
-        ++i;
+        (*i)->sendMessage( message, size);
+        
+        i++;
     }
 }
 
@@ -163,26 +155,19 @@ NetworkServer::sendMessage(const PlayerID player_index, NetMessage* message,
     if( socket == 0 )
         return;
     
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if ( ! (*i)->wannadie
-             && (*i)->client_socket->getPlayerIndex() == player_index )
+        if ( (*i)->getPlayerIndex() == player_index )
         {
-            try
-            {
-                (*i)->client_socket->sendMessage( message, size);
+            (*i)->sendMessage( message, size);
 
-                NetworkState::incPacketsSent(size);
-                return; // premature exit
-            }
-            catch (NetworkException e)
-            {
-                LOGGER.warning ("Network send error when sending to player %d: %s",
-                       player_index, e.what() );
-            }            
+            NetworkState::incPacketsSent(size);
+            return; // premature exit
         }
-        ++i;
+        i++;
     }
 
     // if didn't found player we are here.
@@ -209,13 +194,15 @@ NetworkServer::getPacket(NetPacket* packet)
 void
 NetworkServer::dropClient(ClientSocket * client)
 {
-    ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() && (*i)->client_socket != client )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e && *i != client )
     {
         ++i;
     }
     
-    if ( i != client_list.end() )
+    if ( i != e )
     {
         // XXX hack
         onClientDisconected(client, "dropped");
@@ -225,8 +212,10 @@ NetworkServer::dropClient(ClientSocket * client)
 void
 NetworkServer::niceDisconnect(ClientSocket * client)
 {
-    ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() && (*i)->client_socket != client )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e && *i != client )
     {
         ++i;
     }
@@ -241,13 +230,15 @@ NetworkServer::niceDisconnect(ClientSocket * client)
 void
 NetworkServer::kickClient(ClientSocket * client)
 {
-    ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() && (*i)->client_socket != client )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e && *i != client )
     {
         ++i;
     }
 
-    if ( i != client_list.end() )
+    if ( i != e )
     {
         // XXX hack
         PlayerState *p = PlayerInterface::getPlayer(client->getPlayerIndex());
@@ -255,6 +246,7 @@ NetworkServer::kickClient(ClientSocket * client)
         {
             p->setStateKicked();
         }
+        
         onClientDisconected(client, "kicked");
     }
 }
@@ -262,13 +254,12 @@ NetworkServer::kickClient(ClientSocket * client)
 void
 NetworkServer::sendRemaining()
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if ( ! (*i)->wannadie )
-        {
-            (*i)->client_socket->sendRemaining();
-        }
+        (*i)->sendRemaining();
         i++;
     }
 }
@@ -281,29 +272,32 @@ NetworkServer::isAlreadyConnected( ClientSocket * client )
         return false;
     }
 
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if ( ! (*i)->wannadie
-                && (*i)->client_socket->getIPAddress() == client->getIPAddress() )
+        if ( (*i)->getIPAddress() == client->getIPAddress() )
         {
             return true;
         }
         i++;
     }
+
     return false;
 }
 
 std::string
 NetworkServer::getIP(const PlayerID player_index)
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if ( ! (*i)->wannadie
-             && (*i)->client_socket->getPlayerIndex() == player_index )
+        if ( (*i)->getPlayerIndex() == player_index )
         {
-            return (*i)->client_socket->getFullIPAddress();
+            return (*i)->getFullIPAddress();
         }
         
         i++;
@@ -377,18 +371,6 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
     
     PlayerID player_index = s->getPlayerIndex();
     
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
-    {
-        if ( (*i)->client_socket == s )
-        {
-            LOGGER.debug("NetworkServer:onClientDisconnected found client in list, preparing to die [%d]", player_index);
-            (*i)->wannadie = true;
-            break;
-        }
-        ++i;
-    }
-    
     if ( player_index != INVALID_PLAYER_ID )
     {
         PlayerState * player = PlayerInterface::getPlayer(player_index);
@@ -434,16 +416,17 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 ClientSocket *
 NetworkServer::getClientSocketByPlayerIndex ( const PlayerID index )
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+    ClientList::iterator i = client_list.begin(),
+                         e = client_list.end();
+    
+    while ( i != e )
     {
-        if ( ! (*i)->wannadie
-             && (*i)->client_socket->getPlayerIndex() == index )
+        if ( (*i)->getPlayerIndex() == index )
         {
-            return (*i)->client_socket;
+            return *i;
         }
         i++;
     }
     
-    return NULL;
+    return 0;
 }

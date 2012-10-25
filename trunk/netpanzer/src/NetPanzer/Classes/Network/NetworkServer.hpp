@@ -27,28 +27,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace network;
 
-class ServerClientListData
-{
-public:
-    bool          wannadie;
-    ClientSocket *client_socket;
-
-    ServerClientListData()
-        : wannadie(false), client_socket(0)
-    { }
-};
-
 class NetworkServer : public NetworkInterface,
                       public TCPListenSocketObserver,
                       public ClientSocketObserver
 {
 protected:
-    typedef std::list<ServerClientListData*> ClientList;
+    typedef std::list<ClientSocket*> ClientList;
     ClientList client_list;
-
-    NetPacket net_packet;
-
-    Timer keep_alive_emit_timer;
 
     void updateKeepAliveState();
     void resetClientList();
