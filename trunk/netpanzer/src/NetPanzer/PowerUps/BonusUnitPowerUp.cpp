@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
@@ -79,7 +80,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
     if( PlayerInterface::isLocalPlayer(own_player) )
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("YOU GOT A BONUS UNITS POWERUP") );
     }
 }
 
@@ -90,6 +91,6 @@ void BonusUnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
-        ConsoleInterface::postMessage( Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage( Color::unitAqua, false, 0, _("YOU GOT A BONUS UNITS POWERUP") );
     }
 }

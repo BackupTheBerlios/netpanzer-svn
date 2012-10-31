@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -176,7 +177,7 @@ void UnitPowerUp::onHit( UnitID unit_id )
 
     if(unit->player_id == PlayerInterface::getLocalPlayerIndex())
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP", 
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("YOU GOT A %s POWERUP"), 
                                       powerupTypeToString( unit_powerup_type ) );
     }
 }
@@ -188,7 +189,7 @@ void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP",
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("YOU GOT A %s POWERUP"),
                                       powerupTypeToString( message->getUnitPowerupType() ) );
     }
 }

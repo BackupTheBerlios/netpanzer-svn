@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: netPanzer 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-24 22:10+0200\n"
+"POT-Creation-Date: 2012-10-31 21:50+0100\n"
 "PO-Revision-Date: 2012-10-23 08:41+0100\n"
 "Last-Translator: Wile64\n"
 "Language-Team: Wile64\n"
@@ -24,147 +24,147 @@ msgstr ""
 msgid "Loading Main View..."
 msgstr "Chargement des nouvelles..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:89
+#: Classes/Network/ClientConnectDaemon.cpp:91
 msgid "Connecting to server "
 msgstr "Connexion au serveur "
 
-#: Classes/Network/ClientConnectDaemon.cpp:103
+#: Classes/Network/ClientConnectDaemon.cpp:105
 msgid "Link to Server Established"
 msgstr "Liaison au serveur établi"
 
-#: Classes/Network/ClientConnectDaemon.cpp:104
+#: Classes/Network/ClientConnectDaemon.cpp:106
 #, c-format
 msgid "Protocol Version: %u"
 msgstr "Version du protocole : %u"
 
-#: Classes/Network/ClientConnectDaemon.cpp:111
-#: Classes/Network/ClientConnectDaemon.cpp:122
-#: Classes/Network/ClientConnectDaemon.cpp:130
-#: Classes/Network/ClientConnectDaemon.cpp:138
-#: Classes/Network/ClientConnectDaemon.cpp:145
-#: Classes/Network/ClientConnectDaemon.cpp:152
+#: Classes/Network/ClientConnectDaemon.cpp:113
+#: Classes/Network/ClientConnectDaemon.cpp:124
+#: Classes/Network/ClientConnectDaemon.cpp:132
+#: Classes/Network/ClientConnectDaemon.cpp:140
+#: Classes/Network/ClientConnectDaemon.cpp:147
+#: Classes/Network/ClientConnectDaemon.cpp:154
 msgid "Link to Server FAILED!"
 msgstr "La liaison au serveur a échoué!"
 
-#: Classes/Network/ClientConnectDaemon.cpp:112
+#: Classes/Network/ClientConnectDaemon.cpp:114
 msgid "Incompatible game:"
 msgstr "Jeu incompatibles :"
 
-#: Classes/Network/ClientConnectDaemon.cpp:123
+#: Classes/Network/ClientConnectDaemon.cpp:125
 msgid "Server is VERY busy"
 msgstr "Le serveur est très occupé"
 
-#: Classes/Network/ClientConnectDaemon.cpp:124
+#: Classes/Network/ClientConnectDaemon.cpp:126
 msgid "Please try in a few minutes"
 msgstr "S'il vous plaît réessayez dans quelques minutes"
 
-#: Classes/Network/ClientConnectDaemon.cpp:131
+#: Classes/Network/ClientConnectDaemon.cpp:133
 msgid "Your IP is already connected to this server"
 msgstr "Votre adresse IP est déjà connecté à ce serveur"
 
-#: Classes/Network/ClientConnectDaemon.cpp:132
+#: Classes/Network/ClientConnectDaemon.cpp:134
 msgid "The server limits multiple connections from same IP"
 msgstr "Le serveur limite les connexions multiples à partir de la même IP"
 
-#: Classes/Network/ClientConnectDaemon.cpp:139
+#: Classes/Network/ClientConnectDaemon.cpp:141
 msgid "The password for server was wrong."
 msgstr "Le mot de passe du serveur est incorrect."
 
-#: Classes/Network/ClientConnectDaemon.cpp:146
+#: Classes/Network/ClientConnectDaemon.cpp:148
 msgid "You are banned in this server"
 msgstr "Vous êtes banni de ce serveur"
 
-#: Classes/Network/ClientConnectDaemon.cpp:153
+#: Classes/Network/ClientConnectDaemon.cpp:155
 msgid "Unknown result sent from server"
 msgstr "Résultat inconnu envoyé par le serveur"
 
-#: Classes/Network/ClientConnectDaemon.cpp:169
+#: Classes/Network/ClientConnectDaemon.cpp:171
 #, c-format
 msgid "Your Position In Queue is %d "
 msgstr "Votre position dans la file d'attente est %d"
 
-#: Classes/Network/ClientConnectDaemon.cpp:187
-#: Classes/Network/ClientConnectDaemon.cpp:434
-#: Classes/Network/ClientConnectDaemon.cpp:453
-#: Classes/Network/ClientConnectDaemon.cpp:463
+#: Classes/Network/ClientConnectDaemon.cpp:189
+#: Classes/Network/ClientConnectDaemon.cpp:436
+#: Classes/Network/ClientConnectDaemon.cpp:455
+#: Classes/Network/ClientConnectDaemon.cpp:465
 msgid "Loading Game Data ..."
 msgstr "Chargement des données du jeu"
 
-#: Classes/Network/ClientConnectDaemon.cpp:193
-#: Classes/Network/ClientConnectDaemon.cpp:200
+#: Classes/Network/ClientConnectDaemon.cpp:195
+#: Classes/Network/ClientConnectDaemon.cpp:202
 msgid "Synchronizing Player Info ..."
 msgstr "Synchronisation des infos du joueur..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:207
+#: Classes/Network/ClientConnectDaemon.cpp:209
 msgid "Synchronizing unit profiles..."
 msgstr "Synchronisation des profils unités ..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:213
-#: Classes/Network/ClientConnectDaemon.cpp:220
+#: Classes/Network/ClientConnectDaemon.cpp:215
+#: Classes/Network/ClientConnectDaemon.cpp:222
 msgid "Synchronizing Game Elements ..."
 msgstr "Synchronisation des éléments du jeu ..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:228
+#: Classes/Network/ClientConnectDaemon.cpp:230
 msgid "Game Synchronized"
 msgstr "Jeu synchronisé"
 
-#: Classes/Network/ClientConnectDaemon.cpp:238
+#: Classes/Network/ClientConnectDaemon.cpp:240
 msgid "Server has terminated the game"
 msgstr "Le serveur a mis fin à la partie"
 
-#: Classes/Network/ClientConnectDaemon.cpp:268
+#: Classes/Network/ClientConnectDaemon.cpp:270
 msgid "Error in server connection"
 msgstr "Erreur dans la connexion au serveur"
 
-#: Classes/Network/ClientConnectDaemon.cpp:279
+#: Classes/Network/ClientConnectDaemon.cpp:281
 msgid "Connect Failure: Server Too Busy"
 msgstr "Échec de connexion : Serveur surchargé"
 
-#: Classes/Network/ClientConnectDaemon.cpp:285
-#: Classes/Network/ClientConnectDaemon.cpp:351
+#: Classes/Network/ClientConnectDaemon.cpp:287
+#: Classes/Network/ClientConnectDaemon.cpp:353
 msgid "Connect Failure: Server Full"
 msgstr "Échec de connexion : Serveur plein"
 
-#: Classes/Network/ClientConnectDaemon.cpp:291
+#: Classes/Network/ClientConnectDaemon.cpp:293
 msgid "Connect Failure: You are aready connected"
 msgstr "Échec de connexion : Vous êtes déjà connecté"
 
-#: Classes/Network/ClientConnectDaemon.cpp:320
+#: Classes/Network/ClientConnectDaemon.cpp:322
 msgid "Server is not responding..."
 msgstr "Le serveur ne répond pas ..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:325
+#: Classes/Network/ClientConnectDaemon.cpp:327
 msgid "Connection to server failed..."
 msgstr "La connexion au serveur a échoué ..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:326
+#: Classes/Network/ClientConnectDaemon.cpp:328
 msgid "it might be older netpanzer or server is down"
 msgstr "Il pourrait être un ancien netPanzer ou le serveur est en panne"
 
-#: Classes/Network/ClientConnectDaemon.cpp:342
+#: Classes/Network/ClientConnectDaemon.cpp:344
 msgid "Connecting ..."
 msgstr "Connexion en cours ..."
 
-#: Classes/Network/ClientConnectDaemon.cpp:398
+#: Classes/Network/ClientConnectDaemon.cpp:400
 msgid "Connection To Server Failed"
 msgstr "Échec de la connexion au serveur"
 
-#: Classes/Network/ClientConnectDaemon.cpp:419
+#: Classes/Network/ClientConnectDaemon.cpp:421
 #: Interfaces/GameControlRulesDaemon.cpp:636
 #, c-format
 msgid "MAP %s NOT FOUND!"
 msgstr "CARTE %s INTROUVABLE !"
 
-#: Classes/Network/ClientConnectDaemon.cpp:426
+#: Classes/Network/ClientConnectDaemon.cpp:428
 #: Interfaces/GameControlRulesDaemon.cpp:641
 msgid "MAP TILE SET NOT FOUND!"
 msgstr "LE TILESET POUR LA CARTE INTROUVABLE !"
 
-#: Classes/Network/ClientConnectDaemon.cpp:427
+#: Classes/Network/ClientConnectDaemon.cpp:429
 msgid "please download the appropriate tileset"
 msgstr "s'il vous plaît télécharger le tileset appropriée"
 
-#: Classes/Network/ClientConnectDaemon.cpp:428
+#: Classes/Network/ClientConnectDaemon.cpp:430
 msgid "from www.pyrosoftgames.com"
 msgstr "à partir www.pyrosoftgames.com"
 
@@ -172,6 +172,26 @@ msgstr "à partir www.pyrosoftgames.com"
 #, c-format
 msgid "connection error: %s"
 msgstr "Erreur de connexion : %s"
+
+#: Classes/Network/NetworkServer.cpp:368
+#, fuzzy, c-format
+msgid "'%s' has left."
+msgstr "%s a quitté la parti."
+
+#: Classes/Network/ServerConnectDaemon.cpp:95
+#, fuzzy, c-format
+msgid "'%s' [%s] has joined the game int team %s."
+msgstr "%s a rejoind la parti dans l'équipe %s."
+
+#: Classes/Network/ServerConnectDaemon.cpp:102
+#, fuzzy, c-format
+msgid "'%s' [%s] has joined the game."
+msgstr "%s a rejoind la parti."
+
+#: Classes/WorldInputCmdProcessor.cpp:511
+#, c-format
+msgid "Group %d created"
+msgstr "Groupe %s créée"
 
 #: Core/NetworkGlobals.cpp:45
 #, fuzzy, c-format
@@ -190,6 +210,7 @@ msgstr "Ancienne version de développement, vous ne pouvez pas l'utiliser"
 msgid "This server is a newer netpanzer, please check http://www.netpanzer.org"
 msgstr "Nouveau serveur, vérifier ici http://www.netpanzer.org"
 
+#: Interfaces/ChatInterface.cpp:108 Interfaces/ChatInterface.cpp:158
 #: Interfaces/ChatInterface.cpp:176
 #, c-format
 msgid "Server: %s"
@@ -203,6 +224,7 @@ msgstr "Prochaine carte '%s'."
 #: Interfaces/GameControlRulesDaemon.cpp:133
 #: Interfaces/GameControlRulesDaemon.cpp:162
 #: Interfaces/GameControlRulesDaemon.cpp:169
+#: Interfaces/GameControlRulesDaemon.cpp:297
 #: Interfaces/GameControlRulesDaemon.cpp:334
 msgid "Loading Game Map..."
 msgstr "Chargement de la carte..."
@@ -214,6 +236,16 @@ msgstr "Erreur lors du chargement de la carte:"
 #: Interfaces/GameControlRulesDaemon.cpp:165
 msgid "Waiting to respawn..."
 msgstr "En attente de réapparition..."
+
+#: Interfaces/GameControlRulesDaemon.cpp:272
+#, fuzzy, c-format
+msgid "loading map '%s'."
+msgstr "Chargement de la carte..."
+
+#: Interfaces/GameControlRulesDaemon.cpp:344
+#, fuzzy
+msgid "game started."
+msgstr "Liés au Jeu"
 
 #: Interfaces/GameManager.cpp:188
 msgid "Please wait... generating palettes"
@@ -244,34 +276,44 @@ msgstr "La connexion de %s a été inopinément interrompu."
 msgid "Player %s was kicked"
 msgstr "Le joueur%s a été expulsé"
 
-#: Interfaces/PlayerGameManager.cpp:282 Interfaces/PlayerGameManager.cpp:332
+#: Interfaces/PlayerGameManager.cpp:282 Interfaces/PlayerGameManager.cpp:347
 msgid "Launching Server..."
 msgstr "Lancement du serveur..."
 
-#: Interfaces/PlayerGameManager.cpp:322
+#: Interfaces/PlayerGameManager.cpp:337
 msgid "SERVER LAUNCH FAILED"
 msgstr "Le lancement du serveur a échoué"
 
-#: Interfaces/PlayerGameManager.cpp:337 Interfaces/PlayerGameManager.cpp:357
-#: Interfaces/PlayerGameManager.cpp:392
+#: Interfaces/PlayerGameManager.cpp:352 Interfaces/PlayerGameManager.cpp:376
+#: Interfaces/PlayerGameManager.cpp:414
 msgid "Loading Game Data"
 msgstr "Chargement des données du jeu"
 
-#: Interfaces/PlayerGameManager.cpp:365
+#: Interfaces/PlayerGameManager.cpp:384
 msgid "ERROR unit profiles"
 msgstr "ERROR unit profiles"
 
-#: Interfaces/PlayerGameManager.cpp:366
+#: Interfaces/PlayerGameManager.cpp:385
 msgid "game.unit_profiles"
 msgstr "game.unit_profiles"
 
-#: Interfaces/PlayerGameManager.cpp:397 Interfaces/PlayerGameManager.cpp:401
+#: Interfaces/PlayerGameManager.cpp:419 Interfaces/PlayerGameManager.cpp:423
 msgid "Initializing Game Logic"
 msgstr "Initialisation de la logique de jeu"
 
-#: Interfaces/PlayerGameManager.cpp:404 Interfaces/PlayerGameManager.cpp:411
+#: Interfaces/PlayerGameManager.cpp:426 Interfaces/PlayerGameManager.cpp:433
 msgid "Spawning Player"
 msgstr "Apparition du joueur"
+
+#: Interfaces/PlayerGameManager.cpp:515
+#, c-format
+msgid "Server kicked '%s' due to inactivity"
+msgstr "Le Serveur a expulsé '% s' due à une inactivitée"
+
+#: Interfaces/PlayerInterface.cpp:156
+#, fuzzy, c-format
+msgid "Player %u"
+msgstr "Joueurs"
 
 #: Interfaces/PlayerInterface.cpp:672
 #, c-format
@@ -313,10 +355,47 @@ msgstr "%s a rompu l'alliance avec vous."
 msgid "%s canceled the alliance request with you."
 msgstr "%s a annulé la requête d'alliance avec vous."
 
+#: Interfaces/VoteManager.cpp:43
+msgid "Surrendering vote, you choose surrendering?"
+msgstr "Vote pour Abandons, vous choisissez de vous rendre ?"
+
+#: Interfaces/VoteManager.cpp:132
+#, fuzzy, c-format
+msgid "%d %% players has voted YES, %d %% has voted NO"
+msgstr "joueur %s a voté, en attente de %d votes"
+
+#: Interfaces/VoteManager.cpp:139
+#, c-format
+msgid "%s team has accepted surrendering. Round is over"
+msgstr "L'équipe %s a accepté de se rendre. Le match est terminée"
+
+#: Interfaces/VoteManager.cpp:194
+#, fuzzy, c-format
+msgid "Player %s request vote"
+msgstr "Le joueur%s a été expulsé"
+
+#: Interfaces/VoteManager.cpp:211
+#, c-format
+msgid "player %s has voted, waiting %d votes"
+msgstr "joueur %s a voté, en attente de %d votes"
+
 #: Objectives/Objective.cpp:76
 #, c-format
 msgid "'%s' has been occupied by '%s'"
 msgstr "'%s' est occupé par '%s'"
+
+#: PowerUps/BonusUnitPowerUp.cpp:83 PowerUps/BonusUnitPowerUp.cpp:94
+msgid "YOU GOT A BONUS UNITS POWERUP"
+msgstr "VOUS AVEZ LE BONUS UNITÉS PUISSANTENT "
+
+#: PowerUps/EnemyRadarPowerUp.cpp:45
+msgid "YOU GOT AN ENEMY RADAR POWERUP"
+msgstr "VOUS AVEZ LE BONUS RADAR ENNEMI"
+
+#: PowerUps/UnitPowerUp.cpp:180 PowerUps/UnitPowerUp.cpp:192
+#, c-format
+msgid "YOU GOT A %s POWERUP"
+msgstr "VOUS AVEZ UN BONUS %s"
 
 #: Scripts/ScriptManager.cpp:274
 msgid "Error running user command"
@@ -353,7 +432,7 @@ msgstr "Erreur d'exécution de la commande serveur '"
 
 #: Scripts/ScriptManager.cpp:355
 msgid "Server command '"
-msgstr "Commande serveur  '"
+msgstr "Commande serveur '"
 
 #: Scripts/ScriptManager.cpp:355
 msgid "' not found"
@@ -367,30 +446,35 @@ msgstr "Vous devez être administrateur."
 msgid "There is no defined ServerCommands"
 msgstr "Il n'y a pas ServerCommands définies"
 
-#: Views/Components/InfoBar.cpp:55
+#: System/SDLVideo.cpp:215
+#, c-format
+msgid "Screenshoot saved as: %s"
+msgstr "Capture d'écran enregistrée : %s"
+
+#: Views/Components/InfoBar.cpp:53
 msgid "game"
 msgstr "Jeu"
 
-#: Views/Components/InfoBar.cpp:55
+#: Views/Components/InfoBar.cpp:53
 #, fuzzy
 msgid "units"
 msgstr "Unités"
 
-#: Views/Components/InfoBar.cpp:55
+#: Views/Components/InfoBar.cpp:53
 #, fuzzy
 msgid "frags"
 msgstr "tués"
 
-#: Views/Components/InfoBar.cpp:55
+#: Views/Components/InfoBar.cpp:53
 msgid "objs."
 msgstr "Objs."
 
-#: Views/Components/InfoBar.cpp:55
+#: Views/Components/InfoBar.cpp:53
 #, fuzzy
 msgid "time"
 msgstr "Temps"
 
-#: Views/Components/InfoBar.cpp:55
+#: Views/Components/InfoBar.cpp:53
 msgid "FPS"
 msgstr "FPS"
 
@@ -1393,9 +1477,6 @@ msgstr "Status musique :"
 #: Views/MainMenu/OptionsTemplateView.cpp:279
 msgid "Music Volume:"
 msgstr "Volume musique :"
-
-#~ msgid "player %s has voted, waiting %d votes"
-#~ msgstr "joueur %s a voté, en attente de %d votes"
 
 #~ msgid "/server listprofiles"
 #~ msgstr "/server listprofiles"

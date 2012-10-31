@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/MouseInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
-
+#include "Interfaces/StrManager.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -508,7 +508,7 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
     if ( ctrl_status )
     {
         setSelectionList(group);
-        ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", group ? group : 10);
+        ConsoleInterface::postMessage(Color::brown, false, 0, _("Group %d created"), group ? group : 10);
         return;
     }
 

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Scripts/ScriptManager.hpp"
 
 float Palette::brightness = 1.0f;
+bool  Palette::loaded = false;
 
 std::string Palette::name;
 
@@ -359,10 +360,14 @@ void Palette::ramp(SDL_Color table [], int startRGB, int r1, int g1, int b1, int
 //---------------------------------------------------------------------------
 void Palette::init(const std::string& name)
 {
-    loadACT(name);
-    setColors();
-    setColorTables();
-    setBrightnessAbsolute(brightness);
+    if (!loaded)
+    {
+        loadACT(name);
+        setColors();
+        setColorTables();
+        setBrightnessAbsolute(brightness);
+        loaded = true;
+    }
 } // end Palette::init
 
 // setBrightnessAbsolute

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -41,7 +42,7 @@ ActivateRadar()
 {
     radarActive = true;
     radarTimer.reset();
-    ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
+    ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("YOU GOT AN ENEMY RADAR POWERUP") );
 }
 
 bool

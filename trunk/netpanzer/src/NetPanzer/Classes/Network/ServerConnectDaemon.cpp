@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/StrManager.hpp"
 
 enum ConnectionState
 {
@@ -91,14 +92,14 @@ static void sendConnectionAlert(ClientSocket * client)
         TeamManager::addPlayer(player_state->getID());
         TeamManager::sendScores();
         ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                  "'%s' [%s] has joined the game int team %s.",
+                                  _("'%s' [%s] has joined the game int team %s."),
                                   player_state->getName().c_str(),
                                   client->getFullIPAddress().c_str(),
                                   TeamManager::getTeamName(player_state->getTeamID()).c_str());
     } else
     {
         ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(),
-                                  "'%s' [%s] has joined the game.",
+                                  _("'%s' [%s] has joined the game."),
                                   player_state->getName().c_str(),
                                   client->getFullIPAddress().c_str());
     }

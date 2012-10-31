@@ -40,7 +40,7 @@ Uint8  VoteManager::vote_team = 0xFF;
 
 VoteBox *votebox;
 
-const char *VoteStrings[1] = {"Surrendering vote, you choose surrendering?\0"};
+const char *VoteStrings[1] = {_("Surrendering vote, you choose surrendering?\0")};
 
 void VoteManager::startVote(Uint8 type)
 {
@@ -129,14 +129,14 @@ void VoteManager::checkPlayersVote()
 
     bool accepted_vote = ( yes_percent > 80 );
 
-    sprintf(buff, "%d %% players has voted YES, %d %% has voted NO", yes_percent, no_percent);
+    sprintf(buff, _("%d %% players has voted YES, %d %% has voted NO"), yes_percent, no_percent);
 
     if ( GameConfig::game_teammode )
     {
         TeamManager::serversayToTeam(vote_team, buff);
         if ( accepted_vote )
         {
-            sprintf(buff, "%s team has accepted surrendering. Round is over",
+            sprintf(buff, _("%s team has accepted surrendering. Round is over"),
                     TeamManager::getTeamName(vote_team).c_str());
             ChatInterface::serversay(buff);
         }
@@ -191,7 +191,7 @@ void VoteManager::playerRequest_startSurrenderVote(const PlayerID player_id)
     serverSendRequestVote();
     
     char buff[100];
-    sprintf(buff, "Player %s request vote",
+    sprintf(buff, _("Player %s request vote"),
             PlayerInterface::getPlayer(player_id)->getName().c_str());
     
     if (GameConfig::game_teammode)
@@ -208,7 +208,7 @@ void VoteManager::playerRequest_voteSelected(const PlayerID player_id, Uint8 sel
         player_vote[ player_id ] = selected_vote;
         
         char buff[100];
-        sprintf(buff, "player %s has voted, waiting %d votes",
+        sprintf(buff, _("player %s has voted, waiting %d votes"),
                 PlayerInterface::getPlayer(player_id)->getName().c_str(),
                 vote_counter);
         

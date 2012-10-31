@@ -32,6 +32,7 @@ class Palette
 private:
     static float brightness;
     static std::string name;
+    static bool loaded;
 
 public:
     Palette();

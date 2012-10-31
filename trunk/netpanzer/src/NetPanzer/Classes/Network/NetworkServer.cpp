@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/TeamManager.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #include "Objectives/ObjectiveInterface.hpp"
 #include "SystemNetMessage.hpp"
@@ -364,7 +365,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         {
             if (GameConfig::game_teammode == true)
             ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
-                                      "'%s' has left.",
+                                      _("'%s' has left."),
                                       player->getName().c_str());
         }
 

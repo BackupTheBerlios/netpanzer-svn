@@ -153,7 +153,7 @@ void PlayerInterface::initialize(const unsigned int _max_players)
         player_lists[ player_id ].setID( player_id );
         player_lists[ player_id ].resetStats(false);
         player_lists[ player_id ].setStateFree();
-        sprintf( temp_str, "Player %u", player_id );
+        sprintf( temp_str, _("Player %u"), player_id );
         player_lists[ player_id ].setName( temp_str );
     }
 

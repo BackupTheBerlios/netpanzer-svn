@@ -512,7 +512,7 @@ bool PlayerGameManager::mainLoop()
                         if ( player->checkAutokick() )
                         {
                             char chat_string[256];
-                            sprintf(chat_string, "Server kicked '%s' due to inactivity",player->getName().c_str());
+                            sprintf(chat_string, _("Server kicked '%s' due to inactivity"),player->getName().c_str());
                             LOGGER.info("PSE: %s", chat_string);
                             ChatInterface::serversay(chat_string);
                             SERVER->kickClient((PlayerID)i);

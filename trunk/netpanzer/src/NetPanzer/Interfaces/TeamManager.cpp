@@ -339,6 +339,12 @@ void TeamManager::PlayerRequestReadyAccepted(PlayerID player_id)
 
 void TeamManager::SpawnTeams()
 {
+    PlayerInterface::reset();
+    for (TeamID team_id = 0; team_id < max_Teams; ++team_id )
+    {
+        Teams_lists[team_id].makeAlliance();
+    }
+
     for ( PlayerID player_id = 0; player_id < PlayerInterface::getMaxPlayers(); ++player_id )
     {
         PlayerState* state_id = PlayerInterface::getPlayer(player_id);

@@ -269,7 +269,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 GameConfig::game_map->assign( MapsManager::getNextMap( *GameConfig::game_map ) );
             }
 
-            ConsoleInterface::postMessage(Color::white, false, 0, "loading map '%s'.",
+            ConsoleInterface::postMessage(Color::white, false, 0, _("loading map '%s'."),
                                           GameConfig::game_map->c_str());
 
             GameControlCycleMap cycle_map_mesg;
@@ -294,7 +294,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             {
                 LoadingView::show();
 
-                LoadingView::append( "Loading Game Map..." );
+                LoadingView::append( _("Loading Game Map...") );
                 ObjectiveInterface::resetLogic();
 
                 try
@@ -341,7 +341,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
     {
         if ( map_cycle_fsm_server_map_load_timer.count() )
         {
-            ConsoleInterface::postMessage(Color::white, false, 0, "game started.");
+            ConsoleInterface::postMessage(Color::white, false, 0, _("game started."));
             map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
         }
     }

@@ -105,7 +105,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
     if ( message->message_id == message_type_server )
     {
         ((ServerChatMessage*)message)->getText(size, text);
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", text.c_str());
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("Server: %s"), text.c_str());
         return;
     }
     
@@ -155,7 +155,7 @@ void ChatInterface::serversay(const NPString& message)
         int to_send = msg.setText(message);
         
         SERVER->broadcastMessage(&msg, to_send);
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", message.c_str());
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, _("Server: %s"), message.c_str());
     }
 }
 

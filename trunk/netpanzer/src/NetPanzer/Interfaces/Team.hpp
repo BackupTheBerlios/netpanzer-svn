@@ -49,6 +49,7 @@ public:
     PlayerID getrandomplayer() const;
     void loadFlag(const char *fileName);
     void drawFlag(Surface &dest, int x, int y) const;
+    void makeAlliance();
 
     short getKills() const;
     short getLosses() const;

@@ -26,7 +26,6 @@ class SDLVideo
 {
 private:
     SDL_Surface* frontBuffer;
-    SDL_Surface* backBuffer;
 
 public:
     SDLVideo();
