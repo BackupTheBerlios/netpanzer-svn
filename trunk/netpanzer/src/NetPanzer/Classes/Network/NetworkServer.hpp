@@ -27,18 +27,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace network;
 
+class HTTPServerSocket;
+
 class NetworkServer : public NetworkInterface,
                       public TCPListenSocketObserver,
                       public ClientSocketObserver
 {
 protected:
     typedef std::list<ClientSocket*> ClientList;
+    typedef std::list<HTTPServerSocket*> HTTPList;
+    
     ClientList client_list;
+    HTTPList http_list;
 
     void updateKeepAliveState();
     void resetClientList();
 
-    
 public:
     NetworkServer();
     virtual ~NetworkServer();
@@ -66,7 +70,9 @@ public:
     void kickClient(const PlayerID index);
 
     std::string getIP(const PlayerID player_index);
-
+    
+    void onHTTPServerSocketDisconnected(HTTPServerSocket * socket);
+    
 protected:
     TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
     void onSocketError(TCPListenSocket *so);

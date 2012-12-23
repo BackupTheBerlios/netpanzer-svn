@@ -74,6 +74,16 @@ TCPSocket::destroy()
     doClose();
 }
 
+void
+TCPSocket::changeObserver(TCPSocketObserver* o)
+{
+    observer = o;
+    if ( observer )
+    {
+        observer->onConnected(this);
+    }
+}
+
 size_t
 TCPSocket::send(const void* data, size_t size)
 {

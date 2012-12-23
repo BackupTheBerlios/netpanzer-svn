@@ -71,8 +71,9 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
         throw;
     }
 }
-ClientSocket::ClientSocket(ClientSocketObserver *o)
-    : observer(o), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
+
+ClientSocket::ClientSocket(ClientSocketObserver *o, network::TCPSocket * so)
+    : observer(o), socket(so), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
 {
     initId();
 }

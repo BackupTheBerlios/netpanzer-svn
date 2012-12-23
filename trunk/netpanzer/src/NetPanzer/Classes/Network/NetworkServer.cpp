@@ -40,6 +40,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/TCPSocket.hpp"
 #include "Core/NetworkGlobals.hpp"
 
+#include "Network/HTTPServerSocket.hpp"
+
 NetworkServer* SERVER = 0;
 
 NetworkServer::NetworkServer()
@@ -247,6 +249,15 @@ NetworkServer::sendRemaining()
         (*i)->sendRemaining();
         i++;
     }
+    
+    HTTPList::iterator h = http_list.begin(),
+                       x = http_list.end();
+    
+    while ( h != x )
+    {
+        (*h)->work();
+        h++;
+    }
 }
 
 bool
@@ -304,7 +315,9 @@ NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
 {
     (void)so;
     (void)fromaddr;
-    return new ClientSocket(this);
+    HTTPServerSocket * hss = new HTTPServerSocket();
+    http_list.push_back(hss);
+    return hss;
 }
 
 void
@@ -396,4 +409,10 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
             TeamManager::BalancedTeam();
         }
     }
+}
+
+void NetworkServer::onHTTPServerSocketDisconnected(HTTPServerSocket* socket)
+{
+    http_list.remove(socket);
+    delete(socket);
 }

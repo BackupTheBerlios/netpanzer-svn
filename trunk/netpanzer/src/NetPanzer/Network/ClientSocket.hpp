@@ -42,7 +42,7 @@ class ClientSocket : public network::TCPSocketObserver
 {
 public:
     ClientSocket(ClientSocketObserver *o, const std::string& serveraddress);
-    ClientSocket(ClientSocketObserver *o);
+    ClientSocket(ClientSocketObserver *o, network::TCPSocket * so = 0);
     ~ClientSocket();
 
     //void read();
@@ -79,6 +79,7 @@ protected:
 private:
     friend class ServerConnectDaemon;
     friend class NetworkClient;
+    friend class HTTPServerSocket;
     void initId();
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
