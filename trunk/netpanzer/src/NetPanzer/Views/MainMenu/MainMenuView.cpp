@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
 This program is free software; you can redistribute it and/or modify
