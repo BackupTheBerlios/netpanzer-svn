@@ -18,27 +18,69 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPFILE_HPP
 #define _MAPFILE_HPP
 
-#include "SDL.h"
+#include "Core/CoreTypes.hpp"
 
-namespace filesystem
+class Surface;
+
+class MapFile
 {
-class ReadFile;
-}
-
-class MapFile {
 public:
-    void load(filesystem::ReadFile& file);
+    typedef uint16_t ElementType;
+    enum { InvalidElement = 0xffff };
 
+    ~MapFile()
+    {
+        if ( data )
+        {
+            delete[] data;
+            data = 0;
+        }
+        
+        if ( thumbnail )
+        {
+            delete thumbnail;
+            thumbnail = 0;
+        }
+    }
+
+    inline bool hasData()       const { return data != 0; }
+    inline bool hasThumbnail()  const { return thumbnail != 0; }
+    
+    inline uint16_t getWidth()  const { return width; }
+    inline uint16_t getHeight() const { return height; }
+    
+    inline ElementType getValue( size_t offset ) const
+    {
+        return ( offset < data_length ) ? data[offset] : InvalidElement;
+    }
+    
+    inline ElementType getValue( size_t x, size_t y ) const
+    {
+        return getValue( (y * getWidth()) + x );
+    }
+    
+    inline unsigned getOutpostCount() const { return outpost_count; }
+    
+    NPString filename;
+    NPString fullfilename;
+    
     char netp_id_header[64];
-    Uint16 id;
+    uint16_t id;
     char name[256];
     char description[1024];
-    Uint16 width;
-    Uint16 height;
+    uint16_t width;
+    uint16_t height;
     char tile_set[256];
+    
+    size_t data_length;
+    ElementType * data;
+    
+    Surface * thumbnail;
 
-    Uint16 thumbnail_width;
-    Uint16 thumbnail_height;
+    uint16_t thumbnail_width;
+    uint16_t thumbnail_height;
+    
+    unsigned outpost_count;
 };
 
 #endif // ** _MAPFILE_HPP

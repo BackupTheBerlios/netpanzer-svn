@@ -54,10 +54,8 @@ public:
     {
         int view_start_x, view_start_y;
         getViewStart( view_size.x, view_size.y, &view_start_x, &view_start_y );
-        view_win->min.x = view_start_x;
-        view_win->min.y = view_start_y;
-        view_win->max.x = view_start_x + view_size.x;
-        view_win->max.y = view_start_y + view_size.y;
+        view_win->setLocation(view_start_x, view_start_y);
+        view_win->setSize(view_size);
     }
 
     inline long getCameraDistance( const iXY &world_loc )

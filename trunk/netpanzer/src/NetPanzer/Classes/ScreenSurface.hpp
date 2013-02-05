@@ -26,7 +26,8 @@ class ScreenSurface : public Surface
 {
 public:
     ScreenSurface(SDLVideo* draw, int width, int height);
-
+    ~ScreenSurface();
+    
     void create(int xPix, int yPix, int nStride, int nNumFrames);
 
     void lock();

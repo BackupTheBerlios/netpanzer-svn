@@ -36,9 +36,13 @@ SocketManager::handleEvents()
 {
     SocketsIterator i;
 
-    if (!newSockets.empty()) {
-        for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+    if ( !newSockets.empty() )
+    {
+        for (i = newSockets.begin(); i!=newSockets.end(); i++)
+        {
+            LOGGER.debug("SocketManager:: Adding socket [%d,%08lx,%s:%d]",
+                         (*i)->sockfd, (unsigned long)(*i),
+                         (*i)->addr.getIP().c_str(), (*i)->addr.getPort());
             socketList.insert(*i);
         }
         newSockets.clear();
@@ -68,7 +72,19 @@ SocketManager::handleEvents()
                 break;
 
             case SocketBase::CONNECTING :
-                sset.addWrite(sb);
+                if ( sb->disconnectTimer.isTimeOut() )
+                {
+                    LOGGER.debug("SocketManager:: Removing socket (TIMEOUT) [%d,%08lx, %s:%d]",
+                                 sb->sockfd, (unsigned long)sb,
+                                 sb->addr.getIP().c_str(), sb->addr.getPort());
+                    sb->onSocketError();
+                    delete sb;
+                    socketList.erase(i);
+                }
+                else
+                {
+                        sset.addWrite(sb);
+                }
                 break;
 
             case SocketBase::BOUND:
@@ -80,7 +96,9 @@ SocketManager::handleEvents()
             case SocketBase::DESTROYING :
                 if ( sb->disconnectTimer.isTimeOut() )
                 {
-                    LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",sb->sockfd, (unsigned long)sb);
+                    LOGGER.debug("SocketManager:: Removing socket [%d,%08lx, %s:%d]",
+                                 sb->sockfd, (unsigned long)sb,
+                                 sb->addr.getIP().c_str(), sb->addr.getPort());
                     delete sb;
                     socketList.erase(i);
                 }
@@ -114,15 +132,6 @@ SocketManager::handleEvents()
                     if ( sset.dataAvailable(sb) )
                     {
                         sb->onDataReady();
-                    }
-                    break;
-
-                case SocketBase::DESTROYING :
-                    if ( sb->disconnectTimer.isTimeOut() )
-                    {
-                        LOGGER.debug("SocketManager:: Removing socket2 [%d,%08lx]",sb->sockfd, (unsigned long)sb);
-                        delete sb;
-                        socketList.erase(i);
                     }
                     break;
             }

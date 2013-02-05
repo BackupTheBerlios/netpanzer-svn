@@ -19,17 +19,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __PackedSurface_hpp__
 
 #include <string>
-#include <vector>
+#include <stdint.h>
 
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 #include "Util/NoCopy.hpp"
 #include "ColorTable.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 class Surface;
 class PackedSurface;
-
-int loadAllPAKInDirectory(const char *path, std::vector<PackedSurface*>& list);
 
 //--------------------------------------------------------------------------
 class PackedSurface : public NoCopy
@@ -37,9 +36,7 @@ class PackedSurface : public NoCopy
 public:
     static int totalDrawCount;     // The number of bytes of the surfaces alive.
 
-    typedef void (*SPAN_FUNC)(const Uint8 *src, Uint8 *dest, int count);
-
-    void pack(const Surface &src);
+    void pack(const PtrArray<Surface>& src);
 
     void blt(Surface &dest, int x, int y) const;
     void blt(Surface &dest, iXY pos) const
@@ -48,10 +45,6 @@ public:
     }
 
     void bltBlend(Surface &dest, int x, int y, ColorTable &colorTable) const;
-    void bltBlend(Surface &dest, iXY pos, ColorTable &colorTable) const
-    {
-        bltBlend(dest, pos.x, pos.y, colorTable);
-    }
 
     void free();
 
@@ -156,14 +149,15 @@ public:
     }
     iRect  getRect() const
     {
-        return iRect(0, 0, pix.x - 1, pix.y - 1);
+        return iRect(0, 0, pix.x, pix.y);
     }
 
-    int  *getRowOffsetTable() const
+    int* getRowOffsetTable() const
     {
         return rowOffsetTable;
     }
-    Uint8 *getPackedDataChunk() const
+
+    uint8_t* getPackedDataChunk() const
     {
         return packedDataChunk;
     }
@@ -181,7 +175,7 @@ protected:
     iXY   center;
     iXY   pix;
     int  *rowOffsetTable;
-    Uint8 *packedDataChunk;
+    uint8_t *packedDataChunk;
     bool  myMem;
 
     static int totalSurfaceCount;  // The number of surfaces alive.
@@ -190,7 +184,7 @@ protected:
 
 //---------------------------------------------------------------------------
 
-class PackedSurfaceList : public std::vector<PackedSurface*>
+class PackedSurfaceList : public PtrArray<PackedSurface>
 {
 public:
     PackedSurfaceList()
@@ -198,9 +192,8 @@ public:
 
     ~PackedSurfaceList()
     {
-        std::vector<PackedSurface*>::iterator i;
-        for(i = begin(); i != end(); i++)
-            delete *i;
+        for ( size_t n = 0; n < getLastIndex(); n++ )
+            delete operator[](n);
     }
 };
 

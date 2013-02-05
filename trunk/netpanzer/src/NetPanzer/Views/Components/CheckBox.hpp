@@ -21,68 +21,106 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 #include "MouseEvent.hpp"
-#include "Util/Log.hpp"
 #include "ViewGlobals.hpp"
-
-class StateChangedCallback;
+#include "Actions/Action.hpp"
 
 //--------------------------------------------------------------------------
 class CheckBox : public Component
 {
-protected:
-    std::string label;
-    bool   state;
-    StateChangedCallback* callback;
-
-    PIX textColor;
-
-    void render();
-
 public:
-    CheckBox(StateChangedCallback* newcallback = 0)
-            : Component(), state(false), callback(newcallback)
-    {
-        setSize( 14, 14);
-        textColor = componentActiveTextColor;
-    }
-
-    CheckBox(const std::string& newlabel, bool newstate = false)
-            : Component(), label(newlabel), state(newstate), callback(0)
+    CheckBox(const int x, const int y, const NPString& label, bool* state, Action * a = 0)
+            : Component(), label(label), state(state), action(a)
     {
         setSize( 20+label.length()*8, 14);
+        setLocation(x, y);
         textColor = componentActiveTextColor;
-        dirty = true;
     }
 
     virtual ~CheckBox()
     {
+        if ( action && ! action->isShared() )
+        {
+            delete action;
+            action = 0;
+        }
     }
 
     const std::string& getLabel() const
     {
         return label;
     }
-    bool   getState() const
-    {
-        return state;
-    }
-
+    
     void setLabel(const std::string& label)
     {
         CheckBox::label = label;
         setSize( 20+label.length()*8, 14);
-        dirty = true;
     }
-    void setState(bool state)
+    
+    void setAction(Action * a)
     {
-        CheckBox::state = state;
+        if ( action && ! action->isShared() )
+        {
+            delete action;
+        }
+        action = a;
     }
-    void setStateChangedCallback(StateChangedCallback* newcallback)
-    {
-        callback = newcallback;
-    }
+    
+private:
+    std::string label;
+    bool*   state;
 
-    virtual void actionPerformed(const mMouseEvent &me);
-}; // end CheckBox
+    PIX textColor;
+
+    Action * action;
+    
+    void render() {}
+    
+    void draw(Surface& s)
+    {
+        iRect r(position.x, position.y, 14, 14);
+        s.FillRoundRect( r,2,  componentBodyColor);
+        
+        r.grow(-1,-1);
+        s.RoundRect( r, 2, textColor);
+        
+        s.bltString(r.getLocationX() + 17, r.getLocationY() + 1, label.c_str(), textColor);
+        
+        if ( *state )
+        {
+            int x = r.getLocationX() + 2;
+            int y = r.getLocationY() + 5;
+            s.drawLine(x, y, x+3, y+3, textColor);
+            y += 1;
+            s.drawLine(x, y, x+3, y+3, textColor);
+            y+=3;
+            x+=3;
+            s.drawLine(x, y, x+3, y-6, textColor);
+            y -= 1;
+            s.drawLine(x, y, x+3, y-6, textColor);
+        }
+    }
+    
+    void actionPerformed(const mMouseEvent &me)
+    {
+        if (    ( me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
+             && ( me.getModifiers() & InputEvent::BUTTON1_MASK) )
+        {
+            *state = !(*state);
+            if ( action )
+            {
+                action->execute();
+            }
+        }
+        else if ( me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED )
+        {
+            textColor = componentFocusTextColor;
+        }
+        else if ( me.getID() == mMouseEvent::MOUSE_EVENT_EXITED )
+        {
+            textColor = componentActiveTextColor;
+        }
+    }
+    
+};
 
 #endif // end __CheckBox_hpp__

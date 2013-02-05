@@ -28,15 +28,8 @@ MiniMapView::MiniMapView() : GameTemplateView()
     assert(this != 0);
 
     setSearchName("MiniMapView");
-    setTitle("MiniMapView");
-    setSubTitle("");
-    setAllowResize(false);
-    setDisplayStatusBar(false);
-    setVisible(false);
     setAllowMove(true);
 
-    setBordered(false);
-    
     resize(160, 160);
     add(new MiniMap(1,1,158,158));
 } // end MiniMapView::MiniMapView
@@ -50,19 +43,20 @@ void MiniMapView::init()
 } // end MiniMapView::init
 
 void
-MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
+MiniMapView::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
+    (void)oldResolution;
     moveTo(iXY(0,newResolution.y-160));
 }
 
 // doDraw
 //---------------------------------------------------------------------------
-void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
+void MiniMapView::doDraw( Surface& dest )
 {
     // border
-    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
+    dest.drawRect(iRect(0,0,dest.getWidth(), dest.getHeight()),Color::gray);
     
-    GameTemplateView::doDraw(viewArea, clientArea);
+    GameTemplateView::doDraw( dest );
 } // end doDraw
 
 void MiniMapView::processEvents()

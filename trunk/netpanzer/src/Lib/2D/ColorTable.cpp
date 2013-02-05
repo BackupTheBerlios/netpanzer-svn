@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ColorTable.hpp"
 #include "Palette.hpp"
 #include "Surface.hpp"
-#include "Util/UtilInterface.hpp"
 
 const char *ColorTable::extension = ".tbl";
 
@@ -81,7 +80,7 @@ void ColorTable::init(int colorCount)
 
 // setColor
 //---------------------------------------------------------------------------
-void ColorTable::setColor(int index, Uint8 color)
+void ColorTable::setColor(int index, uint8_t color)
 {
     assert(index < colorCount);
 
@@ -188,9 +187,9 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
             curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
             curOffset  = (y * 256) + x;
 
-            curColor.r   = (Uint8) (curPercent * float(Palette::color[y].r));
-            curColor.g = (Uint8) (curPercent * float(Palette::color[y].g));
-            curColor.b  = (Uint8) (curPercent * float(Palette::color[y].b));
+            curColor.r   = (uint8_t) (curPercent * float(Palette::color[y].r));
+            curColor.g = (uint8_t) (curPercent * float(Palette::color[y].g));
+            curColor.b  = (uint8_t) (curPercent * float(Palette::color[y].b));
 
             setColor(curOffset, Palette::findNearestColor(curColor.r, curColor.g, curColor.b));
         }
@@ -244,13 +243,10 @@ void ColorTable::create(
 
             curOffset = (int(index) << 8) + indexPic;
 
-//            SDL_Color curColor((Uint8) (color1 * col.r   + color2 * colPic.r),
-//                              (Uint8) (color1 * col.g + color2 * colPic.g),
-//                              (Uint8) (color1 * col.b  + color2 * colPic.b));
             SDL_Color curColor;
-            curColor.r = (Uint8) (color1 * col.r + color2 * colPic.r);
-            curColor.g = (Uint8) (color1 * col.g + color2 * colPic.g);
-            curColor.b = (Uint8) (color1 * col.b + color2 * colPic.b);
+            curColor.r = (uint8_t) (color1 * col.r + color2 * colPic.r);
+            curColor.g = (uint8_t) (color1 * col.g + color2 * colPic.g);
+            curColor.b = (uint8_t) (color1 * col.b + color2 * colPic.b);
 
             // Makes the color table use color 0 as transparent.
             if (indexPic == 0) {
@@ -283,22 +279,22 @@ void ColorTable::create(
 //---------------------------------------------------------------------------
 void ColorTable::loadTable(const char *filename)
 {
-    try {
-        std::auto_ptr<filesystem::ReadFile> file(filesystem::openRead(filename));
+    filesystem::ReadFile file(filename);
+    if ( file.isOpen() )
+    {
+        if ( file.fileLength() < (PALETTE_LENGTH*3) )
+        {
+            throw Exception("colortable file not big enought '%s'", filename);
+        }
 
-    	// make sure palette in file is the same as current one
-	for(size_t i=0; i<PALETTE_LENGTH; i++) {
-	    SDL_Color checkcolor;
-	    file->read(&checkcolor, sizeof(Uint8), 3);
-	}
-
-	// put the color table data into the colorArray
-	file->read(colorArray, colorCount, 1);
-    } catch(std::exception& e) {
-	throw Exception("couldn't load colortable '%s': %s",
-		filename, e.what());
+        file.read(colorArray, colorCount, 1);
     }
-    LOGGER.info("Loading ColorTable '%s'", filename);
+    else
+    {
+        throw Exception("Couldn't open colortable file '%s'", filename);
+    }
+    
+    LOGGER.info("Loaded ColorTable '%s'", filename);
 } // end ColorTable::loadTable
 
 // saveTable
@@ -309,7 +305,6 @@ void ColorTable::saveTable(const char *filename) const
         std::auto_ptr<filesystem::WriteFile> file(
                 filesystem::openWrite(filename));
 
-    	file->write(&Palette::color, 768, 1);
         file->write(colorArray, colorCount, 1);
     } catch(std::exception& e) {
         throw Exception("error while writing to file '%s': %s",

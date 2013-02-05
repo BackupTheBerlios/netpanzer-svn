@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "2D/Color.hpp"
 #include "ViewGlobals.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 class Action;
 
@@ -56,7 +57,7 @@ protected:
     PIX textColors[BMAX_STATE];
     iXY state_offset[BMAX_STATE];
    
-    Surface bimage;
+    PtrArray<Surface> background_images;
    
     void render();
     ButtonState bstate;
@@ -100,15 +101,7 @@ public:
         dirty = true;
     }
    
-    void setImage(const Surface &s)
-    {
-        if ( s.getNumFrames() )
-        {
-            bimage.copy(s);
-            setSize(bimage.getWidth(), bimage.getHeight());
-        }
-        dirty = true;
-    }
+    void setImage( PtrArray<Surface>& sl );
     
     void enable()
     {

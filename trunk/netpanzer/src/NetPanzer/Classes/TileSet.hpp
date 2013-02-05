@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TILESET_HPP
 
 #include "Structs/TileSetStruct.hpp"
-#include "Classes/WadMapTable.hpp"
 
 namespace filesystem {
 class ReadFile;
@@ -37,40 +36,34 @@ protected:
     unsigned long tile_count;
     void computeTileConsts( void );
 
-    filesystem::ReadFile* partition_load_fhandle;
-    unsigned long partition_load_partition_count;
-    unsigned long partition_load_tile_index;
-    unsigned long partition_load_mapped_index;
-
 public:
     TileSet();
     ~TileSet();
 
     void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
-    void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
-    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
-
-    bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
-    bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
-
     void loadTileSet( const char *file_path );
+    
     inline unsigned char * getTile(unsigned long index) const
     {
         return( tile_data + (index * tile_size) );
     }
+    
     inline unsigned short getTileXsize() const
     {
         return ( tile_set_info.x_pix );
     }
+    
     inline unsigned short getTileYsize() const
     {
         return ( tile_set_info.y_pix );
     }
+    
     inline unsigned short getTileCount() const
     {
         return ( tile_set_info.tile_count );
     }
+    
     inline unsigned char getAverageTileColor(unsigned long index) const
     {
         return( tile_info[ index ].avg_color );
@@ -84,23 +77,13 @@ public:
     inline unsigned char getTilePixel( unsigned long index , unsigned int pixX,
                                        unsigned int pixY)
     {
-        if( index < tile_count ) {
+        if ( index < tile_count )
+        {
             return( *(getTile(index) + (pixY * getTileXsize()) + pixX));
         }
 
         return( 0 );
     }
-
-    /*
-       inline unsigned char getTilePixel( long *index , unsigned int pixX, unsigned int pixY)
-        {
-         if( ( (*index) >= 0) && ( (*index) < (long) tile_count) )
-          { return( *(getTile( (unsigned long) index) + (pixY * getTileXsize()) + pixX)); }
-        
-         (*index) = -1;
-         return( 0 );
-        }
-    */
 };
 
 #endif // ** _TILESET_HPP

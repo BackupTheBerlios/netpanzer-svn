@@ -554,20 +554,26 @@ WorldInputCmdProcessor::selectBoundBoxUnits()
     bool select_success;
     iRect r;
 
-    if ( box_press.x > box_release.x ) {
-        r.min.x=box_release.x;
-        r.max.x=box_press.x;
-    } else {
-        r.min.x=box_press.x;
-        r.max.x=box_release.x;
+    if ( box_press.x > box_release.x )
+    {
+        r.setLocationX(box_release.x);
+        r.setWidth(box_press.x - box_release.x);
+    }
+    else
+    {
+        r.setLocationX(box_press.x);
+        r.setWidth(box_release.x - box_press.x);
     }
 
-    if ( box_press.y > box_release.y ) {
-        r.min.y=box_release.y;
-        r.max.y=box_press.y;
-    } else {
-        r.min.y=box_press.y;
-        r.max.y=box_release.y;
+    if ( box_press.y > box_release.y )
+    {
+        r.setLocationY(box_release.y);
+        r.setHeight(box_press.y-box_release.y);
+    }
+    else
+    {
+        r.setLocationY(box_press.y);
+        r.setHeight(box_release.y-box_press.y);
     }
 
     bool addunits = false;
@@ -1029,7 +1035,7 @@ WorldInputCmdProcessor::draw()
         --box2.x;
         box2.y-=3;
 
-        screen->drawRect(iRect(box1, box2), Color::white);
+        screen->drawRect(iRect(box1.x, box1.y, box2.x-box1.x, box2.y-box1.y), Color::white);
     }
 
     if (outpost_goal_selection != OBJECTIVE_NONE)

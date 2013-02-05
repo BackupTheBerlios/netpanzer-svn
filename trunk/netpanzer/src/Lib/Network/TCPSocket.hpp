@@ -43,9 +43,6 @@ protected:
 class TCPSocket : public SocketBase
 {
 public:
-//    TCPSocket(const Address& bindaddr, const Address& address, bool blocking = true);
-
-    TCPSocket(const Address& address, TCPSocketObserver *o) throw(NetworkException);
     TCPSocket(const std::string& host,const std::string& port, TCPSocketObserver *o) throw(NetworkException);
 
     void destroy();

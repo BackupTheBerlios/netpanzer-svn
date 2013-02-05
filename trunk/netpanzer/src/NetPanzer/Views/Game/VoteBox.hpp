@@ -25,5 +25,5 @@ class VoteBox : public GameTemplateView
 public:
     VoteBox(NPString msg);
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
 };

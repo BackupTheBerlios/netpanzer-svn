@@ -21,17 +21,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 
-iRect MenuRect(80, 80, 80+640, 80+470);
-iRect bodyTextRect(MenuRect.min.x +10, MenuRect.min.y+10, MenuRect.max.x-10, MenuRect.max.y-80);
-iRect newsRect(bodyTextRect.min.x, bodyTextRect.max.y+10, bodyTextRect.max.x, MenuRect.max.y-10);
+iRect MenuRect(80, 26, 640, 480-26-26);
+iRect bodyTextRect(MenuRect.getLocationX()+10, MenuRect.getLocationY()+10,  MenuRect.getWidth()-10,  MenuRect.getHeight()-80);
+iRect newsRect(bodyTextRect.getLocationX(),    bodyTextRect.getEndY() + 10, bodyTextRect.getWidth(), MenuRect.getHeight()-90);
 
-iXY mainPos(MenuRect.min.x+8, MenuRect.min.y-26);
+iXY mainPos(MenuRect.getLocationX()+8, MenuRect.getLocationY()-26);
 iXY joinPos(mainPos.x+54, mainPos.y);
 iXY hostPos(joinPos.x+54, mainPos.y);
 iXY optionsPos(hostPos.x+54, mainPos.y);
 iXY helpPos(optionsPos.x+78, mainPos.y);
-iXY exitPos(MenuRect.max.x-140, mainPos.y);
-iXY playPos(MenuRect.max.x-58, MenuRect.max.y);
+
+iXY exitPos(MenuRect.getEndX() - 140, mainPos.y);
+iXY playPos(MenuRect.getEndX()-58, MenuRect.getEndY());
+
 iXY returnToGamePos(mainPos);
 iXY resignPos(optionsPos);
 
@@ -55,25 +57,10 @@ iXY interfacePos = sub2;
 iXY soundPos = sub3; // XXX 2
 #endif
 
-
-
-
 bool gDrawGameHelp          = false;
 
 //--------------------------------------------------------------------------
 void bltViewBackground(Surface &dest)
 {
-    bltBlendRect(dest, dest.getRect());
-}
-
-//--------------------------------------------------------------------------
-void bltBlendRect(Surface &dest, const iRect &r)
-{
-    if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
-        dest.BltRoundRect(r, 10, Palette::darkGray256.getColorArray());
-    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
-        dest.BltRoundRect(r, 10, Palette::gray256.getColorArray());
-    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK) {
-        dest.fillRect(r, Color::black);
-    } else if (GameConfig::interface_viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT) {}
+    dest.BltRoundRect(dest.getRect(), 10, Palette::darkGray256.getColorArray());
 }

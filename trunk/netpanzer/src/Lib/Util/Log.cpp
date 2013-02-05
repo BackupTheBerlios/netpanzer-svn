@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <string>
 #include <sstream>
-#include <vector>
 #include <algorithm>
 #include <exception>
 #include <iomanip>
@@ -33,6 +32,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FileSystem.hpp"
 #include "Log.hpp"
 #include "SDL.h"
+
+#include "Util/StringUtil.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 #define MAX_LOG_FILES 25
 #define MAX_LOGFILE_SIZE 10000000
@@ -74,31 +76,36 @@ void
 Logger::cleanLogs()
 {
     info("Cleaning old log files");
+    
+    PtrArray<char> fnames(20);
+    
     char** list = filesystem::enumerateFiles("/");
     
-    std::vector<std::string> filenames;
-    for(char** file = list; *file != 0; file++) {
-        std::string name = *file;
-        if( !name.compare(0, prefix.length(), prefix)
-            && ! name.compare(name.length()-4, 4, ".log") ) {
-            filenames.push_back(name);
+    for(char** file = list; *file != 0; file++)
+    {
+        int flen = strlen(*file) - 4;
+        if ( (flen > 0) && (strcmp((*file) + flen, ".log") == 0) )
+        {
+            fnames.push_back(*file);
         }
     }
 
-    filesystem::freeList(list);
-
-    int todelete = filenames.size() - MAX_LOG_FILES;
-    if ( todelete > 0 ) {
-        std::sort(filenames.begin(), filenames.end());
-        for (int n=0; n<todelete; n++) {
+    int todelete = fnames.size() - MAX_LOG_FILES;
+    if ( todelete > 0 )
+    {
+        std::sort(fnames.begin(), fnames.end(), StringUtil::cstr_sorter());
+        for (int n=0; n<todelete; n++)
+        {
             try {
-                info("Deleting '%s'", filenames.at(n).c_str());
-                filesystem::remove(filenames.at(n).c_str());
+                info("Deleting '%s'", fnames[n]);
+                filesystem::remove(fnames[n]);
             } catch (std::exception &e) {
                 warning("Some error happened cleaning logs '%s'", e.what());
             }
         }
     }
+    
+    filesystem::freeList(list);
 }
 //-----------------------------------------------------------------
 void

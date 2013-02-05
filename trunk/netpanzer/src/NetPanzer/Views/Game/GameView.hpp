@@ -34,10 +34,10 @@ public:
 protected:
     virtual void processEvents();
     void doActivate();
-    void checkResolution(iXY oldResolution, iXY newResolution);
 
 private:
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    virtual void doDraw( Surface& dest );
     //virtual void mouseEnter(const iXY &pos);
     virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
     void drawMap(Surface &window);

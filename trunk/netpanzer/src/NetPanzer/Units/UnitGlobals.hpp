@@ -18,10 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITGLOBALS_HPP
 #define _UNITGLOBALS_HPP
 
-#include "2D/PackedSurface.hpp"
-
-void RemapGrayUnitsHack( ColorTable &gray256 );
-
 extern int unitLayer;
 
 #endif // ** _UNITGLOBALS_HPP

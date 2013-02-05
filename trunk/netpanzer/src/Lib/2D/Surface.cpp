@@ -26,17 +26,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
-#include "Util/UtilInterface.hpp"
 #include "Types/fXY.hpp"
 #include "Util/TimerInterface.hpp"
 #include "Util/Exception.hpp"
 #include "Palette.hpp"
 #include "Surface.hpp"
-#include "Span.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 using std::swap;
-using std::min;
-using std::max;
 
 extern char staticNewFont[15280];
 #define FONT_HEIGHT 10
@@ -53,27 +50,6 @@ inline void orderCoords(T &a, T &b)
     if (a > b) swap(a, b);
 } // end orderCoords
 
-// orderCoords
-//---------------------------------------------------------------------------
-// Purpose: Orders a 2 pairs of (x,y) coordinates, making sure x1 <= x2 and y1 <= y2.
-//---------------------------------------------------------------------------
-template <class T>
-inline void orderCoords(T &x1, T &y1, T &x2, T &y2)
-{
-    if (x1 > x2) swap(x1, x2);
-    if (y1 > y2) swap(y1, y2);
-} // end orderCoords
-
-inline void orderCoords(iRect &bounds)
-{
-    if (bounds.min.x > bounds.max.x) {
-        swap(bounds.min.x, bounds.max.x);
-    }
-    if (bounds.min.y > bounds.max.y) {
-        swap(bounds.min.y, bounds.max.y);
-    }
-} // end orderCoords
-
 class BitmapFileHeader
 {
 public:
@@ -83,16 +59,16 @@ public:
     Uint16    bfReserved2;
     Uint32   bfOffBits;
 
-    BitmapFileHeader(filesystem::ReadFile* file);
+    BitmapFileHeader(filesystem::ReadFile& file);
 };
 
-BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile* file)
+BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile& file)
 {
-    bfType = file->readULE16();
-    bfSize = file->readULE32();
-    bfReserved1 = file->readULE16();
-    bfReserved2 = file->readULE16();
-    bfOffBits = file->readULE32();
+    bfType = file.readULE16();
+    bfSize = file.readULE32();
+    bfReserved1 = file.readULE16();
+    bfReserved2 = file.readULE16();
+    bfOffBits = file.readULE32();
 }
 
 #define BI_RGB      0L
@@ -114,25 +90,25 @@ public:
     Uint32  biClrUsed;
     Uint32  biClrImportant;
 
-    BitmapInfoHeader(filesystem::ReadFile* file);
+    BitmapInfoHeader(filesystem::ReadFile& file);
 };
 
-BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile* file)
+BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile& file)
 {
-    biSize = file->readULE32();
-    biWidth = file->readULE32();
-    biHeight = file->readULE32();
-    biPlanes = file->readULE16();
-    biBitCount = file->readULE16();
-    biCompression = file->readULE32();
-    biSizeImage = file->readULE32();
-    biXPelsPerMeter = file->readULE32();
-    biYPelsPerMeter = file->readULE32();
-    biClrUsed = file->readULE32();
-    biClrImportant = file->readULE32();
+    biSize = file.readULE32();
+    biWidth = file.readULE32();
+    biHeight = file.readULE32();
+    biPlanes = file.readULE16();
+    biBitCount = file.readULE16();
+    biCompression = file.readULE32();
+    biSizeImage = file.readULE32();
+    biXPelsPerMeter = file.readULE32();
+    biYPelsPerMeter = file.readULE32();
+    biClrUsed = file.readULE32();
+    biClrImportant = file.readULE32();
 }
 
-Surface ascii8x8;
+PtrArray<Surface> ascii8x8;
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -150,11 +126,11 @@ Surface::Surface()
 
 // Surface
 //---------------------------------------------------------------------------
-Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
+Surface::Surface(unsigned int w, unsigned int h)
 {
     reset();
 
-    alloc( w, h, nframes);
+    alloc( w, h);
 
     totalSurfaceCount++;
     totalByteCount += sizeof(Surface);
@@ -164,7 +140,8 @@ Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
 //---------------------------------------------------------------------------
 Surface::~Surface()
 {
-    if ((doesExist != false) && (myMem != false)) {
+    if ( getDoesExist() )
+    {
         free();
     }
 
@@ -178,19 +155,17 @@ Surface::~Surface()
 //---------------------------------------------------------------------------
 void Surface::free()
 {
-    if (myMem && frame0 != 0) {
+    if ( frame0 )
+    {
         ::free(frame0);
 
-        totalByteCount -= getPitch() * getHeight() * sizeof(PIX) * getNumFrames();
+        totalByteCount -= getPitch() * getHeight() * sizeof(PIX);
 
         assert(totalByteCount >= 0);
     }
 
     frame0     = 0;
     mem        = 0;
-    myMem      = false;
-    doesExist  = false;
-    numFrames = 0;
 }
 
 // reset
@@ -202,29 +177,12 @@ void Surface::reset()
     twidth      = 0;
     theight     = 0;
     tpitch      = 0;
+    clip_rect.setLocation( 0, 0);
+    clip_rect.setSize( 0, 0);
 
     mem         = 0;
     frame0      = 0;
-    myMem       = false;
-    numFrames   = 0;
-    curFrame    = 0;
-    fps         = 0;
-    offset.zero();
-    doesExist   = 0;
 } // end Surface::reset
-
-// setOffsetCenter
-//---------------------------------------------------------------------------
-// Purpose: Set the offset to the center of the image.
-//---------------------------------------------------------------------------
-void Surface::setOffsetCenter()
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    offset = iXY(-(getWidth()>>1), -(getHeight()>>1));
-
-} // end Surface::setOffsetCenter
 
 // alloc
 //---------------------------------------------------------------------------
@@ -233,7 +191,7 @@ void Surface::setOffsetCenter()
 //          otherwise false is returned.
 //---------------------------------------------------------------------------
 void
-Surface::alloc(unsigned int w, unsigned int h, int nframes)
+Surface::alloc(unsigned int w, unsigned int h)
 {
     assert(this != 0);
 
@@ -241,98 +199,24 @@ Surface::alloc(unsigned int w, unsigned int h, int nframes)
 
     twidth = w;
     theight= h;
-    tpitch = getWidth();
+    tpitch = w;
+    clip_rect.setLocation( 0, 0);
+    clip_rect.setSize( w, h);
+    
+    size_t requestedBytes = getPitch() * getHeight();
 
-    size_t requestedBytes = getPitch() * getHeight() * sizeof(PIX) * nframes;
-
-    if (requestedBytes > 0) {
+    if (requestedBytes > 0)
+    {
         frame0 = (PIX *) malloc(requestedBytes);
 
         if (frame0 == 0)
             throw Exception("out of memory while allocating surface.");
 
         totalByteCount += requestedBytes;
-        myMem = true;
     }
 
     Surface::mem        = frame0;
-    numFrames           = nframes;
-    Surface::doesExist  = true;
 } // end Surface::alloc
-
-// resize
-//---------------------------------------------------------------------------
-// Purpose: Resizes the calling surface to a new length and width, while
-//          remaining the same number of frames.
-//---------------------------------------------------------------------------
-void Surface::resize(int x, int y)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    create(x, y, getNumFrames());
-
-} // end Surface::resize
-
-// setTo
-//---------------------------------------------------------------------------
-// Purpose: Maps a Surface's coordinates to an existing surface.  This can
-//          save you from having to allocate memory for every single surface.
-//          You can just draw everything onto one surface in the given bounds.
-//---------------------------------------------------------------------------
-void Surface::setTo(const Surface &source, iRect bounds)
-{
-    assert(source.getDoesExist());
-    assert(this != 0);
-
-    free();
-    orderCoords(bounds);
-
-    myMem      = false;
-    frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
-    mem	       = frame0;
-    if ( (unsigned int)bounds.max.x > source.getWidth() )
-        twidth = source.getWidth() - bounds.min.x;
-    else
-        twidth     = bounds.getSizeX();
-
-    if ( (unsigned int)bounds.max.y > source.getHeight() )
-        theight = source.getHeight() - bounds.min.y;
-    else
-        theight    = bounds.getSizeY();
-
-    tpitch     = source.getPitch();
-    numFrames  = source.getNumFrames();
-    fps        = source.getFPS();
-
-    doesExist  = source.getDoesExist();
-
-} // end Surface::setTo
-
-// setTo
-//---------------------------------------------------------------------------
-// Purpose: Maps the calling surface to some specified coordinates of the
-//          another Surface.
-//---------------------------------------------------------------------------
-void Surface::setTo(const Surface &source)
-{
-    assert(this != 0);
-    assert(source.getDoesExist());
-
-    free();
-
-    myMem      = false;
-    frame0     = source.getFrame0();
-    mem        = frame0;
-    twidth     = source.getWidth();
-    theight    = source.getHeight();
-    tpitch     = source.getPitch();
-    numFrames  = source.getNumFrames();
-    fps        = source.getFPS();
-    offset     = source.getOffset();
-    doesExist  = source.getDoesExist();
-
-} // end Surface::setTo
 
 // grab
 //---------------------------------------------------------------------------
@@ -345,15 +229,11 @@ bool Surface::grab(const Surface &source,
     assert(this != 0);
 
     free();
-    orderCoords(bounds);
 
-    alloc(bounds.getSizeX(), bounds.getSizeY(), 1);
-
-    // We can blit like this because everything will be clipped away for us.
-    source.blt(*this, -bounds.min.x, -bounds.min.y);
+    alloc(bounds.getWidth(), bounds.getHeight());
+    source.blt(*this, -bounds.getLocationX(), -bounds.getLocationY()); // full blit
 
     return true;
-
 } // end Surface::grab
 
 // blt
@@ -363,80 +243,56 @@ bool Surface::grab(const Surface &source,
 //---------------------------------------------------------------------------
 void Surface::blt(Surface &dest, int x, int y) const
 {
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-    assert(mem != 0);
-    assert(dest.mem != 0);
+    int source_lines = getHeight();
+    int source_cols = getWidth();
+    int source_start_y = 0;
+    int source_start_x = 0;
 
-    // Add in the offset factor.
-    x+=offset.x;
-    y+=offset.y;
-
-    // Trivial clipping rejection - no overlap.
-    // Also will jump out immediately if either image has zero size.
-    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
+    {
         return;
-
-    int end_x = x + getWidth();
-    int end_y = y + getHeight();
-    if ( end_x <= 0 || end_y <= 0 ) return;
-
-    unsigned int pixelsPerRow = getWidth();
-    unsigned int numRows      = getHeight();
-
-    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
-    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
-
-    // Check for partial clip, calculate number of pixels
-    // per row to copy, and number of rows to copy.  Adjust
-    // sPtr and dPtr.
-
-    // CLIP LEFT
-    if (x < 0) {
-        pixelsPerRow +=  x; // This will subtract the neg. x value.
-        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
-    } else {
-        dPtr += x;
     }
 
-    // CLIP RIGHT
-    // This subtracts only the portion hanging over the right edge of the
-    // destination Surface
-    if ((unsigned int)end_x > dest.getWidth())
-        pixelsPerRow -= end_x - dest.getWidth();
+    if ( y < 0 )
+    {
+        if ( -y >= source_lines )
+        {
+            return;
+        }
 
-    // CLIP TOP
-    if (y < 0) {
-        numRows += y;
-        sPtr    -= y * (int)getPitch();
-    } else {
-        dPtr += y * (int)dest.getPitch();
+        source_lines += y;
+        source_start_y -= y;
+        y = 0;
     }
 
-    // CLIP BOTTOM
-    // This subtracts only the portion hanging over the bottom edge of the
-    // destination Surface
-    if ((unsigned int)end_y > dest.getHeight())
-        numRows -= end_y - dest.getHeight();
+    if ( x < 0 )
+    {
+        if ( -x >= source_cols )
+        {
+            return;
+        }
+        source_cols += x;
+        source_start_x -= x;
+        x = 0;
+    }
 
-    // Now, Check to make sure I actually have something
-    // to draw.  I should - because I checked for trivial
-    // rejection first.  These asserts just make sure
-    // my clipping is working...
-    assert(pixelsPerRow > 0);
-    assert(numRows > 0);
+    int dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    int dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
 
-    // Now blt the sucker!  But first, see if we can do it in one
-    // big blt, without doing each row individually...
-    if (getPitch() == pixelsPerRow && dest.getPitch() == pixelsPerRow) {
-        memcpy(dPtr, sPtr, pixelsPerRow * numRows * sizeof(PIX));
-    } else {
-        do {
-            memcpy(dPtr, sPtr, pixelsPerRow * sizeof(PIX));
+    if ( (getPitch() == (unsigned)dest_cols) && (dest.getPitch() == (unsigned)dest_cols) )
+    {
+        memcpy(dPtr, sPtr, dest_lines * dest_cols * sizeof(PIX));
+    }
+    else
+    {
+        do
+        {
+            memcpy(dPtr, sPtr, dest_cols * sizeof(PIX));
             sPtr += getPitch();
             dPtr += dest.getPitch();
-        } while (--numRows > 0);
+        } while ( --dest_lines );
     }
 } // end Surface::blt
 
@@ -448,74 +304,78 @@ void Surface::blt(Surface &dest, int x, int y) const
 //---------------------------------------------------------------------------
 void Surface::bltTrans(Surface &dest, int x, int y) const
 {
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-    assert(mem != 0);
-    assert(dest.mem != 0);
+    int source_lines = getHeight();
+    int source_cols = getWidth();
+    int source_start_y = 0;
+    int source_start_x = 0;
 
-    // Add in the offset factor.
-    x+=offset.x;
-    y+=offset.y;
+//    bool logit = (y < 0) ||(x < 0);
+    bool logit = false;
 
-    // Trivial clipping rejection - no overlap.
-    // Also will jump out immediately if either image has zero size.
-    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+    if ( logit )
+    {
+        LOGGER.warning("BLIT: ssize: %d,%d$%d dsize: %d,%d$%d pos: %d,%d",
+                        getWidth(), getHeight(), getPitch(),
+                        dest.getWidth(), dest.getHeight(), dest.getPitch(),
+                        x, y );
+    }
+
+    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
+    {
+        if ( logit ) LOGGER.warning("BLIT END: completely out");
         return;
-
-    int end_x = x + getWidth();
-    int end_y = y + getHeight();
-    if ( end_x <= 0 || end_y <= 0 ) return;
-
-    unsigned int pixelsPerRow = getWidth();
-    unsigned int numRows      = getHeight();
-
-    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
-    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
-
-    // Check for partial clip, calculate number of pixels
-    // per row to copy, and number of rows to copy.  Adjust
-    // sPtr and dPtr.
-
-    // CLIP LEFT
-    if (x < 0) {
-        pixelsPerRow +=  x; // This will subtract the neg. x value.
-        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
-    } else {
-        dPtr += x;
     }
 
-    // CLIP RIGHT
-    // This subtracts only the portion hanging over the right edge of the
-    // destination Surface
-    if ((unsigned int)end_x > dest.getWidth())
-        pixelsPerRow -= end_x - dest.getWidth();
+    if ( y < 0 )
+    {
+        if ( -y >= source_lines )
+        {
+            if ( logit ) LOGGER.warning("BLIT END: negative lines more than source size");
+            return;
+        }
 
-    // CLIP TOP
-    if (y < 0) {
-        numRows += y;
-        sPtr    -= y * (int)getPitch();
-    } else {
-        dPtr += y * (int)dest.getPitch();
+        source_lines += y;
+        source_start_y -= y;
+        y = 0;
     }
 
-    // CLIP BOTTOM
-    // This subtracts only the portion hanging over the bottom edge of the
-    // destination Surface
-    if ((unsigned int)end_y > dest.getHeight())
-        numRows -= end_y - dest.getHeight();
+    if ( x < 0 )
+    {
+        if ( -x >= source_cols )
+        {
+            if ( logit ) LOGGER.warning("BLIT END: negative cols more than source size");
+            return;
+        }
+        source_cols += x;
+        source_start_x -= x;
+        x = 0;
+    }
 
-    // Now, Check to make sure I actually have something
-    // to draw.  I should - because I checked for trivial
-    // rejection first.  These asserts just make sure
-    // my clipping is working...
-    assert(pixelsPerRow > 0);
-    assert(numRows > 0);
+    int dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    int dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
 
-    int srcAdjustment  = getPitch()      - pixelsPerRow;
-    int destAdjustment = dest.getPitch() - pixelsPerRow;
-    for (unsigned int row = 0; row < numRows; row++) {
-        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+    int srcAdjustment  = getPitch()      - dest_cols;
+    int destAdjustment = dest.getPitch() - dest_cols;
+
+    if ( logit )
+    {
+        LOGGER.warning("BLIT DATA: sstart: %d,%d ssize: %d,%d sa: %d dstart: %d,%d dsize: %d,%d da: %d",
+                       source_start_x, source_start_y,
+                       source_cols, source_lines,
+                       srcAdjustment,
+                       x, y,
+                       dest_cols, dest_lines,
+                       destAdjustment
+                       );
+    }
+
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
+    
+    for (unsigned int row = 0; row < dest_lines; row++)
+    {
+        for (unsigned int col = 0; col < dest_cols; col++)
+        {
             if (*sPtr != 0)
                 *dPtr = *sPtr;
             sPtr++;
@@ -537,75 +397,78 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
 //---------------------------------------------------------------------------
 void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) const
 {
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-    assert(mem != 0);
-    assert(dest.mem != 0);
+    int source_lines = getHeight();
+    int source_cols = getWidth();
+    int source_start_y = 0;
+    int source_start_x = 0;
 
-    // Add in the offset factor.
-    x+=offset.x;
-    y+=offset.y;
+    //    bool logit = (y < 0) ||(x < 0);
+    bool logit = false;
 
-    // Trivial clipping rejection - no overlap.
-    // Also will jump out immediately if either image has zero size.
-    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+    if ( logit )
+    {
+        LOGGER.warning("BLITX: ssize: %d,%d$%d dsize: %d,%d$%d pos: %d,%d",
+                        getWidth(), getHeight(), getPitch(),
+                        dest.getWidth(), dest.getHeight(), dest.getPitch(),
+                        x, y );
+    }
+
+    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
+    {
+        if ( logit ) LOGGER.warning("BLITX END: completely out");
         return;
-
-    int end_x = x + getWidth();
-    int end_y = y + getHeight();
-    if ( end_x <= 0 || end_y <= 0 ) return;
-
-    unsigned int pixelsPerRow = getWidth();
-    unsigned int numRows      = getHeight();
-
-    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
-    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
-
-    // Check for partial clip, calculate number of pixels
-    // per row to copy, and number of rows to copy.  Adjust
-    // sPtr and dPtr.
-
-    // CLIP LEFT
-    if (x < 0) {
-        pixelsPerRow +=  x; // This will subtract the neg. x value.
-        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
-    } else {
-        dPtr += x;
     }
 
-    // CLIP RIGHT
-    // This subtracts only the portion hanging over the right edge of the
-    // destination Surface
-    if ((unsigned int)end_x > dest.getWidth())
-        pixelsPerRow -= end_x - dest.getWidth();
+    if ( y < 0 )
+    {
+        if ( -y >= source_lines )
+        {
+            if ( logit ) LOGGER.warning("BLITX END: negative lines more than source size");
+            return;
+        }
 
-    // CLIP TOP
-    if (y < 0) {
-        numRows += y;
-        sPtr    -= y * (int)getPitch();
-    } else {
-        dPtr += y * (int)dest.getPitch();
+        source_lines += y;
+        source_start_y -= y;
+        y = 0;
     }
 
-    // CLIP BOTTOM
-    // This subtracts only the portion hanging over the bottom edge of the
-    // destination Surface
-    if ((unsigned int)end_y > dest.getHeight())
-        numRows -= end_y - dest.getHeight();
+    if ( x < 0 )
+    {
+        if ( -x >= source_cols )
+        {
+            if ( logit ) LOGGER.warning("BLITX END: negative cols more than source size");
+            return;
+        }
+        source_cols += x;
+        source_start_x -= x;
+        x = 0;
+    }
 
-    // Now, Check to make sure I actually have something
-    // to draw.  I should - because I checked for trivial
-    // rejection first.  These asserts just make sure
-    // my clipping is working...
-    assert(pixelsPerRow > 0);
-    assert(numRows > 0);
+    int dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    int dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
 
-    int srcAdjustment  = getPitch()      - pixelsPerRow;
-    int destAdjustment = dest.getPitch() - pixelsPerRow;
+    int srcAdjustment  = getPitch()      - dest_cols;
+    int destAdjustment = dest.getPitch() - dest_cols;
 
-    for (unsigned int row = 0; row < numRows; row++) {
-        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+    if ( logit )
+    {
+        LOGGER.warning("BLITX DATA: sstart: %d,%d ssize: %d,%d sa: %d dstart: %d,%d dsize: %d,%d da: %d",
+                       source_start_x, source_start_y,
+                       source_cols, source_lines,
+                       srcAdjustment,
+                       x, y,
+                       dest_cols, dest_lines,
+                       destAdjustment
+                       );
+    }
+
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
+
+    for (unsigned int row = 0; row < dest_lines; row++)
+    {
+        for (unsigned int col = 0; col < dest_cols; col++)
+        {
             if (*sPtr != 0)
                 *dPtr = color;
             sPtr++;
@@ -621,36 +484,36 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
 //---------------------------------------------------------------------------
 // Purpose: Draws a horizontal drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
+void Surface::drawHLine(int x, int y, int size, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
 
     // Check for trivial rejection
-    if ( y < 0 || x2 <= 0
+    if (    y < 0
+         || size <= 0
          || y >= (int)getHeight()
-         || x1 >= (int)getWidth() )
+         || x >= (int)getWidth()
+       )
+    {
          return;
-
-    assert(mem != 0);
-    if (mem == 0) return;
-
-    orderCoords(x1, x2);
-
-    unsigned length = x2 - x1;
-    PIX *ptr = mem + y * (int)getPitch();
-
-    // CLIP LEFT
-    if (x1 < 0) {
-        length += x1;
-    }	else {
-        ptr += x1;
     }
 
-    // CLIP RIGHT
-    if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
-
-    memset(ptr, color, length * sizeof(PIX));
+    if ( x < 0 )
+    {
+        size += x;
+        x = 0;
+        if ( size <= 0 )
+        {
+            return;
+        }
+    }
+    
+    if ( (x+size) >= (int)getWidth() ) size = getWidth()-x;
+    
+    PIX *ptr = pixPtr(x, y);
+    
+    memset(ptr, color, size * sizeof(PIX));
 
 } // end Surface::drawHLine
 
@@ -658,36 +521,40 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Draws a vertical drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
+void Surface::drawVLine(int x, int y, int size, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
 
     // Check for trivial rejection
-    if ( x < 0 || y2 <= 0
+    if (   x < 0
+        || size <= 0
         || x >= (int)getWidth()
-        || y1 >= (int)getHeight() )
+        || y >= (int)getHeight()
+       )
+    {
         return;
+    }
 
-    assert(mem != 0);
-    if (mem == 0) return;
+    if ( y < 0 )
+    {
+        size += y;
+        y = 0;
+        if ( size <= 0 )
+        {
+            return;
+        }
+    }
 
-    orderCoords(y1, y2);
+    if ( (y+size) >= (int)getHeight() ) size = getHeight()-y;
+    
+    PIX	*ptr	= pixPtr(x, y);
 
-    // CLIP TOP
-    if (y1 < 0) y1 = 0;
-
-    // CLIP BOTTOM
-    if (y2 >= (int)getHeight()) y2 = getHeight()-1;
-
-    PIX	*ptr	= mem+y1*(int)getPitch()+x;
-
-    int	width	= y2 - y1;
-
-    while(width > 0) {
+    while ( size > 0 )
+    {
         *ptr	= color;
         ptr	+= getPitch();
-        width--;
+        --size;
     }
 } // end Surface::drawVLine
 
@@ -697,17 +564,18 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
 //---------------------------------------------------------------------------
 void Surface::fill(const PIX &color)
 {
-    assert(getDoesExist());
-    assert(this != 0);
-
     if ( !getWidth() || !getHeight() ) return;
 
-    if (getWidth() == getPitch()) {
+    if ( getWidth() == getPitch() )
+    {
         memset(mem, color, getWidth() * getHeight() * sizeof(PIX));
-    }	else {
-        int	n = getHeight();
-        PIX *ptr = mem;
-        do {
+    }
+    else
+    {
+        int n = getHeight();
+        PIX* ptr = mem;
+        do
+        {
             memset(ptr, color, getWidth());
             ptr += getPitch();
         } while (--n > 0);
@@ -723,34 +591,32 @@ void Surface::fill(const PIX &color)
 void Surface::fillRect(iRect bounds, const PIX &color)
 {
     assert(getDoesExist());
-    assert(this != 0);
 
     if ( !getWidth() || !getHeight() ) return;
 
-    orderCoords(bounds);
-
     // Check for trivial rejection
-    //if (bounds.max < 0 || bounds.min >= pix) return;
-    if (bounds.max.x <  0)     return;
-    if (bounds.max.y <  0)     return;
-    if (bounds.min.x >= (int)getWidth()) return;
-    if (bounds.min.y >= (int)getHeight()) return;
+    if ( bounds.isEmpty() ) return;
+    if (bounds.getLocationX() >= (int)getWidth()) return;
+    if (bounds.getLocationY() >= (int)getHeight()) return;
 
-    // Check for clipping
-    if (bounds.min.x <  0)     bounds.min.x = 0;
-    if (bounds.min.y <  0)     bounds.min.y = 0;
-    if (bounds.max.x > (int)getWidth())  bounds.max.x = getWidth();
-    if (bounds.max.y > (int)getHeight()) bounds.max.y = getHeight();
+    int x_len = bounds.getWidth();
+    int y_len = bounds.getHeight();
+    
+    // clip
+    if (bounds.getLocationX() <  0) { x_len += bounds.getLocationX(); bounds.setLocationX(0); }
+    if (bounds.getLocationY() <  0) { y_len += bounds.getLocationY(); bounds.setLocationY(0); }
+    if ( (bounds.getLocationX()+x_len) >= (int)getWidth() )  x_len = getWidth() - bounds.getLocationX();
+    if ( (bounds.getLocationY()+y_len) > (int)getHeight() )  y_len = getHeight() - bounds.getLocationY();
 
-    iXY diff;
-    diff = (bounds.max - bounds.min);
+    if ( ( x_len <= 0 ) || ( y_len <= 0 ) ) return;
 
     // Set memory to the top-left pixel of the rectangle.
-    PIX	*ptr = mem + bounds.min.y * (int)getPitch() + bounds.min.x;
+    PIX	*ptr = pixPtr(bounds.getLocationX(), bounds.getLocationY());
 
-    for (int y = 0; y < diff.y; y++) {
+    for (int y = 0; y < y_len; y++)
+    {
         // Lay the horizontal strip.
-        memset(ptr, color, diff.x * sizeof(PIX));
+        memset(ptr, color, x_len * sizeof(PIX));
         ptr += getPitch();
     }
 } // end Surface::fillRect
@@ -762,28 +628,33 @@ void Surface::fillRect(iRect bounds, const PIX &color)
 void Surface::drawRect(iRect bounds, const PIX &color)
 {
     assert(getDoesExist());
-    assert(this != 0);
 
     if ( !getWidth() || !getHeight() ) return;
 
-    orderCoords(bounds);
-
     // Check for trivial rejection
-    if      (bounds.max.x <  0)     return;
-    else if (bounds.max.y <  0)     return;
-    else if (bounds.min.x >= (int)getWidth()) return;
-    else if (bounds.min.y >= (int)getHeight()) return;
+    if ( bounds.isEmpty() ) return;
+    if (bounds.getLocationX() >= (int)getWidth()) return;
+    if (bounds.getLocationY() >= (int)getHeight()) return;
 
-    // Check for clipping
-    if (bounds.min.x <  0)     bounds.min.x = 0;
-    if (bounds.min.y <  0)     bounds.min.y = 0;
-    if (bounds.max.x >= (int)getWidth())  bounds.max.x = getWidth() - 1;
-    if (bounds.max.y >= (int)getHeight()) bounds.max.y = getHeight() - 1;
+    int x_len = bounds.getWidth();
+    int y_len = bounds.getHeight();
+    
+    // clip
+    if (bounds.getLocationX() <  0) { x_len += bounds.getLocationX(); bounds.setLocationX(0); }
+    if (bounds.getLocationY() <  0) { y_len += bounds.getLocationY(); bounds.setLocationY(0); }
+    if ( (bounds.getLocationX()+x_len) >= (int)getWidth() )  x_len = getWidth() - bounds.getLocationX();
+    if ( (bounds.getLocationY()+y_len) > (int)getHeight() )  y_len = getHeight() - bounds.getLocationY();
 
-    drawHLine(bounds.min.x, bounds.min.y, bounds.max.x,   color);
-    drawHLine(bounds.min.x, bounds.max.y, bounds.max.x+1, color);
-    drawVLine(bounds.min.x, bounds.min.y, bounds.max.y,   color);
-    drawVLine(bounds.max.x, bounds.min.y, bounds.max.y,   color);
+    if ( ( x_len <= 0 ) || ( y_len <= 0 ) ) return;
+
+    drawHLine(bounds.getLocationX(), bounds.getLocationY(), x_len, color);
+    drawHLine(bounds.getLocationX(), bounds.getEndY(),      x_len, color);
+
+    if ( y_len > 2 )
+    {
+        drawVLine(bounds.getLocationX(), bounds.getLocationY()+1, y_len-2, color);
+        drawVLine(bounds.getEndX(),      bounds.getLocationY()+1, y_len-2, color);
+    }
 } // end Surface::drawRect
 
 // drawLine
@@ -798,14 +669,14 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color)
     // Check for horizontal lines
     if (y1 == y2) {
         orderCoords(x1, x2);
-        drawHLine(x1, y1, x2 + 1, color);
+        drawHLine(x1, y1, x2-x1, color);
         return;
     }
 
     // Check for vertical lines
     if (x1 == x2) {
         orderCoords(y1, y2);
-        drawVLine(x1, y1, y2, color);
+        drawVLine(x1, y1, y2-y1, color);
         return;
     }
 
@@ -865,24 +736,20 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color)
 void Surface::flipVertical()
 {
     assert(getDoesExist());
-    assert(this != 0);
 
-    Surface tempSurface(getWidth(), getHeight(), 1);
+    PIX * newMem = (PIX*)malloc(getPitch() * getHeight());
+    PIX * ptr = newMem;
 
-    for (unsigned int frameNum = 0; frameNum < getNumFrames(); frameNum++) {
-        // This sets the mem pointer of the source Surface
-        setFrame(frameNum);
-
-        PIX *sPtr = mem + getWidth() * getHeight() - getWidth();
-        PIX *dPtr = tempSurface.mem;
-
-        for (unsigned int y = 0; y < getHeight(); y++) {
-            memcpy(dPtr, sPtr, getWidth() * sizeof(PIX));
-            sPtr -= getWidth();
-            dPtr += getWidth();
-        }
-        tempSurface.blt(*this,0 ,0);
+    PIX * bottomPtr = frame0 + (getPitch() * (getHeight()-1));
+    for ( unsigned y = 0; y < getHeight(); y++ )
+    {
+        memcpy(ptr, bottomPtr, getPitch());
+        bottomPtr -= getPitch();
+        ptr += getPitch();
     }
+
+    frame0 = newMem;
+    resetClip();
 } // end Surface::flipVertical
 
 // copy
@@ -895,183 +762,62 @@ void Surface::copy(const Surface &source)
     if(!source.getDoesExist())
         return;
 
-    assert(this != 0);
+    create(source.getFullWidth(), source.getFullHeight());
+    memcpy(frame0, source.frame0, getFullHeight()*getPitch());
 
-    // XXX ugly ugly ugly
-    Surface& nonconstsource = const_cast<Surface&> (source);
-
-    // Create a Surface the surface the same size as the source.
-    create(source.getWidth(), source.getHeight(), source.getNumFrames());
-
-    PIX* oldmem = source.mem;
-    for (unsigned int frameNum = 0; frameNum < source.getNumFrames(); frameNum++) {
-        // Set the source Surface frame.
-        setFrame(frameNum);
-        nonconstsource.setFrame(frameNum);
-
-        // Blit the source frame to the calling frame
-        source.blt(*this, 0, 0);
-    }
-    nonconstsource.mem = oldmem;
 } // end Surface::copy
-
-// rotate
-//---------------------------------------------------------------------------
-// Purpose: Rotates a surface.  Accepts 0..360 integers for the degrees.
-//---------------------------------------------------------------------------
-void Surface::rotate(int angle)
-{
-    assert(this != 0);
-    int center_x = getWidth()>>1;
-    int center_y = getHeight()>>1;
-
-    for (unsigned int i = 0; i < getNumFrames(); i++) {
-        setFrame(i);
-
-        if (angle % 360 != 0) {
-            Surface tempSurface(getWidth(), getHeight(), 1);
-
-            float angleRadians = -float(angle) / float(180.0 / M_PI);
-            float cosAngle     = cos(angleRadians);
-            float sinAngle     = sin(angleRadians);
-
-            int index   = 0;
-
-            for (int y = -center_y; y < center_y; y++) {
-                for (int x = -center_x; x < center_x; x++) {
-                    int xSource = int((x * cosAngle - y * sinAngle) + center_x);
-                    int ySource = int((y * cosAngle + x * sinAngle) + center_y);
-
-                    if ((xSource >= 0) && ((unsigned int)xSource < getWidth()) && (ySource >= 0) && ((unsigned int)ySource < getHeight())) {
-                        tempSurface.putPixel(index % getWidth(), index / getHeight(), getPixel(xSource, ySource));
-                    } else {
-                        // Set the pixel transparent
-                        tempSurface.putPixel(index % getWidth(), index / getHeight(), 0);
-                    }
-                    index++;
-                }
-            }
-
-            tempSurface.blt(*this, 0, 0);
-        }
-    }
-} // end ROTATE
-
-// scale
-//---------------------------------------------------------------------------
-// Purpose: Scales all the frames of the surface from the current size to the
-//          requested size.
-//---------------------------------------------------------------------------
-void Surface::scale(unsigned int x, unsigned int y)
-{
-    if ( !x || !y || (x==getWidth() && y==getHeight()))
-        return;
-
-    // Create a temporary surface to scale the image onto.
-    Surface tempSurface(x, y, getNumFrames());
-
-    iRect r(0, 0, x, y);
-
-    // Go through all the frames of the surface.
-    unsigned int frame;
-    for (frame = 0; frame < tempSurface.getNumFrames(); frame++) {
-        tempSurface.setFrame(frame);
-        Surface::setFrame(frame);
-
-        tempSurface.bltScale(*this, r);
-    }
-
-    // Resize the calling surface, then copy all the scaled images on it.
-    Surface::resize(x, y);
-
-    for (frame = 0; frame < tempSurface.getNumFrames(); frame++) {
-        Surface::setFrame(frame);
-        tempSurface.setFrame(frame);
-
-        tempSurface.blt(*this, 0, 0);
-    }
-
-    /* OLD VERSION 6.29.1998
-    	// Find out the number of pix to step in the image.
-    	fXY stepPix;
-    	stepPix.x = float(Surface::pix.x) / float(pix.x);
-    	stepPix.y = float(Surface::pix.y) / float(pix.y);
-
-    	// Create a temporary surface to scale the image onto.
-    	Surface tempSurface(pix, pix.x, frameCount);
-
-    	// build a table the first time you go through, then scaling all
-    	// additional frames can be done by getting the values from the table.
-
-    	fXY curPix;
-    	curPix = 0.0;
-
-    	// Go through all the frames of the surface.
-    	for (int frame = 0; frame < frameCount; frame++)
-    	{
-    		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
-    		tempSurface.setFrame(frame);
-    		this->setFrame(frame);
-
-    		for (int x = 0; x < pix.x; x++)
-    		{
-    			for (int y = 0; y < pix.y; y++)
-    			{
-    				tempSurface.putPixel(x, y, this->getPixel(int(curPix.x), int(curPix.y)));
-    				curPix.y += stepPix.y;
-    			}
-    			curPix.y = 0.0;
-    			curPix.x += stepPix.x;
-    		}
-    		curPix.x = 0.0;
-    	}
-
-    	// Resize the calling surface, then map all the scaled images on it.
-    	this->resize(pix);
-
-    	assert(frameCount == tempSurface.frameCount);
-
-    	for (frame = 0; frame < frameCount; frame++)
-    	{
-    		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
-    		this->setFrame(frame);
-    		tempSurface.setFrame(frame);
-    		tempSurface.blt(*this);
-    	}
-    */
-} // end Surface::scale
 
 void Surface::bltLookup(const iRect &destRect, const PIX table[])
 {
-    assert(getDoesExist());
-    assert(this != 0);
-    assert(mem != 0);
+    int source_lines = destRect.getHeight();
+    int source_cols = destRect.getWidth();
+    int source_start_y = destRect.getLocationY();
+    int source_start_x = destRect.getLocationX();
 
-    iXY min = destRect.min + offset;
-    if (min.x >= (int)getWidth()) return;
-    if (min.y >= (int)getHeight()) return;
-
-    iXY max = destRect.max + offset;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Clip destination rectangle
-    if (min.x < 0) min.x = 0;
-    if (min.y < 0) min.y = 0;
-    if (max.x >= (int)getWidth())  max.x = getWidth();
-    if (max.y >= (int)getHeight()) max.y = getHeight();
-
-    size_t pixelsPerRow = max.x - min.x;
-    size_t numRows      = max.y - min.y;
-
-    PIX *dRow = mem + min.y*(int)getPitch() + min.x;
-
-    for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
-        for(size_t x=0; x<pixelsPerRow; x++)
-            dRow[x] = table[dRow[x]];
-
-        dRow += getPitch();
+    if ( (source_start_y >= (int)getHeight()) || (source_start_x >= (int)getWidth()) )
+    {
+        return;
     }
+
+    if ( source_start_y < 0 )
+    {
+        if ( -source_start_y >= source_lines )
+        {
+            return;
+        }
+
+        source_lines += source_start_y;
+        source_start_y = 0;
+    }
+
+    if ( source_start_x < 0 )
+    {
+        if ( -source_start_x >= source_cols )
+        {
+            return;
+        }
+        source_cols += source_start_x;
+        source_start_x = 0;
+    }
+
+    int dest_lines = std::min(getHeight() - source_start_y, (unsigned)source_lines);
+    int dest_cols = std::min(getWidth() - source_start_x, (unsigned)source_cols);
+
+    int srcAdjustment  = getPitch()      - dest_cols;
+
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+
+    for (unsigned int row = 0; row < dest_lines; row++)
+    {
+        for (unsigned int col = 0; col < dest_cols; col++)
+        {
+            *sPtr = table[*sPtr];
+            sPtr++;
+        }
+
+        sPtr += srcAdjustment;
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -1081,8 +827,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     assert(source.getDoesExist());
     assert(this != 0);
 
-    iXY min = destRect.min + source.offset;
-    iXY max = destRect.max + source.offset;
+    iXY min = destRect.getLocation();
+    iXY max = min + destRect.getSize(); // XXX check should have -1 here
 
     if (min.x >= (int)getWidth()) return;
     if (min.y >= (int)getHeight()) return;
@@ -1136,113 +882,22 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     if (pixelsPerRow <= 0) return;
     if (numRows <= 0) return;
 
-#if 0
-    int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
-    int stepWholePart = xSrcDelta >> 16;
-    int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
-#endif
-
     float xdelta = float(source.getWidth()) / float(max.x - min.x);
-    for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
+    for (size_t yCount = 0 ; yCount < numRows ; yCount++)
+    {
         const PIX *sRow = source.pixPtr(0, srcY >> 16) + (srcX1 >> 16);
 
-#if 0
-        bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
-#else
         // XXX: WARNING SLOW CODE
         float sPos = 0;
         for(size_t x=0; x<pixelsPerRow; x++) {
             dRow[x] = sRow[(size_t) sPos];
             sPos += xdelta;
         }
-#endif
 
         srcY += ySrcDelta;
         dRow += getPitch();
     }
 }
-
-// shrinkWrap
-//---------------------------------------------------------------------------
-void Surface::shrinkWrap()
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    int center_x = getWidth()>>1;
-    int center_y = getHeight()>>1;
-
-    // Start the bounds values in the center of the surface.
-    iRect bounds;
-    bounds.min.x = center_x;
-    bounds.max.x = center_x;
-    bounds.min.y = center_y;
-    bounds.max.y = center_y;
-
-    unsigned int num;
-    for (num = 0; num < getNumFrames(); num++) {
-        setFrame(num);
-        //LOG(("curFrame:  %d", curFrame));
-        //LOG(("frameCount: %d", frameCount));
-        //LOG(("pix.x:     %d", pix.x));
-        //LOG(("pix.y:     %d", pix.y));
-
-        // Check the x bounds.
-        for (unsigned int y = 0; y < getHeight(); y++) {
-            for (unsigned int x = 0; x < getWidth(); x++) {
-                if (getPixel(x, y) != 0) {
-                    if (x < (unsigned int)bounds.min.x) {
-                        bounds.min.x = x;
-                    }
-                    if (x > (unsigned int)bounds.max.x) {
-                        bounds.max.x = x;
-                    }
-                }
-            }
-        }
-
-        // Check the y bounds.
-        for (unsigned int x = 0; x < getWidth(); x++) {
-            for (unsigned int y = 0; y < getHeight(); y++) {
-                if (getPixel(x, y) != 0) {
-                    if (y < (unsigned int)bounds.min.y) {
-                        bounds.min.y = y;
-                    }
-                    if (y > (unsigned int)bounds.max.y) {
-                        bounds.max.y = y;
-                    }
-                }
-            }
-        }
-    }
-
-    int xDiff = bounds.max.x-bounds.min.x;
-    int yDiff = bounds.max.y-bounds.min.y;
-
-    //LOG(("bounds.min.x: %d", bounds.min.x));
-    //LOG(("bounds.max.x: %d", bounds.max.x));
-    //LOG(("bounds.min.y: %d", bounds.min.y));
-    //LOG(("bounds.max.y: %d", bounds.max.y));
-    //LOG(("xDiff:        %d", xDiff));
-    //LOG(("yDiff:        %d", yDiff));
-
-    // Create a temporary surface to draw all the cropped frames onto.
-    Surface tempSurface(xDiff, yDiff, getNumFrames());
-    //tempSurface.create(xDiff, yDiff, xDiff, frameCount);
-
-    // Crop the surface frames onto the temp surface.
-    for (num = 0; num < getNumFrames(); num++) {
-        setFrame(num);
-        tempSurface.setFrame(num);
-        tempSurface.fill(0);
-        blt(tempSurface, -bounds.min.x, -bounds.min.y);
-    }
-
-    resize(xDiff, yDiff);
-
-    copy(tempSurface);
-
-} // end Surface::shrinkWrap
 
 static inline float getRand(float lo, float hi)
 {
@@ -1274,7 +929,7 @@ PIX Surface::getAverageColor()
     }
 
     // Divide each individual amount by the number of bytes in the image.
-    int numPix = getArea();
+    int numPix = getWidth() * getHeight();
 
     avgR /= numPix;
     avgG /= numPix;
@@ -1290,25 +945,25 @@ PIX Surface::getAverageColor()
 //---------------------------------------------------------------------------
 void initFont()
 {
-    ascii8x8.create(FONT_WIDTH, FONT_HEIGHT, FONT_MAXCHAR);
-
-    for ( int c = 0; c < FONT_MAXCHAR; c++) {
-        ascii8x8.setFrame(c);
+    for ( int c = 0; c < FONT_MAXCHAR; c++)\
+    {
+        Surface *s = new Surface(FONT_WIDTH, FONT_HEIGHT);
         char * fptr = (char *)&staticNewFont+ (c * (FONT_WIDTH*FONT_HEIGHT));
-        PIX * dptr = ascii8x8.getMem();
+        PIX * dptr = s->getMem();
         memcpy(dptr,fptr,(FONT_WIDTH*FONT_HEIGHT));
+        ascii8x8.push_back(s);
     }
 } // Surface::initFont
 
 unsigned int
 Surface::getFontHeight()
 {
-    return ascii8x8.getHeight();
+    return FONT_HEIGHT;
 }
 
 int Surface::getTextLength(const char* text)
 {
-    return ascii8x8.getWidth() * strlen(text);
+    return FONT_WIDTH * strlen(text);
 }
 
 // renderText
@@ -1338,10 +993,10 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     if ( frame0 != 0 ) {
         if ( getWidth() != need_width || getHeight() != need_height ) {
             free();
-            create( need_width, need_height, 1);
+            create( need_width, need_height);
         }
     } else {
-        create( need_width, need_height, 1);
+        create( need_width, need_height);
     }
 
     for ( int line = 0; line < FONT_HEIGHT; ++line) {
@@ -1369,10 +1024,9 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
 void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
 {
     if (character > 31) character-=32;
-    if (character >= ascii8x8.getNumFrames())
+    if (character >= FONT_MAXCHAR)
         return;
-    ascii8x8.setFrame(character);
-    ascii8x8.bltTransColor(*this, x, y, color);
+    ascii8x8[character]->bltTransColor(*this, x, y, color);
 } // end Surface::bltChar8x8
 
 // bltString
@@ -1429,7 +1083,7 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 //---------------------------------------------------------------------------
 void Surface::bltStringCenter(const char *string, PIX color)
 {
-    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+    bltString(  (getWidth() - (strlen(string) * FONT_WIDTH)) / 2,
                 (getHeight() - getFontHeight()) / 2,
                 string, color);
 
@@ -1442,7 +1096,7 @@ void Surface::bltStringCenter(const char *string, PIX color)
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
 {
-    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
+    bltStringShadowed((getWidth() - (strlen(string) * FONT_WIDTH)) / 2,
                       (getHeight() - getFontHeight()) / 2,
                       string, foreground, background);
 
@@ -1457,8 +1111,8 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
     int length = strlen(string);
 
     iXY destPos;
-    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
-    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
+    destPos.x = rect.getLocationX() + (rect.getWidth() - (length * FONT_WIDTH)) / 2;
+    destPos.y = rect.getLocationY() + (rect.getHeight() - getFontHeight()) / 2;
 
     for (int i = 0; string[i] != 0; i++) {
         bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
@@ -1469,29 +1123,11 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
 // create
 //---------------------------------------------------------------------------
 void
-Surface::create(unsigned int w, unsigned int h, unsigned int nframes)
+Surface::create(unsigned int w, unsigned int h)
 {
-    //reset();
-    alloc( w, h, nframes);
+    free();
+    alloc( w, h);
 } // end Surface::create
-
-// nextFrame
-//
-// Move to the next frame based off time and the fps.  Returns a 0 if it
-// was the last frame and 1 otherwise.
-//---------------------------------------------------------------------------
-int Surface::nextFrame()
-{
-    curFrame += TimerInterface::getTimeSlice() * fps;
-
-    if (curFrame >= getNumFrames()) {
-        curFrame = 0.0;
-        return 0;
-    }
-
-    setFrame(curFrame);
-    return 1;
-}
 
 void Surface::loadBMP(const char *fileName, bool needAlloc)
 {
@@ -1499,16 +1135,15 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
 
     if (needAlloc) free();
 
-    std::auto_ptr<filesystem::ReadFile> file(
-            filesystem::openRead(fileName));
-
-    try {
-        BitmapFileHeader file_header(file.get());
+    filesystem::ReadFile file(fileName);
+    if ( file.isOpen() )
+    {
+        BitmapFileHeader file_header(file);
 
         if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
             throw Exception("%s is not a valid 8-bit BMP file", fileName);
 
-        BitmapInfoHeader info_header(file.get());
+        BitmapInfoHeader info_header(file);
 
         if ( info_header.biBitCount != 8 )
             throw Exception("%s is not a 8-bit BMP file", fileName);
@@ -1516,38 +1151,44 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
         if ( info_header.biCompression != BI_RGB )
             throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
 
-        if (needAlloc) {
-            alloc(info_header.biWidth, info_header.biHeight, 1);
+
+        if (needAlloc)
+        {
+            LOGGER.warning("Loading '%s' size %dx%d", fileName,info_header.biWidth, info_header.biHeight );
+            alloc(info_header.biWidth, info_header.biHeight);
 
         } else {
+            LOGGER.warning("Loading '%s' size %dx%d preallocated: %dx%d", fileName,info_header.biWidth, info_header.biHeight, getWidth(), getHeight() );
             // Check and make sure the picture will fit
             if (getWidth() < (unsigned long) info_header.biWidth|| getHeight() < (unsigned long) info_header.biHeight )
                 throw Exception("Not enough memory to load BMP image %s", fileName);
         }
 
-        file->seek(file_header.bfOffBits);
+        file.seek(file_header.bfOffBits);
 
         if ( (info_header.biWidth % 4) == 0 ) {
-            file->read(mem, getWidth() * getHeight(), 1);
+            file.read(mem, getWidth() * getHeight(), 1);
         } else {
             int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
 
             PIX buffer[10];
             int numRows = getHeight();
 
-            //PIX *sPtr = mem;
+            PIX *ptr = mem;
 
-            for (int row = 0; row < numRows; row++) {
-                file->read(mem, getWidth(), 1);
-                file->read(buffer, padding, 1);
-                mem += getPitch();
+            for (int row = 0; row < numRows; row++)
+            {
+                file.read(ptr, getWidth(), 1);
+                file.read(buffer, padding, 1);
+                ptr += getPitch();
             }
         }
 
         flipVertical();
-    } catch(std::exception& e) {
-        throw Exception("Error reading .bmp file '%s': %s",
-                fileName, e.what());
+    }
+    else
+    {
+        throw Exception("Cannot open bmp file '%s'", fileName);
     }
 }
 
@@ -1558,7 +1199,6 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
     assert(getDoesExist());
     assert(this != 0);
 
-    orderCoords(bounds);
 //    drawHLine(bounds.min.x,bounds.min.y,bounds.max.x-1,topLeftColor);
 //    drawVLine(bounds.min.x,bounds.min.y,bounds.max.y-1,topLeftColor);
 //    drawHLine(bounds.min.x,bounds.max.y-1,bounds.max.x-1,bottomRightColor);
@@ -1575,100 +1215,31 @@ void Surface::drawWindowsBorder()
     RoundRect(iRect(0,0,getWidth(),getHeight()),8, Color::lightGray);
 } // end Surface::drawWindowsBorder
 
-// bltStringInBox
-//--------------------------------------------------------------------------
-void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace, bool drawBox)
-{
-    if (drawBox) {
-        drawRect(rect, Color::yellow);
-    }
-
-    iXY pos(rect.min);
-
-    int  totalLength = strlen(string);
-    int  length      = 0;
-    int  done        = 0;
-
-    while (length < totalLength - 1) {
-        while (string[length] == '\n') {
-            pos.x = rect.min.x;
-            pos.y += gapSpace;
-            length++;
-        }
-
-        // Remove any spaces.
-        while (string[length] == ' ') {
-            pos.x += ascii8x8.getWidth();
-            length++;
-        }
-
-        char strBuf[256];
-        memset(strBuf, 0, sizeof(strBuf));
-        int strBufLength = 0;
-
-        while (!isspace(string[length + strBufLength]) && string[length + strBufLength] != '\n') {
-            if (string[length + strBufLength] == '\0') {
-                done = true;
-                break;
-            }
-
-            assert(strBufLength < 256);
-            strBuf[strBufLength] = string[length + strBufLength];
-            strBufLength++;
-        }
-
-        strBuf[strBufLength] = '\0';
-
-        if ((int) (pos.x + strlen(strBuf) * ascii8x8.getWidth()) > rect.max.x) {
-            pos.x = rect.min.x;
-            pos.y += gapSpace;
-        }
-
-        bltString(pos.x, pos.y, strBuf, color);
-
-        if (done) {
-            return;
-        }
-
-        pos.x += strlen(strBuf) * ascii8x8.getWidth();
-
-        length += strBufLength;
-    }
-
-} // end Surface::bltStringInBox
-
 // drawBoxCorners
 //--------------------------------------------------------------------------
 // Purpose: Draws lines in the corners of the surface of the specified length
 //          and color.
 //--------------------------------------------------------------------------
-void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color)
+void Surface::drawBoxCorners(const iRect &rect, unsigned cornerLength, PIX color)
 {
-    // Make sure the corner lines are not longer than the rect.
-    if (rect.getSizeX() < cornerLength) {
-        cornerLength -= cornerLength - rect.getSizeX();
-    }
-
-    if (rect.getSizeY() < cornerLength) {
-        cornerLength -= cornerLength - rect.getSizeY();
-    }
-
+    cornerLength = std::min(rect.getWidth(), std::min(rect.getHeight(), cornerLength));
+    
     // Draw the rectangle edge-only selection box.
     // Top-left
-    drawHLine(rect.min.x, rect.min.y, rect.min.x + cornerLength, color);
-    drawVLine(rect.min.x, rect.min.y, rect.min.y + cornerLength, color);
+    drawHLine(rect.getLocationX(), rect.getLocationY(),     cornerLength, color);
+    drawVLine(rect.getLocationX(), rect.getLocationY() + 1, cornerLength - 1, color);
 
     // Top-right
-    drawHLine(rect.max.x - 1, rect.min.y, rect.max.x - cornerLength, color);
-    drawVLine(rect.max.x - 1, rect.min.y, rect.min.y + cornerLength, color);
+    drawHLine(rect.getEndX() - cornerLength + 1, rect.getLocationY(),     cornerLength,     color);
+    drawVLine(rect.getEndX(),                    rect.getLocationY() + 1, cornerLength - 1, color);
 
     // Bottom-right
-    drawHLine(rect.max.x, rect.max.y - 1, rect.max.x - cornerLength, color);
-    drawVLine(rect.max.x - 1, rect.max.y - 1, rect.max.y - cornerLength, color);
+    drawHLine(rect.getEndX() - cornerLength + 1, rect.getEndY(),                    cornerLength,     color);
+    drawVLine(rect.getEndX(),                    rect.getEndY() - cornerLength + 1, cornerLength - 1, color);
 
     // Bottom-left
-    drawHLine(rect.min.x, rect.max.y - 1, rect.min.x + cornerLength, color);
-    drawVLine(rect.min.x, rect.max.y - 1, rect.max.y - cornerLength, color);
+    drawHLine(rect.getLocationX(), rect.getEndY(),                    cornerLength,     color);
+    drawVLine(rect.getLocationX(), rect.getEndY() - cornerLength + 1, cornerLength - 1, color);
 
 } // end Surface::drawBoxCorners
 
@@ -1680,24 +1251,24 @@ void Surface::circle(int cx, int cy, int radius, PIX color)
   x = 0;
   y = radius;
 
-  while (y >= x) {
-    putPixel(cx + x, cy + y, color);// down right corner
-    putPixel(cx + y, cy + x, color);// down right corner
-    putPixel(cx - x, cy + y, color);// up left corner
-    putPixel(cx - y, cy + x, color);// up left corner
-    putPixel(cx + x, cy - y, color);// up right corner
-    putPixel(cx + y, cy - x, color);// up right corner
-    putPixel(cx - x, cy - y, color);// down left corner
-    putPixel(cx - y, cy - x, color);// down left corner
-
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else {
-      d = d + 4 * (x - y) + 10;
-      y--;
-    }
-    x++;
-  }
+//  while (y >= x) {
+//    putPixel(cx + x, cy + y, color);// down right corner
+//    putPixel(cx + y, cy + x, color);// down right corner
+//    putPixel(cx - x, cy + y, color);// up left corner
+//    putPixel(cx - y, cy + x, color);// up left corner
+//    putPixel(cx + x, cy - y, color);// up right corner
+//    putPixel(cx + y, cy - x, color);// up right corner
+//    putPixel(cx - x, cy - y, color);// down left corner
+//    putPixel(cx - y, cy - x, color);// down left corner
+//
+//    if (d < 0)
+//      d = d + (4 * x) + 6;
+//    else {
+//      d = d + 4 * (x - y) + 10;
+//      y--;
+//    }
+//    x++;
+//  }
 }
 
 void Surface::FillCircle(int cx, int cy, int radius, PIX color)
@@ -1708,20 +1279,20 @@ void Surface::FillCircle(int cx, int cy, int radius, PIX color)
   x = 0;
   y = radius;
 
-  while (y >= x) {
-    drawHLine(cx - x, cy - y,cx+ (x + 1), color);
-    drawHLine(cx - x, cy + y,cx+ (x + 1), color);
-    drawHLine(cx - y, cy - x,cx+ (y + 1), color);
-    drawHLine(cx - y, cy + x,cx+ (y + 1), color);
-
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else {
-      d = d + 4 * (x - y) + 10;
-      y--;
-    }
-    x++;
-  }
+//  while (y >= x) {
+//    drawHLine(cx - x, cy - y, x , color);
+//    drawHLine(cx - x, cy + y, x, color);
+//    drawHLine(cx - y, cy - x, y, color);
+//    drawHLine(cx - y, cy + x, y, color);
+//
+//    if (d < 0)
+//      d = d + (4 * x) + 6;
+//    else {
+//      d = d + 4 * (x - y) + 10;
+//      y--;
+//    }
+//    x++;
+//  }
 }
 
 void Surface::BltCircle(int cx, int cy, int radius, const PIX table[])
@@ -1732,20 +1303,20 @@ void Surface::BltCircle(int cx, int cy, int radius, const PIX table[])
   x = 0;
   y = radius;
 
-  while (y >= x) {
-    bltHLine(cx - x, cy - y,cx+ (x + 1), table);
-    bltHLine(cx - x, cy + y,cx+ (x + 1), table);
-    bltHLine(cx - y, cy - x,cx+ (y + 1), table);
-    bltHLine(cx - y, cy + x,cx+ (y + 1), table);
-
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else {
-      d = d + 4 * (x - y) + 10;
-      y--;
-    }
-    x++;
-  }
+//  while (y >= x) {
+//    bltHLine(cx - x, cy - y,cx+ (x + 1), table);
+//    bltHLine(cx - x, cy + y,cx+ (x + 1), table);
+//    bltHLine(cx - y, cy - x,cx+ (y + 1), table);
+//    bltHLine(cx - y, cy + x,cx+ (y + 1), table);
+//
+//    if (d < 0)
+//      d = d + (4 * x) + 6;
+//    else {
+//      d = d + 4 * (x - y) + 10;
+//      y--;
+//    }
+//    x++;
+//  }
 }
 
 
@@ -1759,78 +1330,75 @@ void Surface::RoundRect(iRect rect, int radius, PIX color)
 
     if ( !getWidth() || !getHeight() ) return;
 
-    orderCoords(rect);
-
     // Check for trivial rejection
-    if      (rect.max.x <  0)     return;
-    else if (rect.max.y <  0)     return;
-    else if (rect.min.x >= (int)getWidth()) return;
-    else if (rect.min.y >= (int)getHeight()) return;
-
+    if ( rect.isEmpty() ) return;
+    else if (rect.getLocationX() >= (int)getWidth()) return;
+    else if (rect.getLocationY() >= (int)getHeight()) return;
+    
     // Check for clipping
-    if (rect.min.x <  0)     rect.min.x = 0;
-    if (rect.min.y <  0)     rect.min.y = 0;
-    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
-    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+    if (rect.getLocationX() <  0)  rect.setLocationX(0);
+    if (rect.getLocationY() <  0)  rect.setLocationY(0);
+//    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+//    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
 
-    drawHLine(rect.min.x+radius, rect.min.y, rect.max.x-radius,   color);
-    drawHLine(rect.min.x+radius, rect.max.y, rect.max.x+1-radius, color);
-    drawVLine(rect.min.x, rect.min.y+radius, rect.max.y-radius,   color);
-    drawVLine(rect.max.x, rect.min.y+radius, rect.max.y-radius,   color);
+    drawHLine(rect.getLocationX()+radius, rect.getLocationY(),        rect.getWidth()  - (radius*2), color);
+    drawHLine(rect.getLocationX()+radius, rect.getEndY(),             rect.getWidth()  - (radius*2), color);
+    drawVLine(rect.getLocationX(),        rect.getLocationY()+radius, rect.getHeight() - (radius*2), color);
+    drawVLine(rect.getEndX(),             rect.getLocationY()+radius, rect.getHeight() - (radius*2), color);
 
-  while (y >= x) {
-    putPixel((rect.max.x-radius) + x, (rect.max.y-radius) + y, color);// down right corner
-    putPixel((rect.max.x-radius) + y, (rect.max.y-radius) + x, color);// down right corner
-    putPixel((rect.min.x+radius) - x, (rect.max.y-radius) + y, color);// down left corner
-    putPixel((rect.min.x+radius) - y, (rect.max.y-radius) + x, color);// down left corner
-    putPixel((rect.max.x-radius) + x, (rect.min.y+radius) - y, color);// up right corner
-    putPixel((rect.max.x-radius) + y, (rect.min.y+radius) - x, color);// up right corner
-    putPixel((rect.min.x+radius) - x, (rect.min.y+radius) - y, color);// up left corner
-    putPixel((rect.min.x+radius) - y, (rect.min.y+radius) - x, color);// up left corner
-//
-    if (d < 0)
-      d = d + (4 * x) + 6;
-    else {
-      d = d + 4 * (x - y) + 10;
-      y--;
+    while (y >= x)
+    {
+        putPixel( (rect.getLocationX()+radius) - x, (rect.getLocationY()+radius) - y, color);// up left corner
+        putPixel( (rect.getLocationX()+radius) - y, (rect.getLocationY()+radius) - x, color);// up left corner
+
+        putPixel( rect.getEndX() - radius + x, (rect.getLocationY()+radius) - y, color);// up right corner
+        putPixel( rect.getEndX() - radius + y, (rect.getLocationY()+radius) - x, color);// up right corner
+
+        putPixel( (rect.getLocationX()+radius) - x, rect.getEndY() - radius + y, color);// down left corner
+        putPixel( (rect.getLocationX()+radius) - y, rect.getEndY() - radius + x, color);// down left corner
+
+        putPixel( rect.getEndX() - radius + x, rect.getEndY() - radius + y, color);// down right corner
+        putPixel( rect.getEndX() - radius + y, rect.getEndY() - radius + x, color);// down right corner
+
+        if (d < 0)
+            d = d + (4 * x) + 6;
+        else
+        {
+            d = d + 4 * (x - y) + 10;
+            y--;
+        }
+        x++;
     }
-    x++;
-  }
 }
 
 void Surface::FillRoundRect(iRect rect, int radius, PIX color)
 {
+    if ( !getWidth() || !getHeight() ) return;
+
+    // Check for trivial rejection
+    if      (rect.isEmpty())     return;
+    else if (rect.getLocationX() >= (int)getWidth()) return;
+    else if (rect.getLocationY() >= (int)getHeight()) return;
+
     int d, y, x;
 
     d = 3 - (2 * radius);
     x = 0;
     y = radius;
 
-    if ( !getWidth() || !getHeight() ) return;
-
-    orderCoords(rect);
-
-    // Check for trivial rejection
-    if      (rect.max.x <  0)     return;
-    else if (rect.max.y <  0)     return;
-    else if (rect.min.x >= (int)getWidth()) return;
-    else if (rect.min.y >= (int)getHeight()) return;
-
     // Check for clipping
-    if (rect.min.x <  0)     rect.min.x = 0;
-    if (rect.min.y <  0)     rect.min.y = 0;
-    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
-    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+    if (rect.getLocationX() <  0)  rect.setLocationX(0);
+    if (rect.getLocationY() <  0)  rect.setLocationY(0);
+//    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+//    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
 
-    fillRect(iRect(rect.min.x,rect.min.y+radius,
-                   rect.max.x,rect.max.y-radius), color);
+    fillRect(iRect( rect.getLocationX(), rect.getLocationY()+radius+1,
+                    rect.getWidth(), rect.getHeight() - (radius*2) - 2), color);
 
     while (y >= x)
     {
-        drawHLine((rect.min.x+radius) - x - 1, (rect.min.y+radius) - y, (rect.max.x-radius)+ x + 2, color);//up
-        drawHLine((rect.min.x+radius) - x - 1, (rect.max.y-radius) + y, (rect.max.x-radius)+ x + 2, color);//down
-        drawHLine((rect.min.x+radius) - y - 1, (rect.min.y+radius) - x, (rect.max.x-radius)+ y + 2, color);//up
-        drawHLine((rect.min.x+radius) - y - 1, (rect.max.y-radius) + x, (rect.max.x-radius)+ y + 2, color);//down
+        drawHLine((rect.getLocationX()+radius) - y, (rect.getLocationY()+radius) - x, rect.getWidth() - (radius-y) + y - radius, color);//up
+        drawHLine((rect.getLocationX()+radius) - y, (rect.getEndY()-radius) + x,      rect.getWidth() - (radius-y) + y - radius, color);//down
 
         if (d < 0)
         {
@@ -1839,9 +1407,14 @@ void Surface::FillRoundRect(iRect rect, int radius, PIX color)
         else
         {
             d = d + 4 * (x - y) + 10;
+            if ( y > x )
+            {
+                drawHLine((rect.getLocationX()+radius) - x, (rect.getLocationY()+radius) - y, rect.getWidth() - (radius-x) + x - radius, color);//up
+                drawHLine((rect.getLocationX()+radius) - x, (rect.getEndY()-radius) + y,      rect.getWidth() - (radius-x) + x - radius, color);//down
+            }
             y--;
         }
-        
+
         x++;
     }
 }
@@ -1850,78 +1423,80 @@ void Surface::BltRoundRect(iRect rect, int radius, const PIX table[])
 {
     if ( !getWidth() || !getHeight() ) return;
 
-    orderCoords(rect);
-
     // Check for trivial rejection
-    if      (rect.max.x <  0)     return;
-    else if (rect.max.y <  0)     return;
-    else if (rect.min.x >= (int)getWidth()) return;
-    else if (rect.min.y >= (int)getHeight()) return;
+    if      (rect.isEmpty())     return;
+    else if (rect.getLocationX() >= (int)getWidth()) return;
+    else if (rect.getLocationY() >= (int)getHeight()) return;
+
+    int d, y, x;
+
+    d = 3 - (2 * radius);
+    x = 0;
+    y = radius;
 
     // Check for clipping
-    if (rect.min.x <  0)     rect.min.x = 0;
-    if (rect.min.y <  0)     rect.min.y = 0;
-    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
-    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
+    if (rect.getLocationX() <  0)  rect.setLocationX(0);
+    if (rect.getLocationY() <  0)  rect.setLocationY(0);
+//    if (rect.max.x >= (int)getWidth())  rect.max.x = getWidth() - 1;
+//    if (rect.max.y >= (int)getHeight()) rect.max.y = getHeight() - 1;
 
-    bltLookup(iRect(rect.min.x,rect.min.y+radius,
-                   rect.max.x,rect.max.y-radius+1), table);
+    bltLookup(iRect( rect.getLocationX(), rect.getLocationY()+radius+1,
+                     rect.getWidth(), rect.getHeight() - (radius*2) - 2), table);
 
-    int d = 3 - (2 * radius);
-    int x = 0;
-    int y = radius;
 
-    while (x < y)
+    while (y >= x)
     {
+        bltHLine((rect.getLocationX()+radius) - y, (rect.getLocationY()+radius) - x, rect.getWidth() - (radius-y) + y - radius, table);//up
+        bltHLine((rect.getLocationX()+radius) - y, (rect.getEndY()-radius) + x,      rect.getWidth() - (radius-y) + y - radius, table);//down
+
         if (d < 0)
         {
             d = d + (4 * x) + 6;
         }
         else
         {
-            bltHLine((rect.min.x+radius) - x, (rect.max.y-radius) + y,(rect.max.x-radius)+ x, table);//down
-            bltHLine((rect.min.x+radius) - x, (rect.min.y+radius) - y,(rect.max.x-radius)+ x, table);//up
             d = d + 4 * (x - y) + 10;
+            if ( y > x )
+            {
+                bltHLine((rect.getLocationX()+radius) - x, (rect.getLocationY()+radius) - y, rect.getWidth() - (radius-x) + x - radius, table);//up
+                bltHLine((rect.getLocationX()+radius) - x, (rect.getEndY()-radius) + y,      rect.getWidth() - (radius-x) + x - radius, table);//down
+            }
             y--;
         }
 
         x++;
-        bltHLine((rect.min.x+radius) - y, (rect.min.y+radius) - x,(rect.max.x-radius)+ y, table);//up
-        bltHLine((rect.min.x+radius) - y, (rect.max.y-radius) + x,(rect.max.x-radius)+ y, table);//down
     }
 }
 
-void Surface::bltHLine(int x1, int y, int x2, const PIX table[])
+void Surface::bltHLine(int x, int y, int size, const PIX table[])
 {
     assert(getDoesExist());
     assert(this != 0);
 
     // Check for trivial rejection
-    if ( y < 0 || x2 <= 0
+    if (    y < 0
          || y >= (int)getHeight()
-         || x1 >= (int)getWidth() )
+         || size <= 0
+       )
+    {
          return;
-
-    assert(mem != 0);
-    if (mem == 0) return;
-
-    orderCoords(x1, x2);
-
-    unsigned length = x2 - x1;
-    PIX *ptr = mem + y * (int)getPitch();
-
-    // CLIP LEFT
-    if (x1 < 0) {
-        length += x1;
-    }	else {
-        ptr += x1;
     }
 
-    // CLIP RIGHT
-    if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
-
-    for(size_t x=0; x<length; x++)
-        ptr[x] = table[ptr[x]];
-
+    if ( x < 0 )
+    {
+        size -= x;
+        x = 0;
+        if ( size <= 0 )
+        {
+            return;
+        }
+    }
+    
+    if ( (x+size) > (int)getWidth() ) size = getWidth()-x;
+    
+    PIX *ptr = mem + (x * sizeof(PIX)) + y * (int)getPitch();
+    
+    for(int r=0; r<size; r++)
+        ptr[r] = table[ptr[r]];
 } // end Surface::drawHLine
 

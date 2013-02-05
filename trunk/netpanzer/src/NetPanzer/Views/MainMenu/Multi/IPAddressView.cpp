@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "IPAddressView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Label.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/StrManager.hpp"
 
@@ -27,24 +28,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 IPAddressView::IPAddressView() : View()
 {
     setSearchName("IPAddressView");
-    setTitle(_("Server IP Address"));
-    setSubTitle("");
+//    setTitle(_("Server IP Address"));
 
-    setAllowResize(false);
     setAllowMove(false);
-    setVisible(false);
 
-    moveTo(iXY(bodyTextRect.min.x, bodyTextRect.min.y + 50));
+    moveTo(iXY(bodyTextRect.getLocationX(), bodyTextRect.getLocationY() + 24));
 
     iXY  area_size = iXY(
-            31 * 8 + 16,
+            31 * 8 + 16 + 100,
             Surface::getFontHeight() + 4 + 8);
     
-    resizeClientArea(area_size);
+    resize(area_size);
 
+    Label *c = new Label(0,4,_("Server IP Address"), Color::white);
+    add(c);
+    
     serverIP = new InputField();
-    serverIP->setLocation(iXY(8, 3));
-    serverIP->setSize(255, 16);
+    serverIP->setLocation(iXY(150, 0));
+    serverIP->setSize(getWidth()-160, 16);
     serverIP->setMaxTextLength(255);
     serverIP->setText("");
 

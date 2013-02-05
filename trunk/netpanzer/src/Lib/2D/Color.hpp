@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Color_hpp__
 #define __Color_hpp__
 
-#include "SDL.h"
 #include "Core/CoreTypes.hpp"
 
 //---------------------------------------------------------------------------
@@ -26,78 +25,78 @@ class Color
 {
 public:
     // Color for netPanzer players.
-    static Uint8 unitAqua;
-    static Uint8 unitYellow;
-    static Uint8 unitRed;
-    static Uint8 unitBlue;
-    static Uint8 unitDarkBlue;
-    static Uint8 unitLightGreen;
-    static Uint8 unitGreen;
-    static Uint8 unitBlueGray;
-    static Uint8 unitDarkRed;
-    static Uint8 unitBlack;
-    static Uint8 unitDarkGreen;
-    static Uint8 unitWhite;
-    static Uint8 unitLightOrange;
-    static Uint8 unitOrange;
-    static Uint8 unitGray;
-    static Uint8 unitDarkGray;
+    static uint8_t unitAqua;
+    static uint8_t unitYellow;
+    static uint8_t unitRed;
+    static uint8_t unitBlue;
+    static uint8_t unitDarkBlue;
+    static uint8_t unitLightGreen;
+    static uint8_t unitGreen;
+    static uint8_t unitBlueGray;
+    static uint8_t unitDarkRed;
+    static uint8_t unitBlack;
+    static uint8_t unitDarkGreen;
+    static uint8_t unitWhite;
+    static uint8_t unitLightOrange;
+    static uint8_t unitOrange;
+    static uint8_t unitGray;
+    static uint8_t unitDarkGray;
 
     // Normal Colors.
-    static Uint8 black;
-    static Uint8 blue;
-    static Uint8 brown;
-    static Uint8 cyan;
-    static Uint8 gray;
-    static Uint8 green;
-    static Uint8 magenta;
-    static Uint8 orange;
-    static Uint8 pink;
-    static Uint8 red;
-    static Uint8 white;
-    static Uint8 yellow;
+    static uint8_t black;
+    static uint8_t blue;
+    static uint8_t brown;
+    static uint8_t cyan;
+    static uint8_t gray;
+    static uint8_t green;
+    static uint8_t magenta;
+    static uint8_t orange;
+    static uint8_t pink;
+    static uint8_t red;
+    static uint8_t white;
+    static uint8_t yellow;
 
     // Color specifically for netPanzer.
-    static Uint8 tan;
-    static Uint8 chartreuse;
-    static Uint8 cobaltGreen;
-    static Uint8 emeraldGreen;
-    static Uint8 forestGreen;
-    static Uint8 darkOliveGreen;
-    static Uint8 terreVerte;
+    static uint8_t tan;
+    static uint8_t chartreuse;
+    static uint8_t cobaltGreen;
+    static uint8_t emeraldGreen;
+    static uint8_t forestGreen;
+    static uint8_t darkOliveGreen;
+    static uint8_t terreVerte;
 
     // Dark Colors.
-    static Uint8 darkBlue;
-    static Uint8 darkBrown;
-    static Uint8 darkCyan;
-    static Uint8 darkGray;
-    static Uint8 darkGreen;
-    static Uint8 darkMagenta;
-    static Uint8 darkOrange;
-    static Uint8 darkPink;
-    static Uint8 darkRed;
-    static Uint8 darkYellow;
+    static uint8_t darkBlue;
+    static uint8_t darkBrown;
+    static uint8_t darkCyan;
+    static uint8_t darkGray;
+    static uint8_t darkGreen;
+    static uint8_t darkMagenta;
+    static uint8_t darkOrange;
+    static uint8_t darkPink;
+    static uint8_t darkRed;
+    static uint8_t darkYellow;
 
     // Light Colors.
-    static Uint8 lightBlue;
-    static Uint8 lightBrown;
-    static Uint8 lightCyan;
-    static Uint8 lightGray;
-    static Uint8 lightGreen;
-    static Uint8 lightMagenta;
-    static Uint8 lightOrange;
-    static Uint8 lightPink;
-    static Uint8 lightRed;
-    static Uint8 lightYellow;
+    static uint8_t lightBlue;
+    static uint8_t lightBrown;
+    static uint8_t lightCyan;
+    static uint8_t lightGray;
+    static uint8_t lightGreen;
+    static uint8_t lightMagenta;
+    static uint8_t lightOrange;
+    static uint8_t lightPink;
+    static uint8_t lightRed;
+    static uint8_t lightYellow;
 
     // Gray scales.
-    static Uint8 gray32;
-    static Uint8 gray64;
-    static Uint8 gray96;
-    static Uint8 gray128;
-    static Uint8 gray160;
-    static Uint8 gray192;
-    static Uint8 gray224;
+    static uint8_t gray32;
+    static uint8_t gray64;
+    static uint8_t gray96;
+    static uint8_t gray128;
+    static uint8_t gray160;
+    static uint8_t gray192;
+    static uint8_t gray224;
 
 private:
     friend class ScriptManager;

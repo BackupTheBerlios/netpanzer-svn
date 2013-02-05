@@ -35,11 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 RankTeam::RankTeam() : GameTemplateView()
 {
     setSearchName("RankTeam");
-    setTitle(_("Round stats"));
-    setSubTitle("");
-
-    setAllowResize(false);
-    setBordered(false);
+//    setTitle(_("Round stats"));
 
     moveTo(GameConfig::interface_rankposition_x, GameConfig::interface_rankposition_y);
     resize(iXY(400, 200));
@@ -52,24 +48,24 @@ RankTeam::RankTeam() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void RankTeam::doDraw(Surface &viewArea, Surface &clientArea)
+void RankTeam::doDraw( Surface& dest )
 {
     unsigned int newheight = HEADER_HEIGHT
                              + (ENTRY_HEIGHT * (PlayerInterface::countPlayers()+1/2))
                              + 60;
 
-    if ( newheight != (unsigned int)getSizeY() )
+    if ( newheight != (unsigned int)getHeight() )
     {
         resize(400, newheight);
         RectStates = getClientRect();
         return; // this frame draws nothing
     }
-    clientArea.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
-    clientArea.RoundRect(RectStates, 14, ctWindowsBorder);
+    dest.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
+    dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
-    drawTeamStats(clientArea);
+    drawTeamStats(dest);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 }
 
 class StatesSortByTeam
@@ -87,33 +83,33 @@ public:
 
 static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
 {
-    char statBuf[256];
-    int x = rect.min.x+5;
-    int y = rect.min.y+5;
-
-    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
-    snprintf(statBuf, sizeof(statBuf), "%5i %s", 
-             state->getTotal(),
-             _("Points"));
-    dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
-    y += 10;
-    dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
-    y += 5;
-    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
-             _("Frags"), 
-             state->getKills());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
-    y += 12;
-    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
-             _("deaths"), 
-             state->getLosses());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
-    x += 120;
-    y = rect.min.y+20;
-    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
-             _("Objectives"),
-             state->getObjectivesHeld());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    char statBuf[256];
+//    int x = rect.position.x+5;
+//    int y = rect.position.y+5;
+//
+//    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
+//    snprintf(statBuf, sizeof(statBuf), "%5i %s", 
+//             state->getTotal(),
+//             _("Points"));
+//    dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
+//    y += 10;
+//    dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
+//    y += 5;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+//             _("Frags"), 
+//             state->getKills());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    y += 12;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+//             _("deaths"), 
+//             state->getLosses());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    x += 120;
+//    y = rect.position.y+20;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %5i", 
+//             _("Objectives"),
+//             state->getObjectivesHeld());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
 }
 
 static void DrawTeamHeader(Surface& dest, const Uint8 team, int x, int y)
@@ -146,78 +142,78 @@ static void DrawTeamHeader(Surface& dest, const Uint8 team, int x, int y)
 
 void RankTeam::drawTeamStats(Surface& dest)
 {
-    unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    char statBuf[256];
-    iRect r((RectStates.getSizeX()/2)-2, RectStates.min.y+5, (RectStates.getSizeX()/2)+2, RectStates.max.y-20);
-    dest.fillRect(r, ctTexteDisable);
-
-    states.clear();
-    PlayerID i;
-    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
-    {
-        PlayerState* state = PlayerInterface::getPlayer(i);
-        if( state->isActive() )
-        {
-            states.push_back(state);
-        }
-    }
-    std::sort(states.begin(), states.end(), StatesSortByTeam());
-
-    DrawTeamHeader(dest, 0, 5, 7);
-    DrawTeamHeader(dest, 1, (RectStates.getSizeX()/2)+5, 7);
-
-    int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
-    int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
-    Surface * flag = 0;
-    int cur_state = 1;
-
-    dest.drawLine(RectStates.min.x+5, cur_line_pos+10, RectStates.max.x-5, cur_line_pos+10, ctTexteNormal);
-
-    cur_line_pos += ENTRY_HEIGHT;
-    flag_pos += ENTRY_HEIGHT;
-    int current_Team = 0;
-    int FLAG_START = 3+RectStates.min.x+5;
-    int NAME_START = 3+RectStates.min.x+28;
-
-    iRect infopanel(RectStates.min.x+10,RectStates.max.y-50, RectStates.max.x-10, RectStates.max.y-5);
-    dest.fillRect(infopanel, ctWindowsbackground);
-
-    for(std::vector<const PlayerState*>::iterator i = states.begin();
-            i != states.end(); ++i)
-    {
-        const PlayerState* state = *i;
-
-        if (current_Team != state->getTeamID())
-        {
-            cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
-            flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
-            cur_line_pos += ENTRY_HEIGHT;
-            flag_pos += ENTRY_HEIGHT;
-            current_Team = state->getTeamID();
-            FLAG_START = (3+RectStates.getSizeX()/2)+5;
-            NAME_START = (3+RectStates.getSizeX()/2)+28;
-            cur_state = 1;
-        }
-        snprintf(statBuf, sizeof(statBuf),
-                 "%-15s", state->getName().c_str());
-        if (cur_state == selected_line)
-        {
-            if (selected_col == current_Team)
-            {
-                iRect r(FLAG_START, cur_line_pos-3, FLAG_START+185, cur_line_pos+11);
-                dest.fillRect(r, ctTexteOver);
-                DrawPanelUser(infopanel, dest, state);
-            }
-        }
-        dest.bltString(NAME_START, cur_line_pos, statBuf, ctTexteNormal);
-
-        flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, FLAG_START, flag_pos );
-
-        cur_line_pos += ENTRY_HEIGHT;
-        flag_pos += ENTRY_HEIGHT;
-        ++cur_state;
-    }
+//    unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
+//    char statBuf[256];
+//    iRect r((RectStates.getSizeX()/2)-2, RectStates.position.y+5, (RectStates.getSizeX()/2)+2, RectStates.max.y-20);
+//    dest.fillRect(r, ctTexteDisable);
+//
+//    states.clear();
+//    PlayerID i;
+//    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
+//    {
+//        PlayerState* state = PlayerInterface::getPlayer(i);
+//        if( state->isActive() )
+//        {
+//            states.push_back(state);
+//        }
+//    }
+//    std::sort(states.begin(), states.end(), StatesSortByTeam());
+//
+//    DrawTeamHeader(dest, 0, 5, 7);
+//    DrawTeamHeader(dest, 1, (RectStates.getSizeX()/2)+5, 7);
+//
+//    int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+//    int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
+//    Surface * flag = 0;
+//    int cur_state = 1;
+//
+//    dest.drawLine(RectStates.position.x+5, cur_line_pos+10, RectStates.max.x-5, cur_line_pos+10, ctTexteNormal);
+//
+//    cur_line_pos += ENTRY_HEIGHT;
+//    flag_pos += ENTRY_HEIGHT;
+//    int current_Team = 0;
+//    int FLAG_START = 3+RectStates.position.x+5;
+//    int NAME_START = 3+RectStates.position.x+28;
+//
+//    iRect infopanel(RectStates.position.x+10,RectStates.max.y-50, RectStates.max.x-10, RectStates.max.y-5);
+//    dest.fillRect(infopanel, ctWindowsbackground);
+//
+//    for(std::vector<const PlayerState*>::iterator i = states.begin();
+//            i != states.end(); ++i)
+//    {
+//        const PlayerState* state = *i;
+//
+//        if (current_Team != state->getTeamID())
+//        {
+//            cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+//            flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
+//            cur_line_pos += ENTRY_HEIGHT;
+//            flag_pos += ENTRY_HEIGHT;
+//            current_Team = state->getTeamID();
+//            FLAG_START = (3+RectStates.getSizeX()/2)+5;
+//            NAME_START = (3+RectStates.getSizeX()/2)+28;
+//            cur_state = 1;
+//        }
+//        snprintf(statBuf, sizeof(statBuf),
+//                 "%-15s", state->getName().c_str());
+//        if (cur_state == selected_line)
+//        {
+//            if (selected_col == current_Team)
+//            {
+//                iRect r(FLAG_START, cur_line_pos-3, FLAG_START+185, cur_line_pos+11);
+//                dest.fillRect(r, ctTexteOver);
+//                DrawPanelUser(infopanel, dest, state);
+//            }
+//        }
+//        dest.bltString(NAME_START, cur_line_pos, statBuf, ctTexteNormal);
+//
+//        flag = ResourceManager::getFlag(state->getFlag());
+//        flag->blt( dest, FLAG_START, flag_pos );
+//
+//        cur_line_pos += ENTRY_HEIGHT;
+//        flag_pos += ENTRY_HEIGHT;
+//        ++cur_state;
+//    }
 
 }
 
@@ -227,15 +223,15 @@ void RankTeam::mouseMove(const iXY & prevPos, const iXY &newPos)
     if ( newPos.y >= TABLE_START )
     {
         selected_line = (newPos.y-TABLE_START) / ENTRY_HEIGHT;
-        if (newPos.x > RectStates.getSizeX()/2) selected_col = 1;
+        if (newPos.x > RectStates.getWidth()/2) selected_col = 1;
         else selected_col = 0;
     }
 }
 
 void RankTeam::notifyMoveTo()
 {
-    GameConfig::interface_rankposition_x = min.x;
-    GameConfig::interface_rankposition_y = min.y;
+    GameConfig::interface_rankposition_x = getLocationX();
+    GameConfig::interface_rankposition_y = getLocationY();
 }
 
 void RankTeam::doActivate()

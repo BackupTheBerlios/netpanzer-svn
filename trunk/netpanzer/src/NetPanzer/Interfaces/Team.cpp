@@ -150,7 +150,7 @@ void Team::loadFlag(const char *fileName)
  
 void Team::drawFlag(Surface &dest, int x, int y) const
 {
-    Flag.bltTrans(dest, x, y);
+    Flag.bltTrans(dest, x, y); // blit full
 }
  
 short Team::getKills() const

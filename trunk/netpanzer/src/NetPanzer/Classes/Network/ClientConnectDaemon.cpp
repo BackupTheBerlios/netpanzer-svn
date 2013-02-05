@@ -445,27 +445,10 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
 
     case _connect_state_setup_client_game :
     {
-        char str_buf[128];
-        int percent_complete;
-
-        if ( GameManager::clientGameSetup( &percent_complete ) == false )
-        {
-            ConnectMesgClientGameSetupAck client_game_setup_ack;
-
-            sprintf( str_buf, "%s (%d%%)", _("Loading Game Data ..."), percent_complete);
-            LoadingView::update( str_buf );
-
-            CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
-            connection_state = _connect_state_sync_profiles;
-        }
-        else
-        {
-            ConnectMesgClientGameSetupPing client_game_setup_ping;
-
-            sprintf( str_buf, "%s (%d%%)",_("Loading Game Data ..."), percent_complete);
-            LoadingView::update( str_buf );
-            CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
-        }
+        ConnectMesgClientGameSetupAck client_game_setup_ack;
+        CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
+        
+        connection_state = _connect_state_sync_profiles;
     }
     break;
 

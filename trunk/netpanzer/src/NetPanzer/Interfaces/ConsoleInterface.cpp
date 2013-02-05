@@ -53,7 +53,7 @@ void ConsoleInterface::initialize( long size )
     surface_size = iXY( 800, 600 );
     bounds = iRect( 5, 5, 800 - 5, 600 - 5 );
 
-    max_char_per_line = (bounds.max.x - bounds.min.x) / 8;
+    max_char_per_line = bounds.getWidth() / 8;
 
     vertical_spacing = 2;
 
@@ -77,12 +77,11 @@ void ConsoleInterface::setToSurfaceSize( iXY pix )
 {
     surface_size = pix;
 
-    bounds.min.x = 5;
-    bounds.min.y = 5;
-    bounds.max = pix - iXY(5, 5);
+    bounds.setLocation(5, 5);
+    bounds.setSize(pix - iXY(5, 5));
 
     int CHAR_XPIX = 8; // XXX hardcoded
-    max_char_per_line = (bounds.max.x - bounds.min.x) / CHAR_XPIX;
+    max_char_per_line = bounds.getWidth() / CHAR_XPIX;
 }
 
 void ConsoleInterface::setStdoutPipe( bool on_off )
@@ -175,8 +174,8 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
     } while( index != line_index );
 
-    current_line.y = bounds.min.y + (line_offset.y * visible_count );
-    current_line.x = bounds.min.x + line_offset.x;
+    current_line.y = bounds.getLocationY() + (line_offset.y * visible_count );
+    current_line.x = bounds.getLocationX() + line_offset.x;
 
     int flagextrax;
     Surface * flag = 0;
@@ -188,7 +187,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
             {
                 flag = ResourceManager::getFlag(line_list[index].flag);
                 flagextrax = flag->getWidth()+2;
-                flag->blt(surface, current_line.x, current_line.y);
+                flag->blt(surface, current_line.x, current_line.y); // full blit
             }
             else
             {

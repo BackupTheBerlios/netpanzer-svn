@@ -63,18 +63,7 @@ extern iRect bodyTextRect;
 extern iRect newsRect;
 extern iRect MenuRect;
 
-// These are the possible background colors for the menus.
-enum
-{
-    VIEW_BACKGROUND_DARK_GRAY_BLEND,
-    VIEW_BACKGROUND_LIGHT_GRAY_BLEND,
-    VIEW_BACKGROUND_SOLID_BLACK,
-    VIEW_BACKGROUND_TRANSPARENT,
-    VIEW_BACKGROUND_COUNT
-};
-
 void bltViewBackground(Surface &dest);
-void bltBlendRect(Surface &dest, const iRect &r);
 
 // Is the game help currently open?
 extern bool gDrawGameHelp;

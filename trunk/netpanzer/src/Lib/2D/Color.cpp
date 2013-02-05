@@ -89,12 +89,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // Have to merge like this, cant use ##
 #define MERGE_CLASS(a) a::
-#define GEN_VAR(CNAME) Uint8 MERGE_CLASS(Color)CNAME;
+#define GEN_VAR(CNAME) uint8_t MERGE_CLASS(Color)CNAME;
 
 #define GEN_GETSTRUCT(CNAME) { #CNAME, GETSVTYPE_BYTE, &MERGE_CLASS(Color)CNAME },
 #define GEN_SETSTRUCT(CNAME) { #CNAME, SETSVTYPE_BYTE, &MERGE_CLASS(Color)CNAME },
 
-// This generate the Uint8 Color::colorname for all the colors
+// This generate the uint8_t Color::colorname for all the colors
 // Must not have ';' at end
 GEN_COLORS(GEN_VAR)
 

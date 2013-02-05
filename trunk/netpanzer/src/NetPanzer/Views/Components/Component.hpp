@@ -33,10 +33,10 @@ class View;
 class Component
 {
 protected:
-    PIX    background;
-    PIX    foreground;
+    PIX     background;
+    PIX     foreground;
     iXY     size;
-    iXY    position;
+    iXY     position;
     Surface surface;
     bool    enabled;
     bool    visible;
@@ -47,25 +47,6 @@ protected:
     void reset();
 
 public:
-    Component *next;
-    Component *prev;
-
-    View * parent;       // Who is my daddy?
-
-    void setParent(View *parent)
-    {
-        this->parent = parent;
-    }
-
-    enum
-    {
-        BOTTOM_ALIGNMENT,
-        CENTER_ALIGNMENT,
-        LEFT_ALIGNMENT,
-        RIGHT_ALIGNMENT,
-        TOP_ALIGNMENT
-    };
-
     Component()
     {
         reset();
@@ -78,29 +59,29 @@ public:
     // Accessor functions.
     void getBounds(iRect &r)
     {
-        r.min = position;
-        r.max = position + size;
+        r.setLocation(position);
+        r.setSize(size);
     }
-    bool contains(int x, int y) const;
-    bool contains(iXY p) const { return contains(p.x, p.y); }
+    bool contains(const int x, const int y) const;
+    bool contains(const iXY& p) const { return contains(p.x, p.y); }
 
     void setBounds(const iRect &r)
     {
-        position  = r.min;
+        position  = r.getLocation();
         size = r.getSize();
         //surface.create(r.getSizeX(), r.getSizeY(), 1);
         dirty = true;
     }
 
-    virtual void setSize(int x, int y)
+    virtual void setSize(const int x, const int y)
     {
         size.x=x;
         size.y=y;
-        surface.create(x,y,1);
+        surface.create(x,y);
         dirty=true;
     }
 
-    void setLocation(int x, int y);
+    virtual void setLocation(const int x, const int y);
     void setLocation(const iXY &p)
     {
         setLocation(p.x, p.y);
@@ -126,13 +107,10 @@ public:
 
     virtual void draw(Surface &dest)
     {
-        iRect bounds;
-        getBounds(bounds);
-
         if ( dirty )
             render();
 
-        surface.bltTrans(dest, bounds.min.x, bounds.min.y);
+        surface.bltTrans(dest, position.x, position.y ); // blit full
     }
 
     virtual void render() = 0;

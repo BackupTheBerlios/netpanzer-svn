@@ -50,6 +50,8 @@ int NetworkManager::resolver_worker(void *data)
         SDL_SemWait(semaphore);
         if ( ! network_running ) break;
 
+//        LOGGER.debug("[Resolv Thread] Resolving: %s:%s", thread_work.str_host.c_str(), thread_work.str_port.c_str() );
+
         struct addrinfo hints;
         struct addrinfo *firstaddress = 0;
 
@@ -80,6 +82,7 @@ int NetworkManager::resolver_worker(void *data)
 
             thread_work.status = Address::ST_OK;
         }
+//        LOGGER.debug("[Resolv Thread] Resolved: %s:%s --> %s", thread_work.str_host.c_str(), thread_work.str_port.c_str(), thread_work.status == Address::ST_OK ? "Ok": "Error" );
     }
     return 0;
 }

@@ -33,14 +33,13 @@ void Component::reset()
     position.zero();
     enabled    = true;
     visible    = true;
-    parent     = 0;
     surface.free();
 
 } // end Component::reset
 
 // contains
 //---------------------------------------------------------------------------
-bool Component::contains(int x, int y) const
+bool Component::contains(const int x, const int y) const
 {
     return (x >= position.x &&
             x < position.x + size.x &&
@@ -51,7 +50,7 @@ bool Component::contains(int x, int y) const
 
 // setLocation
 //---------------------------------------------------------------------------
-void Component::setLocation(int x, int y)
+void Component::setLocation(const int x, const int y)
 {
     position.x = x;
     position.y = y;

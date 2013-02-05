@@ -42,8 +42,8 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     occupying_player = 0;
 
     MapInterface::pointXYtoMapXY( location, outpost_map_loc );
-    selection_box.max = location + iXY( 64, 32 );
-    selection_box.min = location + iXY( -224, -128 );
+    selection_box.setLocation(location + iXY( -224, -128 ));
+    selection_box.setSize( 288, 160 );
     this->area.min = iXY( -400, -144 );
     this->area.max = iXY(  304,  240 );
     outpost_type = 0;

@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
-#include "INIParser/Store.hpp"
-#include "INIParser/Section.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Views/Game/MiniMapView.hpp"
@@ -85,7 +83,6 @@ int       GameConfig::radar_selectedunitcolor = _color_white;
 int       GameConfig::radar_alliedunitcolor = _color_orange;
 int       GameConfig::radar_playeroutpostcolor = _color_blue;
 int       GameConfig::radar_alliedoutpostcolor = _color_orange;
-int       GameConfig::radar_enemyoutpostcolor = _color_red;
 int       GameConfig::radar_unitsize = _mini_map_unit_size_small;
 
 int       GameConfig::interface_attacknotificationtime = 5;
@@ -95,7 +92,6 @@ int       GameConfig::interface_unitinfodrawlayer = 0;
 int       GameConfig::interface_scrollrate = 1000;
 int       GameConfig::interface_rankposition_x = 100;
 int       GameConfig::interface_rankposition_y = 100;
-int       GameConfig::interface_viewdrawbackgroundmode = (int)VIEW_BACKGROUND_DARK_GRAY_BLEND;
 NPString* GameConfig::interface_language = 0;
 
 int       GameConfig::server_port = NETPANZER_DEFAULT_PORT_TCP;
@@ -156,7 +152,6 @@ static const ScriptVarBindRecord interface_getters[] =
     { "scrollrate",             GETSVTYPE_INT,     &GameConfig::interface_scrollrate},
     { "rankposition_x",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         GETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
-    { "viewdrawbackgroundmode", GETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
     { "language",               GETSVTYPE_STRING,  &GameConfig::interface_language},
     {0,0}
 };
@@ -173,7 +168,6 @@ static const ScriptVarBindRecord interface_setters[] =
     { "scrollrate",             SETSVTYPE_INT,     &GameConfig::interface_scrollrate},
     { "rankposition_x",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_x},
     { "rankposition_y",         SETSVTYPE_INT,     &GameConfig::interface_rankposition_y},
-    { "viewdrawbackgroundmode", SETSVTYPE_INT,     &GameConfig::interface_viewdrawbackgroundmode},
     { "language",               SETSVTYPE_STRING,  &GameConfig::interface_language},
     {0,0}
 };
@@ -265,7 +259,6 @@ static const ScriptVarBindRecord radar_getters[] =
     { "alliedunitcolor",    GETSVTYPE_INT,     &GameConfig::radar_alliedunitcolor},
     { "playeroutpostcolor", GETSVTYPE_INT,     &GameConfig::radar_playeroutpostcolor},
     { "alliedoutpostcolor", GETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
-    { "enemyoutpostcolor",  GETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
     { "unitsize",           GETSVTYPE_INT,     &GameConfig::radar_unitsize},
     {0,0}
 };
@@ -277,7 +270,6 @@ static const ScriptVarBindRecord radar_setters[] =
     { "alliedunitcolor",    SETSVTYPE_INT,     &GameConfig::radar_alliedunitcolor},
     { "playeroutpostcolor", SETSVTYPE_INT,     &GameConfig::radar_playeroutpostcolor},
     { "alliedoutpostcolor", SETSVTYPE_INT,     &GameConfig::radar_alliedoutpostcolor},
-    { "enemyoutpostcolor",  SETSVTYPE_INT,     &GameConfig::radar_enemyoutpostcolor},
     { "unitsize",           SETSVTYPE_INT,     &GameConfig::radar_unitsize},
     {0,0}
 };
@@ -382,7 +374,7 @@ void GameConfig::registerScript(const NPString& table_name)
 
     if ( ! interface_language )
     {
-        interface_language = new NPString("");
+        interface_language = new NPString("en.po");
     }
 
     ScriptManager::bindStaticVariables(table_name + ".video",
@@ -421,10 +413,10 @@ void GameConfig::registerScript(const NPString& table_name)
 GameConfig::GameConfig(const std::string& luaconfigfile,bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
     :
-      hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
-      quickConnect("quickconnect", false),
-      needPassword("needpassword", false),
-      serverConnect("serverconnect", "")
+      hostorjoin(_game_session_join),
+      quickConnect(false),
+      needPassword(false),
+      serverConnect("")
 
 {
     this->luaconfigfile = luaconfigfile;

@@ -59,7 +59,7 @@ void
 MiniMap::draw(Surface &dest)
 {
     //regenerate();
-    surface.blt(dest,position.x, position.y);
+    surface.blt(dest,position.x, position.y); // full blit
     drawObjectives(dest);
     drawUnits(dest);
     drawWorldAndMouseBox(dest);
@@ -149,7 +149,7 @@ MiniMap::regenerate()
 void
 MiniMap::drawObjectives(Surface &dest)
 {
-    iRect objective_rect, map_rect;
+    iRect map_rect;
     PIX color;
     ObjectiveID objective_id;
 
@@ -182,16 +182,18 @@ MiniMap::drawObjectives(Surface &dest)
             color = Color::white;
         }
 
-        objective_rect = obj->area.getAbsRect( obj->location );
+        map_rect = obj->area.getAbsRect( obj->location );
 
-        // magic 32 to convert from point to tile
-        map_rect.min.x = int(float(objective_rect.min.x/32) / xratio)+position.x;
-        map_rect.min.y = int(float(objective_rect.min.y/32) / yratio)+position.y;
-        map_rect.max.x = int(float(objective_rect.max.x/32) / xratio)+position.x;
-        map_rect.max.y = int(float(objective_rect.max.y/32) / yratio)+position.y;
-
+        map_rect.scale(1/(xratio*32), 1/(yratio*32));
+        map_rect.translate(position);
+        
         dest.drawRect( map_rect, color);
-        dest.drawRect( iRect(map_rect.min.x + 1, map_rect.min.y + 1, map_rect.max.x - 1, map_rect.max.y - 1), color );
+        
+        {
+            iRect gr(map_rect);
+            gr.grow(-1,-1);
+            dest.drawRect( gr, color );
+        }
 
         //LOG(("%d", obj_state.outpost_type));
         if ( obj->occupying_player == PlayerInterface::getLocalPlayer() )
@@ -289,19 +291,35 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
     iRect world_win;
     WorldViewInterface::getViewWindow(&world_win);
 
-    world_win.min.x = int(float(world_win.min.x/32) / xratio)+position.x;
-    world_win.min.y = int(float(world_win.min.y/32) / yratio)+position.y;
-    world_win.max.x = int(float(world_win.max.x/32) / xratio)+position.x;
-    world_win.max.y = int(float(world_win.max.y/32) / yratio)+position.y;
-
+    world_win.scale(1/(xratio*32), 1/(yratio*32));
+    world_win.translate(position);
+    
     dest.bltLookup(world_win, Palette::darkGray256.getColorArray());
     dest.drawBoxCorners(world_win, 5, Color::white);
     
     if ( mouseinside )
     {
         iXY size(world_win.getSize());
-        world_win.min = mousepos - (size/2);
-        world_win.max = world_win.min + size;
+        world_win.setLocation(mousepos - (size/2));
+        world_win.setSize(size);
+        if ( world_win.getLocationY() < 0 )
+        {
+            world_win.setLocationY(0);
+        }
+        else if ( world_win.getEndY() > dest.getHeight() )
+        {
+            world_win.setLocationY(dest.getHeight() - world_win.getHeight());
+        }
+        
+        if ( world_win.getLocationX() < 0 )
+        {
+            world_win.setLocationX(0);
+        }
+        else if ( world_win.getEndX() > dest.getWidth() )
+        {
+            world_win.setLocationX(dest.getWidth() - world_win.getWidth());
+        }
+        
         dest.drawBoxCorners(world_win, 5, Color::red);
     }
 }

@@ -32,22 +32,17 @@ class MenuTemplateView : public RMouseHackView
 private:
     Button * playButton;
     
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    
 protected:
-    static  void loadNetPanzerLogo();
-
     virtual void loadBackgroundSurface();
-    virtual void loadTitleSurface();
 
     void doLoadBackgroundSurface(const std::string& string);
-    void doLoadTitleSurface(const std::string& string);
-
-    float curTitleFlashTime;  // Where am I at in the flash?
-    float titleFlashTimeHalf; // Time it takes for a half flash.
 
 public:
     MenuTemplateView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void processEvents();
@@ -55,7 +50,7 @@ public:
     void initInGameOptionButtons();
     void initPreGameOptionButtons();
 
-    virtual void initButtons();
+    virtual void init();
     
     void showPlayButton();
     void hidePlayButton();
@@ -64,7 +59,6 @@ public:
     static bool          firstTimeInMenu;
     //static PackedSurface globeSurface;
     static Surface       backgroundSurface;
-    static PackedSurface titlePackedSurface;
 }; // end MenuTemplateView
 
 #endif // end __MenuTemplateView_hpp__

@@ -18,20 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPRITESORTER_HPP
 #define _SPRITESORTER_HPP
 
-#include <vector>
+#include "ArrayUtil/PtrArray.hpp"
 #include "Classes/Sprite.hpp"
 
 class SpriteSorter
 {
 protected:
     iRect world_window;
-    std::vector<Sprite*> sprite_lists[ _MAX_HEIGHT_LEVELS ];
-    unsigned long  list_counts[ _MAX_HEIGHT_LEVELS ];
+    PtrArray<Sprite> sprite_lists[ _MAX_HEIGHT_LEVELS ];
+    unsigned long max_sprite_stats[ _MAX_HEIGHT_LEVELS ];
 
     void sortLists( void );
 
-protected:
-    unsigned long max_sprite_stats[ _MAX_HEIGHT_LEVELS ];
 
 public:
 

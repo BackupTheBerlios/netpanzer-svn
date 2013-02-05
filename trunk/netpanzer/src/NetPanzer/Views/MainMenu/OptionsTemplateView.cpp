@@ -16,11 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Components/Label.hpp"
+#include "Views/Components/BoxedLabel.hpp"
+#include "Views/Components/CheckBox.hpp"
+#include "Views/Components/Separator.hpp"
+#include "Views/Components/Choice.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
@@ -31,49 +34,116 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Actions/Action.hpp"
 #include "Actions/ChangeIntVarAction.hpp"
 
-class Separator:public Component
+class FullScreenModifiedAction : public Action
 {
 public:
-    Separator(int x, int y, int endx, string t, PIX color)
+    FullScreenModifiedAction() : Action(false) {}
+    
+    void execute()
     {
-        text = t;
-        foreground = color;
-        position.x = x;
-        position.y = y;
-        xend = endx;
+        GameManager::setVideoMode();
     }
-    
-    void draw(Surface &dest);
-    
-    virtual void render()
-    {
-        // nothing
-    }
-    
-    void actionPerformed(const mMouseEvent &me)
-    {
-        // nothing
-    }
-    
-private:
-    string text;
-    int xend;
 };
 
-void Separator::draw(Surface &dest)
-{    
-    dest.drawLine(position.x, position.y+3, position.x+20, position.y+3, foreground);
-    dest.drawLine(position.x, position.y+2, position.x+20, position.y+2, Color::black);
-    dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::black);
-    int lentxt = 30+dest.getTextLength(text);
-    dest.drawLine(position.x+lentxt, position.y+3, xend, position.y+3, foreground);
-    dest.drawLine(position.x+lentxt, position.y+2, xend, position.y+2, Color::black);
-}
-
-static int getScrollRate()
+class SoundModifiedAction : public Action
 {
-    return (int) GameConfig::interface_scrollrate;
-}
+    CheckBox * cb;
+public:
+    SoundModifiedAction(CheckBox* cb) : Action(false), cb(cb) {}
+    
+    void execute()
+    {
+        delete sound;
+
+        if ( GameConfig::sound_enable )
+        {
+            sound = new SDLSound();
+            cb->setLabel(_("Enabled"));
+            
+            if ( GameControlRulesDaemon::getGameState() )
+            {
+                sound->playTankIdle();
+            }
+            
+            if ( GameConfig::sound_music )
+            {
+                sound->playMusic("sound/music/");
+            }
+        }
+        else
+        {
+            sound = new DummySound();
+            cb->setLabel(_("Disabled"));
+        }
+    }
+};
+
+class MusicModifiedAction : public Action
+{
+    CheckBox * cb;
+public:
+    MusicModifiedAction(CheckBox* cb) : Action(false), cb(cb) {}
+    
+    void execute()
+    {
+        if ( GameConfig::sound_music )
+        {
+            sound->playMusic("sound/music/");
+            cb->setLabel(_("Enabled"));
+        }
+        else
+        {
+            sound->stopMusic();
+            cb->setLabel(_("Disabled"));
+        }
+    }
+};
+
+class ScrollRateBoxedLabel : public BoxedLabel
+{
+public:
+    ScrollRateBoxedLabel()
+        : BoxedLabel(0,0,10,"",meterTextColor, meterColor, true)
+    {}
+
+    NPString getText() const
+    {
+        char strBuf[256];
+        sprintf(strBuf, "%d %%", int((float(GameConfig::interface_scrollrate) / 10000.0f * 100.0f)));
+        return NPString(strBuf);
+    }
+};
+
+class SoundVolumeBoxedLabel : public BoxedLabel
+{
+public:
+    SoundVolumeBoxedLabel()
+        : BoxedLabel(0,0,10,"",meterTextColor, meterColor, true)
+    {}
+
+    NPString getText() const
+    {
+        char strBuf[256];
+        sprintf(strBuf, "%d %%", GameConfig::sound_effectsvol);
+        return NPString(strBuf);
+    }
+};
+
+class MusicVolumeBoxedLabel : public BoxedLabel
+{
+public:
+    MusicVolumeBoxedLabel()
+        : BoxedLabel(0,0,10,"",meterTextColor, meterColor, true)
+    {}
+
+    NPString getText() const
+    {
+        char strBuf[256];
+        sprintf(strBuf, "%d %%", GameConfig::sound_musicvol);
+        return NPString(strBuf);
+    }
+};
+
 
 class ChangeSoundVolumeAction : public Action
 {
@@ -91,11 +161,6 @@ public:
     }
 };
 
-static int getSoundVolume()
-{
-    return GameConfig::sound_effectsvol;
-}
-
 class ChangeMusicVolumeAction : public Action
 {
 public:
@@ -112,251 +177,40 @@ public:
     }
 };
 
-static int getMusicVolume()
+class ScreenResolutionChoice : public Choice
 {
-    return GameConfig::sound_musicvol;
-}
-
-
-// OptionsTemplateView
-//---------------------------------------------------------------------------
-OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
-{
-    setSearchName("OptionsView");
-    setTitle("OptionsTemplate");
-    setSubTitle("");
-
-    initButtons();
-
-} // end OptionsTemplateView::OptionsTemplateView
-
-
-// initButtons
-//---------------------------------------------------------------------------
-void OptionsTemplateView::initButtons()
-{
-    removeComponents();
-
-    MenuTemplateView::initButtons();
-
-    int xTextStart       = bodyTextRect.min.x;
-    int x                = xTextStart;
-    int y                = bodyTextRect.min.y;
-    int yOffset          =  17;
-    int arrowButtonWidth =  16;
-    int col              = 200;
-    // Settings
-    //----------------------------------------------------------------------
-    int minWidth = 19 * 8;
-
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  _("VISUAL"), componentActiveTextColor) );
-    y += yOffset;
-    x = xTextStart;
-    checkBoxFullscreen = new CheckBox();
-    checkBoxFullscreen->setLabel(_("Full screen"));
-    checkBoxFullscreen->setLocation(x+ col, y);
-    checkBoxFullscreen->setStateChangedCallback(this);
-    add(checkBoxFullscreen);
-    y += yOffset;
-    x = xTextStart;
-    checkBoxDrawAllShadows = new CheckBox();
-    checkBoxDrawAllShadows->setLabel(_("Draw All Shadows"));
-    checkBoxDrawAllShadows->setState(GameConfig::video_shadows);
-    checkBoxDrawAllShadows->setLocation(x+ col, y);
-    checkBoxDrawAllShadows->setStateChangedCallback(this);
-    add(checkBoxDrawAllShadows);
-
-    x = xTextStart;
-    char res_str[20];
-    choiceResolution = new Choice();
-    choiceResolution->setLabel(_("Resolution"));
-    choiceResolution->addItem(_("Current"));
-    SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
-    int cur_mode = 0;
-    if ( modes && modes != (SDL_Rect**)-1 )
+public:
+    ScreenResolutionChoice(int x, int y, int w) : Choice()
     {
-        while ( modes[cur_mode] )
+        setLabel(_("Resolution"));
+        addItem(_("current"));
+
+        SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
+        int cur_mode = 0;
+        char res_str[20];
+        if ( modes && modes != (SDL_Rect**)-1 )
         {
-            if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 599) ) 
+            while ( modes[cur_mode] )
             {
-                snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
-                res_str[sizeof(res_str)-1] = 0;
-                choiceResolution->addItem(res_str);
+                if ((modes[cur_mode]->w > 799) && (modes[cur_mode]->h > 479) ) 
+                {
+                    snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
+                    res_str[sizeof(res_str)-1] = 0;
+                    addItem(res_str);
+                }
+                ++cur_mode;
             }
-            ++cur_mode;
         }
+
+        setMinWidth(w);
+        setLocation(x, y);
+        
+        select(0);
     }
-
-    choiceResolution->setLocation(x, y-3);
-    choiceResolution->select(0);
-    choiceResolution->setMinWidth(minWidth);
-    choiceResolution->setStateChangedCallback(this);
-    add(choiceResolution);
-    current_width = 0;
-    current_height = 0;
-    y += yOffset;
-
-    x = xTextStart;
-    checkBoxBlendSmoke = new CheckBox();
-    checkBoxBlendSmoke->setLabel(_("Blend Smoke"));
-    checkBoxBlendSmoke->setState(GameConfig::video_blendsmoke);
-    checkBoxBlendSmoke->setLocation(x+ col, y);
-    checkBoxBlendSmoke->setStateChangedCallback(this);
-    add(checkBoxBlendSmoke);
-    y += yOffset;
- 
-#ifdef _WIN32
-    x = xTextStart;
-    checkBoxUseDirectX = new CheckBox();
-    checkBoxUseDirectX->setLabel(_("Use DirectX"));
-    checkBoxUseDirectX->setState(GameConfig::video_usedirectx);
-    checkBoxUseDirectX->setLocation(x+ col, y);
-    checkBoxUseDirectX->setStateChangedCallback(this);
-    add(checkBoxUseDirectX);
-#endif
-
-    x = xTextStart;
-    choiceMiniMapUnitSize = new Choice();
-    choiceMiniMapUnitSize->setLabel(_("Mini Map Unit Size"));
-    choiceMiniMapUnitSize->addItem(_("Small"));
-    choiceMiniMapUnitSize->addItem(_("Large"));
-    choiceMiniMapUnitSize->setLocation(x, y);
-    choiceMiniMapUnitSize->select(gameconfig->radar_unitsize);
-    choiceMiniMapUnitSize->setMinWidth(minWidth);
-    choiceMiniMapUnitSize->setStateChangedCallback(this);
-    add(choiceMiniMapUnitSize);
-    y += yOffset*2;
-   
-// VISUAL OPTIONS
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x, _("INTERFACE"), componentActiveTextColor) );
-
-    y += yOffset;
-    x = xTextStart;
-    add( new Label( x, y+3, _("Scroll Rate:"), windowTextColor) );
-    x += optionsMeterStartX;
-    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
-    x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
-    y += yOffset*3;
-
-// SOUND OPTIONS
-
-    add( new Separator( bodyTextRect.min.x, y, bodyTextRect.max.x,  _("SOUND"), componentActiveTextColor) );
-
-    y += yOffset;
-    x = xTextStart;
-    add( new Label( x, y, _("Sound Status:"), windowTextColor) );
-    checkBoxSoundEnabled = new CheckBox();
-    checkBoxSoundEnabled->setLabel(GameConfig::sound_enable?_("Enabled"):_("Disabled"));
-    checkBoxSoundEnabled->setState(GameConfig::sound_enable);
-    x += optionsMeterStartX;
-    checkBoxSoundEnabled->setLocation(x, y-2);
-    checkBoxSoundEnabled->setStateChangedCallback(this);
-    add(checkBoxSoundEnabled);
-    y += yOffset;
-
-    x = xTextStart;
-    add( new Label( x, y+3, _("Sound Volume:"), windowTextColor) );
-    x += optionsMeterStartX;
-    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeSoundVolumeAction(-1)));
-    x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeSoundVolumeAction(1)));
-    y += yOffset;
-
-    y += yOffset; 
-    x = xTextStart;
-    add( new Label( x, y, _("Music Status:"), windowTextColor) );
-    checkBoxMusicEnabled = new CheckBox();
-    checkBoxMusicEnabled->setLabel(GameConfig::sound_music?_("Enabled"):_("Disabled"));
-    checkBoxMusicEnabled->setState(GameConfig::sound_music);
-    x += optionsMeterStartX;
-    checkBoxMusicEnabled->setLocation(x, y-2);
-    checkBoxMusicEnabled->setStateChangedCallback(this);
-    add(checkBoxMusicEnabled);
-    y += yOffset;
-
-    x = xTextStart;
-    add( new Label( x, y+3, _("Music Volume:"), windowTextColor) );
-    x += optionsMeterStartX;
-    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeMusicVolumeAction(-1)));
-    x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeMusicVolumeAction(1)));
-    y += yOffset;
-} // end OptionsTemplateView::initButtons
-
-// doDraw
-//---------------------------------------------------------------------------
-void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
-{
-    checkBoxFullscreen->setState(GameConfig::video_fullscreen);
-    checkBoxBlendSmoke->setState(GameConfig::video_blendsmoke);
-    checkBoxDrawAllShadows->setState(GameConfig::video_shadows);
-
-    MenuTemplateView::doDraw(viewArea, clientArea);
-
-    Surface tempSurface(optionsMeterWidth, 14, 1);
-
-    // Scroll Rate
-    tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-
-    char strBuf[256];
-    const int arrowButtonWidth = 16;
-    int   x               = bodyTextRect.min.x + optionsMeterStartX + arrowButtonWidth;
-    int   y               = bodyTextRect.min.y ;
-    int yOffset          =  17;
-
-    y += yOffset*7;
-
-    sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 10000.0f * 100.0f)));
-    tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
-    y += yOffset*2;
     
-    // Sound Volume
-    y += yOffset*3;
-    tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    sprintf(strBuf, "%d %%", getSoundVolume());
-    tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
-
-    // Music Volume
-    y += yOffset*3;
-    tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    sprintf(strBuf, "%d %%", getMusicVolume());
-    tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
-} // end VisualsView::doDraw
-
-// processEvents
-//---------------------------------------------------------------------------
-//void OptionsView::processEvents()
-//{
-//    OptionsTemplateView::processEvents();
-//} // end VisualsView::processEvents
-
-// actionPerformed
-//---------------------------------------------------------------------------
-void OptionsTemplateView::stateChanged(Component* source)
-{
-    if ( source == checkBoxDrawAllShadows )
+    void onSelectionChanged()
     {
-        GameConfig::video_shadows = checkBoxDrawAllShadows->getState();
-    }
-    else if ( source == checkBoxBlendSmoke )
-    {
-        GameConfig::video_blendsmoke = checkBoxBlendSmoke->getState();
-    }
-    else if ( source == checkBoxFullscreen )
-    {
-        GameConfig::video_fullscreen = checkBoxFullscreen->getState();
-        GameManager::setVideoMode();
-    }
-    else if ( source == choiceResolution )
-    {
-        int sel_index = choiceResolution->getSelectedIndex()-1;
+        int sel_index = getSelectedIndex()-1;
         if ( sel_index < 0 )
         {
             return;
@@ -385,67 +239,167 @@ void OptionsTemplateView::stateChanged(Component* source)
 
         GameManager::setVideoMode();
     }
-    else if ( source == choiceMiniMapUnitSize )
-    {
-        if (choiceMiniMapUnitSize->getSelectedIndex() == 0)
-        {
-            gameconfig->radar_unitsize = _mini_map_unit_size_small;
-        }
-        else if (choiceMiniMapUnitSize->getSelectedIndex() == 1)
-        {
-            gameconfig->radar_unitsize = _mini_map_unit_size_large;
-        }
-    }
-    else if ( source == checkBoxMusicEnabled )
-    {
-        GameConfig::sound_music = checkBoxMusicEnabled->getState();
-       
-        if ( checkBoxMusicEnabled->getState() ) {
-            sound->playMusic("sound/music/");
-            checkBoxMusicEnabled->setLabel(_("Enabled"));
-        } else {
-            sound->stopMusic();
-            checkBoxMusicEnabled->setLabel(_("Disabled"));
-        }
-    }
-    else if ( source == checkBoxSoundEnabled )
-    {
-        GameConfig::sound_enable = checkBoxSoundEnabled->getState();
+};
 
-        delete sound;
-
-        if ( checkBoxSoundEnabled->getState() ) {
-            sound = new SDLSound();
-            checkBoxSoundEnabled->setLabel(_("Enabled"));
-            if ( GameControlRulesDaemon::getGameState() ) {
-                sound->playTankIdle();
-            }
-            if ( checkBoxMusicEnabled->getState() )
-                sound->playMusic("sound/music/");
-        } else {
-            sound = new DummySound();
-            checkBoxSoundEnabled->setLabel(_("Disabled"));
+class MiniMapUnitSizeChoice : public Choice
+{
+public:
+    MiniMapUnitSizeChoice(int x, int y, int w) : Choice()
+    {
+        setLabel(_("Mini Map Unit Size"));
+        addItem(_("Small"));
+        addItem(_("Large"));
+        setMinWidth(w);
+        setLocation(x, y);
+        
+        if ( gameconfig->radar_unitsize == _mini_map_unit_size_large )
+        {
+            select(1);
+        }
+        else
+        {
+            select(0);
         }
     }
+    
+    void onSelectionChanged()
+    {
+        switch ( getSelectedIndex() )
+        {
+            case 0: gameconfig->radar_unitsize = _mini_map_unit_size_small; break;
+            case 1: gameconfig->radar_unitsize = _mini_map_unit_size_large; break;
+        }
+    }
+};
+
+
+// OptionsTemplateView
+//---------------------------------------------------------------------------
+OptionsTemplateView::OptionsTemplateView() : RMouseHackView()
+{
+    setSearchName("OptionsView");
+
+    setAllowMove(false);
+
+    moveTo(iXY(80, 26));
+    resize(iXY(640, 350));
+    
+    initButtons();
+
+} // end OptionsTemplateView::OptionsTemplateView
+
+
+// initButtons
+//---------------------------------------------------------------------------
+void OptionsTemplateView::initButtons()
+{
+    removeComponents();
+
+    int xTextStart       = 10;
+    int xTextEnd         = getWidth() - 10;
+    int x                = xTextStart;
+    int y                = 10;
+    int yOffset          =  17;
+    int col              = 200;
+    // Settings
+    //----------------------------------------------------------------------
+    int minWidth = 19 * 8;
+
+    add( new Separator( xTextStart, y, xTextEnd,  _("VISUAL"), componentActiveTextColor) );
+    
+    y += yOffset;
+    add( new CheckBox( xTextStart+col, y, _("Full screen"), &GameConfig::video_fullscreen, new FullScreenModifiedAction()) );
+    
+    y += yOffset;
+    add( new CheckBox( xTextStart+col, y, _("Draw All Shadows"), &GameConfig::video_shadows) );
+
+    add( new ScreenResolutionChoice(xTextStart, y-3, minWidth) );
+    
+    y += yOffset;
+
+    add( new CheckBox( xTextStart+col, y, _("Blend Smoke"), &GameConfig::video_blendsmoke) );
+    y += yOffset;
+ 
 #ifdef _WIN32
-    else if ( source == checkBoxUseDirectX )
-    {
-        GameConfig::video_usedirectx = checkBoxUseDirectX->getState();
-    }
+    add( new CheckBox( xTextStart+col, y, _("Use DirectX"), &GameConfig::video_usedirectx) );
 #endif
-} // end OptionsTemplateView::doDraw
 
-// loadBackgroundSurface
-//---------------------------------------------------------------------------
-void OptionsTemplateView::loadBackgroundSurface()
+    add( new MiniMapUnitSizeChoice(xTextStart, y, minWidth) );
+
+    y += yOffset*2;
+   
+// VISUAL OPTIONS
+    add( new Separator( xTextStart, y, xTextEnd, _("INTERFACE"), componentActiveTextColor) );
+
+    y += yOffset;
+    
+    x = xTextStart;
+    addConfRow(iXY(x, y), _("Scroll Rate:"),
+               new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100),
+               new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100),
+               new ScrollRateBoxedLabel() );
+    
+//    add( new Label( x, y+3, _("Scroll Rate:"), windowTextColor) );
+//    x += optionsMeterStartX;
+//    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
+//    x += optionsMeterWidth + arrowButtonWidth;
+//    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
+    y += yOffset*3;
+
+// SOUND OPTIONS
+
+    add( new Separator( xTextStart, y, xTextEnd,  _("SOUND"), componentActiveTextColor) );
+
+    y += yOffset;
+    x = xTextStart;
+    add( new Label( x, y, _("Sound Status:"), windowTextColor) );
+    x += optionsMeterStartX;
+    
+    CheckBox * checkBoxSoundEnabled = new CheckBox( x, y-2, GameConfig::sound_enable?_("Enabled"):_("Disabled"), &GameConfig::sound_enable);
+    checkBoxSoundEnabled->setAction(new SoundModifiedAction(checkBoxSoundEnabled));
+    add(checkBoxSoundEnabled);
+    y += yOffset;
+
+    x = xTextStart;
+
+    addConfRow(iXY(x, y), _("Sound Volume:"),
+               new ChangeSoundVolumeAction(-1),
+               new ChangeSoundVolumeAction(1),
+               new SoundVolumeBoxedLabel() );
+    
+    y += yOffset;
+
+    y += yOffset; 
+    x = xTextStart;
+    add( new Label( x, y, _("Music Status:"), windowTextColor) );
+    x += optionsMeterStartX;
+    
+    CheckBox * checkBoxMusicEnabled = new CheckBox( x, y-2, GameConfig::sound_music?_("Enabled"):_("Disabled"), &GameConfig::sound_music);
+    checkBoxMusicEnabled->setAction(new MusicModifiedAction(checkBoxMusicEnabled));
+    add(checkBoxMusicEnabled);
+    y += yOffset;
+    
+    addConfRow(iXY(xTextStart, y), _("Music Volume:"),
+               new ChangeMusicVolumeAction(-1),
+               new ChangeMusicVolumeAction(1),
+               new MusicVolumeBoxedLabel() );
+} // end OptionsTemplateView::initButtons
+
+void OptionsTemplateView::addConfRow(   const iXY pos,
+                                        const NPString& label,
+                                        Action* decreaseAction,
+                                        Action* increaseAction,
+                                        Component* meter)
 {
-} // end OptionsTemplateView::loadBackgroundSurface
-
-// loadTitleSurface
-//---------------------------------------------------------------------------
-void OptionsTemplateView::loadTitleSurface()
-{
-    doLoadTitleSurface("optionsTitle");
-
-} // end ControlsView::loadTitleSurface
-
+    const int arrowButtonWidth = 16;
+    iXY p(pos);
+    add( new Label(p.x, p.y+3, label, windowTextColor, windowTextColorShadow, true) );
+    p.x += optionsMeterStartX  - 1;
+    add( Button::createTextButton( "<", p, arrowButtonWidth-2, decreaseAction));
+    p.x += arrowButtonWidth + 1;
+    meter->setLocation(p);
+    meter->setSize(meterWidth/2, 16);
+    add(meter);
+    p.x += (meterWidth/2) + 1;
+    add( Button::createTextButton( ">", p, arrowButtonWidth-2, increaseAction));
+}

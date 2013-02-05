@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define NETPANZER_PROTOCOL_VERSION     1108
 #define MASTERSERVER_PORT             28900
 
-const char * getNetpanzerProtocolMessage(const int protocol);
+#include "CoreTypes.hpp"
+
+const NPString getNetpanzerProtocolMessage(const int protocol);
 
 #endif

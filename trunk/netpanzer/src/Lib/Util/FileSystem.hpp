@@ -21,9 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Exception.hpp"
 #include "SDL.h"
-#include <string>
 #include <stdlib.h>
 #include "physfs/physfs.h"
+#include "Core/CoreTypes.hpp"
 
 namespace filesystem
 {
@@ -31,7 +31,8 @@ namespace filesystem
 class File
 {
 public:
-    ~File();
+    File() : file(0) {}
+    ~File() { close(); }
 
     bool eof();
     int64_t tell();
@@ -45,9 +46,22 @@ public:
 
     void setBuffer(uint64_t bufsize);
     void flush();
+    
+    bool isOpen() const { return file != 0; }
+    
+    void close()
+    {
+        if ( isOpen() )
+        {
+            PHYSFS_close(file);
+            file = 0;
+        }
+    }
 
 protected:
-    File(PHYSFS_file* file);
+    File(PHYSFS_file* file) : file(file) {}
+    File(const File&);
+    void operator=(const File&);
 
     PHYSFS_file* file;
 };
@@ -57,6 +71,8 @@ class FileSystem;
 class ReadFile : public File
 {
 public:
+    ReadFile(const NPString& name);
+    
     bool isEOF();	
 
     void read(void* buffer, size_t objsize, size_t objcount);
@@ -149,9 +165,6 @@ static inline char** enumerateFiles(const std::string& directory)
 { return enumerateFiles(directory.c_str()); }
 void freeList(char** list);
 
-ReadFile* openRead(const char* filename);
-static inline ReadFile* openRead(const std::string& filename)
-{ return openRead(filename.c_str()); }
 WriteFile* openAppend(const char* filename);
 static inline WriteFile* openAppend(const std::string& filename)
 { return openAppend(filename.c_str()); }

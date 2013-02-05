@@ -31,20 +31,29 @@ public:
     {
     }
 
-    std::string getNextToken()
+    inline bool hasMore() const { return pos < buffer.length(); }
+        
+    std::string getNextToken(bool getEmpty = false)
     {
         if(pos >= buffer.length())
             return "";
 
         // skip \ chars
-        while(pos < buffer.length() && buffer[pos] == token)
-            ++pos;
+        if ( ! getEmpty )
+        {
+            while(pos < buffer.length() && buffer[pos] == token)
+            {
+                ++pos;
+            }
+        }
         std::string::size_type start = pos;
         // search next \ char
         while(pos < buffer.length() && buffer[pos] != token)
             ++pos;
         
-        return std::string(buffer, start, pos-start);
+        ++pos;
+        
+        return std::string(buffer, start, pos-start-1);
     }
 
 private:

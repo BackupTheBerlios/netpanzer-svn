@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Network/TCPSocket.hpp"
 #include "Util/FileSystem.hpp"
+#include "Core/CoreTypes.hpp"
 #include <stdint.h>
 #include <string>
 #include <map>
@@ -54,7 +55,7 @@ private:
     int receive_length;
     
     uint8_t send_buffer[HTTPSERVERSOCKET_SBUFFER_SIZE];
-    int send_length;
+    size_t send_length;
     
     int state;
     

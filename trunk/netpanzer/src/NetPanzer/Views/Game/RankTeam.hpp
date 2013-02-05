@@ -32,7 +32,7 @@ private:
     iRect RectStates;
 public:
     RankTeam();
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
 protected:
     virtual void doActivate();
     virtual void doDeactivate();

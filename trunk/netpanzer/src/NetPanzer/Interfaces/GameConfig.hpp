@@ -28,15 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "2D/Color.hpp"
 #include "Util/NoCopy.hpp"
-#include "ConfigVariable.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 
 #define DEFAULT_UNIT_PROFILES "Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer"
-
-enum { _mini_map_objective_draw_mode_solid_rect,
-       _mini_map_objective_draw_mode_outline_rect,
-       _mini_map_objective_draw_mode_last
-     };
 
 enum { _mini_map_unit_size_small,
        _mini_map_unit_size_large,
@@ -46,10 +40,6 @@ enum { _mini_map_unit_size_small,
 enum { _unit_selection_box_draw_mode_rect,
        _unit_selection_box_draw_mode_rect_edges,
        _unit_selection_box_draw_mode_last
-     };
-
-enum { _gamemode_skirmish,
-       _gamemode_multiplayer
      };
 
 enum { _game_session_host,
@@ -63,21 +53,9 @@ enum { _gametype_objective,
        _gametype_last
      };
 
-enum { _connection_tcpip,
-       _connection_direct_connect,
-       _connection_modem
-     };
-
 enum { _game_config_respawn_type_round_robin,
        _game_config_respawn_type_random,
        _game_config_respawn_type_last
-     };
-
-enum { _game_config_standard_res_640x480,
-       _game_config_standard_res_800x600,
-       _game_config_standard_res_1024x768,
-       _game_config_standard_res_1280x1024,
-       _game_config_standard_res_max
      };
 
 enum { _color_aqua,
@@ -98,10 +76,6 @@ enum { _color_aqua,
        _color_dark_gray,
        _color_last
      };
-
-namespace INI {
-    class Section;
-}
 
 class GameConfig : public NoCopy
 {
@@ -156,10 +130,10 @@ public:
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
     // game Settings (there are not saved to disk)
-    ConfigInt       hostorjoin;         // 1=host, 2=join
-    ConfigBool      quickConnect;
-    ConfigBool      needPassword;
-    ConfigString    serverConnect;      // server to connect to
+    int      hostorjoin;         // 1=host, 2=join
+    bool     quickConnect;
+    bool     needPassword;
+    NPString serverConnect;      // server to connect to
 
     static NPString* player_name;
 
@@ -187,7 +161,6 @@ public:
     static int       interface_scrollrate;
     static int       interface_rankposition_x;
     static int       interface_rankposition_y;
-    static int       interface_viewdrawbackgroundmode;
     static NPString* interface_language;
 
     // radar settings
@@ -196,7 +169,6 @@ public:
     static int       radar_alliedunitcolor;
     static int       radar_playeroutpostcolor;
     static int       radar_alliedoutpostcolor;
-    static int       radar_enemyoutpostcolor;
     static int       radar_unitsize;
     
 public:
@@ -218,11 +190,6 @@ public:
     int GetUnitsPerPlayer() const
     {
         return game_maxunits / game_maxplayers;
-    }
-
-    int GetTimeLimitSeconds() const
-    {
-        return game_timelimit * 60;
     }
 
     const char * getRespawnTypeString() const
@@ -267,24 +234,9 @@ public:
         return( colorEnumToPix( radar_alliedoutpostcolor ) );
     }
     
-    PIX getEnemyOutpostRadarColor() const
-    {
-        return( colorEnumToPix( radar_enemyoutpostcolor ) );
-    }
-    
     PIX getVehicleSelectionBoxColor() const
     {
         return( colorEnumToPix( interface_vehicleselectioncolor ) );
-    }
-
-    const char *getMiniMapUnitSizeString() const
-    {
-        if (radar_unitsize == _mini_map_unit_size_small) {
-            return( "Small" );
-        } else if (radar_unitsize == _mini_map_unit_size_large) {
-            return( "Large" );
-        } else assert(false);
-        return( "Undefined value" );
     }
 
 private:

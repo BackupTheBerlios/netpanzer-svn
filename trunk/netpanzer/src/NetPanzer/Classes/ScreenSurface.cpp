@@ -16,41 +16,45 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "System/SDLVideo.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Util/Log.hpp"
+#include "System/SDLSound.hpp"
 
 ScreenSurface* screen = 0;
 
 ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
         : Surface(), draw(newdraw)
 {
-    myMem = false;
-    numFrames = 1;
-
     twidth =width;
     theight=height;
     tpitch = width;
-    
-    numFrames = 1;
-    doesExist = false;
+
+    clip_rect.setLocation( 0, 0);
+    clip_rect.setSize( width, height);
+}
+
+ScreenSurface::~ScreenSurface()
+{
+    frame0 = 0;
+    mem = 0;
 }
 
 void ScreenSurface::lock()
 {
-    // XXX HERE HERE 
-    assert(doesExist == false);
+    assert(getDoesExist() == false);
     draw->lockDoubleBuffer( (unsigned char **) &frame0 );
-    mem = frame0;
     tpitch = draw->getSurface()->pitch;
-    doesExist = true;
+    mem = frame0 + (clip_rect.getLocationY() * getPitch()) + clip_rect.getLocationX();
+//    mem = frame0;
 }
 
 void ScreenSurface::unlock() 
 {
-    assert(doesExist == true);
+    assert(getDoesExist() == true);
     draw->unlockDoubleBuffer();
-    doesExist = false;
+    frame0 = 0;
+    mem = 0;
 }
 
 void ScreenSurface::copyToVideoFlip()

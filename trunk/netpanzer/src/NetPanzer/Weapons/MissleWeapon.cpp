@@ -26,8 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 #include "Util/Math.hpp"
-#include "Particles/FlashParticle2D.hpp"
-
 
 float MissleWeapon::thrustForce = gMissleThrustForce;
 // size 0 = small 1 = medium

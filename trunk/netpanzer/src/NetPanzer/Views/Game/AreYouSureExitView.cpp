@@ -32,8 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
 {
     setSearchName("AreYouSureExitView");
-    setTitle(_("Exit netPanzer"));
-    setSubTitle("");
     loaded = false;
 	} // end AreYouSureExitView::AreYouSureExitView
 
@@ -41,15 +39,11 @@ AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::init()
 {
-    setBordered(false);
-    setAllowResize(false);
-    setDisplayStatusBar(false);
-
     moveTo(iXY(0, 0));
-    resize(iXY(800, 600));
+    resize(iXY(800, 480));
 
-    int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
-    int y = getClientRect().getSize().y/2 + 30;
+    int x = (getClientRect().getWidth() - (141 * 2 + 20)) / 2;
+    int y = getClientRect().getHeight()/2 + 30;
     add( Button::createTextButton( _("YES"), iXY(x, y), 137, ActionManager::getAction("quit")));
     x += 141 + 10;
     add( Button::createTextButton( _("NO"), iXY(x, y), 137, ActionManager::getAction("hide_confirmexit")));
@@ -58,14 +52,14 @@ void AreYouSureExitView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
+void AreYouSureExitView::doDraw( Surface& dest )
 {
-    viewArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
+    dest.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenter(_("Are you sure you wish to exit netPanzer?"), Color::white);
+    dest.bltStringCenter(_("Are you sure you wish to exit netPanzer?"), Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 } // end AreYouSureExitView::doDraw
 
 // doActivate

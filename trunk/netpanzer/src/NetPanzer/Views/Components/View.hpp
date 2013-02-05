@@ -26,117 +26,88 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 
-#include <list>
 #include <algorithm>
 #include "Views/Components/StateChangedCallback.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 using namespace std;
 
 class View : public iRect, public StateChangedCallback
 {
+private:
     friend class Desktop;
-public:
-    void add(Component *Component);
-
-public:
-    typedef list<Component *> ComponentList;
-    typedef ComponentList::iterator ComponentsIterator;
+    
+    typedef PtrArray<Component> ComponentList;
     
     ComponentList components;
-    
     Component *focusComponent;
 
-protected:
-    virtual void     actionPerformed(mMouseEvent ) {}
-    Surface*         getViewArea(Surface& dest);
-    virtual Surface* getClientArea(Surface& dest);
-
     char            *searchName;
-    char            *title;
-    char            *subTitle;
     int              status;
 
-    char            *statusText;
-
-    enum { RESIZE_XMINSIZE = 15 };
-    enum { RESIZE_YMINSIZE = 15 };
-
-    // Status items
     enum { STATUS_ACTIVE             = (1U << 0) };
     enum { STATUS_VISIBLE            = (1U << 1) };
-    enum { STATUS_ALLOW_RESIZE       = (1U << 2) };
-    enum { STATUS_ALLOW_MOVE         = (1U << 3) };
-    enum { STATUS_ALWAYS_ON_BOTTOM   = (1U << 4) };
-    enum { STATUS_BORDERED           = (1U << 5) };
-    enum { STATUS_DISPLAY_STATUS_BAR = (1U << 6) };
-    enum { STATUS_SCROLL_BAR         = (1U << 7) };
+    enum { STATUS_ALLOW_MOVE         = (1U << 2) };
+    enum { STATUS_ALWAYS_ON_BOTTOM   = (1U << 3) };
+    
+    inline void show() { status |=  STATUS_VISIBLE; }
+    inline void hide() { status &= ~STATUS_VISIBLE; }
+    
+public:
+    View();
+    virtual ~View();
 
-    // Mouse actions
-    enum { MA_RESIZE_TOP    = (1U <<  0) };
-    enum { MA_RESIZE_LEFT   = (1U <<  1) };
-    enum { MA_RESIZE_BOTTOM = (1U <<  2) };
-    enum { MA_RESIZE_RIGHT  = (1U <<  3) };
-    enum { MA_MOVE          = (1U <<  4) };
-    enum { MA_CLOSE         = (1U <<  5) };
-    enum { MA_MINIMIZE      = (1U <<  6) };
-    enum { MA_MAXIMIZE      = (1U <<  7) };
-    enum { MA_RESTORE       = (1U <<  8) };
-    enum { MA_IMAGE_TILES   = (1U <<  9) };
-    enum { MA_SCROLL_BAR    = (1U << 10) };
-    enum { MA_MOUSE_ENTER   = (1U << 11) };
-    enum { MA_MOUSE_EXIT    = (1U << 12) };
+    inline const char *getSearchName() const { return searchName; }
+    
+    inline bool isVisible() const { return status & STATUS_VISIBLE; }
+    inline bool isActive() const  { return status & STATUS_ACTIVE; }
+    inline bool isMovable() const { return status & STATUS_ALLOW_MOVE; }
+    inline bool isAlwaysOnBottom() const { return status & STATUS_ALWAYS_ON_BOTTOM; }
 
+protected:
+    void add(Component *Component);
+    
+    virtual void     actionPerformed(mMouseEvent ) {}
+    virtual void     onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    virtual void     onShow() {};
+    virtual void     onHide() {};
+    
     void        reset     ();
     void        activate  ();
     void        deactivate();
 
-protected:
-    typedef void (*ITEM_FUNC)(void);
-
     // View Status Functions.
-    void setAllowResize     (const bool &newStatus);
-    void setDisplayStatusBar(const bool &newStatus);
-    void setBordered        (const bool &newStatus);
     void setAllowMove       (const bool &newStatus);
     void setActive          (const bool &newStatus);
 
     // SearchName, Title, and SubTitle functions.
     void  setSearchName(const char *searchName);
-    void  setTitle(const char *title);
-    void  setSubTitle(const char *subTitle);
-    void  drawTitle(Surface &windowArea);
 
     /////////////////////////////////
     void draw(Surface& drawon);
-    void showStatus(const char *string);
-    void drawStatus(Surface &dest);
-    virtual void checkResolution(iXY oldResolution, iXY newResolution);
+    
+    /** Ensures the view is inside the screen, XXX REVIEW */
     void checkArea(iXY viewarea);
-    void toggleView();
+    
     iXY  getScreenToClientPos(const iXY &pos);
     iXY  getScreenToViewPos(const iXY &pos);
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
-    virtual void drawBorder(Surface &windowArea);
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
     virtual void lMouseDown(const iXY &pos);
     virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-    virtual void lMouseDouble(const iXY &pos);
     virtual void rMouseDown(const iXY &pos);
     virtual void rMouseUp(const iXY &downPos, const iXY &upPos);
     virtual void rMouseUp();
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-    virtual void rMouseDouble(const iXY &pos);
-    //virtual void keyDown(Uint8 keyCode);
+
     virtual void mouseEnter(const iXY &pos);
     virtual void mouseExit(const iXY &pos);
-    //virtual void keyUp();
-    void scrollBarMove(const iXY &prevpos, const iXY &newpos);
 
     void resize(const iXY &size);
     inline void resize(const int &x, const int &y)
@@ -150,28 +121,11 @@ protected:
         resizeClientArea(iXY(x, y));
     }
 
+public:
     virtual void processEvents() {}
 
-    int moveAreaHeight;
-    int borderSize;
-    int snapToTolerance;
-
-    Surface* currentscreen; // HACK
-
-public:
     // Hack city, should be protected???????
     void setAlwaysOnBottom(const bool &newStatus);
-    void setVisible(const bool &newStatus);
-
-
-    View();
-    View(const iXY &pos, const iXY &size, const char *title);
-    virtual ~View();
-
-    enum { DEFAULT_MOVE_AREA_HEIGHT  = 12 };
-    enum { DEFAULT_STATUS_BAR_HEIGHT = 16 };
-    enum { DEFAULT_BORDER_SIZE       =  3 };
-    enum { DEFAULT_SNAP_TOLERANCE    = 20 };
 
     void moveTo(iXY destMin);
     inline void moveTo(const int &x, const int &y)
@@ -181,75 +135,27 @@ public:
 
     void removeComponents()
     {
-        ComponentsIterator i = components.begin();
-        while ( i != components.end() )
-        {
-            Component *c = *i;
-            i++;
-            delete c;
-        }
-        components.clear();
+        components.deleteAll();
+        components.reset();
         focusComponent      = 0;
     }
 
     void removeComponent(Component *c)
     {
-        components.erase(std::remove(components.begin(), components.end(), c), components.end());
+        for ( size_t n = 0; n < components.getLastIndex(); n++ )
+        {
+            if ( components[n] == c )
+            {
+                components.erase(n);
+            }
+        }
+
         if ( focusComponent == c )
         {
             focusComponent = 0;
         }
     }
-
-    // Accessor Functions.
-    inline const char *getSearchName() const
-    {
-        return searchName;
-    }
-    inline const char *getTitle() const
-    {
-        return title;
-    }
-    inline const char *getSubTitle() const
-    {
-        return subTitle;
-    }
-
-    inline int getActive() const
-    {
-        return status & STATUS_ACTIVE;
-    }
-    inline int getVisible() const
-    {
-        return status & STATUS_VISIBLE;
-    }
-    inline int getAllowMove() const
-    {
-        return status & STATUS_ALLOW_MOVE;
-    }
-    inline int getBordered() const
-    {
-        return status & STATUS_BORDERED;
-    }
-    inline int getAlwaysOnBottom() const
-    {
-        return status & STATUS_ALWAYS_ON_BOTTOM;
-    }
-    inline int getShowStatus() const
-    {
-        return status & STATUS_DISPLAY_STATUS_BAR;
-    }
-    inline int getResize() const
-    {
-        return status & STATUS_ALLOW_RESIZE;
-    }
-    inline int getScrollBar() const
-    {
-        return status & STATUS_SCROLL_BAR;
-    }
-
-    virtual int getMouseActions(const iXY &p) const;
-
+    
     iRect getClientRect() const;
 };
 

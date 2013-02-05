@@ -43,14 +43,15 @@ private:
     Surface allBg;
     Surface friendsBg;
     
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    
 public:
     ChatView();
     virtual ~ChatView()
     {}
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
     virtual void processEvents();
-    virtual void checkResolution(iXY oldResolution, iXY newResolution);
     void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... );
     void clear();
     

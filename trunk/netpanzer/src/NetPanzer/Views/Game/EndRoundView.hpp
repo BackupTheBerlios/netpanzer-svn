@@ -34,6 +34,7 @@ private:
     enum { ITEM_GAP_SPACE = 10 };
     void drawPlayerStats(Surface &dest, unsigned int flagHeight);
     void drawTeamStats(Surface &dest, unsigned int flagHeight);
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
 
     Surface allyImage;
     Surface allyRequestImage;
@@ -51,8 +52,7 @@ public:
     {
     }
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    void checkResolution(iXY oldResolution, iXY newResolution);
+    virtual void doDraw( Surface& dest );
 
 protected:
     virtual void doActivate();

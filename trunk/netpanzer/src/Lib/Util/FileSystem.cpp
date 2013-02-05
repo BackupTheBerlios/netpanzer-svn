@@ -163,55 +163,6 @@ WriteFile* openWrite(const char* filename)
     return new WriteFile(file);
 }
 
-ReadFile* openRead(const char* filename)
-{
-    PHYSFS_file* file = PHYSFS_openRead(filename);
-    if(!file)
-    {
-		int fn_length = strlen(filename)+1;
-		char fn[fn_length];
-		memcpy(fn, filename, fn_length); // includes \0;
-
-		char * folder_sep = strrchr(fn, '/');
-		char * fn_start = fn;
-		char ** filelist = 0;
-		if ( folder_sep )
-		{
-			*folder_sep = 0;
-			filelist = enumerateFiles(fn);
-			*folder_sep = '/';
-			fn_start = folder_sep+1;
-		}
-		else
-		{
-			filelist = enumerateFiles(".");
-			folder_sep = fn;
-		}
-
-		if ( filelist )
-		{
-			for(char** curfile = filelist; *curfile != 0; curfile++)
-			{
-				if ( strcasecmp(*curfile, fn_start) == 0 )
-				{
-					memcpy(fn_start, *curfile, fn_length-(folder_sep-fn));
-					file = PHYSFS_openRead(fn);
-					break;
-				}
-			}
-			freeList(filelist);
-		}
-
-		if ( !file )
-		{
-			throw Exception("couldn't open file '%s' for reading: %s", filename,
-						PHYSFS_getLastError());
-		}
-	}
-
-    return new ReadFile(file);
-}
-
 WriteFile* openAppend(const char* filename)
 {
     PHYSFS_file* file = PHYSFS_openAppend(filename);
@@ -263,15 +214,6 @@ int64_t getLastModTime(const char* filename)
 
 //---------------------------------------------------------------------------
 
-File::File(PHYSFS_file* newfile)
-        : file(newfile)
-{}
-
-File::~File()
-{
-    PHYSFS_close(file);
-}
-
 bool File::eof()
 {
     return PHYSFS_eof(file);
@@ -311,6 +253,49 @@ ReadFile::ReadFile(PHYSFS_file* file)
         : File(file)
 {}
 
+ReadFile::ReadFile(const NPString& name)
+{
+    PHYSFS_file* newfile = PHYSFS_openRead(name.c_str());
+    if ( !newfile )
+    {
+		int fn_length = name.length()+1;
+		char fn[fn_length];
+		memcpy(fn, name.c_str(), fn_length); // includes \0;
+
+		char * folder_sep = strrchr(fn, '/');
+		char * fn_start = fn;
+		char ** filelist = 0;
+		if ( folder_sep )
+		{
+			*folder_sep = 0;
+			filelist = enumerateFiles(fn);
+			*folder_sep = '/';
+			fn_start = folder_sep+1;
+		}
+		else
+		{
+			filelist = enumerateFiles(".");
+			folder_sep = fn;
+		}
+
+		if ( filelist )
+		{
+			for(char** curfile = filelist; *curfile != 0; curfile++)
+			{
+				if ( strcasecmp(*curfile, fn_start) == 0 )
+				{
+					memcpy(fn_start, *curfile, fn_length-(folder_sep-fn));
+					newfile = PHYSFS_openRead(fn);
+					break;
+				}
+			}
+			freeList(filelist);
+		}
+    }
+    file = newfile;
+}
+
+
 size_t ReadFile::_read(void* buffer, size_t objsize, size_t objcount)
 {
     return (size_t) PHYSFS_read(file, buffer, objsize, objcount);
@@ -325,7 +310,7 @@ void ReadFile::read(void* buffer, size_t objsize, size_t objcount)
 
 bool ReadFile::isEOF()
 {
-    return PHYSFS_eof(file);
+    return isOpen() && PHYSFS_eof(file);
 }
 
 SDL_RWops* ReadFile::getSDLRWOps()

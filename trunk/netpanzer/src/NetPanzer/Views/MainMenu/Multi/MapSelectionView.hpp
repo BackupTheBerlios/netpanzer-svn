@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
+#include "Core/CoreTypes.hpp"
 
 //---------------------------------------------------------------------------
 class MapInfo
@@ -39,28 +40,35 @@ public:
     }
 }; // end MapInfo
 
+class MapThumbnailComponent;
+class Label;
+
 //---------------------------------------------------------------------------
 class MapSelectionView : public RMouseHackView
 {
 private:
     enum { BORDER_SPACE =   4 };
     enum { MAP_SIZE     = 100 };
+    
+    MapThumbnailComponent * mapthumbnail;
+    Label * name_label;
+    Label * size_label;
+    Label * objectives_label;
+    
     int  loadMaps();
-    void drawCurMapInfo(Surface &dest, const iXY &pos);
 
-    std::vector<MapInfo*> mapList;
+    std::vector<NPString> mapList;
     int curMap;
+    
 public:
     MapSelectionView();
     ~MapSelectionView();
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
     int getNumMaps() const { return mapList.size(); }
     int getCurrentSelectedMapNumber() const { return curMap; }
     
     void setSelectedMap(int map_number);
-    MapInfo* getCurrentSelectedMapInfo() const { return (curMap < 0) ? 0 : mapList[curMap]; } 
+    const NPString getCurrentSelectedMapName() const { return (curMap < 0) ? "" : mapList[curMap]; } 
     
     void init();
 }; // end MapSelectionView

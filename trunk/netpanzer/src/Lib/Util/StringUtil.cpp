@@ -19,27 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StringUtil.hpp"
 
-#include <ctype.h>
-
-std::string removeSurroundingSpaces(const std::string& str)
-{
-    if(str.size() == 0)
-        return "";
-    
-    std::string::size_type s = 0;
-    while(s < str.size() && isspace(str[s]))
-        s++;
-   
-    std::string::size_type e = str.size() - 1;
-    while(isspace(str[e])) {
-        if(e <= 1)
-            break;
-        e--;
-    }
-    
-    return std::string(str, s, e-s+1);
-}
-
 void string_to_params( const NPString& str, std::vector<NPString>& parameters )
 {
     parameters.clear();

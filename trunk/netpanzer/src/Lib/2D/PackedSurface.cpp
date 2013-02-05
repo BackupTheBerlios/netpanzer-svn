@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include <iostream>
-#include <vector>
 #include <string>
 #include <algorithm>
 #include <memory>
@@ -26,11 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
-#include "Util/UtilInterface.hpp"
 #include "Util/Endian.hpp"
+#include "Util/StringUtil.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
-#include "Span.hpp"
 
 #ifdef MSVC
 #pragma pack (1)
@@ -56,6 +54,15 @@ int PackedSurface::totalDrawCount    = 0;  // The number of bytes of the surface
 // 1 MB Initial version
 
 const int CURRENT_PAK_VERSION = 1;
+
+//--------------------------------------------------------------------------
+inline void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow, const Uint8 *table)
+{
+    for( size_t idx=0; idx<pixelsPerRow; idx++ )
+    {
+        dRow[idx] = table[ (dRow[idx]<<8)+sRow[idx] ];
+    }
+}
 
 //--------------------------------------------------------------------------
 void PackedSurface::setOffset(const iXY &offset)
@@ -106,15 +113,14 @@ void PackedSurface::reset()
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::pack(const Surface &source)
+void PackedSurface::pack(const PtrArray<Surface>& source)
 {
     free();
 
-    pix.x      = source.getWidth();
-    pix.y      = source.getHeight();
-    offset     = source.getOffset();
-    frameCount = source.getNumFrames();
-    fps        = source.getFPS();
+    pix.x      = source.get(0)->getWidth();
+    pix.y      = source.get(0)->getHeight();
+    frameCount = source.size();
+    fps        = 0; // source.getFPS();
 
     rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
     if (rowOffsetTable == 0) {
@@ -125,13 +131,12 @@ void PackedSurface::pack(const Surface &source)
     packedDataChunk = 0;
     int curByteOffset = 0;
 
-    float saveFrame = source.getCurFrame();
-
-    for (int frame = 0 ; frame < frameCount ; ++frame) {
-        ((Surface *)&source)->setFrame(frame);
-        for (int y = 0 ; y < pix.y ; ++y) {
+    for (int frame = 0 ; frame < frameCount ; ++frame)
+    {
+        for (int y = 0 ; y < pix.y ; ++y)
+        {
             rowOffsetTable[frame*pix.y + y] = curByteOffset;
-            const PIX *rowPtr = source.pixPtr(0,y);
+            const PIX *rowPtr = source.get(frame)->pixPtr(0,y);
 
             int x = 0;
             while (x < pix.x) {
@@ -187,65 +192,71 @@ void PackedSurface::pack(const Surface &source)
     packedDataChunk = (Uint8 *) realloc(packedDataChunk, curByteOffset);
     if (packedDataChunk == 0) throw Exception("Hell froze");
 
-    // Restore source surface frame number, so the function
-    // is logically const
-
-    ((Surface *)&source)->setFrame(saveFrame);
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::load(const std::string& filename)
 {
-    try {
-	std::auto_ptr<filesystem::ReadFile> file(
-                filesystem::openRead(filename));
+    filesystem::ReadFile file(filename);
+    if ( file.isOpen() )
+    {
+        free();
+        Sint32 version = file.readSLE32();
+        
+        if (version < 1)
+        {
+            throw Exception("Invalid PAK file version: %d", version);
+        }
+        
+        if (version > CURRENT_PAK_VERSION)
+        {
+            throw Exception("PAK file version of '%s' is newer(%d) than "
+                "the currently supported version(%d)",
+            filename.c_str(), version, CURRENT_PAK_VERSION);
+        }
+        
+        pix.x = file.readSLE32();
+        pix.y = file.readSLE32();
 
-	free();
-	Sint32 version = file->readSLE32();
-	if (version < 1)
-	    throw Exception("Invalid PAK file version: %d", version);
-	if (version > CURRENT_PAK_VERSION)
-	    throw Exception("PAK file version of '%s' is newer(%d) than "
-		    "the currently supported version(%d)",
-		filename.c_str(), version, CURRENT_PAK_VERSION);
-	pix.x = file->readSLE32();
-	pix.y = file->readSLE32();
+        center = pix / 2;
 
-	center = pix / 2;
+        frameCount = file.readSLE32(); 
+        // should be done like following but this isn't backward compatible to
+        // the existing files :-/
+        //fps = float(file->readSLE32()) / 65536;
+        // XXX is this correct?!?
+        Sint32 fpsint = file.readSLE32();
+        fps = * ((float*) (void*) &fpsint);
+        offset.x = file.readSLE32();
+        offset.y = file.readSLE32();
+        
+        rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
+        if (rowOffsetTable == 0)
+        {
+            throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+        }
+        
+        for(int i=0;i<(pix.y * frameCount+1);i++)
+        {
+            rowOffsetTable[i] = file.readSLE32();
+        }
+        
+        packedDataChunk = (Uint8 *)malloc(rowOffsetTable[pix.y*frameCount]);
+        if (packedDataChunk == 0)
+        {
+            throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
+        }
+        file.read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
 
-	frameCount = file->readSLE32(); 
-	// should be done like following but this isn't backward compatible to
-	// the existing files :-/
-	//fps = float(file->readSLE32()) / 65536;
-	// XXX is this correct?!?
-	Sint32 fpsint = file->readSLE32();
-	fps = * ((float*) (void*) &fpsint);
-	offset.x = file->readSLE32();
-	offset.y = file->readSLE32();
-    
-	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
-	if (rowOffsetTable == 0)
-	    throw Exception(
-		"ERROR: Unable to allocate rowTableOffset for PackedSurface.");
-	for(int i=0;i<(pix.y * frameCount+1);i++) {
-	    rowOffsetTable[i] = file->readSLE32();
-	}
-    
-	packedDataChunk = (Uint8 *)malloc(rowOffsetTable[pix.y*frameCount]);
-	if (packedDataChunk == 0) {
-	    throw Exception(
-		"ERROR: Unable to allocate packedDataChunk for PackedSurface.");
-	}
-	file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
+        // Add size of rowTableOffset.
+        totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
 
-	// Add size of rowTableOffset.
-	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
-
-	// Add size of packedDataChunk.
-	totalByteCount += pix.y * frameCount;
-    } catch(std::exception& e) {
-	throw Exception("Error while reading pakfile '%s': %s",
-	    filename.c_str(), e.what());
+        // Add size of packedDataChunk.
+        totalByteCount += pix.y * frameCount;
+    }
+    else
+    {
+        throw Exception("Pak file not found '%s'", filename.c_str());
     }
 }
 
@@ -587,25 +598,35 @@ int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
 {
     char** list = filesystem::enumerateFiles(path);
 
-    std::vector<std::string> filenames;
-    for(char** file = list; *file != 0; file++) {
-	std::string name = path;
-	name += *file;
-	if(name.find(".pak") != std::string::npos)
-	    filenames.push_back(name);
-    }
+    PtrArray<char> fnames(20);
 
-    filesystem::freeList(list);
+    for ( char** file = list; *file != 0; file++ )
+    {
+        if ( strstr(*file, ".pak") )
+        {
+            fnames.push_back(*file);
+        }
+    }
    
-    std::sort(filenames.begin(), filenames.end()); 
+    std::sort(fnames.begin(), fnames.end(), StringUtil::cstr_sorter());
+
+    char fil[512];
+    int len = strlen(path);
+    memcpy(fil, path, len);
 
     // Now load in the sorted PAK names.
-    for (size_t i = 0; i < filenames.size(); i++) {
-        PackedSurface* surface = new PackedSurface;
-        surface->load(filenames[i].c_str());
+    for (size_t i = 0; i < fnames.size(); i++)
+    {
+        PackedSurface* surface = new PackedSurface();
+        
+        strcpy(fil+len, fnames[i]);
+        surface->load(fil);
+        
         paklist.push_back(surface);
     }
 
-    return filenames.size();
+    filesystem::freeList(list);
+
+    return fnames.size();
 } // end loadAllPAKInDirectory
 

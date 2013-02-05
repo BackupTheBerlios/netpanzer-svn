@@ -51,7 +51,7 @@ const char * SocketBase::state_str[] =
 SocketBase::SocketBase()
 {
     state = UNINITIALIZED;
-    disconnectTimer.setTimeOut(500);
+    disconnectTimer.setTimeOut(4000);
 }
 
 SocketBase::SocketBase(const Address &a, bool isTcp)
@@ -61,7 +61,7 @@ SocketBase::SocketBase(const Address &a, bool isTcp)
     state = RESOLVED;
     create();
     setNonBlocking();
-    disconnectTimer.setTimeOut(500);
+    disconnectTimer.setTimeOut(4000);
     state = CONFIGURED;
 }
 
@@ -72,7 +72,7 @@ SocketBase::SocketBase(SOCKET fd, const Address &a)
     state = CONNECTED;
     SocketManager::addSocket(this);
     setNonBlocking();
-    disconnectTimer.setTimeOut(500);
+    disconnectTimer.setTimeOut(4000);
 }
 
 SocketBase::~SocketBase()
@@ -248,6 +248,7 @@ SocketBase::doConnect() throw(NetworkException)
             }
         }
         state = CONNECTING;
+        disconnectTimer.reset();
         SocketManager::addSocket(this);
     }
     else
@@ -404,6 +405,7 @@ void
 SocketBase::doClose()
 {
     LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    disconnectTimer.setTimeOut(500);
     SocketManager::removeSocket(this);
 }
 

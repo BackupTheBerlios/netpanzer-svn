@@ -64,13 +64,8 @@ static long INFO_AREA_Y_OFFSET = 60;
 CodeStatsView::CodeStatsView() : GameTemplateView()
 {
     setSearchName("CodeStatsView");
-    setTitle("CodeStatsView");
-    setSubTitle(" - F4");
 
-    setAllowResize(false);
     setAllowMove(true);
-    setDisplayStatusBar(true);
-    setVisible(false);
 
     moveTo(iXY(0, 0));
 
@@ -100,29 +95,29 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
+void CodeStatsView::doDraw( Surface& dest )
 {
-    bltViewBackground(viewArea);
+    bltViewBackground(dest);
 
     switch( display_mode ) {
     case _display_mode_network_stats :
-        drawNetworkStats( clientArea );
+        drawNetworkStats( dest );
         break;
 
     case _display_mode_sorter_stats :
-        drawSorterStats( clientArea );
+        drawSorterStats( dest );
         break;
 
     case _display_mode_pathing_stats :
-        drawPathingStats( clientArea );
+        drawPathingStats( dest );
         break;
 
     case _display_mode_unit_stats :
-        drawUnitStats( clientArea );
+        drawUnitStats( dest );
         break;
     }
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 } // end CodeStatsView::doDraw
 
 //---------------------------------------------------------------------------

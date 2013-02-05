@@ -232,8 +232,7 @@ void SDLSound::loadSound(const char* directory)
         {
             try
             {
-                filesystem::ReadFile *file 
-                    = filesystem::openRead(filename.c_str());
+                filesystem::ReadFile *file = new filesystem::ReadFile(filename);
                 Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
                 if (chunk)
                 {
@@ -348,7 +347,7 @@ void SDLSound::nextSong()
          * use LoadMUS_RW from newer SDL_mixers
          */
         try {
-            filesystem::ReadFile *file = filesystem::openRead(toplay);
+            filesystem::ReadFile * file = new filesystem::ReadFile(toplay);
             music = Mix_LoadMUS_RW(file->getSDLRWOps());
             if (music) {
                 if (Mix_PlayMusic(music, 1) == 0) {

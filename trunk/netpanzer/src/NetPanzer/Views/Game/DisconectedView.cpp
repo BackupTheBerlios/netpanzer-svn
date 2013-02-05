@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "Classes/ScreenSurface.hpp"
 
 #include "Util/Log.hpp"
@@ -33,34 +32,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 DisconectedView::DisconectedView() : SpecialButtonView()
 {
     setSearchName("DisconectedView");
-    setTitle("Disconected from server");
-    setSubTitle("");
 }
 
 void
 DisconectedView::init()
 {
-    setBordered(true);
-    setAllowResize(false);
-
     resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
 
     int bsize = Surface::getTextLength(" ") * 8;
     
-    add( Button::createTextButton("Ok", iXY((getClientRect().getSizeX()/2)-(bsize/2), (getClientRect().getSizeY()/2)+(Surface::getFontHeight() * 2)),
+    add( Button::createTextButton("Ok", iXY((getClientRect().getWidth()/2)-(bsize/2), (getClientRect().getHeight()/2)+(Surface::getFontHeight() * 2)),
                                   bsize, ActionManager::getAction("disconnect")));
 }
 
 void
-DisconectedView::doDraw(Surface &viewArea, Surface &clientArea)
+DisconectedView::doDraw( Surface& dest )
 {
-    iRect r(min, max);
+    dest.bltLookup(*this, Palette::darkGray256.getColorArray());
+    dest.bltStringCenter(disconectMsg.c_str(), Color::white);
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-    viewArea.bltStringCenter(disconectMsg.c_str(), Color::white);
-
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 }
 
 void

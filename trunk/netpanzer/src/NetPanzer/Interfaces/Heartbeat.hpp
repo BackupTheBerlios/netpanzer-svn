@@ -22,8 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/TCPSocket.hpp"
 #include "Util/NTimer.hpp"
 #include "SDL.h"
-#include <vector>
 #include <map>
+
+#include "ArrayUtil/PtrArray.hpp"
+#include "Core/CoreTypes.hpp"
 
 using namespace std;
 using namespace network;
@@ -47,7 +49,7 @@ protected:
 private:
     NTimer nextHeartbeat;
     string hb_message;
-    vector<Address> mslist;
+    PtrArray<NPString> mslist;
     typedef map<TCPSocket *, MasterserverInfo *> MSMap;
     typedef MSMap::iterator MSMapIterator;
     MSMap masterservers;

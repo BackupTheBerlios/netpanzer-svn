@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <assert.h>
-#include "SDL.h"
+#include <stdint.h>
 
 //--------------------------------------------------------------------------
 class ColorTable
@@ -31,7 +31,7 @@ protected:
     static const char *extension;
 
     int   colorCount;
-    Uint8 *colorArray;
+    uint8_t *colorArray;
 
     static int totalColorArrayCount;
     static int totalByteCount;
@@ -41,10 +41,10 @@ public:
     ~ColorTable();
 
     void init(int colorCount);
-    void setColor(int index, Uint8 color);
+    void setColor(int index, uint8_t color);
 
     // Give us an array index into the table.
-    inline Uint8 operator[](int index) const
+    inline uint8_t operator[](int index) const
     {
         assert(index < colorCount);
         return *(colorArray + index);
@@ -54,7 +54,7 @@ public:
     {
         return colorCount;
     }
-    inline const Uint8 *getColorArray()
+    inline const uint8_t *getColorArray()
     {
         return colorArray;
     }

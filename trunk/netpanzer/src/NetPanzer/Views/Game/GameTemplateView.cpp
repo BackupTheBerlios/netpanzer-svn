@@ -31,29 +31,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 GameTemplateView::GameTemplateView() : View()
 {
     setSearchName("GameTemplateView");
-    setTitle("Game Template");
-    setSubTitle("");
-
 } // end GameTemplateView::GameTemplateView
 
 // rMouseDrag
 //---------------------------------------------------------------------------
 void GameTemplateView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
-    // Check for view blending mode change.
-    if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
-    } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
-    } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_SOLID_BLACK;
-    } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        GameConfig::interface_viewdrawbackgroundmode = VIEW_BACKGROUND_TRANSPARENT;
-    }
-
-    if (getAllowMove())
+    if ( isMovable() )
     {
-        moveTo(min + newPos - prevPos);
+        moveTo(getLocation() + newPos - prevPos);
         checkArea(iXY(screen->getWidth(),screen->getHeight()));
         notifyMoveTo();
     }
@@ -68,17 +54,6 @@ void GameTemplateView::doActivate()
     Desktop::setFocusView(this);
 
 } // end VehicleSelectionView::doActivate
-
-// mouseEnter
-//--------------------------------------------------------------------------
-//void GameTemplateView::mouseEnter(const iXY &pos)
-//{
-//	if (!mouse.getButtonMask())
-//	{
-//		Desktop::setActiveView(this);
-//	}
-//
-//} // end GameTemplateView::mouseEnter
 
 // mouseMove
 //--------------------------------------------------------------------------
@@ -100,6 +75,6 @@ void GameTemplateView::doDeactivate()
 {
     View::doDeactivate();
 
-    Desktop::setActiveView("GameView");
+    //Desktop::setActiveView("GameView");
 
 } // end GameTemplateView::doDeactivate

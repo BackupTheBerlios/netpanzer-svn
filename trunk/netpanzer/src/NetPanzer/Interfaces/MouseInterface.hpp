@@ -55,6 +55,7 @@ private:
 
 protected:
     static iXY mouse_pos;
+    static iXY mouse_offset;
 
     static unsigned char button_mask;
 
@@ -84,9 +85,9 @@ public:
     
     static void draw(Surface &dest)
     {
-        if (cursor) {
-            cursor->nextFrame();
-            cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
+        if (cursor)
+        {
+            cursor->bltTrans(dest, mouse_pos.x - mouse_offset.x, mouse_pos.y - mouse_offset.y); // full blit
         }
     }
 

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITPROFILEINTERFACE_HPP
 
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -28,6 +27,8 @@ using namespace std;
 #include "2D/PackedSurface.hpp"
 
 #include "Core/CoreTypes.hpp"
+
+#include "ArrayUtil/PtrArray.hpp"
 
 class NetMessage;
 
@@ -65,7 +66,7 @@ public:
 class UnitProfileInterface
 {
 protected:
-    static vector<UnitProfile *> profiles;
+    static PtrArray<UnitProfile> profiles;
 
     static void doLoadUnitProfiles();
     

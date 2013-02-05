@@ -37,8 +37,8 @@ void Astar::initializeAstar( unsigned long node_list_size,
             MapInterface::getHeight() );
     closed_set.initialize( MapInterface::getWidth(),
             MapInterface::getHeight() );
-    open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,
-           AstarNodePtrCompare>();
+            
+    open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,AstarNodePtrCompare>();
 
     initializeNodeList( node_list_size );
 
@@ -129,7 +129,7 @@ void Astar::initializePath(iXY &start, iXY &goal, unsigned short path_type)
 
     goal_node.map_loc = goal;
 
-    goal_node.g = getMovementValue( goal );
+    goal_node.g = MapInterface::getMovementValue( goal );
     goal_node.abs_loc = mapXYtoAbsloc( goal );
 
     best_node = 0;
@@ -156,8 +156,8 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
 {
     unsigned long abs;
 
-    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) main_map.getWidth() ) ||
-            ( map_loc.y < 0 ) || (map_loc.y >= (int) main_map.getHeight() )
+    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) MapInterface::getWidth() )
+       ||( map_loc.y < 0 ) || (map_loc.y >= (int) MapInterface::getHeight() )
        )
         return 0xFFFFFFFF;
 
@@ -222,7 +222,7 @@ unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, Ast
     succ->map_loc = node->map_loc + succ->map_loc;
     succ->abs_loc = mapXYtoAbsloc( succ->map_loc );
 
-    movement_val = getMovementValue( succ->map_loc );
+    movement_val = MapInterface::getMovementValue( succ->map_loc );
     if ( movement_val != 0xFF )
         if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == true ) &&
                 (succ->map_loc != goal_node.map_loc) )
@@ -404,8 +404,7 @@ void Astar::cleanUp()
     // STL doesn't define a clear for some reason, so we try a workaround with
     // asignment
     //open.clear();
-    open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,
-           AstarNodePtrCompare>();
+    open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,AstarNodePtrCompare>();
 
     resetNodeList();
     ini_flag = true;

@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MasterServer/ServerList.hpp"
 #include "MasterServer/ServerQueryThread.hpp"
 
+class ServerListQuery;
+
 class ServerListView : public View
 {
 public:
@@ -32,10 +34,10 @@ public:
     void refresh();
     void endQuery();
         
-    virtual void doDraw(Surface& windowArea, Surface& clientArea);
-    virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
+    virtual void doDraw( Surface& dest );
 
 private:
+    ServerListQuery * server_list_query;
     masterserver::ServerList serverlist;
     masterserver::ServerQueryThread* queryThread;
 

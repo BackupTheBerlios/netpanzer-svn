@@ -35,7 +35,7 @@ struct version_data older_versions[] =
 
 #define NUM_OLD_VERSIONS (sizeof(older_versions)/sizeof(version_data))
 
-const char * getNetpanzerProtocolMessage(const int protocol)
+const NPString getNetpanzerProtocolMessage(const int protocol)
 {
     for ( size_t n = 0; n < NUM_OLD_VERSIONS; n++)
     {

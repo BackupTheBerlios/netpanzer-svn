@@ -35,7 +35,7 @@ class NetPacket
 public:
     PlayerID fromPlayer;
     ClientSocket *fromClient;
-    int size;
+    size_t size;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];
 

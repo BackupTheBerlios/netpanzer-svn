@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerGameManager.hpp"
 #include "System/Sound.hpp"
 #include "Classes/ScreenSurface.hpp"
-#include "Particles/RadarPingParticle2D.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Util/Exception.hpp"
@@ -47,7 +46,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 Surface       MenuTemplateView::backgroundSurface;
-PackedSurface MenuTemplateView::titlePackedSurface;
+
+// <editor-fold desc="actions" defaultstate="collapsed">
 
 class ShowMainViewAction : public Action
 {
@@ -94,7 +94,7 @@ public:
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("ServerListView", true);
-        serverlistview->refresh();
+//        serverlistview->refresh();
         ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->showPlayButton();
         // TODO: do doLoadTitleSurface("joinTitle");
     }
@@ -108,6 +108,7 @@ public:
     void execute()
     {
         Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MenuTemplateView", true);
         Desktop::setVisibility("OptionsView", true);
         ((MenuTemplateView*)Desktop::getView("MenuTemplateView"))->hidePlayButton();
     }
@@ -185,7 +186,7 @@ public:
 
         const NPString& serv_ip = ((IPAddressView*)Desktop::getView("IPAddressView"))->getSelectedServerIp();
         
-        if ( (gameconfig->hostorjoin == _game_session_join) && (serv_ip.length() == 0) )
+        if ( (gameconfig->hostorjoin == _game_session_join) && serv_ip.empty() )
         {
             return;
         }
@@ -212,6 +213,8 @@ public:
     }
 };
 
+// </editor-fold>
+
 static Button * createMenuButton(   const NPString& label,
                                     iXY loc,
                                     bool inverted,
@@ -230,8 +233,6 @@ static Button * createMenuButton(   const NPString& label,
     b->setSize(Surface::getTextLength(label)+20, 25);
     b->setTextColors(Color::gray, Color::lightGray, Color::black, Color::darkGray);
 
-    Surface bgSurface(Surface::getTextLength(label)+20, 25, 3);
-    
     b->setExtraBorder();
     
     b->borders[0][0] = Color::gray;
@@ -240,17 +241,19 @@ static Button * createMenuButton(   const NPString& label,
     b->borders[1][1] = Color::gray;
     b->borders[2][0] = Color::gray;
     b->borders[2][1] = Color::darkGray;
+
+    PtrArray<Surface> bg(3);
+    int bgsize = Surface::getTextLength(label)+20;
     
-    iRect r = bgSurface.getRect();
-    
-    for ( unsigned int n = 0; n < bgSurface.getNumFrames(); n++ )
+    for ( unsigned int n = 0; n < 3; n++ )
     {
-        bgSurface.setFrame(n);
-        bgSurface.FillRoundRect(r, 3, b->borders[n][1]);
-        bitmap.bltTrans(bgSurface, 0, 0);
+        Surface *s = new Surface( bgsize, 25);
+        s->FillRoundRect(s->getRect(), 2, b->borders[n][1]);
+        bitmap.bltTrans(*s, 0, 0);
+        bg.push_back(s);
     }
     
-    b->setImage(bgSurface);
+    b->setImage(bg);
     
     b->setAction(action);
 
@@ -262,24 +265,34 @@ static Button * createMenuButton(   const NPString& label,
 MenuTemplateView::MenuTemplateView() : RMouseHackView()
 {
     setSearchName("MenuTemplateView");
-    setTitle("MenuTemplate");
-    setSubTitle("");
 
-    setAllowResize(false);
-    setVisible(false);
     setAllowMove(false);
-    setDisplayStatusBar(false);
-    setBordered(false);
     setAlwaysOnBottom(true);
 
     moveTo(iXY(0, 0));
-    resize(iXY(800, 600));
+    resize(iXY(800, 480));
 
-    initButtons();
+    init();
     
-    curTitleFlashTime  = 0.0f;
-    titleFlashTimeHalf = 0.5;
 } // end MenuTemplateView constructor
+
+void MenuTemplateView::onDesktopResized(const iXY& oldResolution, const iXY& newResolution)
+{
+    (void)oldResolution;
+    
+    if ( newResolution.y < 600 )
+    {
+        resize(800,480);
+    }
+    else
+    {
+        resize(800,480);
+    }
+    
+    removeComponents();
+    View::onDesktopResized(oldResolution, newResolution);
+    init();
+}
 
 //---------------------------------------------------------------------------
 // initPreGameOptionButtons
@@ -294,9 +307,9 @@ void MenuTemplateView::initPreGameOptionButtons()
     add( createMenuButton( _("Options"),        optionsPos, false, new ShowOptionsViewAction()) );
     helpPos.x = optionsPos.x + Surface::getTextLength(_("Options"))+22;
     add( createMenuButton( _("Help"),           helpPos,    false, new ShowHelpViewAction()) );
-    exitPos.x = MenuRect.max.x - Surface::getTextLength(_("Exit netPanzer"))-25;
+    exitPos.x = MenuRect.getEndX() - Surface::getTextLength(_("Exit netPanzer"))-30;
     add( createMenuButton( _("Exit netPanzer"), exitPos,    false, ActionManager::getAction("quit")) );
-    
+
     playButton = createMenuButton( _("Play"), iXY(-150, 0), true, new PlayButtonClickedAction());
     add( playButton );
 } // end MenuTemplateView::initPreGameOptionButtons
@@ -305,6 +318,7 @@ void MenuTemplateView::initPreGameOptionButtons()
 //---------------------------------------------------------------------------
 void MenuTemplateView::initInGameOptionButtons()
 {
+    playButton = 0;
     if(!gameconfig->quickConnect)
     {
         add( createMenuButton( _("Resign"),          resignPos, false, new OpenResignGameViewAction()) );
@@ -318,51 +332,47 @@ void MenuTemplateView::initInGameOptionButtons()
     add( createMenuButton( _("Close Options"), returnToGamePos, false, new CloseOptionsWindowAction()) );
 } // end MenuTemplateView::initInGameOptionButtons
 
-// initButtons
-//---------------------------------------------------------------------------
-void MenuTemplateView::initButtons()
+void MenuTemplateView::init()
 {
-    if (Desktop::getVisible("GameView")) {
+    removeComponents();
+    
+    if ( Desktop::getVisible("GameView") )
+    {
         initInGameOptionButtons();
-    } else {
+    }
+    else
+    {
         initPreGameOptionButtons();
     }
-} // end MenuTemplateView::initButtons
+}
 
 // doDraw
 //---------------------------------------------------------------------------
-void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
+void MenuTemplateView::doDraw( Surface& dest )
 {
-    //setWorldRect();
     if (Desktop::getVisible("GameView"))
     {
 	// When ingame, tint the game into gray
-        clientArea.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
-        clientArea.RoundRect(MenuRect, 10, Color::gray);
-        clientArea.drawWindowsBorder();
+        dest.BltRoundRect(getClientRect(), 10, Palette::darkGray256.getColorArray());
+        dest.RoundRect(MenuRect, 10, Color::gray);
+        dest.drawWindowsBorder();
 
     }
     else
     {        
-        screen->fill(0);
-		// Set the following to get does exist.
-        if (backgroundSurface.getNumFrames() > 0) {
-            backgroundSurface.blt(viewArea, 0, 0);
-        } else {
-            throw Exception("Where is the background surface?");
-        }
-        clientArea.BltRoundRect(MenuRect, 10, Palette::darkGray256.getColorArray());
-        clientArea.RoundRect(MenuRect, 10, Color::gray);
-
-        //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, MenuRect.min.x, MenuRect.max.y-60, Palette::colorTable6040);
+        int dx = (dest.getWidth()/2) - (backgroundSurface.getWidth()/2);
+        int dy = (dest.getHeight()/2) - (backgroundSurface.getHeight()/2);
+        backgroundSurface.blt(dest, dx, dy); // full blit
+        
+        dest.BltRoundRect(MenuRect, 10, Palette::darkGray256.getColorArray());
+        dest.RoundRect(MenuRect, 10, Color::gray);
     }
 
-    static char text[] =
-        "NetPanzer " PACKAGE_VERSION;
-        clientArea.bltString(10, 590, text, Color::yellow);
+    static char text[] = "NetPanzer " PACKAGE_VERSION;
 
-    View::doDraw(viewArea, clientArea);
+    dest.bltString(10, dest.getHeight()-Surface::getFontHeight() - 4, text, Color::yellow);
+
+    View::doDraw( dest );
 } // end doDraw
 
 // doActivate
@@ -370,11 +380,9 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 void MenuTemplateView::doActivate()
 {
     // Make the activating view active, redo this please!
-    Desktop::setActiveView(searchName);
+    Desktop::setActiveView("MenuTemplateView");
 
     loadBackgroundSurface();
-    loadTitleSurface();
-    loadNetPanzerLogo();
 } // end doActivate
 
 // loadBackgroundSurface
@@ -391,36 +399,11 @@ void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
     backgroundSurface.loadBMP(string.c_str());
 } // end MenuTemplateView::doLoadBackgroundSurface
 
-// loadTitleSurface
-//---------------------------------------------------------------------------
-void MenuTemplateView::loadTitleSurface()
-{
-    doLoadTitleSurface("mainTitle");
-} // end MenuTemplateView::loadTitleSurface
-
-// doLoadBackgroundSurface
-//---------------------------------------------------------------------------
-void MenuTemplateView::doLoadTitleSurface(const std::string& string)
-{
-    curTitleFlashTime  = 0.0f;
-    titleFlashTimeHalf = 2.5;
-
-    std::string pakString = "pics/backgrounds/menus/menu/pak/";
-    pakString += string;
-    pakString += ".pak";
-
-    titlePackedSurface.load(pakString);
-} // end MenuTemplateView::doLoadTitleSurface
-
 // doDeactivate
 //---------------------------------------------------------------------------
 void MenuTemplateView::doDeactivate()
 {
 } // end doDeactivate
-
-//---------------------------------------------------------------------------
-void MenuTemplateView::loadNetPanzerLogo()
-{} // end MenuTemplateView::loadNetPanzerLogo
 
 // processEvents
 //---------------------------------------------------------------------------

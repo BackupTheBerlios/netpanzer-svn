@@ -36,10 +36,10 @@ protected:
     static PackedSurface staticPackedUnitGrayChunks;
 
     static void createPAKFiles();
-    static void createGroundChunks();
-    static void createBurnGroundChunks();
-    static void createUnitBodyGreenChunks();
-    static void createUnitBodyGrayChunks();
+//    static void createGroundChunks();
+//    static void createBurnGroundChunks();
+//    static void createUnitBodyGreenChunks();
+//    static void createUnitBodyGrayChunks();
 
     float     arcYPix;
     int       hasSmoke;

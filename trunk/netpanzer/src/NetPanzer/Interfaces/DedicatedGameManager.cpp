@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Interfaces/MapsManager.hpp"
 #include "Interfaces/Heartbeat.hpp"
 #include "Interfaces/InfoSocket.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -51,6 +50,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 #include "Actions/ActionManager.hpp"
+#include "Resources/ResourceManager.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -157,7 +157,7 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::MAPCHANGE:
-                if(!MapsManager::existsMap(command.argument)) {
+                if(!ResourceManager::mapExists(command.argument)) {
                     std::cout << "map '" << command.argument
                         << "' doesn't exist." << std::endl;
                     break;
@@ -238,7 +238,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
     ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
-    GameConfig::game_map->assign(MapsManager::getNextMap(""));
+    GameConfig::game_map->assign(GameManager::getNextMapName(""));
 
     GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str());
 

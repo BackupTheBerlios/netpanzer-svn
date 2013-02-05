@@ -26,12 +26,12 @@ void tVScrollBar::initScrollBar()
 {
     Surface bitmap;
     bitmap.loadBMP(itScroll);
-    bRiseOver.grab(bitmap, iRect(bSize*4, bSize, bSize*5, bSize*2));
-    bRiseNormal.grab(bitmap, iRect(bSize*4, 0, bSize*5, bSize));
-    bUpOver.grab(bitmap, iRect(bSize*2, 0, bSize*3, bSize));
-    bUpNormal.grab(bitmap, iRect(bSize*3, 0, bSize*4, bSize));
-    bDownOver.grab(bitmap, iRect(0, 0, bSize, bSize));
-    bDownNormal.grab(bitmap, iRect(bSize, 0, bSize*2, bSize));
+    bRiseOver.grab(bitmap,   iRect(bSize*4, bSize, bSize, bSize));
+    bRiseNormal.grab(bitmap, iRect(bSize*4, 0, bSize, bSize));
+    bUpOver.grab(bitmap,     iRect(bSize*2, 0, bSize, bSize));
+    bUpNormal.grab(bitmap,   iRect(bSize*3, 0, bSize, bSize));
+    bDownOver.grab(bitmap,   iRect(0, 0, bSize, bSize));
+    bDownNormal.grab(bitmap, iRect(bSize, 0, bSize, bSize));
     setLocation(iXY(0,0));
     setSize(bSize, 0);
 
@@ -195,37 +195,37 @@ void tVScrollBar::render()
     surface.drawRect(surface.getRect(), ctWindowsBorder);
     if (bUpstate == PRESSED)
     {
-        bUpOver.bltTrans(surface, 1, 1);
+        bUpOver.bltTrans(surface, 1, 1); // blit full
     }
     else if (bUpstate == OVER)
     {
-        bUpOver.bltTrans(surface, 0, 0);
+        bUpOver.bltTrans(surface, 0, 0); // blit full
     }
     else
     {
-        bUpNormal.bltTrans(surface, 0, 0);
+        bUpNormal.bltTrans(surface, 0, 0); // blit full
     }
 
     if (bDownstate == PRESSED)
     {
-        bDownOver.bltTrans(surface, 1, size.y-(bSize-1));
+        bDownOver.bltTrans(surface, 1, size.y-(bSize-1)); // blit full
     }
     else if (bDownstate == OVER)
     {
-        bDownOver.bltTrans(surface, 0, size.y-bSize);
+        bDownOver.bltTrans(surface, 0, size.y-bSize); // blit full
     } 
     else
     {
-        bDownNormal.bltTrans(surface, 0, size.y-bSize);
+        bDownNormal.bltTrans(surface, 0, size.y-bSize); // blit full
     }
     
     if ( (bRisestate == OVER) || (bRisestate == PRESSED) )
     {
-        bRiseOver.bltTrans(surface, 0,  bSize+RisePos);
+        bRiseOver.bltTrans(surface, 0,  bSize+RisePos); // blit full
     } 
     else
     {
-        bRiseNormal.bltTrans(surface, 0,  bSize+RisePos);
+        bRiseNormal.bltTrans(surface, 0,  bSize+RisePos); // blit full
     }
 }
 

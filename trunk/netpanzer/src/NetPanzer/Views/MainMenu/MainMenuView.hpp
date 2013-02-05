@@ -19,25 +19,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __MainMenuView_hpp__
 
 #include "Views/Components/View.hpp"
-#include "2D/Surface.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
+#include "RMouseHackView.hpp"
 #include "Network/NewsGetter.hpp"
+
+class tStringListBox;
 
 //--------------------------------------------------------------------------
 class MainMenuView : public RMouseHackView
 {
 private:
     NewsGetter news_getter;
+    tStringListBox * intro_text;
+    tStringListBox * news_text;
+
+//    void doDraw(Surface &surface);
 
 public:
     MainMenuView();
     ~MainMenuView();
 
     static void setNews(const std::string& news);
-    static const char * news_message;
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-
+    
 }; // end MainMenuView
 
 #endif // end __MainMenuView_hpp__

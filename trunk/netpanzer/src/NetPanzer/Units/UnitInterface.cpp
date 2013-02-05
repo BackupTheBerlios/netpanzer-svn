@@ -108,7 +108,15 @@ UnitInterface::reset()
         playerUnitLists[i].clear();
     }
 
-    unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
+    if ( MapInterface::isMapLoaded() )
+    {
+        unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
+    }
+    else
+    {
+        unit_bucket_array.initialize(iXY(1,1),iXY(1,1),1,1);
+    }
+
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i)
         delete i->second;
@@ -177,11 +185,15 @@ void UnitInterface::removeUnit(Units::iterator i)
     PlayerUnitList& plist =
         playerUnitLists[unit->player_id];
     
-    PlayerUnitList::iterator pi
-        = std::find(plist.begin(), plist.end(), unit);
-    assert(pi != plist.end());
-    if(pi != plist.end())
-        plist.erase(pi);
+    
+    for (size_t n = 0; n <plist.getLastIndex(); n++ )
+    {
+        if ( plist[n] == unit )
+        {
+            plist.erase(n);
+            break;
+        }
+    }
 
     units.erase(i);
     delete unit;
@@ -237,10 +249,12 @@ void UnitInterface::offloadGraphics(SpriteSorter& sorter)
     world_window_rect = sorter.getWorldWindow();
     bucket_rect = unit_bucket_array.worldRectToBucketRectClip(world_window_rect);
 
-    for(long row_index = bucket_rect.min.y;
-            row_index <= bucket_rect.max.y; row_index++ ) {
-        for(long column_index = bucket_rect.min.x;
-                column_index <= bucket_rect.max.x; column_index++ ) {
+    for ( long row_index = bucket_rect.getLocationY();
+               row_index <= bucket_rect.getEndY(); row_index++ )
+    {
+        for ( long column_index = bucket_rect.getLocationX();
+                   column_index <= bucket_rect.getEndX(); column_index++ )
+        {
             bucket_list = unit_bucket_array.getBucket(row_index, column_index);
 
             for(UnitBucketPointer* t = bucket_list->getFront();
@@ -521,8 +535,10 @@ bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr, iRect &boundi
 
     bucket_rect = unit_bucket_array.worldRectToBucketRect( bounding_rect );
 
-    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ ) {
-        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ ) {
+    for ( long row_index = bucket_rect.getLocationY(); row_index <= bucket_rect.getHeight(); row_index++ )
+    {
+        for ( long column_index = bucket_rect.getLocationX(); column_index <= bucket_rect.getWidth(); column_index++ )
+        {
             bucket_list = unit_bucket_array.getBucket( row_index, column_index );
 
             traversal_ptr = bucket_list->getFront();
@@ -609,13 +625,12 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 {
     PlayerID player_id = PlayerInterface::getLocalPlayerIndex();
 
-    std::vector<UnitID> locUnits;
-    queryUnitsAt(locUnits, loc, player_id, 0);
-    if(locUnits.size() == 0) {
+    UnitID id;
+    if ( ! queryUnitAtMapLoc(loc, &id) )
+    {
         return _no_unit_found;
     }
 
-    UnitID id = locUnits[0];
     UnitBase* unit = getUnit(id);
     if(!unit) {
         return _no_unit_found;
@@ -812,11 +827,9 @@ void UnitInterface::selfDestructUnit(const UnitID unit_id)
 void UnitInterface::destroyPlayerUnits(PlayerID player_id)
 {
     PlayerUnitList& unitlist = playerUnitLists[player_id];
-    for(PlayerUnitList::iterator i = unitlist.begin();
-            i != unitlist.end(); ++i)
+    for ( size_t n = 0; n < unitlist.getLastIndex(); n++ )
     {
-        UnitBase* unit = *i;
-        unit->selfDestruct();
+        unitlist[n]->selfDestruct();
     }
 }
 

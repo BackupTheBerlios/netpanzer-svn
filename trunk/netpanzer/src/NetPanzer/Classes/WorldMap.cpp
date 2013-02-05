@@ -29,33 +29,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 
 WorldMap::WorldMap()
-    : map_loaded(false), map_buffer(0)
 {
 }
 
 WorldMap::~WorldMap()
 {
-    delete[] map_buffer;
 }
-
-void WorldMap::reMap( WadMapTable &mapping_table )
-{
-    for(size_t i = 0; i < getSize(); ++i) {
-        map_buffer[i] = mapping_table[map_buffer[i]].remap_index;
-    }
-}
-
+/*
 void WorldMap::loadMapFile(const std::string& filename)
 {
     try {
 	std::auto_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
-
-	if ( map_loaded == true ) {
-	    delete[] map_buffer;
-	    map_buffer = 0;
-	    map_loaded = false;
-	}
 
 	map_info.load(*file);
 
@@ -73,3 +58,4 @@ void WorldMap::loadMapFile(const std::string& filename)
 		filename.c_str(), e.what());
     }
 }
+*/

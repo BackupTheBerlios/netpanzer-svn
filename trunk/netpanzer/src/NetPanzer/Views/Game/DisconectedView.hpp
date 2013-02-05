@@ -33,7 +33,7 @@ private:
 public:
     DisconectedView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
     virtual void doActivate();
     void setMsg(const char * msg) { disconectMsg=msg; }
 };

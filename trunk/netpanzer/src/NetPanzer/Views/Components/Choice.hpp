@@ -35,12 +35,13 @@ private:
     int                 minWidth;
     bool                isOpen;
     size_t              mouseover;
-    int                 adjustedY;  // The y translation value to keep the choice on the screen.
+    int                 real_y;
     StateChangedCallback* callback;
 
-    enum { ChoiceItemHeight = 14 };
-    
     NPString label;
+    
+protected:
+    virtual void onSelectionChanged() {}
 
 public:
     Choice(StateChangedCallback* newcallback = 0)
@@ -48,20 +49,24 @@ public:
     {
         reset();
     }
+            
     virtual ~Choice()
     {}
 
-    void   add(const std::string& item);
     void   addItem(const std::string& item);
-    void   copyItems(const Choice &choice);
+
+    void setLocation(const int x, const int y) { real_y = y; Component::setLocation(x,y); }
+
     size_t getItemCount() const
     {
         return choiceList.size();
     }
+
     size_t getSelectedIndex() const
     {
         return index;
     }
+
     void   select(const std::string& item);
     void   select(size_t index);
     void   setMinWidth(int minWidth);

@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SERVERQUERYTHREAD_HPP__
 #define __SERVERQUERYTHREAD_HPP__
 
-#include <vector>
 #include <string>
 #include <map>
 #include <SDL_thread.h>
 #include "Network/TCPSocket.hpp"
 #include "Network/UDPSocket.hpp"
 #include "Network/Address.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 
 #include "ServerList.hpp"
 
@@ -51,13 +51,14 @@ public:
 protected:
     void onDataReceived(network::TCPSocket *s, const char *data, const int len);
     void onConnected(network::TCPSocket *s);
-    void onDisconected(network::TCPSocket *s);    
-    void onDataReceived(network::UDPSocket *s, const network::Address &from, const char *data, const int len);
+    void onDisconected(network::TCPSocket *s);
     void onSocketError(network::TCPSocket *s);
+    
+    void onDataReceived(network::UDPSocket *s, const network::Address &from, const char *data, const int len);
     void onSocketError(network::UDPSocket *s);
     
 private:
-    
+    void parseMasterserverRepply(MSInfo * data);
     void parseServerData(ServerInfo *server, string &data);
     void sendNextQuery();
     void sendQuery(ServerInfo *server);
@@ -82,7 +83,7 @@ private:
 
     network::UDPSocket* udpsocket;
 
-    std::vector<ServerInfo*> not_queried;
+    PtrArray<ServerInfo> not_queried;
     int queries; // number of currently running queries
     
     map<network::TCPSocket *,MSInfo *> querying_msdata;

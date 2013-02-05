@@ -20,9 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/Choice.hpp"
-
-#include "Views/Components/CheckBox.hpp"
 
 class Action;
 
@@ -31,25 +28,7 @@ class HostOptionsView : public RMouseHackView
 {
 private:
     void addMeterButtons(const iXY &pos);
-    void drawMeterInfo(Surface &dest, const iXY &pos);
-
-    static int cloudCoverageCount;
-    static int windSpeed;
-    static int gameType;
-
-
-    enum { BORDER_SPACE = 4 };
-
-    CheckBox checkPowerUp;
-    CheckBox checkPublic;
-
-    Choice choiceGameType;
-    Choice choiceWindSpeed;
-    Choice choiceCloudCoverage;
-    
-    void addConfRow( const iXY pos, const NPString& label, Action* decreaseAction, Action* increaseAction );
-    
-    static void updateGameConfigCloudCoverage();
+    void addConfRow( const iXY pos, const NPString& label, Action* decreaseAction, Action* increaseAction, Component* meter);
     
 protected:
     virtual void doDeactivate();
@@ -58,32 +37,6 @@ public:
     HostOptionsView();
     virtual ~HostOptionsView()
     {}
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void actionPerformed(mMouseEvent me);
-
-    static void updateGameConfigGameType();
-    static void updateWindSpeedString();
-
-    static int  getCloudCoverageCount()
-    {
-        return cloudCoverageCount;
-    }
-    static void setCloudCoverageCount(int count)
-    {
-        cloudCoverageCount = count;
-    }
-    static int  getWindSpeed()
-    {
-        return windSpeed;
-    }
-    static void setWindSpeed(int speed)
-    {
-        windSpeed = speed;
-    }
-
-    static std::string cloudCoverageString;
-    static std::string windSpeedString;
 }; // end HostOptionsView
 
 #endif // end __HostOptionsView_hpp__

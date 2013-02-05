@@ -55,14 +55,8 @@ int GameView::gDrawSolidBackground = 0;
 GameView::GameView() : View()
 {
     setSearchName("GameView");
-    setTitle("Game");
-    setSubTitle("");
 
-    setBordered(false);
     setAlwaysOnBottom(true);
-    setAllowResize(false);
-    setDisplayStatusBar(false);
-    setVisible(false);
 
     resize(800,600);
     moveTo(iXY(0, 0));
@@ -88,14 +82,15 @@ void GameView::init()
     moveTo(iXY(0, 0));
 } // end GameView::init
 void
-GameView::checkResolution(iXY oldResolution, iXY newResolution)
+GameView::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
+    (void)oldResolution;
     resize(iXY(newResolution.x, newResolution.y));
     moveTo(iXY(0,0));
 }
 // doDraw
 //---------------------------------------------------------------------------
-void GameView::doDraw(Surface &va, Surface &clientArea)
+void GameView::doDraw( Surface& dest )
 {
     // Added for debugging, accesible through LibView.
     //screen->fill(0);
@@ -103,7 +98,7 @@ void GameView::doDraw(Surface &va, Surface &clientArea)
     if (gDrawSolidBackground) {
         screen->fill(250);
     } else {
-        drawMap(clientArea);
+        drawMap(dest);
     }
 
     // Added for debugging, accesible through LibView.
@@ -117,23 +112,23 @@ void GameView::doDraw(Surface &va, Surface &clientArea)
     SPRITE_SORTER.reset(world_win);
 
     PackedSurface::totalDrawCount = 0;
-    ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
-    Particle2D::drawAll(clientArea, SPRITE_SORTER );
+    ParticleSystem2D::drawAll(dest, SPRITE_SORTER );
+    Particle2D::drawAll(dest, SPRITE_SORTER );
 
     UnitInterface::offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-    SPRITE_SORTER.blitLists(&clientArea);
+    SPRITE_SORTER.blitLists(&dest);
 
-    VehicleSelectionView::drawMiniProductionStatus(clientArea);
+    VehicleSelectionView::drawMiniProductionStatus(dest);
 
     COMMAND_PROCESSOR.draw();
 
     // Make sure the console info is the last thing drawn.
-    ConsoleInterface::update(clientArea);
+    ConsoleInterface::update(dest);
     
-    View::doDraw(va, clientArea);
+    View::doDraw( dest );
 } // end GameView::doDraw
 
 // lMouseDown
@@ -158,9 +153,9 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
 
-    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
+    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this)
+    {
         Desktop::setFocusView(this);
-        //Desktop::setActiveView(this);
         MouseInterface::setCursor("default.bmp");
     }
 
@@ -241,7 +236,7 @@ GameView::drawMap(Surface &window)
     
     unsigned int tile = 0;
     
-    WorldMap * worldmap = MapInterface::getMap();
+    const MapFile * worldmap = MapInterface::getMap();
     
     unsigned short tmx;
     

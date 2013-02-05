@@ -23,11 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ParticleTweakView::ParticleTweakView() : View()
 {
-    setTitle("ParticleTweakView");
-    setAllowResize(false);
     setAllowMove(true);
-    setDisplayStatusBar(true);
-    setVisible(false);
 
     moveTo(0, 0);
     resizeClientArea(800, 600);
@@ -36,9 +32,8 @@ ParticleTweakView::ParticleTweakView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ParticleTweakView::doDraw(Surface &viewArea, Surface &clientArea)
+void ParticleTweakView::doDraw( Surface &dest )
 {
-    viewArea.fill(Color::black);
-
-    View::doDraw(viewArea, clientArea);
+    dest.fill(Color::black);
+    View::doDraw(dest);
 } // end ParticleTweakView::doDraw

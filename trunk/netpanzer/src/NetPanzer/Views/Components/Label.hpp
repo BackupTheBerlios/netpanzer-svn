@@ -35,6 +35,8 @@ public:
         position.y = y;
     }
     
+    void setText(const NPString& t) { text = t; }
+    
     void draw(Surface &dest);
     
     virtual void render()

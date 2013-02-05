@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/TeamManager.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "ScreenSurface.hpp"
 
 bool SelectionBoxSprite::isVisible(const iRect &world_win) const
 {
@@ -42,8 +43,8 @@ void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
     if ( box_state == false )
         return;
 
-    min_abs = (world_pos + selection_area.min) - world_win.min;
-    max_abs = (world_pos + selection_area.max) - world_win.min;
+    min_abs = (world_pos + selection_area.min) - world_win.getLocation();
+    max_abs = (world_pos + selection_area.max) - world_win.getLocation();
 
     if( (min_abs.x >= 0 ) ) {
         surface->drawVLine(min_abs.x, min_abs.y, max_abs.y, box_color);
@@ -76,14 +77,15 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 {
     iXY min_abs, max_abs;
 
-    min_abs = (world_pos + selection_area.min) - world_win.min;
-    max_abs = (world_pos + selection_area.max) - world_win.min;
+    min_abs = (world_pos + selection_area.min) - world_win.getLocation();
+    max_abs = (world_pos + selection_area.max) - world_win.getLocation();
 
+    iRect screen_rect;
+    screen_rect.setLocation(min_abs);
+    screen_rect.setSize(max_abs - min_abs);
+    
     if ( box_state == true )
     {
-
-        // Modified the vehicle selection box and moved the hitpoints outside,
-        // the box status check, because I may want the hitpoints drawn all the time.
         PIX selectionBoxColor = gameconfig->getVehicleSelectionBoxColor();
 
         assert(max_hit_points > 0);
@@ -91,14 +93,11 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         // Draw the selection box.
         if (GameConfig::interface_unitselectionmode == _unit_selection_box_draw_mode_rect)
         {
-            // Draw the rectangle selection box.
-            surface->drawRect(iRect(min_abs, max_abs), selectionBoxColor);
+            surface->drawRect(screen_rect, selectionBoxColor);
         }
-        else // if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges)
+        else
         {
-            surface->drawBoxCorners(
-                    iRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y),
-                    7, selectionBoxColor);
+            surface->drawBoxCorners(screen_rect, 7, selectionBoxColor);
         }
 
     } // ** box_state == true
@@ -124,53 +123,36 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
             hitBarColor = Color::green;
         }
 
-        int hit_bar_size = int ( (float) (max_abs.x - min_abs.x - 5) * ( hitPointPercent ) );
+        int hit_bar_size = int ( (float) (max_abs.x - min_abs.x - 4) * ( hitPointPercent ) );
 
-        iRect r(min_abs.x + 1, max_abs.y - 5, max_abs.x - 1, max_abs.y - 1);
+        screen_rect.translate(1, screen_rect.getHeight()-6);
+        screen_rect.setSize(screen_rect.getWidth()-2, 5);
+        surface->bltLookup(screen_rect, Palette::darkGray256.getColorArray());
 
-        surface->bltLookup(r, Palette::darkGray256.getColorArray());
-
-        r = iRect(min_abs.x + 2, max_abs.y - 4, min_abs.x + 2 + hit_bar_size, max_abs.y - 3);
-
-        surface->drawRect(r, hitBarColor);
-
-        // Solid method.
-        //surface->drawHLine(min_abs.x+1, max_abs.y-1, min_abs.x + hit_bar_size, hit_bar_color);
-        //surface->drawHLine(min_abs.x+1, max_abs.y-2, min_abs.x + hit_bar_size, hit_bar_color);
-        //surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
+        screen_rect.grow(-1,-1);
+        screen_rect.setWidth(hit_bar_size);
+        surface->fillRect(screen_rect, hitBarColor);
     }
 
     if ( GameConfig::interface_show_flags == true  && unit_flag )
     {
-        //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
-        //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
-        unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT - 1 );
+        unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT - 1 ); // full blit
     }
 
-    if ( GameConfig::interface_show_names == true )
+    if ( GameConfig::interface_show_names && (playerName.length() > 0) )
     {
-        if ( playerName.length() > 0 )
-        {   // XXX dirty trick, I don't center the text, just "by hand"
-            if (GameConfig::game_teammode == true)
-            {
-                
+        if (GameConfig::game_teammode == true)
+        {
             surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
                                 min_abs.y - FLAG_HEIGHT + 2,
                                 playerName.c_str(), TeamManager::getTeamColor(team_ID) );
-            }
-            else
+        }
+        else
+        {
             surface->bltString( min_abs.x + FLAG_WIDTH  + 2,
                                 min_abs.y - FLAG_HEIGHT + 2,
                                 playerName.c_str(), Color::gray224);
         }
     }
-
-    /*
-    if ( (flag_visibility_state == true) && (allie_state == true) )
-     { 
-      allie_flag.blt ( *surface, iXY( max_abs.x - allie_flag.getPix().x , min_abs.y - allie_flag.getPix().y ) );
-     }
-    */
-
 
 }

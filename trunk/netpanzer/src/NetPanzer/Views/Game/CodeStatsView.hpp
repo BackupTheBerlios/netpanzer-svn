@@ -38,7 +38,7 @@ protected:
 public:
     CodeStatsView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
 }; // end CodeStatsView
 
 

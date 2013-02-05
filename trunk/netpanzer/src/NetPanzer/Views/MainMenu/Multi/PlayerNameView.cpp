@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/StrManager.hpp"
 #include "Views/Components/InputField.hpp"
+#include "Views/Components/Label.hpp"
 
 enum { BORDER_SPACE           =  4 };    
 // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
@@ -34,19 +35,13 @@ enum { INPUT_FIELD_CHARACTERS = 15 };
 PlayerNameView::PlayerNameView() : View()
 {
     setSearchName("PlayerNameView");
-    setTitle(_("Player Name"));
-    setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
-    setVisible(false);
 
-    moveTo(bodyTextRect.min);
+    moveTo(bodyTextRect.getLocation());
 
-    // The plus 8 for x and 4 for y are what I put in input field.  Add function to find out,
-    // inpit field dimension.
     int CHAR_XPIX = 8; // XXX hardcoded :-/
-    resizeClientArea((INPUT_FIELD_CHARACTERS+1) * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
+    resizeClientArea((INPUT_FIELD_CHARACTERS+1) * CHAR_XPIX + 8 + BORDER_SPACE * 2 + 200, 32 );
 
     init();
 } // end PlayerNameView::PlayerNameView
@@ -55,13 +50,14 @@ PlayerNameView::PlayerNameView() : View()
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
 {
+    add( new Label(0,6, _("Player Name"), Color::white) );
+    
     playerName = new InputField();
-    playerName->setLocation(iXY(BORDER_SPACE, BORDER_SPACE));
-    playerName->setSize(getSizeX()-20, 16);
+    playerName->setLocation(iXY(150, 2));
+    playerName->setSize(getWidth()-160, 16);
     playerName->setMaxTextLength(INPUT_FIELD_CHARACTERS * 2); // XXX *2 for testing only
     playerName->setExcludedChars("\\");
     playerName->setText(*GameConfig::player_name);
 
     add(playerName);
-    
 } // end PlayerNameView::init

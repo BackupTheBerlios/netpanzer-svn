@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_INTERFACE_HPP
 #define _POWERUP_INTERFACE_HPP
 
-#include <vector>
-
+#include "ArrayUtil/PtrArray.hpp"
 #include "PowerUps/PowerUp.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/Network/NetPacket.hpp"
@@ -28,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class PowerUpInterface
 {
 protected:
-    typedef std::vector<PowerUp *> PowerUpList;
+    typedef PtrArray<PowerUp> PowerUpList;
     static PowerUpList powerup_list;
     
     static PowerUpID getNextPowerUpID();

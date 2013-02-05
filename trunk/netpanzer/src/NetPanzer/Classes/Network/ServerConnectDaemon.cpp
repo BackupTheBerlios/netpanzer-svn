@@ -45,6 +45,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TeamManager.hpp"
 #include "Interfaces/StrManager.hpp"
 
+#include "ArrayUtil/PtrArray.hpp"
+
 enum ConnectionState
 {
     connect_state_idle,
@@ -134,7 +136,7 @@ template<typename T>
 class StateMachine
 {
 private:
-    std::vector<State<T> *> states;
+    PtrArray<State<T> > states;
     State<T> * current;
     T state;
 
@@ -142,11 +144,8 @@ public:
     StateMachine() : current(0) {}
     ~StateMachine()
     {
-        for (int i = 0; i < states.size(); i++)
-        {
-            delete states[i];
-        }
-        states.clear();
+        states.deleteAll();
+        states.reset();
     }
 
     bool isState(T state) { return this->state == state; }

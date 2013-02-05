@@ -158,13 +158,8 @@ void PowerUpInterface::resetLogic( void )
         return;
     }
 
-    // here memory leak, should delete the pointer to powerups in the list
-    PowerUpList::iterator i;
-    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
-    {
-        delete *i;
-    }
-    powerup_list.clear();
+    powerup_list.deleteAll();
+    powerup_list.reset();
 
     map_size_x = MapInterface::getWidth();
     map_size_y = MapInterface::getHeight();
@@ -194,21 +189,20 @@ void PowerUpInterface::updateState()
         }
     }
 
-    for (PowerUpList::iterator i = powerup_list.begin();
-            i != powerup_list.end(); /* empty */)
+    for ( size_t n = 0; n < powerup_list.getLastIndex(); n++ )
     {
-        PowerUp* powerup = *i;
+        PowerUp* powerup = powerup_list[n];
 
         if(powerup->life_cycle_state ==
                 _power_up_lifecycle_state_inactive)
         {
             delete powerup;
-            i = powerup_list.erase(i);
+            powerup_list.erase(n);
         }
         else
         {
             powerup->updateState();
-            i++;
+            n++;
         }
     }
  }
@@ -220,11 +214,9 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
         return;
     }
 
-    PowerUpList::iterator i;
-    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
+    for ( size_t n = 0; n < powerup_list.getLastIndex(); n++)
     {
-        PowerUp* powerup = *i;
-        powerup->offloadGraphics(sorter);
+        powerup_list[n]->offloadGraphics(sorter);
     }
 }
 
@@ -269,12 +261,11 @@ void PowerUpInterface::netMessagePowerUpHit(const NetMessage* message)
 {
     PowerUpHitMesg *hit_mesg = (PowerUpHitMesg *) message;
 
-    PowerUpList::iterator i;
-    for ( i = powerup_list.begin(); i != powerup_list.end(); i++)
+    for ( size_t n = 0; n < powerup_list.getLastIndex(); n++)
     {
-        if ( (*i)->ID == hit_mesg->getID() )
+        if ( powerup_list[n]->ID == hit_mesg->getID() )
         {
-            (*i)->onHitMessage( hit_mesg );
+            powerup_list[n]->onHitMessage( hit_mesg );
             break;
         }
     }
@@ -301,10 +292,9 @@ void PowerUpInterface::processNetMessages(const NetMessage* message )
 
 void PowerUpInterface::syncPowerUps( ClientSocket * client )
 {
-    PowerUpList::iterator i;
-    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
+    for ( size_t n = 0; n < powerup_list.getLastIndex(); n++)
     {
-        PowerUp* powerup_ptr = *i;
+        PowerUp* powerup_ptr = powerup_list[n];
 
         PowerUpCreateMesg create_mesg;
         create_mesg.set( powerup_ptr->map_loc,

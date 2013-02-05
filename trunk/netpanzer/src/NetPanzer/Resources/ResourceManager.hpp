@@ -22,11 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	_RESOURCEMANAGER_HPP
 
 #include "Core/CoreTypes.hpp"
+#include "ArrayUtil/PtrArray.hpp"
 #include <vector>
-#include <string>
 
 // forward declarations
 class Surface;
+class MapFile;
 
 class ResourceManager
 {
@@ -34,13 +35,27 @@ public:
     static void initialize();
     static void finalize();
 
-    static int loadAllFlags(Surface& flags, std::vector<std::string>& names);
-    static bool loadFlag(Surface* dest, std::string name);
+    static int loadAllFlags(PtrArray<Surface>& flags);
+    static bool loadFlag(Surface* dest, const NPString& name);
     static Surface * getFlag(FlagID flag);
 
     static void getFlagData(const FlagID flag, Uint8 * dest, const size_t dest_len);
     static void updateFlagData(const FlagID flag, const Uint8 * src, const size_t src_len);
     static int getFlagUsedCount(const FlagID flag);
+    
+    
+    enum
+    {
+        MAP_HEADER = 0,
+        MAP_DATA = 1,
+        MAP_THUMBNAIL = 2,
+        MAP_ALL = 3
+    };
+    
+    static void refreshMapList();
+    static int listMaps(std::vector<NPString>& dest);
+    static bool mapExists(const NPString& name);
+    static const MapFile* getMap(const NPString& name, const int flags);
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

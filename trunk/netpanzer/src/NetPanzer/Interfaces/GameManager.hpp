@@ -36,15 +36,9 @@ class ConnectMesgServerGameSettings;
 
 class GameManager
 {
-private:
-    static std::string map_path;
-
 protected:
     static time_t game_start_time;
     static time_t game_elapsed_time_offset;
-
-    static bool display_frame_rate_flag;
-    static bool display_network_info_flag;
 
 protected:
     static void finishGameMapLoad();
@@ -59,10 +53,9 @@ protected:
     static void netMessageResetGameLogic(const NetMessage* message);
 
 public:
+    static NPString getNextMapName(const NPString& current_name);
     static void dedicatedLoadGameMap(const char *map_file_path );
-    static void startGameMapLoad(const char *map_file_path,
-                                 unsigned long partitions);
-    static bool gameMapLoad( int *percent_complete );
+    static void loadMap(const char *map_file_path);
 
     // ** Game Rules Methods
     static void spawnPlayer( PlayerID player );
@@ -75,10 +68,8 @@ public:
     static void shutdownParticleSystems();
 
     static bool startClientGameSetup(const NetMessage* message, int *result_code);
-    static bool clientGameSetup( int *percent_complete );
     static ConnectMesgServerGameSettings* getServerGameSetup();
 
-public:
     static void quitNetPanzerGame();
 
     static void setNetPanzerGameOptions();

@@ -115,10 +115,10 @@ public:
 
     inline iRect worldRectToBucketRect( iRect &world_rect )
     {
-        return( iRect( world_rect.min.x / pixel_x_sample_factor,
-                       world_rect.min.y / pixel_y_sample_factor,
-                       world_rect.max.x / pixel_x_sample_factor,
-                       world_rect.max.y / pixel_y_sample_factor  )
+        return( iRect( world_rect.getLocationX() / pixel_x_sample_factor,
+                       world_rect.getLocationY() / pixel_y_sample_factor,
+                       world_rect.getWidth()     / pixel_x_sample_factor,
+                       world_rect.getHeight()    / pixel_y_sample_factor  )
               );
     }
 
@@ -127,10 +127,10 @@ public:
 
     inline iRect mapRectToBucketRect( iRect &map_rect )
     {
-        return( iRect( map_rect.min.x / map_x_sample_factor,
-                       map_rect.min.y / map_y_sample_factor,
-                       map_rect.max.x / map_x_sample_factor,
-                       map_rect.max.y / map_y_sample_factor  )
+        return( iRect( map_rect.getLocationX() / map_x_sample_factor,
+                       map_rect.getLocationY() / map_y_sample_factor,
+                       map_rect.getWidth()     / map_x_sample_factor,
+                       map_rect.getHeight()    / map_y_sample_factor  )
               );
     }
 

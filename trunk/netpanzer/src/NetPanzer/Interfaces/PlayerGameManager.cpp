@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Interfaces/MapsManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
@@ -167,43 +166,43 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    Desktop::add(new GameView());
-    Desktop::add(new RankView());
-    Desktop::add(new RankTeam());
-    Desktop::add(new EndRoundView());
-    Desktop::add(new GFlagSelectionView());
-    Desktop::add(new VehicleSelectionView());
-    Desktop::add(new MiniMapView() );
-    Desktop::add(new CodeStatsView());
-    Desktop::add(new LibView());
-    Desktop::add(new HelpScrollView());
+    Desktop::add(new GameView(), false);
+    Desktop::add(new RankView(), false);
+    Desktop::add(new RankTeam(), false);
+    Desktop::add(new EndRoundView(), false);
+    Desktop::add(new GFlagSelectionView(), false);
+    Desktop::add(new VehicleSelectionView(), false );
+    Desktop::add(new MiniMapView(), false);
+    Desktop::add(new CodeStatsView(), false);
+    Desktop::add(new LibView(), false);
+    Desktop::add(new HelpScrollView(), false);
 
-    Desktop::add(new ChatView());
-    Desktop::add(new PrepareTeam());
+    Desktop::add(new ChatView(), false);
+    Desktop::add(new PrepareTeam(), false);
 
     LoadingView *lv = new LoadingView();
-    Desktop::add(lv);
+    Desktop::add(lv, false);
 
 
-    Desktop::add(new MapSelectionView());
-    Desktop::add(new MainMenuView());
-    Desktop::add(new OptionsTemplateView());
-    Desktop::add(new HostOptionsView());
-    Desktop::add(new PlayerNameView());
-    Desktop::add(new AreYouSureResignView());
-    Desktop::add(new AreYouSureExitView());
-    Desktop::add(new DisconectedView());
+    Desktop::add(new MapSelectionView(), false);
+    Desktop::add(new MainMenuView(), false);
+    Desktop::add(new OptionsTemplateView(), false);
+    Desktop::add(new HostOptionsView(), false);
+    Desktop::add(new PlayerNameView(), false);
+    Desktop::add(new AreYouSureResignView(), false);
+    Desktop::add(new AreYouSureExitView(), false);
+    Desktop::add(new DisconectedView(), false);
 
-    Desktop::add(new IPAddressView());
-    Desktop::add(new ServerListView());
+    Desktop::add(new IPAddressView(), false);
+    Desktop::add(new ServerListView(), false);
 
-    Desktop::add(new MenuTemplateView());
+    Desktop::add(new MenuTemplateView(), false);
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MenuTemplateView", true);
     Desktop::setVisibility("MainView", true);
 
-    Desktop::checkResolution(iXY(800,600), iXY(screen->getWidth(),screen->getHeight()));
+    Desktop::checkResolution(iXY(800,480), iXY(screen->getWidth(),screen->getHeight()));
     Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
 
 
@@ -231,6 +230,8 @@ void PlayerGameManager::inputLoop()
 void PlayerGameManager::graphicsLoop()
 {
     screen->lock();
+
+    screen->fill(0);
 
     Desktop::draw(*screen);
 
@@ -352,12 +353,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::append( _("Loading Game Data") );
     graphicsLoop();
 
-    GameConfig::game_map->assign( MapsManager::getNextMap("") );
+    GameConfig::game_map->assign( GameManager::getNextMapName("") );
     const char* mapname = GameConfig::game_map->c_str();
 
     try
     {
-        GameManager::startGameMapLoad(mapname, 20);
+        GameManager::loadMap(mapname);
     }
     catch(std::exception& e)
     {
@@ -366,17 +367,10 @@ void PlayerGameManager::hostMultiPlayerGame()
         return;
     }
 
-    int percent_complete;
+    int percent_complete = 0;
     char strbuf[256];
 
     ObjectiveInterface::resetLogic();
-
-    while( GameManager::gameMapLoad( &percent_complete ) == true )
-    {
-        sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
-        LoadingView::update( strbuf );
-        graphicsLoop();
-    }
 
     UnitProfileInterface::loadUnitProfiles();
     if ( UnitProfileInterface::getNumUnitTypes() == 0 )
@@ -531,22 +525,24 @@ void PlayerGameManager::processSystemKeys()
 {
     if (Desktop::getVisible("GameView"))
     {
-
-        if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
-                KeyboardInterface::getKeyState( SDLK_RALT )) {
-            if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
+        if (   KeyboardInterface::getKeyState( SDLK_LALT )
+            || KeyboardInterface::getKeyState( SDLK_RALT ) )
+        {
+            if (KeyboardInterface::getKeyPressed(SDLK_RETURN))
+            {
                 GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
                 GameManager::setVideoMode();
             }
-        } // ** LFT_ALT or RGT_ALT pressed
+        }
 
         if ( KeyboardInterface::getKeyState(SDLK_F9) )
         {
             Screen->doScreenshoot();
         }
 
-        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
-            if (!Desktop::getView("OptionsView")->getVisible())
+        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
+        {
+            if ( ! Desktop::getVisible("OptionsView") )
             {
                 if ( Desktop::getVisible("HelpScrollView") )
                 {
@@ -558,21 +554,25 @@ void PlayerGameManager::processSystemKeys()
                 }
                 else
                 {
-                    View *v = Desktop::getView("OptionsView");
+                    View *v = Desktop::getView("MenuTemplateView");
+                    assert(v != 0);
+                    ((MenuTemplateView *)v)->init();
+                    ((MenuTemplateView *)v)->setAlwaysOnBottom(false);
+                    
+                    v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->initButtons();
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
+                    Desktop::setVisibility("MenuTemplateView", true);
                     Desktop::setVisibility("OptionsView", true);
                     Desktop::setActiveView("OptionsView");
                 }
             }
             else
             {
-                View *v = Desktop::getView("OptionsView");
-                assert(v != 0);
-                ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                ((OptionsTemplateView *)v)->setVisible(false);
+                Desktop::setVisibility("MenuTemplateView", false);
+                Desktop::setVisibility("OptionsView", false);
             }
         }
     }

@@ -21,7 +21,6 @@
 #include "Views/Components/Label.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/ChatView.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
 
 #include "Particles/ParticleInterface.hpp"
 
@@ -49,14 +48,9 @@ void
 LoadingView::init()
 {
     setSearchName("LoadingView");
-    setTitle(_("Loading Progress"));
-    setSubTitle("");
+//    setTitle(_("Loading Progress"));
 
-    setAllowResize(false);
     setAllowMove(false);
-    setDisplayStatusBar(false);
-    setVisible(false);
-    setBordered(false);
     need_password = false;
     
     password = new InputField();
@@ -64,7 +58,7 @@ LoadingView::init()
     password->setSize(32 * 8, 16);
     password->setMaxTextLength(31);
 
-    resize(800, 600);
+    resize(800, 480);
 
     Action * onAbort = ( gameconfig->quickConnect )
                        ? ActionManager::getAction("quit")
@@ -80,18 +74,18 @@ LoadingView::init()
 
 
 void
-LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
+LoadingView::doDraw( Surface& dest )
 {
     if (dirty)
         render();
 
     screen->fill(Color::black);
-    backgroundSurface.blt(clientArea, 0, 0);
-    clientArea.FillRoundRect(iRect(165, 40, 635, 225), 10, Color::black);
-    clientArea.RoundRect(iRect(165, 40, 635, 225), 10, Color::yellow);
-    surface.blt(clientArea, 172, 45);
+    backgroundSurface.blt(dest, 0, 0); // full blit
+    dest.FillRoundRect(iRect(165, 40, 470, 185), 10, Color::black);
+    dest.RoundRect(iRect(165, 40, 470, 185), 10, Color::yellow);
+    surface.blt(dest, 172, 45); // full blit
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 }
 
 void
@@ -117,7 +111,7 @@ void
 LoadingView::doActivate()
 {
     backgroundSurface.loadBMP("pics/backgrounds/menus/menu/defaultMB.bmp");
-    surface.create(455, 175, 1);
+    surface.create(455, 175);
     dirty=true;
 }
 

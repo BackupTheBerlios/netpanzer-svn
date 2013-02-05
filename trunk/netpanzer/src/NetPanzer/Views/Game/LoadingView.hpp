@@ -50,7 +50,7 @@ public:
     virtual void doActivate();
     virtual void doDeactivate();
 
-    void doDraw(Surface &viewArea, Surface &clientArea);
+    void doDraw( Surface& dest );
     void render();
 
     void setNeedPassword(bool need_password);

@@ -45,14 +45,6 @@ TCPSocket::TCPSocket(const std::string &host, const std::string &port, TCPSocket
     setAddress(a);
 }
 
-TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
-    throw(NetworkException)
-    : SocketBase(address,true), observer(o)
-{
-    doConnect();
-    setNoDelay();
-}
-
 TCPSocket::~TCPSocket()
 { }
 

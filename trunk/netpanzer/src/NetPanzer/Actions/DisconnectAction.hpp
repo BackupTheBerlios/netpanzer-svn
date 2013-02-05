@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/StrManager.hpp"
 #include "2D/Color.hpp"
 
+#include "Util/Log.hpp"
+
 
 class DisconnectAction : public Action
 {
@@ -46,12 +48,16 @@ public:
 
         GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
 
+        Desktop::setVisibilityAllWindows(false);
+
         if ( menuview )
         {
-            menuview->hidePlayButton();
+            menuview->init();
+            menuview->setAlwaysOnBottom(true);
+            Desktop::remove(menuview);
+            Desktop::add(menuview, false);
         }
-        
-        Desktop::setVisibilityAllWindows(false);
+
         Desktop::setVisibility("MenuTemplateView", true);
         Desktop::setVisibility("MainView", true);
 

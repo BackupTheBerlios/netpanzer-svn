@@ -77,15 +77,15 @@ public:
     static inline void clientXYtoWorldXY(const iRect& view_win,
                                           const iXY& client, iXY *world)
     {
-        world->x = view_win.min.x + client.x;
-        world->y = view_win.min.y + client.y;
+        world->x = view_win.getLocationX() + client.x;
+        world->y = view_win.getLocationY() + client.y;
     }
 
     static inline void worldXYtoClientXY(const iRect& view_win,
                                           const iXY& world, iXY *client )
     {
-        client->x = world.x - view_win.min.x;
-        client->y = world.y - view_win.min.y;
+        client->x = world.x - view_win.getLocationX();
+        client->y = world.y - view_win.getLocationY();
     }
 
     static inline iRect getViewWindow()
@@ -99,7 +99,7 @@ public:
     {
         iRect view_win;
         main_camera->getViewWindow( &view_win );
-        return( view_win.min );
+        return( view_win.getLocation() );
     }
 
     static inline long getCameraDistance(const iXY& world_loc)

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 
+#include "Util/StringTokenizer.hpp"
+
 #define MAX_CHAT_LINES (2000)
 
 tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
@@ -28,8 +30,8 @@ tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
     VScrollBar = 0;
     HScrollBar = 0;
     callback = newcallback;
-    setLocation(rect.min);
-    setSize(rect.getSizeX(), rect.getSizeY());
+    setLocation(rect.getLocation());
+    setSize(rect.getWidth(), rect.getHeight());
     background = ctWindowsbackground;
     StartItem = List.end();
     StartSubLine = 0;
@@ -38,18 +40,56 @@ tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
     TotalPosition = 0;
     MaxItemWidth = size.x;
     SelectedItem = List.end();
-    MaxItemView = (size.y-5)/ItemHeight;
     AutoScroll = false;
     AutoWrap = false;
+    Selectable = true;
+    Bordered = true;
     dirty = true;
+    hasHeader = false;
+}
+
+void tStringListBox::Clear()
+{
+    List.clear();
+    dirty = true;
+    SelectedItem = List.end();
+    StartItem = List.end();
+    StartSubLine = 0;
+    TotalLines = 0;
+    TotalPosition = 0;
+    MaxItemWidth = size.x;
+
+    if (VScrollBar)
+    {
+        VScrollBar->setPosition(0);
+        VScrollBar->setMax(0);
+    }
+
+    if (HScrollBar)
+    {
+        HScrollBar->setPosition(0);
+        HScrollBar->setMax(MaxItemWidth);
+    }
 }
 
 void tStringListBox::actionPerformed(const mMouseEvent &me)
 {
+    if ( ! Selectable )
+    {
+        return;
+    }
+    
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
         (me.getModifiers() & InputEvent::BUTTON1_MASK)) 
     {
-        int SelectedLine = (me.getY()-(position.y+4))/ItemHeight;
+        int contents_start = position.y + 4;
+        if ( hasHeader )
+        {
+            contents_start += ItemHeight;
+        }
+        
+        int SelectedLine = (me.getY()-(contents_start))/ItemHeight;
+        
         SelectedItem = StartItem;
         int TmpSubLine = StartSubLine;
         
@@ -79,6 +119,18 @@ std::string tStringListBox::getTextItem()
 int tStringListBox::getMaxItemWidth(const DataItem& data)
 {
     return Surface::getTextLength(data.text)+10;
+}
+
+void tStringListBox::AddBlock(const std::string& S)
+{
+    StringTokenizer tok(S,'\n');
+    
+    while ( tok.hasMore() )
+    {
+        Add(tok.getNextToken(true));
+    }
+    
+    dirty = true;
 }
 
 void tStringListBox::AddData(const std::string& S, void * D)
@@ -132,7 +184,7 @@ void tStringListBox::AddData(const std::string& S, void * D)
     
     if (VScrollBar)
     {
-        VScrollBar->setMax(TotalLines-MaxItemView);
+        VScrollBar->setMax(TotalLines-getNumVisibleLines());
     }
     
     if (HScrollBar)
@@ -178,7 +230,10 @@ void tStringListBox::AddData(const std::string& S, void * D)
 void tStringListBox::render()
 {
     surface.fill(background);
-    surface.drawRect(surface.getRect(), ctWindowsBorder);
+    if ( Bordered )
+    {
+        surface.drawRect(surface.getRect(), ctWindowsBorder);
+    }
     int row = 4;
     
     int maxw = 0;
@@ -191,8 +246,16 @@ void tStringListBox::render()
         maxw = MaxItemWidth+10;
     }
     
-    Surface RowPaint(maxw, ItemHeight, 1);
-    Surface Bitmap(size.x-6, ItemHeight, 1);
+    Surface RowPaint(maxw, ItemHeight);
+    Surface Bitmap(size.x-6, ItemHeight);
+    
+    if ( hasHeader )
+    {
+        Surface hh(size.x - 2, ItemHeight);
+        paintHeader(hh);
+        hh.blt(surface, 1, 1); // full blit
+        row += ItemHeight;
+    }
     
     std::list<DataItem>::iterator item = StartItem;
     int subline_num = StartSubLine;
@@ -210,7 +273,7 @@ void tStringListBox::render()
         
         iRect r(StartWidth, 0, StartWidth+(size.x-6), ItemHeight);
         Bitmap.grab(RowPaint, r);
-        Bitmap.blt(surface, 3, row);
+        Bitmap.blt(surface, 3, row); // full blit
         
         row += ItemHeight;
         subline_num += 1;
@@ -241,7 +304,7 @@ void tStringListBox::setVscrollBar(tVScrollBar *newVScrollBar)
         VScrollBar->setLocation(position.x+size.x, position.y);
         VScrollBar->setHeight(size.y);
         VScrollBar->setStateChangedCallback(this);
-        VScrollBar->setMax(List.size()-MaxItemView);
+        VScrollBar->setMax(List.size()-getNumVisibleLines());
     }
 }
 

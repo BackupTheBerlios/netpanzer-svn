@@ -141,33 +141,29 @@ int main ( int argc, char** argv )
     printf("fps=%f\n", fps);
     printf("offset=%d,%d\n", offset_x, offset_y);
 
-    Surface unpacked(width, height, frames);
-
-    unpacked.setFPS(fps);
-    unpacked.setOffsetX(offset_x);
-    unpacked.setOffsetY(offset_y);
-
-    Surface bmp;
-
-    for ( int n = 0; n < frames; n++ )
-    {
-        std::stringstream bfile;
-        bfile << filename_noext << "_" << n << ".bmp";
-
-        bmp.loadBMP(bfile.str().c_str());
-
-        printf("Loaded: %s\n", bfile.str().c_str());
-
-        unpacked.setFrame(n);
-        unpacked.fill(0);
-        bmp.blt(unpacked, 0, 0);
-    }
-
-
-    PackedSurface pak;
-    pak.pack(unpacked);
-    pak.setFPS(fps);
-    pak.save(outfile);
+//    Surface unpacked(width, height, frames);
+//
+//    Surface bmp;
+//
+//    for ( int n = 0; n < frames; n++ )
+//    {
+//        std::stringstream bfile;
+//        bfile << filename_noext << "_" << n << ".bmp";
+//
+//        bmp.loadBMP(bfile.str().c_str());
+//
+//        printf("Loaded: %s\n", bfile.str().c_str());
+//
+//        unpacked.setFrame(n); // XXX tmp
+//        unpacked.fill(0);
+//        bmp.blt(unpacked, 0, 0); // blit to frame
+//    }
+//
+//
+//    PackedSurface pak;
+//    pak.pack(unpacked);
+//    pak.setFPS(fps);
+//    pak.save(outfile);
 
     printf("Wrote to: %s\n", filesystem::getRealWriteName(outfile.c_str()).c_str());
 

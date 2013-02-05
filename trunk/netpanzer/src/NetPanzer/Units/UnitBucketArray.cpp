@@ -74,23 +74,28 @@ UnitBucketArray::initialize( iXY map_size, iXY tile_size,
 iRect
 UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
 {
-    long bucket_max_x;
-    long bucket_max_y;
+    long bucket_size_x;
+    long bucket_size_y;
 
-    bucket_max_x = world_rect.max.x / pixel_x_sample_factor;
-    if ( bucket_max_x >= (long) column_size ) {
-        bucket_max_x = column_size - 1;
+    bucket_size_x = world_rect.getEndX() / pixel_x_sample_factor;
+    if ( bucket_size_x >= (long) column_size )
+    {
+        bucket_size_x = column_size - 1;
     }
 
-    bucket_max_y = world_rect.max.y / pixel_y_sample_factor;
-    if ( bucket_max_y >= (long) row_size ) {
-        bucket_max_y = row_size  - 1;
+    bucket_size_y = world_rect.getEndY() / pixel_y_sample_factor;
+    if ( bucket_size_y >= (long) row_size )
+    {
+        bucket_size_y = row_size  - 1;
     }
 
-    return( iRect( world_rect.min.x / pixel_x_sample_factor,
-                   world_rect.min.y / pixel_y_sample_factor,
-                   bucket_max_x,
-                   bucket_max_y
+    int px = world_rect.getLocationX() / pixel_x_sample_factor;
+    int py = world_rect.getLocationY() / pixel_y_sample_factor;
+    
+    return( iRect( world_rect.getLocationX() / pixel_x_sample_factor,
+                   world_rect.getLocationY() / pixel_y_sample_factor,
+                   bucket_size_x-px+1,
+                   bucket_size_y-py+1
                  )
           );
 }

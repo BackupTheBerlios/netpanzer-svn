@@ -215,12 +215,13 @@ BaseGameManager *initialise(int argc, char** argv)
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console
     // for the dedicated server and the bot
-    if(dedicated_option.value() || bot_option.value().size() > 0) {
+    
+    //if(dedicated_option.value() || bot_option.value().size() > 0) {
         AllocConsole();
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
-        freopen("CON", "r", stdin);
-    }
+//        freopen("CON", "r", stdin);
+    //}
 #endif
 
     // Initialize random number generator

@@ -36,23 +36,26 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
         int                    isFarAway) : ParticleSystem2D(pos, isFarAway)
 {
     // Make sure the the bounding box is not negative.
-    assert(emitBounds.getSizeX() >= 0);
-    assert(emitBounds.getSizeY() >= 0);
+    assert(emitBounds.getWidth() >= 0);
+    assert(emitBounds.getHeight() >= 0);
 
     iRect bounds(emitBounds);
 
     // If all 0's were entered, give the bounds a size of 1.
-    if (bounds.getSizeX() == 0) {
-        bounds.max.x = 1;
-        bounds.min.x = 0;
+    if (bounds.getWidth() == 0)
+    {
+        bounds.setWidth(1);
+        bounds.setLocationX(0);
     }
-    if (bounds.getSizeY() == 0) {
-        bounds.max.y = 1;
-        bounds.min.y = 0;
+    
+    if (bounds.getHeight() == 0)
+    {
+        bounds.setHeight(1);
+        bounds.setLocationY(0);
     }
 
-    int halfBoundsX = bounds.getSizeX() / 2;
-    int halfBoundsY = bounds.getSizeY() / 2;
+    int halfBoundsX = bounds.getWidth() / 2;
+    int halfBoundsY = bounds.getHeight() / 2;
 
     // Add a crater on the ground if it is a logical location.
     int pixMovementValue = TileInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
@@ -138,9 +141,9 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
 
     {
         for (int i = 0; i < smallCount; i++) {
-            offset.x = pos.x - (rand() % bounds.getSizeX()) + halfBoundsX;
+            offset.x = pos.x - (rand() % bounds.getWidth()) + halfBoundsX;
             offset.y = pos.y;
-            offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
+            offset.z = pos.z - (rand() % bounds.getHeight()) + halfBoundsY;
 
             try {
                 new ChunkTrajectoryParticle2D(	offset,
@@ -167,9 +170,9 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
 
     {
         for (int i = 0; i < mediumCount; i++) {
-            offset.x = pos.x - (rand() % bounds.getSizeX()) + halfBoundsX;
+            offset.x = pos.x - (rand() % bounds.getWidth()) + halfBoundsX;
             offset.y = pos.y;
-            offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
+            offset.z = pos.z - (rand() % bounds.getHeight()) + halfBoundsY;
 
             try {
                 new ChunkTrajectoryParticle2D(	pos,
@@ -196,9 +199,9 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
 
     {
         for (int i = 0; i < largeCount; i++) {
-            offset.x = pos.x - (rand() % bounds.getSizeX()) + halfBoundsX;
+            offset.x = pos.x - (rand() % bounds.getWidth()) + halfBoundsX;
             offset.y = pos.y;
-            offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
+            offset.z = pos.z - (rand() % bounds.getHeight()) + halfBoundsY;
 
             try {
                 new ChunkTrajectoryParticle2D(	pos,

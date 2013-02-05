@@ -41,12 +41,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class GFlagButton : public Button
 {
 public:
-    GFlagButton( int x, int y, Surface &s )
+    GFlagButton( int x, int y, Surface* s )
     {
         setLocation(x, y);
-        setSize(s.getWidth(), s.getHeight());
-        bimage.create(s.getWidth(), s.getHeight(), 1);
-        s.blt(bimage, 0, 0);
+        setSize(s->getWidth(), s->getHeight());
+        background_images.push_back(s);
 
         setExtraBorder();
         borders[1][0] = Color::red;
@@ -59,8 +58,8 @@ public:
     {
         if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
         {
-            bimage.frameToBuffer(GameConfig::player_flag_data,
-                                 sizeof(GameConfig::player_flag_data));
+            background_images[0]->frameToBuffer(GameConfig::player_flag_data,
+                                                sizeof(GameConfig::player_flag_data));
 
             ChangeFlagRequest req;
             memcpy(req.player_flag,
@@ -83,13 +82,8 @@ public:
 GFlagSelectionView::GFlagSelectionView() : View()
 {
     setSearchName("GFlagSelectionView");
-    setTitle("GFlag Selection");
-    setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
-    setVisible(false);
-    setBordered(false);
 
     loaded = false;
 }
@@ -100,39 +94,35 @@ void GFlagSelectionView::init()
 
     iRect viewrect = getClientRect();
 
-    rect.min.x = (viewrect.getSizeX()/2) - 250;
-    rect.min.y = (viewrect.getSizeY()/2) - 250;
-    rect.max.x = rect.min.x + 500;
-    rect.max.y = rect.min.y + 500;
+    rect.setLocation( (viewrect.getWidth()/2) - 250,
+                      (viewrect.getHeight()/2) - 250);
+    rect.setSize(500,500);
 
-    int tx = rect.min.x + 20;
-    int ty = rect.min.y + 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
+    int tx = rect.getLocationX() + 20;
+    int ty = rect.getLocationY() + 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
     add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
 
     loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
-    loc_player_flag.y = rect.min.y + 14;
+    loc_player_flag.y = rect.getLocationY() + 14;
 
-    iXY flagStartOffset(rect.min.x + 14, rect.min.y + 14*3);
+    iXY flagStartOffset(rect.getLocationX() + 14, rect.getLocationY() + 14*3);
 
     int yOffset = FLAG_HEIGHT + 8;
 
     int x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
-    Surface game_flags;
-    std::vector<string> flag_names;
+    PtrArray<Surface> game_flags;
 
-    ResourceManager::loadAllFlags(game_flags, flag_names);
+    ResourceManager::loadAllFlags(game_flags);
 
-    unsigned int max_flags = game_flags.getNumFrames();
-    for (unsigned int i = 0; i < max_flags; ++i)
+    for (unsigned int i = 0; i < game_flags.size(); ++i)
     {
-        game_flags.setFrame(i);
-        add( new GFlagButton(x, y, game_flags) );
+        add( new GFlagButton(x, y, game_flags[i]) );
 
         x += FLAG_WIDTH + 8;
 
-        if (x > flagStartOffset.x + rect.getSizeX() - 20 - FLAG_WIDTH)
+        if (x > flagStartOffset.x + rect.getWidth() - 20 - FLAG_WIDTH)
         {
             x = flagStartOffset.x;
             y += yOffset;
@@ -141,14 +131,14 @@ void GFlagSelectionView::init()
     loaded = true;
 }
 
-void GFlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
+void GFlagSelectionView::doDraw( Surface& dest )
 {
-    clientArea.BltRoundRect(rect, 14, Palette::darkGray256.getColorArray());
-    clientArea.RoundRect(rect,14, Color::gray);
+    dest.BltRoundRect(rect, 14, Palette::darkGray256.getColorArray());
+    dest.RoundRect(rect,14, Color::gray);
 
-    ResourceManager::getFlag(PlayerInterface::getLocalPlayerIndex())->blt(clientArea, loc_player_flag.x, loc_player_flag.y);
+    ResourceManager::getFlag(PlayerInterface::getLocalPlayerIndex())->blt(dest, loc_player_flag.x, loc_player_flag.y); // full blit
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 } // end doDraw
 
 void GFlagSelectionView::doActivate()
@@ -158,19 +148,19 @@ void GFlagSelectionView::doActivate()
         init();
     }
     Desktop::setActiveView(this);
-	}
+}
 
 void GFlagSelectionView::doDeactivate()
 {
-    if ( ! getVisible() )
+    if ( ! isVisible() )
     {
-        removeComponents();
+//        removeComponents();
         loaded = false;
     }
 }
 
 void
-GFlagSelectionView::checkResolution(iXY oldResolution, iXY newResolution)
+GFlagSelectionView::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
     resize(iXY(newResolution.x, newResolution.y));
     moveTo(iXY(0,0));

@@ -64,32 +64,29 @@ Button::render()
     surface.fill(0);
     dirty = false;
     if (!visible) return;
-    if ( bimage.getNumFrames() == 1 )
+    if ( background_images.size() == 1 )
     {
-        bimage.bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y);
+        background_images[0]->bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y); // blit full
     }
-    else if ( bimage.getNumFrames() >= 3 )
+    else if ( background_images.size() >= 3 )
     {
-        bimage.setFrame( (bstate < bimage.getNumFrames()) ? bstate : 0 );
-        bimage.bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y);
+        background_images[(bstate < background_images.size()) ? bstate : 0]->bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y);
     }
     else
     {
-        surface.fill(componentBodyColor);
+//        surface.fill(componentBodyColor);
+        surface.FillRoundRect(surface.getRect(), 3, componentBodyColor);
     }
 
     if ( borders[bstate][0]|extraBorder ) // only 1 | (binary or)
     {
-        surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
+        surface.RoundRect(surface.getRect(), 3, borders[bstate][0]);
+//        surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
     }
 
-    if ( label.length() )
+    if ( ! label.empty() )
     {
-        Surface text;
-        text.renderText( label.c_str(), textColors[bstate], 0);
-        // blit centered and transparent
-        text.bltTrans(surface, ((surface.getWidth()/2) - (text.getWidth()/2))+state_offset[bstate].x,
-                      ((surface.getHeight()/2) - (text.getHeight()/2))+state_offset[bstate].y);
+        surface.bltStringCenter(label.c_str(), textColors[bstate]);
     }
 
 }
@@ -151,6 +148,22 @@ Button::createTextButton( const NPString& label,
     return b;
 }
 
+void Button::setImage( PtrArray<Surface>& sl )
+{
+    background_images.deleteAll();
+    background_images.clear();
+
+    for ( size_t n = 0; n < sl.size(); n++ )
+    {
+        background_images.push_back(sl[n]);
+    }
+
+    sl.clear();
+
+    setSize(background_images[0]->getWidth(), background_images[0]->getHeight());
+    dirty = true;
+}
+
 Button *
 Button::createNewSpecialButton(    const NPString& label,
                                    const iXY& loc,
@@ -167,19 +180,23 @@ Button::createNewSpecialButton(    const NPString& label,
     Surface bmiddle;
     bmiddle.grab(bitmap, iRect(15, 0, bitmap.getWidth()-15, bitmap.getHeight()));
 
-    Surface spbutton(width, bstart.getHeight(), 1);
+    Surface * spbutton = new Surface(width, bstart.getHeight());
 
-    spbutton.setFrame(0);
-    bstart.blt(spbutton,0,0);
+    bstart.blt(*spbutton,0,0); // full blit
+
     int msize = bmiddle.getWidth();
-    for (int i = 0; i < (int)((spbutton.getWidth())/msize);i++)
+    for (int i = 0; i < (int)((spbutton->getWidth())/msize);i++)
     {
-        bmiddle.blt(spbutton,15+(msize*i),0);
+        bmiddle.blt(*spbutton,15+(msize*i),0); // full blit
     }
-    bend.blt(spbutton,spbutton.getWidth()-15,0);
+
+    bend.blt(*spbutton,spbutton->getWidth()-15,0); // full blit
+
+    PtrArray<Surface> bg(1);
+    bg.push_back(spbutton);
 
     Button *b = new Button();
-    b->setImage(spbutton);
+    b->setImage(bg);
     b->setLabel(label);
     b->setLocation(loc);
     b->setTextColors(ctTexteNormal, ctTexteOver, ctTextePressed, ctTexteDisable);

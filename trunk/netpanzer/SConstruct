@@ -277,7 +277,7 @@ env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
 MakeStaticLib(env, 'np2d', '2D', '*.c*')
 
 # BUILDS REST OF LIBRARIES
-MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
+MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm','*.cpp')
 
 ################################################################
 # NetPanzer source dirs

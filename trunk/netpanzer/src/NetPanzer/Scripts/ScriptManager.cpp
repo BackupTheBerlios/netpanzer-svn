@@ -180,6 +180,7 @@ ScriptManager::prepareFunction(const NPString& func_name)
     NPString fname;
     PrepareTableIndex(luavm, func_name, fname);
     lua_getfield(luavm, -1, fname.c_str());
+    return true;
 }
 
 void

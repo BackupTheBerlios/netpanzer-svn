@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ServerConsole.hpp"
 #include "Util/Exception.hpp"
-#include "Util/StringTokenizer.hpp"
 
 ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
     : running(false), thread(0), manager(newmanager)

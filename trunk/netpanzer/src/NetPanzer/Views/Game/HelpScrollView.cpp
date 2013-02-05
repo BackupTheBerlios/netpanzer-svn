@@ -33,14 +33,12 @@ void HelpScrollView::addhelpcmd(NPString cmd, NPString help)
 HelpScrollView::HelpScrollView() : SpecialButtonView()
 {
     setSearchName("HelpScrollView");
-    setTitle(_("Help Information"));
-    setSubTitle("");
-    setAllowResize(false);
+//    setTitle(_("Help Information"));
     setAllowMove(false);
     
-    moveTo(bodyTextRect.min);
+    moveTo(bodyTextRect.getLocation());
     resize(bodyTextRect.getSize());
-    iRect r(0, 0, bodyTextRect.getSizeX()-20, bodyTextRect.getSizeY()-33);
+    iRect r(0, 0, bodyTextRect.getWidth()-20, bodyTextRect.getHeight()-33);
     HelpBox = new tStringListBox(r, 0);
     VscrollBar = new tVScrollBar();
     add(VscrollBar);
@@ -147,13 +145,13 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     HelpBox->Add(" ");
 }
 
-void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
+void HelpScrollView::doDraw( Surface& dest )
 {
     if (Desktop::getVisible("GameView")) {
-        bltViewBackground(viewArea);
+        bltViewBackground(dest);
     }
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 } // end HelpScrollView::doDraw
 
 void HelpScrollView::doActivate()

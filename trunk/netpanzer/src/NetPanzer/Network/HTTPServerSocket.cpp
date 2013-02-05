@@ -179,7 +179,7 @@ template<> inline
 void HTTPServerSocket::onReceiveState<State::CONNECTED>(const char * data, const int len)
 {
     uint8_t opcode = data[0];
-    bool is_fin = opcode & 0x80;
+//    bool is_fin = opcode & 0x80;
     opcode &= 0xf;
     
     uint8_t paylen = data[1];
@@ -445,9 +445,9 @@ bool HTTPServerSocket::handle_request()
     
     if ( filesystem::exists(path) )
     {
-        filesystem::ReadFile * file = filesystem::openRead(path);
+        filesystem::ReadFile * file = new filesystem::ReadFile(path);
         
-        int flen = file->length();
+        const size_t flen = file->length();
         
         std::stringstream ss;
         

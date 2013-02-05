@@ -51,7 +51,7 @@ void tChatBox::onPaint(Surface &dst, const DataItem& data, int SubLine)
                 flag = ResourceManager::getFlag(MsgData->FlagIndex);
                 if (flag)
                 {
-                    flag->blt(dst, 0, 0);
+                    flag->blt(dst, 0, 0); // full blit
                 }
                 
                 NumPrintableChars -= 3;

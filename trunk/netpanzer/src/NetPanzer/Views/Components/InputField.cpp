@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "InputField.hpp"
+#include "View.hpp"
 #include "2D/Color.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
@@ -29,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     #include <windows.h>
 #endif
 
-InputField::InputField()
+InputField::InputField(View * view)
 {
     this->has_focus = false;
     this->max_chars = 50;
@@ -40,6 +41,8 @@ InputField::InputField()
     this->was_special_key = false;
     
     this->text_color = Color::white;
+
+    this->view_process_events = view;
     
 }
 
@@ -53,48 +56,35 @@ void InputField::draw(Surface &dest)
     iRect r;
     getBounds(r);
 
-    dest.fillRect(r, Color::black);
+    dest.FillRoundRect(r, 3, Color::black);
 
     bool inFocus = Desktop::getKeyboardFocusComponent() == this;
 
     if ( inFocus )
     {
         checkRepeatKey();
-        dest.drawButtonBorder(r, Color::gray64, Color::white);
+        dest.RoundRect(r, 3, Color::gray64);
     }
     else
     {
         last_pressed_key = 0;
-        dest.drawButtonBorder(r, Color::white, Color::gray64);
+        dest.RoundRect(r, 3, Color::white);
     }
     
-    r.min.y += 2; // add the border;
-    r.min.x += 2;
-    r.max.y -= 2;
-    r.max.x -= 2;
+    r.grow(-2,-2);
+    r.translate(0, (r.getHeight()/2)-6);
 
-    Surface s;
-    s.setTo(dest, r);
-    
-    int text_y = (r.getSizeY()/2)-4;
-
-    s.bltString(0, text_y , text.substr(text_display_start).c_str(), text_color);
+    dest.bltString(r.getLocationX(), r.getLocationY(), text.substr(text_display_start).c_str(), text_color);
 
     if ( inFocus )
     {
-        drawCursor(s, text_y);
-    }
-}
-
-void InputField::drawCursor(Surface& dest, int text_y)
-{
-    Uint32 now = SDL_GetTicks()/100;
-
-    if ( now & 2)
-    {
-        int cpos = (cursor_pos - text_display_start) * 8;
-        iRect r(cpos, text_y + 7, cpos+7, text_y + 9);
-        dest.fillRect(r, Color::white);
+        if ( (SDL_GetTicks()/100) & 2)
+        {
+            int cpos = (cursor_pos - text_display_start) * 8;
+            r.translate( cpos, 7 );
+            r.setSize( 7, 2 );
+            dest.fillRect( r, Color::white );
+        }
     }
 }
 
@@ -154,11 +144,16 @@ void InputField::handleKeyboard()
         key_repeat_timer.reset();
 
     }
+
+    if ( view_process_events )
+    {
+        view_process_events->processEvents();
+    }
 }
 
 void InputField::handleNormalKey(int key)
 {
-    if ( text.length() < max_chars && excluded_chars.find(key) == std::string::npos )
+    if ( text.length() < (unsigned)max_chars && excluded_chars.find(key) == std::string::npos )
     {
         text.insert(cursor_pos,1,key);
         ++cursor_pos;

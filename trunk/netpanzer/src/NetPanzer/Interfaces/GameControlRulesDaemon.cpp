@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/MapsManager.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/TeamManager.hpp"
@@ -134,7 +133,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
         try
         {
-            GameManager::startGameMapLoad(GameConfig::game_map->c_str(), 16);
+            GameManager::loadMap(GameConfig::game_map->c_str());
         }
         catch(std::exception& e)
         {
@@ -145,33 +144,10 @@ void GameControlRulesDaemon::mapCycleFsmClient()
         }
 
         GameManager::resetGameLogic();
-        map_cycle_fsm_client_state = _map_cycle_client_load_map;
+        map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
         return;
     }
     break;
-
-    case _map_cycle_client_load_map :
-    {
-        int percent_complete;
-        char str_buf[128];
-
-        if ( GameManager::gameMapLoad( &percent_complete ) == false )
-        {
-            map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
-
-            sprintf( str_buf, "%s (%d%%)", _("Loading Game Map..."), percent_complete);
-            LoadingView::update( str_buf );
-
-            LoadingView::append( _("Waiting to respawn...") );
-        }
-        else
-        {
-            sprintf( str_buf, "%s (%d%%)", _("Loading Game Map..."), percent_complete);
-            LoadingView::update( str_buf );
-        }
-
-        return;
-    }
 
     case _map_cycle_client_wait_for_respawn_ack :
     {
@@ -266,7 +242,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             }
             else
             {
-                GameConfig::game_map->assign( MapsManager::getNextMap( *GameConfig::game_map ) );
+                GameConfig::game_map->assign( GameManager::getNextMapName( *GameConfig::game_map ) );
             }
 
             ConsoleInterface::postMessage(Color::white, false, 0, _("loading map '%s'."),
@@ -299,8 +275,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
                 try
                 {
-                    GameManager::startGameMapLoad
-                    (GameConfig::game_map->c_str(), 16);
+                    GameManager::loadMap(GameConfig::game_map->c_str());
                 }
                 catch(std::exception& e)
                 {
@@ -311,28 +286,10 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 }
 
                 GameManager::resetGameLogic();
-                map_cycle_fsm_server_state = _map_cycle_server_state_load_map;
+                map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
                 return;
             }
 
-        }
-    }
-    break;
-
-    case _map_cycle_server_state_load_map :
-    {
-        int percent_complete;
-        char str_buf[128];
-
-        if ( GameManager::gameMapLoad( &percent_complete ) == false )
-        {
-            map_cycle_fsm_server_state = _map_cycle_server_state_load_unit_profiles;
-        }
-
-        if ( GameControlRulesDaemon::execution_mode != _execution_mode_dedicated_server )
-        {
-            sprintf( str_buf, "%s (%d%%)", _("Loading Game Map..."), percent_complete);
-            LoadingView::update( str_buf );
         }
     }
     break;

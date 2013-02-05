@@ -25,18 +25,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/NTimer.hpp"
 #include <string>
 
+class View;
+
 class InputField : public Component
 {
 protected:
     virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
 
-    void drawCursor(Surface& dest, int text_y);
-    
     void render();
 
 public:
-    InputField();
+    InputField(View * view = 0);
     virtual ~InputField() {}
 
     void setText(const std::string& text)
@@ -64,6 +64,7 @@ public:
     void handleSpecialKey(int key);
 
 private:
+    View * view_process_events;
     bool has_focus;
     int cursor_pos;
     int max_chars;

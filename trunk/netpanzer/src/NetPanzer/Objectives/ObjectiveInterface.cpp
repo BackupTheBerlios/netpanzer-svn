@@ -156,7 +156,11 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
 
     try
     {
-        IFileStream in(file_path);
+        NPString ff("/maps/");
+        ff += file_path;
+        ff += ".opt";
+        
+        IFileStream in(ff);
 
         cleanUpObjectiveList();
 
@@ -248,8 +252,8 @@ void ObjectiveInterface::playerRequest_setOutputLoc(const PlayerID player_id, co
         return;
     }
 
-    if ( location.x >= MapInterface::getWidth()
-         || location.y >= MapInterface::getHeight() )
+    if ( (unsigned)location.x >= MapInterface::getWidth()
+         || (unsigned)location.y >= MapInterface::getHeight() )
     {
         LOGGER.warning("OISH_COL CHEAT Player %u sent invalid map location %u,%u; max is %u,%u",
                        player_id,
@@ -370,8 +374,8 @@ ObjectiveInterface::clientHandleNetMessage(const NetMessage* message)
 
             iXY location = msg->getMapPos();
             
-            if ( location.x >= MapInterface::getWidth()
-                 || location.y >= MapInterface::getHeight() )
+            if ( (unsigned)location.x >= MapInterface::getWidth()
+                 || (unsigned)location.y >= MapInterface::getHeight() )
             {
                 LOGGER.warning("OICH_COL CHEAT SERVER sent invalid map location %u,%u; max is %u,%u",
                                location.x, location.y,

@@ -98,14 +98,14 @@ BotPlayer::isReady()
 UnitBase *
 BotPlayer::getRandomUnit(PlayerID playerIndex)
 {
-    const std::vector<UnitBase*>& units 
+    const PtrArray<UnitBase>& units 
         = UnitInterface::getPlayerUnits(playerIndex);
 
     if(units.size() == 0)
         return 0;
     
     size_t unitIndex = rand() % units.size();
-    return units[unitIndex];
+    return units.get(unitIndex);
 }
 
 //-----------------------------------------------------------------

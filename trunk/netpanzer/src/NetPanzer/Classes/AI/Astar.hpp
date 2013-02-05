@@ -88,7 +88,7 @@ public:
     }
 };
 
-class Astar : private MapInterface
+class Astar
 {
 private:
     AstarNode *node_list;
@@ -111,8 +111,7 @@ protected:
     AstarNode goal_node;
     AstarNode *best_node;
 
-    std::priority_queue<AstarNode*, std::vector<AstarNode*>,
-                        AstarNodePtrCompare> open;
+    std::priority_queue<AstarNode*, std::vector<AstarNode*>,AstarNodePtrCompare> open;
 
     BitArray open_set;
     BitArray closed_set;

@@ -57,6 +57,8 @@ extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
 void activateVehicleSelectionView( ObjectiveID outpost_id );
 void toggleDisplayOutpostNames( void );
 
+class BoxedLabel;
+
 //--------------------------------------------------------------------------
 class VehicleSelectionView : public GameTemplateView
 {
@@ -67,6 +69,8 @@ private:
     static Button * buttonStaticDisplay;
     static Button * buttonPower;
     static Button * buttonOk;
+    
+    BoxedLabel * statusBar;
 
     int maxHitPoints;
     int maxAttackFactor;
@@ -90,8 +94,6 @@ private:
     iXY            timeRemainingPos;
     iXY            unitsBuiltPos;
 
-    static Surface unitImages;
-
     static void checkMiniProductionRect(const std::string& string);
 
 public:
@@ -100,7 +102,7 @@ public:
     {}
 
     virtual void        doActivate();
-    virtual void        doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void        doDraw( Surface& dest );
     virtual void        mouseMove(const iXY &prevPos, const iXY &newPos);
     static  const char *getUnitName(int unitType);
     static  void        drawMiniProductionStatus(Surface &dest);

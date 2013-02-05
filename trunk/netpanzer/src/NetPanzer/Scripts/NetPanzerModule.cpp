@@ -25,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/MapsManager.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/FileSystem.hpp"
 #include "Actions/ActionManager.hpp"
+#include "Resources/ResourceManager.hpp"
 
 #include <sstream>
 
@@ -132,7 +132,7 @@ static int npmodule_map (lua_State *L)
     {
         NPString map_name(mname);
 
-        if ( !MapsManager::existsMap(map_name) )
+        if ( !ResourceManager::mapExists(map_name) )
         {
             ss << "Map '" << map_name << "' doesn't exists";
         }
@@ -153,41 +153,17 @@ static int npmodule_map (lua_State *L)
 
 static int npmodule_listMaps (lua_State *L)
 {
-    const char mapsPath[] = "maps/";
-
-    // scan directory for .npm files
-    std::string suffix = ".npm";
-    char **list = filesystem::enumerateFiles(mapsPath);
+    std::vector<NPString> map_names;
+    ResourceManager::listMaps(map_names);
 
     int tindex = 0; // will push ++tindex
     lua_newtable(L);
-
-    for (char **i = list; *i != NULL; i++)
+    
+    for ( std::vector<NPString>::iterator i = map_names.begin(), e=map_names.end(); i != e; i++ )
     {
-        std::string filename = mapsPath;
-        filename.append(*i);
-
-        if ( !filesystem::isDirectory(filename.c_str()) )
-        {
-            if ( filename.size() >= suffix.size()
-                && (filename.compare( filename.size() - suffix.size(),
-                                      suffix.size(), suffix) == 0) )
-            {
-                std::string mapname;
-                size_t p = 0;
-                char c;
-                while( (c = (*i)[p++]) != 0) {
-                    if(c == '.')
-                        break;
-                    mapname += c;
-                }
-
-                lua_pushstring( L, mapname.c_str() );
-                lua_rawseti(L, -2, ++tindex);
-            }
-        }
+        lua_pushstring( L, (*i).c_str() );
+        lua_rawseti(L, -2, ++tindex);
     }
-    filesystem::freeList(list);
 
     return 1;
 }

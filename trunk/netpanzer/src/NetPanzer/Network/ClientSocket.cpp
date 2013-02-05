@@ -27,12 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkInterface.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Network/ClientSocket.hpp"
-#include "Util/UtilInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
 
 using namespace std;
+
+#define TOSTR(X) XSTR(X)
+#define XSTR(X) #X
 
 ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
     : observer(0), socket(0), sendpos(0), tempoffset(0), player_id(INVALID_PLAYER_ID)
@@ -43,16 +45,25 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
 //                gameconfig->proxyserverpass);
     
         // resolve server name
-        int port = NETPANZER_DEFAULT_PORT_TCP;
-        std::string servername;
+        NPString serverport;
+        NPString servername;
 //        const char *server= proxy.proxyserver != ""
 //                ? proxy.proxyserver.c_str() : whole_servername.c_str();
-        UtilInterface::splitServerPort(whole_servername, servername, &port);
 
-        network::Address serveraddr 
-            = network::Address::resolve(servername, port);
+        std::string::size_type colon = whole_servername.find(':',0);
+        if(colon == std::string::npos)
+        {
+            servername = whole_servername;
+            serverport = TOSTR(NETPANZER_DEFAULT_PORT_TCP);
+        }
+        else
+        {
+            servername = whole_servername.substr(0, colon);
+            colon++;
+            serverport = whole_servername.substr(colon, whole_servername.length() - colon);
+        }
         
-        socket = new network::TCPSocket(serveraddr, this);
+        socket = new network::TCPSocket(servername, serverport, this);
 
 #if 0
 // no proxy for now.

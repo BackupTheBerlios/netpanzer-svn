@@ -24,9 +24,9 @@
 #ifndef OPTIONMM_optionmm
 #include <optionmm/option.hpp>
 #endif
-#ifndef __VECTOR__
-#include <vector>
-#endif
+
+#include "ArrayUtil/PtrArray.hpp"
+
 #ifndef __STRING__
 #include <string>
 #endif
@@ -68,7 +68,7 @@ class command_line
 {
 public:
     /// The container of options.
-    typedef std::vector<basic_option*> option_list;
+    typedef PtrArray<basic_option> option_list;
 private:
     /// List of options
     option_list _options;

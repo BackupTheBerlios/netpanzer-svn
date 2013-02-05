@@ -47,13 +47,9 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
     StringTokenizer mstokenizer(*GameConfig::server_masterservers, ',');
     string servname;
-    while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
-        try {
-            Address addr = Address::resolve(servname, MASTERSERVER_PORT, true, false);
-            mslist.push_back(addr);
-        } catch (runtime_error e) {
-            LOGGER.warning("Bad masterserver address: %s", e.what());
-        }
+    while( (servname = StringUtil::trim(mstokenizer.getNextToken())) != "")
+    {
+        mslist.push_back( new NPString(servname) );
     }
     
     stringstream msg;
@@ -68,7 +64,8 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 
 Heartbeat::~Heartbeat()
 {
-    if ( !masterservers.empty() ) {
+    if ( !masterservers.empty() )
+    {
         map<TCPSocket *, MasterserverInfo *>::iterator msiter;
         for (msiter=masterservers.begin(); msiter!=masterservers.end(); msiter++) {
             delete msiter->second;
@@ -76,7 +73,8 @@ Heartbeat::~Heartbeat()
         }
         masterservers.clear();
     }
-    mslist.clear();
+    
+    mslist.deleteAll();
 }
 
 void
@@ -101,25 +99,27 @@ Heartbeat::checkHeartbeat()
 
 }
 
+#define TOSTR(X) XSTR(X)
+#define XSTR(X) #X
+
 void
 Heartbeat::startHeartbeat()
 {
-    vector<Address>::iterator iter = mslist.begin();
     Uint32 now = SDL_GetTicks();
-    while ( iter != mslist.end() ) {
+    for ( size_t n = 0; n < mslist.size(); n++ )
+    {
         TCPSocket *s = 0;
         MasterserverInfo *msi = 0;
         try {
-            s = new TCPSocket(*iter, this);
+            s = new TCPSocket(*(mslist[n]), TOSTR(MASTERSERVER_PORT), this);
             msi = new MasterserverInfo();
             msi->timer.reset(now);
             masterservers[s]=msi;
         } catch (NetworkException e) {
-            LOGGER.warning("Error '%s' connecting to masterserver '%s'", e.what(), (*iter).getIP().c_str());
+            LOGGER.warning("Error '%s' connecting to masterserver '%s'", e.what(), mslist[n]->c_str());
             if (msi)
                 delete msi;
         }
-        iter++;
     }
     nextHeartbeat.reset();
 }

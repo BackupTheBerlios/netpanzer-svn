@@ -48,13 +48,8 @@ VoteBox::VoteBox(NPString msg) : GameTemplateView()
     resize(iXY(sizex, 75));
     
     setSearchName("votebox");
-    setTitle("Message");
-    setSubTitle("");
     
-    setAllowResize(false);
     setAllowMove(true);
-    setVisible(false);
-    setBordered(false);
     
     add( new Label(10, 12, msg, Color::cyan));
     
@@ -71,17 +66,17 @@ VoteBox::VoteBox(NPString msg) : GameTemplateView()
     LOGGER.warning("VoteBox %s", msg.c_str());
 }
 
-void VoteBox::doDraw(Surface &viewArea, Surface &clientArea)
+void VoteBox::doDraw( Surface& dest )
 {
-    clientArea.FillRoundRect(getClientRect(), 8, ctWindowsbackground);
-    clientArea.RoundRect(getClientRect(), 8, ctWindowsBorder);
+    dest.FillRoundRect(getClientRect(), 8, ctWindowsbackground);
+    dest.RoundRect(getClientRect(), 8, ctWindowsBorder);
 
     char statBuf[256];
     snprintf(statBuf, sizeof(statBuf),
              "Time left %d", VoteManager::getTimer());
-    clientArea.bltString(getClientRect().getSizeX()/2-50, getClientRect().getSizeY()-12,statBuf, Color::yellow);
+    dest.bltString(getClientRect().getWidth()/2-50, getClientRect().getHeight()-12,statBuf, Color::yellow);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
     
     if (VoteManager::checkVoteTimer())
         VoteManager::playerVote(vote_nothing);

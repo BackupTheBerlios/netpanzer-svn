@@ -58,29 +58,29 @@ void SpriteSorter::initialize( )
     unsigned long i;
 
     for ( i = 0; i < 3; i++ ) {
-        sprite_lists[i].resize(50);
+        sprite_lists[i].initialize(50);
     }
 
-    sprite_lists[3].resize(500);
-    sprite_lists[4].resize(500);
-    sprite_lists[5].resize(500);
+    sprite_lists[3].initialize(500);
+    sprite_lists[4].initialize(500);
+    sprite_lists[5].initialize(500);
 
-    for ( i = 6; i < _MAX_HEIGHT_LEVELS; i++ ) {
-        sprite_lists[i].resize(50);
+    for ( i = 6; i < _MAX_HEIGHT_LEVELS; i++ )
+    {
+        sprite_lists[i].initialize(50);
     }
 
-    for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
-        list_counts[i] = 0;
+    for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
+    {
         max_sprite_stats[i] = 0;
     }
 }
 
 void SpriteSorter::reset( void )
 {
-    unsigned long i;
-
-    for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
-        list_counts[ i ] = 0;
+    for ( size_t i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
+    {
+        sprite_lists[i].fastClear();
     }
 
 }
@@ -93,7 +93,8 @@ void SpriteSorter::reset( iRect &world_win )
 
 void SpriteSorter::addSprite(Sprite *sprite)
 {
-    if ( sprite->isVisible( world_window ) ) {
+    if ( sprite->isVisible( world_window ) )
+    {
         forceAddSprite(sprite);
     }
 }
@@ -106,40 +107,32 @@ void SpriteSorter::forceAddSprite(Sprite *sprite)
 
     assert( height < _MAX_HEIGHT_LEVELS );
 
-    if(sprite_lists[height].size() <= list_counts[height])
-        sprite_lists[height].resize(1 + list_counts[height]);
-    sprite_lists[height] [list_counts[height]] = sprite;
-
-    list_counts[ height ]++;
+    sprite_lists[height].push_back(sprite);
+    
 }
 
 void SpriteSorter::sortLists()
 {
     unsigned long i;
 
-    for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
-        sort(sprite_lists[i].begin(), sprite_lists[i].end(),
-             SpriteCompare());
-
-        //sprite_lists[ i ].sort( list_counts[ i ], sprite_key );
+    for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
+    {
+        sort(sprite_lists[i].begin(), sprite_lists[i].end(),SpriteCompare());
     }
 }
 
 void SpriteSorter::blitLists( Surface *render_surf )
 {
-    Sprite *sprite;
-    unsigned long list_index, sprite_index;
-
-    //sortLists();
-
-    for ( list_index = 0; list_index < _MAX_HEIGHT_LEVELS; list_index++ ) {
-        for ( sprite_index = 0; sprite_index < list_counts[ list_index]; sprite_index++ ) {
-            sprite = (Sprite *) sprite_lists[ list_index ][ sprite_index ];
-            sprite->blitAll( render_surf, world_window );
+    for ( size_t h = 0; h < _MAX_HEIGHT_LEVELS; h++ )
+    {
+        for ( size_t n = 0; n < sprite_lists[h].getLastIndex(); n++ )
+        {
+            sprite_lists[ h ][n]->blitAll( render_surf, world_window );
         }
 
-        if ( list_counts[ list_index ] > max_sprite_stats[ list_index ] ) {
-            max_sprite_stats[ list_index ] = list_counts[ list_index ];
+        if ( sprite_lists[h].getLastIndex() > max_sprite_stats[ h ] )
+        {
+            max_sprite_stats[ h ] = sprite_lists[h].getLastIndex();
         }
     }
 }

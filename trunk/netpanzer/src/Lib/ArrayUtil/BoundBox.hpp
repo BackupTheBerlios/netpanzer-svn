@@ -20,28 +20,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 
+#include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 
-class BoundBox : public iRect
+class BoundBox
 {
 public:
+    iXY min;
+    iXY max;
+    
     BoundBox()
     {}
 
     BoundBox(int x1, int y1, int x2, int y2)
-            : iRect( x1, y1, x2, y2 )
+            : min(x1,y1), max(x2,y2)
     {
         assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );
     }
 
     BoundBox(const BoundBox &a)
-            : iRect( a )
+            : min(a.min), max(a.max)
     {
         assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );
     }
 
     BoundBox(const iXY& nMin, const iXY& nMax)
-            : iRect( nMin, nMax )
+            : min(nMin), max(nMax)
     {
         assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );
     }
@@ -52,7 +56,7 @@ public:
 
     inline iRect getAbsRect(const iXY& center) const
     {
-        return( iRect( center + min, center + max ) );
+        return( iRect( center.x + min.x, center.y+min.y, max.x - min.x, max.y - min.y ) );
     }
 
 };

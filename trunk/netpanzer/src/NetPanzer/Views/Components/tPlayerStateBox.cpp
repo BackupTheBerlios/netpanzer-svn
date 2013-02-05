@@ -51,7 +51,7 @@ void tPlayerStateBox::onPaint(Surface &dst, const DataItem& data)
     {
         Surface * flag = 0;
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt(dst, 0, 0);
+        flag->blt(dst, 0, 0); // full blit
         StartX = flag->getWidth()+4;
     }
     snprintf(statBuf, sizeof(statBuf), "%-20s", state->getName().c_str());

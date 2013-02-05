@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/StringTokenizer.hpp"
 
 #include "Core/NetworkGlobals.hpp"
+#include "Core/CoreTypes.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameManager.hpp"
@@ -35,8 +36,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	#define PACKAGE_VERSION "testing"
 #endif
 
-using namespace std;
-
 InfoSocket::InfoSocket(int p) : socket(0)
 {
     Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
@@ -44,7 +43,7 @@ InfoSocket::InfoSocket(int p) : socket(0)
     
     // This parameters are fixed always
     // others I plan to be modificable while game is running.
-    stringstream s;
+    std::stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << *GameConfig::player_name
       << "\\gameversion\\" << PACKAGE_VERSION;
@@ -69,28 +68,28 @@ void
 InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, const int len)
 {
     (void)s;
-    string querypacket(data,len);
+    NPString querypacket(data,len);
     StringTokenizer qtokenizer(querypacket, '\\');
     
-    string query;
+    NPString query;
     while ( !(query = qtokenizer.getNextToken()).empty()) {
         LOGGER.debug("InfoSocket:: Received query '%s'", query.c_str());
         if ( query == "status" ) {
-            string answer = prepareStatusPacket();
+            NPString answer = prepareStatusPacket();
 
             LOGGER.debug("InfoSocket:: sending answer [%s][%d]", answer.c_str(), (int)answer.size());
             socket->send(from, answer.c_str(), answer.size());
 
             break;
         } else if(query == "echo") {
-            string echotoken = qtokenizer.getNextToken();
+            NPString echotoken = qtokenizer.getNextToken();
             LOGGER.info("InfoSocket:: Received echo query of size %lu", (unsigned long)echotoken.size());
             if ( echotoken.size() )
                 socket->send(from, echotoken.c_str(), echotoken.size());
         }
         else if ( query == "getflag" )
         {
-            string flagstr = qtokenizer.getNextToken();
+            NPString flagstr = qtokenizer.getNextToken();
 
             LOGGER.info("InfoSocket:: Received flag query for %s", flagstr.c_str());
             if ( flagstr.size() )
@@ -98,7 +97,7 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
                 unsigned int flagnum = atoi(flagstr.c_str());
                 if ( flagnum < 256 && PlayerInterface::isPlayerActive(flagnum) )
                 {
-                    string answer = prepareFlagPacket(flagnum);
+                    NPString answer = prepareFlagPacket(flagnum);
                     socket->send(from, answer.c_str(), answer.size());
                 }
             }
@@ -106,10 +105,10 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
     }
 }
 
-string
+NPString
 InfoSocket::prepareStatusPacket()
 {
-    stringstream s;
+    std::stringstream s;
     PlayerID playingPlayers = PlayerInterface::countPlayers();
     PlayerID maxPlayers = PlayerInterface::getMaxPlayers();
     
@@ -157,7 +156,7 @@ InfoSocket::prepareStatusPacket()
 
 static const char hextochar[] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
 
-string
+NPString
 InfoSocket::prepareFlagPacket(const int flagNum)
 {
     Uint8 rawflag[20*14];
@@ -179,7 +178,7 @@ InfoSocket::prepareFlagPacket(const int flagNum)
         }
     }
 
-    stringstream s;
+    std::stringstream s;
     s << "\\flag\\" << flagNum << '\\' << flagdata << '\\';
     return s.str();
 }

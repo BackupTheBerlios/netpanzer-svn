@@ -24,9 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/PlacementMatrix.hpp"
-
+#include "ArrayUtil/PtrArray.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Units/UnitOpcodeEncoder.hpp"
+
 
 enum { _search_all_players,
        _search_player,
@@ -41,7 +42,7 @@ class UnitInterface
 {
 public:
     typedef std::map<UnitID, UnitBase*> Units;
-    typedef std::vector<UnitBase*> PlayerUnitList;
+    typedef PtrArray<UnitBase> PlayerUnitList;
     
 private:
     static Units units;

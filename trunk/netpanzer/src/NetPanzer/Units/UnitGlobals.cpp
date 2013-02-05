@@ -16,28 +16,4 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "UnitGlobals.hpp"
-#include "2D/Palette.hpp"
-#include "2D/Surface.hpp"
-
 int unitLayer = 3;
-
-void colorMapGray(PackedSurface &source, PackedSurface &dest, ColorTable &colorTable)
-{
-    //colormapping gray scheme.
-    Surface tempSurface;
-
-    tempSurface.create(source.getWidth(),source.getHeight(), source.getFrameCount());
-
-    for (int i = 0; i < source.getFrameCount(); i++) {
-        tempSurface.setFrame(i);
-        tempSurface.fill(Color::white);
-        source.setFrame(i);
-        source.blt(tempSurface, 0, 0);
-        tempSurface.bltLookup(iRect( 0, 0,
-                        tempSurface.getWidth(), tempSurface.getHeight() ),
-                        colorTable.getColorArray());
-    }
-
-    dest.pack(tempSurface);
-}

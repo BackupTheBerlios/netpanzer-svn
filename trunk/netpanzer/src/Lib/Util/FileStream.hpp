@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class IFileStreambuf : public std::streambuf
 {
 public:
-    IFileStreambuf(filesystem::ReadFile* newfile)
-        : file(newfile)
+    IFileStreambuf(const std::string& filename)
+        : file(filename)
     {
         // start reading
         underflow();
@@ -37,25 +37,29 @@ public:
 
     ~IFileStreambuf()
     {
-        delete file;
     }
     
 protected:
     virtual int underflow()
     {
-        if(file->isEOF())
+        if ( ! file.isOpen() || file.isEOF() )
+        {
             return traits_type::eof();
+        }
         
-        size_t bytesread = file->_read(buf, 1, sizeof(buf));
-        if(bytesread == 0)
+        size_t bytesread = file._read(buf, 1, sizeof(buf));
+        if ( bytesread == 0 )
+        {
             return traits_type::eof();
+        }
+        
         setg(buf, buf, buf + bytesread);
 
         return buf[0];
     }
 
 private:
-    filesystem::ReadFile* file;
+    filesystem::ReadFile file;
     char buf[1024];
 };
 
@@ -106,12 +110,8 @@ private:
 class IFileStream : public std::istream
 {
 public:
-    IFileStream(filesystem::ReadFile* file)
-        : std::istream(new IFileStreambuf(file))
-    { }
-
     IFileStream(const std::string& filename)
-        : std::istream(new IFileStreambuf(filesystem::openRead(filename)))
+        : std::istream(new IFileStreambuf(filename))
     { }
 
     ~IFileStream()

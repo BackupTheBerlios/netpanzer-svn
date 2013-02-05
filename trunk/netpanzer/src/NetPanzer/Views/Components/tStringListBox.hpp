@@ -41,6 +41,7 @@ class tStringListBox : public Component, public StateChangedCallback
 {
 protected:
     std::list<DataItem> List;
+    void setHasHeader(bool b) { hasHeader = b; dirty = true; }
 
 private:
     StateChangedCallback* callback;
@@ -54,15 +55,17 @@ private:
     int StartSubLine;
     int StartWidth;
     
-    int MaxItemView;
     std::list<DataItem>::iterator SelectedItem;
     int MaxItemWidth;
     
     int TotalLines;
     int TotalPosition;
     
+    bool Selectable;
     bool AutoScroll;
     bool AutoWrap;
+    bool Bordered;
+    bool hasHeader;
     
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
@@ -71,6 +74,9 @@ public:
     tStringListBox(iRect rect, StateChangedCallback* newcallback = 0);
     virtual ~tStringListBox() {}
 
+    void setSelectable( bool b ) { Selectable = b; SelectedItem = List.end(); dirty = true;}
+    void setBordered( bool b ) { Bordered = b; dirty = true; }
+    
     virtual void setColor(PIX newColor);
     virtual void setStateChangedCallback(StateChangedCallback* newcallback)
     {
@@ -84,38 +90,18 @@ public:
     virtual int getMaxItemWidth(const DataItem& data);
     virtual std::string getTextItem();
     
-    int getNumVisibleLines() { return MaxItemView; }
+    int getNumVisibleLines() { return (size.y-5)/ItemHeight; }
     
+    virtual void AddBlock(const std::string& S);
     virtual void Add(const std::string& S) { AddData(S, 0); }
     virtual void AddData(const std::string& S, void * D);
     virtual void deleteData(const DataItem& data) { /* to be overriden */}
     
-    virtual void Clear()
-    {
-        List.clear();
-        dirty = true;
-        SelectedItem = List.end();
-        StartItem = List.end();
-        StartSubLine = 0;
-        TotalLines = 0;
-        TotalPosition = 0;
-        MaxItemWidth = size.x;
-        
-        if (VScrollBar)
-        {
-            VScrollBar->setPosition(0);
-            VScrollBar->setMax(0);
-        }
-
-        if (HScrollBar)
-        {
-            HScrollBar->setPosition(0);
-            HScrollBar->setMax(MaxItemWidth);
-        }
-    }
+    virtual void Clear();
     
     virtual int Count(){return List.size();}
     virtual void onPaint(Surface &dst, const DataItem& data, int SubLine);
+    virtual void paintHeader(Surface &dst) {}
     virtual void setLocation(int x, int y);
     virtual void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     virtual void setAutoScroll(bool Value){AutoScroll = Value;}

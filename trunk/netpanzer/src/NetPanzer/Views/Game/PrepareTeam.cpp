@@ -63,13 +63,9 @@ public:
 PrepareTeam::PrepareTeam() : GameTemplateView()
 {
     setSearchName("PrepareTeam");
-    setTitle(_("Prepare Team"));
-    setSubTitle("");
+//    setTitle(_("Prepare Team"));
 
-    setAllowResize(false);
     setAllowMove(false);
-    setVisible(false);
-    setBordered(false);
     menuImage.loadBMP("pics/backgrounds/menus/menu/canon.bmp");
     vsImage.loadBMP("pics/backgrounds/menus/menu/vs.bmp");
 
@@ -79,47 +75,44 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
     menuImageXY.x = 0;
     menuImageXY.y = 0;
 
-    rect.min.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
-    rect.min.y = menuImageXY.y+menuImage.getHeight();
-    rect.max.x = rect.min.x+500;
-    rect.max.y = rect.min.y+300;
-
-    firstrect.min.x = rect.min.x+7;
-    firstrect.min.y = rect.min.y+30;
-    firstrect.max.x =  rect.min.x+180;
-    firstrect.max.y = rect.max.y-7;
-
-    secondrect.min.x = rect.max.x-185;
-    secondrect.min.y = firstrect.min.y;
-    secondrect.max.x = rect.max.x-20;
-    secondrect.max.y = firstrect.max.y;
-
-    changebutton = Button::createNewSpecialButton( " >> ",
-                                                   iXY(firstrect.max.x+29, (firstrect.min.y+50)),
-                                                   (secondrect.min.x-firstrect.max.x)-39,
-                                                   new ChangeTeamAction(this));
-    add(changebutton);
-
-    readybutton = Button::createNewSpecialButton( _("Ready"),
-                                                  iXY(firstrect.max.x+29, (firstrect.min.y+85)),
-                                                  (secondrect.min.x-firstrect.max.x)-39,
-                                                  new PlayerReadyAction(this));
-    add(readybutton);
-
-    scTeam1 = new tVScrollBar();
-    add(scTeam1);
-    StateTeam1 = new tPlayerStateBox(firstrect, 0);
-    StateTeam1->setVscrollBar(scTeam1);
-    StateTeam1->setShowTeam(0);
-    add(StateTeam1);
-
-    scTeam2 = new tVScrollBar();
-    add(scTeam2);
-    StateTeam2 = new tPlayerStateBox(secondrect, 0);
-    StateTeam2->setVscrollBar(scTeam2);
-    StateTeam2->setShowTeam(1);
-    add(StateTeam2);
-    loaded = false;
+//    rect.position.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
+//    rect.position.y = menuImageXY.y+menuImage.getHeight();
+//    rect.setSize(500,300);
+//
+//    firstrect.position.x = rect.position.x+7;
+//    firstrect.position.y = rect.position.y+30;
+//    firstrect.setSize(180,rect.size.y-7);
+//
+//    secondrect.position.x = rect.min.x + rect.size.x - 185;
+//    secondrect.position.y = firstrect.position.y;
+//    secondrect.setSize(rect.size.x-20 ,firstrect.size.y);
+//
+//    changebutton = Button::createNewSpecialButton( " >> ",
+//                                                   iXY(firstrect.max.x+29, (firstrect.position.y+50)),
+//                                                   (secondrect.position.x-firstrect.max.x)-39,
+//                                                   new ChangeTeamAction(this));
+//    add(changebutton);
+//
+//    readybutton = Button::createNewSpecialButton( _("Ready"),
+//                                                  iXY(firstrect.max.x+29, (firstrect.position.y+85)),
+//                                                  (secondrect.position.x-firstrect.max.x)-39,
+//                                                  new PlayerReadyAction(this));
+//    add(readybutton);
+//
+//    scTeam1 = new tVScrollBar();
+//    add(scTeam1);
+//    StateTeam1 = new tPlayerStateBox(firstrect, 0);
+//    StateTeam1->setVscrollBar(scTeam1);
+//    StateTeam1->setShowTeam(0);
+//    add(StateTeam1);
+//
+//    scTeam2 = new tVScrollBar();
+//    add(scTeam2);
+//    StateTeam2 = new tPlayerStateBox(secondrect, 0);
+//    StateTeam2->setVscrollBar(scTeam2);
+//    StateTeam2->setShowTeam(1);
+//    add(StateTeam2);
+//    loaded = false;
 }
 
 void PrepareTeam::init()
@@ -130,102 +123,103 @@ void PrepareTeam::init()
     menuImageXY.x = 0;
     menuImageXY.y = 0;
 
-    rect.min.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
-    rect.min.y = menuImageXY.y+menuImage.getHeight();
-    rect.max.x = rect.min.x+500;
-    rect.max.y = rect.min.y+300;
-
-    firstrect.min.x = rect.min.x+7;
-    firstrect.min.y = rect.min.y+30;
-    firstrect.max.x =  rect.min.x+177;
-    firstrect.max.y = rect.max.y-7;
-
-    secondrect.min.x = rect.max.x-190;
-    secondrect.min.y = firstrect.min.y;
-    secondrect.max.x = rect.max.x-25;
-    secondrect.max.y = firstrect.max.y;
-
-    changebutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+50)));
-    readybutton->setLocation(iXY(firstrect.max.x+29, (firstrect.min.y+85)));
-    StateTeam1->setLocation(firstrect.min);
-    StateTeam2->setLocation(secondrect.min);
-    StateTeam1->UpdateState(true);
-    StateTeam2->UpdateState(true);
-    loaded = true;
+//    rect.position.x = menuImageXY.x+ ((menuImage.getWidth()-500)/2);
+//    rect.position.y = menuImageXY.y+menuImage.getHeight();
+//    rect.max.x = rect.position.x+500;
+//    rect.max.y = rect.position.y+300;
+//
+//    firstrect.position.x = rect.position.x+7;
+//    firstrect.position.y = rect.position.y+30;
+//    firstrect.max.x =  rect.position.x+177;
+//    firstrect.max.y = rect.max.y-7;
+//
+//    secondrect.position.x = rect.max.x-190;
+//    secondrect.position.y = firstrect.position.y;
+//    secondrect.max.x = rect.max.x-25;
+//    secondrect.max.y = firstrect.max.y;
+//
+//    changebutton->setLocation(iXY(firstrect.max.x+29, (firstrect.position.y+50)));
+//    readybutton->setLocation(iXY(firstrect.max.x+29, (firstrect.position.y+85)));
+//    StateTeam1->setLocation(firstrect.position);
+//    StateTeam2->setLocation(secondrect.position);
+//    StateTeam1->UpdateState(true);
+//    StateTeam2->UpdateState(true);
+//    loaded = true;
 }
 
-void PrepareTeam::doDraw(Surface &viewArea, Surface &clientArea)
+void PrepareTeam::doDraw( Surface& dest )
 {
-    menuImage.bltTrans(clientArea, menuImageXY.x, menuImageXY.y);
-    clientArea.FillRoundRect(rect, 12, ctWindowsbackground);
-    clientArea.RoundRect(rect,12, ctWindowsBorder);
+    menuImage.bltTrans(dest, menuImageXY.x, menuImageXY.y); // blit full
+    dest.FillRoundRect(rect, 12, ctWindowsbackground);
+    dest.RoundRect(rect,12, ctWindowsBorder);
 
-    DrawInfo(clientArea);
-    drawTeams(clientArea);
-    vsImage.bltTrans(clientArea, firstrect.max.x+40, firstrect.max.y-vsImage.getHeight()-10);
-    View::doDraw(viewArea, clientArea);
-    StateTeam1->UpdateState(false);
-    StateTeam2->UpdateState(false);
+//    DrawInfo(dest);
+//    drawTeams(dest);
+//    vsImage.bltTrans(dest, firstrect.max.x+40, firstrect.max.y-vsImage.getHeight()-10);
+//    StateTeam1->UpdateState(false);
+//    StateTeam2->UpdateState(false);
+    
+    View::doDraw( dest );
 }
 
 void PrepareTeam::DrawInfo(Surface &dest)
 {
-    iXY start;
-    start.x = menuImageXY.x+210;
-    start.y = menuImageXY.y+100;
-    int nextx = 125;
-    char statBuf[256];
-    if (GameControlRulesDaemon::getTeamCD() < 1)
-    {
-        dest.bltString(start.x-5 , rect.min.y-5, _("Get ready, the battle will begin..."), ctTexteNormal);
-    }
-    else
-    {
-        snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
-        dest.bltString(firstrect.max.x+60 , firstrect.min.y+5, statBuf, ctTexteNormal);
-    }
-    dest.bltString(start.x , start.y, _("Game"), ctTexteNormal);
-    dest.bltString(start.x+nextx , start.y, _("Map"), ctTexteNormal);
-    start.y+= 10;
-    dest.drawLine(start.x, start.y, start.x+100, start.y, ctTexteNormal);
-    dest.drawLine(start.x+nextx, start.y, start.x+nextx+100, start.y,ctTexteNormal);
-    start.y+= 7;
-    switch(GameConfig::game_gametype)
-    {
-    case  _gametype_timelimit:
-    {
-        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Time Limit"), GameConfig::game_timelimit);
-        break;
-    }
-    case _gametype_fraglimit:
-    {
-        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Frag Limit"), GameConfig::game_fraglimit);
-        break;
-    }
-    case _gametype_objective:
-    {
-        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Objective"), GameConfig::game_occupationpercentage);
-        break;
-    }
-    }
-    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
-    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", _("Name"), MapInterface::getMap()->getName().c_str());
-    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
-    start.y+= 13;
-    snprintf(statBuf, sizeof(statBuf), "%s: %i/%i",
-             _("Players"),
-             PlayerInterface::getActivePlayerCount(),
-             GameConfig::game_maxplayers);
-    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
-    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
-             _("Objectives"), 
-             (int) ObjectiveInterface::getObjectiveCount());
-    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
-    start.y+= 13;
-    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
-             _("Units"),
-             GameConfig::game_maxunits/GameConfig::game_maxplayers);
-    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
+//    iXY start;
+//    start.x = menuImageXY.x+210;
+//    start.y = menuImageXY.y+100;
+//    int nextx = 125;
+//    char statBuf[256];
+//    if (GameControlRulesDaemon::getTeamCD() < 1)
+//    {
+//        dest.bltString(start.x-5 , rect.position.y-5, _("Get ready, the battle will begin..."), ctTexteNormal);
+//    }
+//    else
+//    {
+//        snprintf(statBuf, sizeof(statBuf), "%d", GameControlRulesDaemon::getTeamCD());
+//        dest.bltString(firstrect.max.x+60 , firstrect.position.y+5, statBuf, ctTexteNormal);
+//    }
+//    dest.bltString(start.x , start.y, _("Game"), ctTexteNormal);
+//    dest.bltString(start.x+nextx , start.y, _("Map"), ctTexteNormal);
+//    start.y+= 10;
+//    dest.drawLine(start.x, start.y, start.x+100, start.y, ctTexteNormal);
+//    dest.drawLine(start.x+nextx, start.y, start.x+nextx+100, start.y,ctTexteNormal);
+//    start.y+= 7;
+//    switch(GameConfig::game_gametype)
+//    {
+//    case  _gametype_timelimit:
+//    {
+//        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Time Limit"), GameConfig::game_timelimit);
+//        break;
+//    }
+//    case _gametype_fraglimit:
+//    {
+//        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Frag Limit"), GameConfig::game_fraglimit);
+//        break;
+//    }
+//    case _gametype_objective:
+//    {
+//        snprintf(statBuf, sizeof(statBuf), "%s: %i", _("Objective"), GameConfig::game_occupationpercentage);
+//        break;
+//    }
+//    }
+//    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
+//    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", _("Name"), MapInterface::getMap()->getName().c_str());
+//    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
+//    start.y+= 13;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %i/%i",
+//             _("Players"),
+//             PlayerInterface::getActivePlayerCount(),
+//             GameConfig::game_maxplayers);
+//    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
+//    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
+//             _("Objectives"), 
+//             (int) ObjectiveInterface::getObjectiveCount());
+//    dest.bltString(start.x+nextx, start.y, statBuf, ctTexteNormal);
+//    start.y+= 13;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %i", 
+//             _("Units"),
+//             GameConfig::game_maxunits/GameConfig::game_maxplayers);
+//    dest.bltString(start.x, start.y, statBuf, ctTexteNormal);
 }
 
 class StatesSortByTeam
@@ -240,24 +234,24 @@ public:
 
 void PrepareTeam::drawTeams(Surface &dest)
 {
-    char statBuf[256];
-
-    int cur_line_pos = rect.min.y +10;
-    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
-             _("Team"),
-             TeamManager::getTeamName(0).c_str());
-    dest.bltString(firstrect.min.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(0));
-    TeamManager::drawFlag(0, dest, firstrect.min.x+10, cur_line_pos-2);
-
-    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
-             _("Team"),
-             TeamManager::getTeamName(1).c_str());
-    dest.bltString(secondrect.min.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(1));
-    TeamManager::drawFlag(1, dest, secondrect.min.x+10, cur_line_pos-2);
-
-    cur_line_pos += 25;
-    dest.drawLine(firstrect.min.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(0));
-    dest.drawLine(secondrect.min.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(1));
+//    char statBuf[256];
+//
+//    int cur_line_pos = rect.position.y +10;
+//    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
+//             _("Team"),
+//             TeamManager::getTeamName(0).c_str());
+//    dest.bltString(firstrect.position.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(0));
+//    TeamManager::drawFlag(0, dest, firstrect.position.x+10, cur_line_pos-2);
+//
+//    snprintf(statBuf, sizeof(statBuf), "%s: %-20s", 
+//             _("Team"),
+//             TeamManager::getTeamName(1).c_str());
+//    dest.bltString(secondrect.position.x+40, cur_line_pos, statBuf,TeamManager::getTeamColor(1));
+//    TeamManager::drawFlag(1, dest, secondrect.position.x+10, cur_line_pos-2);
+//
+//    cur_line_pos += 25;
+//    dest.drawLine(firstrect.position.x+10, cur_line_pos-10, firstrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(0));
+//    dest.drawLine(secondrect.position.x+10, cur_line_pos-10, secondrect.max.x-10, cur_line_pos-10, TeamManager::getTeamColor(1));
 }
 void PrepareTeam::doActivate()
 {
@@ -270,14 +264,16 @@ void PrepareTeam::doActivate()
 
 void PrepareTeam::doDeactivate()
 {
-    if ( ! getVisible() )
+    if ( ! isVisible() )
     {
         loaded = false;
     }
 }
 
-void PrepareTeam::checkResolution(iXY oldResolution, iXY newResolution)
+void PrepareTeam::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
+    (void)oldResolution;
+    (void)newResolution;
     init();
 }
 

@@ -34,7 +34,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Interfaces/MapsManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
@@ -95,17 +94,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Bot/Bot.hpp"
 
-#define _MAX_INITIALIZE_PROCS (10)
-#define _MAX_DEDICATED_INITIALIZE_PROCS (8)
-
+#include "Util/StringUtil.hpp"
 
 time_t GameManager::game_start_time = 0;
 time_t GameManager::game_elapsed_time_offset = 0;
-
-bool GameManager::display_frame_rate_flag = false;
-bool GameManager::display_network_info_flag;
-
-std::string GameManager::map_path;
 
 static Surface hostLoadSurface;
 
@@ -113,14 +105,16 @@ static Surface hostLoadSurface;
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-        Surface text;
-        text.renderText(string, color, 0);
+//        Surface text;
+//        text.renderText(string, color, 0);
         screen->lock();
 
         screen->fill(0);
-        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
-        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
-        text.blt(*screen,x,y);
+//        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
+//        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
+//        text.blt(*screen,x,y); // full blit
+
+        screen->bltStringCenter(string, color);
 
         screen->unlock();
         screen->copyToVideoFlip();
@@ -157,9 +151,9 @@ void GameManager::setVideoMode()
         GameConfig::video_width = 800;
     }
 
-    if ( GameConfig::video_height < 600 )
+    if ( GameConfig::video_height < 480 )
     {
-        GameConfig::video_height = 600;
+        GameConfig::video_height = 480;
     }
 
     mode_res.x = GameConfig::video_width;
@@ -239,36 +233,20 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-void GameManager::startGameMapLoad(const char *map_file_path,
-                                   unsigned long partitions)
+void GameManager::loadMap(const char *map_file_path)
 {
-    map_path = "maps/";
-    map_path.append(map_file_path);
-
-    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
+    if ( !MapInterface::loadMap( map_file_path, true) )
         throw Exception("map format error.");
-}
-
-// ******************************************************************
-
-bool GameManager::gameMapLoad( int *percent_complete )
-{
-    if( MapInterface::loadMap( percent_complete ) == false ) {
-        finishGameMapLoad();
-        return false;
-    }
-
-    return true;
+        
+    ObjectiveInterface::loadObjectiveList( map_file_path );
+        
+    finishGameMapLoad();
 }
 
 // ******************************************************************
 
 void GameManager::finishGameMapLoad()
 {
-    std::string temp_path = map_path;
-    temp_path.append(".opt");
-    ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
-
     if (GameConfig::game_cloudcoverage > 0)
     {
         int total_clouds = (MapInterface::getWidth() * MapInterface::getHeight()) / baseTileCountPerCloud;
@@ -294,6 +272,48 @@ void GameManager::finishGameMapLoad()
 
 // ******************************************************************
 
+NPString GameManager::getNextMapName(const NPString& current_name)
+{
+    // parse the mapcycle in the config
+    const NPString& mapcycle = *GameConfig::game_mapcycle;
+    NPString::size_type i = mapcycle.find(',', 0);
+    NPString::size_type lasti = 0;
+    if(i == NPString::npos)
+        i = mapcycle.size();
+    NPString currentMap = StringUtil::trim(NPString(mapcycle, 0, i));
+    NPString firstmap = currentMap;
+
+    bool takeNext = false;
+    do
+    {
+        if ( takeNext )
+        {
+            return currentMap;
+        }
+    
+        if( currentMap == current_name )
+        {
+            takeNext = true;
+        }
+        
+        if ( i == mapcycle.size() )
+        {
+            break;
+        }
+        
+        lasti = i;
+        i = mapcycle.find(',', i+1);
+        if(i == string::npos)
+        {
+            i = mapcycle.size();
+        }
+        
+        currentMap = StringUtil::trim(NPString(mapcycle, lasti+1, i-lasti-1));
+    } while(1);
+
+    return firstmap;
+}
+
 void GameManager::dedicatedLoadGameMap(const char *map_name )
 {
     Console::mapSwitch(map_name);
@@ -315,13 +335,10 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "AllowAllies: "  << (GameConfig::game_allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << GameConfig::game_cloudcoverage << " (Windspeed " << GameConfig::game_windspeed << ")" << std::endl;
 
-    map_path = "maps/";
-    map_path.append(map_name);
+    
+    MapInterface::loadMap( map_name, false);
 
-    MapInterface::startMapLoad( map_path.c_str(), false, 0 );
-
-    map_path.append(".opt");
-    ObjectiveInterface::loadObjectiveList( map_path.c_str() );
+    ObjectiveInterface::loadObjectiveList( map_name );
 
     ParticleInterface::initParticleSystems();
     Particle2D::setCreateParticles(false);
@@ -541,7 +558,8 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     game_elapsed_time_offset = game_setup->getElapsedTime();
 
     try {
-        startGameMapLoad( game_setup->map_name, 20);
+        loadMap( game_setup->map_name );
+        reinitializeGameLogic();
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s': %s",
                 game_setup->map_name, e.what());
@@ -550,18 +568,6 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     }
 
     *result_code = _mapload_result_success;
-    return true;
-}
-
-// ******************************************************************
-
-bool GameManager::clientGameSetup( int *percent_complete )
-{
-    if( gameMapLoad( percent_complete ) == false ) {
-        reinitializeGameLogic();
-        return false;
-    }
-
     return true;
 }
 

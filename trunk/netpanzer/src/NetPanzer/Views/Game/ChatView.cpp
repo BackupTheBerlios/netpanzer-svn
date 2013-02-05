@@ -65,25 +65,28 @@ public:
 
 static Button* createTitlebarButton(int x, int y, const Surface& button_images, Action* action)
 {
-    Surface bimage(15,15,4);
+    PtrArray<Surface> bg(4);
+
+    Surface *bimage = new Surface(15,15);
+    button_images.blt(*bimage, 0, 0);
+    bimage->bltLookup(bimage->getRect(), Palette::darkGray256.getColorArray());
+    bg.push_back(bimage);
+
+    bimage = new Surface(15,15);
+    button_images.blt(*bimage, 0, 0);
+    bg.push_back(bimage);
     
-    bimage.setFrame(0);
-    button_images.blt(bimage, 0, 0);
-    bimage.bltLookup(bimage.getRect(), Palette::darkGray256.getColorArray());
-    
-    bimage.setFrame(1);
-    button_images.blt(bimage, 0, 0);
-    
-    bimage.setFrame(2);
-//    bimage.fill(0);
-    button_images.blt(bimage, 0, 0);
-    
-    bimage.setFrame(3);
-    button_images.blt(bimage, 0, 0);
-    bimage.bltLookup(bimage.getRect(), Palette::darkGray256.getColorArray());
-    
+    bimage = new Surface(15,15);
+    button_images.blt(*bimage, 0, 0);
+    bg.push_back(bimage);
+
+    bimage = new Surface(15,15);
+    button_images.blt(*bimage, 0, 0);
+    bimage->bltLookup(bimage->getRect(), Palette::darkGray256.getColorArray());
+    bg.push_back(bimage);
+
     Button *b = new Button();
-    b->setImage(bimage);
+    b->setImage(bg);
     b->setLocation( x, y);
     b->setStateOffset(Button::BPRESSED, 1, 1);
     
@@ -117,30 +120,26 @@ public:
 ChatView::ChatView() : GameTemplateView()
 {
     setSearchName("ChatView");
-    setTitle("Chat View");
-    setSubTitle("");
 
-    setAllowResize(false);
-    setVisible(false);
     setAllowMove(true);
-    setBordered(false);
     resize(500, 150);
-    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    moveTo(screen->getWidth()-getWidth(), screen->getHeight()-getHeight());
 
     Surface button_images;
     button_images.loadBMP(itScroll);
     
     bHideWindow = createTitlebarButton( 0, 0, button_images, new MinimizeChatAction(this));
     add(bHideWindow);
-    
-    button_images.setOffsetX(-30);
-    bShowWindow = createTitlebarButton( 15, 0, button_images, new RetoreChatAction(this));
+
+    Surface show_button_image;
+    show_button_image.grab(button_images, iRect(30,0, 15, 15) );
+    bShowWindow = createTitlebarButton( 15, 0, show_button_image, new RetoreChatAction(this));
     bShowWindow->disable();
     add(bShowWindow);
     
     HideWindow = false;
 
-    iRect r(0, 15, getSizeX()-15, getSizeY()-17);
+    iRect r(0, 15, getWidth()-15, getHeight()-17);
     ChatList = new tChatBox(r, 0);
     vsbChat = new tVScrollBar();
     add(vsbChat);
@@ -150,9 +149,9 @@ ChatView::ChatView() : GameTemplateView()
     ChatList->setAutoScroll(true);
     add(ChatList);
     
-    input = new InputField();
-    input->setLocation(2 + 16,getSizeY()-16);
-    input->setSize(getSizeX()-(5 + 17),16);
+    input = new InputField(this);
+    input->setLocation(2 + 16,getHeight()-16);
+    input->setSize(getWidth()-(5 + 17),16);
     input->setMaxTextLength(500);
     input->setExcludedChars("\\�`�");
     
@@ -160,7 +159,7 @@ ChatView::ChatView() : GameTemplateView()
     
     switchModeButton = new Button(); //Button::createTextButton(">", iXY(0, getSizeY()-16), 14, 0);
     
-    switchModeButton->setLocation(1, getSizeY()-16);
+    switchModeButton->setLocation(1, getHeight()-16);
     switchModeButton->setSize(16, 16);
     switchModeButton->setLabel(">");
     switchModeButton->setStateOffset(Button::BPRESSED, 1, 1);
@@ -168,11 +167,11 @@ ChatView::ChatView() : GameTemplateView()
     
     switchModeButton->setTextColors(Color::gray, Color::yellow, Color::gray, Color::darkGray);
     
-    allBg.create(16,16,1);
+    allBg.create(16,16);
     allBg.FillRoundRect(allBg.getRect(), 3, Color::white);
     allBg.RoundRect(allBg.getRect(), 3, Color::white);
     
-    friendsBg.create(16,16,1);
+    friendsBg.create(16,16);
     friendsBg.FillRoundRect(friendsBg.getRect(), 3, Color::yellow);
     friendsBg.RoundRect(friendsBg.getRect(), 3, Color::yellow);
 
@@ -182,11 +181,11 @@ ChatView::ChatView() : GameTemplateView()
     setChatFriends();
 }
 
-void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
+void ChatView::doDraw( Surface& dest )
 {
-    clientArea.bltLookup(viewArea.getRect(), Palette::brightness256.getColorArray());
-    clientArea.bltString(35, 4, title, ctTexteNormal);
-    View::doDraw(viewArea, clientArea);
+    dest.bltLookup(dest.getRect(), Palette::brightness256.getColorArray());
+    dest.bltString(35, 4, "Chat View", ctTexteNormal);
+    View::doDraw( dest );
 }
 
 void ChatView::processEvents()
@@ -258,7 +257,7 @@ void ChatView::minimizeChat()
     removeComponent(switchModeButton);
 
     resize(500, 17);
-    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    moveTo(screen->getWidth()-getWidth(), screen->getHeight()-getHeight());
 }
 
 void ChatView::restoreChat()
@@ -268,7 +267,7 @@ void ChatView::restoreChat()
     bShowWindow->disable();
 
     resize(500, 150);
-    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    moveTo(screen->getWidth()-getWidth(), screen->getHeight()-getHeight());
     
     add(switchModeButton);
     add(input);
@@ -286,9 +285,10 @@ void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *
     ChatList->AddChat(temp_str, msgcolor, hasFlag, flag);
 }
 
-void ChatView::checkResolution(iXY oldResolution, iXY newResolution)
+void ChatView::onDesktopResized(const iXY& oldResolution, const iXY& newResolution)
 {
-    moveTo(screen->getWidth()-getSizeX(), screen->getHeight()-getSizeY());
+    (void)oldResolution;
+    moveTo(newResolution.x-getWidth(), newResolution.y-getHeight());
 }
 
 void ChatView::clear()
@@ -301,7 +301,11 @@ void ChatView::setChatFriends()
     if ( isAllMode )
     {
         isAllMode = false;
-        switchModeButton->setImage(friendsBg);
+        PtrArray<Surface> bg(1);
+        Surface *s = new Surface();
+        s->copy(friendsBg);
+        bg.push_back(s);
+        switchModeButton->setImage(bg);
         input->setTextColor(Color::yellow);
     }
 }
@@ -311,7 +315,11 @@ void ChatView::setChatAll()
     if ( ! isAllMode )
     {
         isAllMode = true;
-        switchModeButton->setImage(allBg);
+        PtrArray<Surface> bg(1);
+        Surface *s = new Surface();
+        s->copy(allBg);
+        bg.push_back(s);
+        switchModeButton->setImage(bg);
         input->setTextColor(Color::white);
     }
 }

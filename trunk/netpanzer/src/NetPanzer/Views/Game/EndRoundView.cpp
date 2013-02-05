@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define TABLE_BORDER_START (HEADER_HEIGHT+TABLE_BORDER)
 #define TABLE_START (HEADER_HEIGHT + TABLE_BORDER)
 
-#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
+#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + (TABLE_BORDER * 2 ) + 14+2)
 
 static const char * table_header =
     "          Name                 Frags Deaths Points Objs.";
@@ -45,13 +45,8 @@ static const char * stats_format = "%-20s%6i%7i%7i%6i";
 EndRoundView::EndRoundView() : GameTemplateView()
 {
     setSearchName("EndRoundView");
-    setTitle("Round stats");
-    setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
-    setVisible(false);
-    setBordered(false);
 
     int x = (screen->getWidth() / 2) - 250;
     int y = (screen->getHeight() / 2) - 250;
@@ -67,29 +62,30 @@ EndRoundView::EndRoundView() : GameTemplateView()
 
     selected_line = -1;
     selected_col = -1;
+    
     RectWinner = getClientRect();
-    RectWinner.min.x = RectWinner.min.y = 0;
+    RectWinner.setLocation(0,0);
     RectStates = RectWinner;
-    RectWinner.max.y = HEADER_HEIGHT-10;
-    RectStates.min.y = HEADER_HEIGHT;
+    RectWinner.setHeight(HEADER_HEIGHT);
+    RectStates.setLocationY(HEADER_HEIGHT);
 
 } // end EndRoundView::EndRoundView
 
 // doDraw
 //---------------------------------------------------------------------------
-void EndRoundView::doDraw(Surface &viewArea, Surface &clientArea)
+void EndRoundView::doDraw( Surface& dest )
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    clientArea.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
-    clientArea.RoundRect(RectWinner,14, ctWindowsBorder);
+    dest.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
+    dest.RoundRect(RectWinner,14, ctWindowsBorder);
 
-    clientArea.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
-    clientArea.RoundRect(RectStates, 14, ctWindowsBorder);
+    dest.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
+    dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
-    if (GameConfig::game_teammode) drawTeamStats(clientArea, flagHeight);
-    else drawPlayerStats(clientArea, flagHeight);
+    if (GameConfig::game_teammode) drawTeamStats(dest, flagHeight);
+    else drawPlayerStats(dest, flagHeight);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest );
 } // end doDraw
 
 class StatesSortByPoints
@@ -159,7 +155,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
     cur_line_pos += ENTRY_HEIGHT;
     flag_pos += ENTRY_HEIGHT;
     ++cur_state;
-    int ALLY_START = RectStates.min.x+4;
+    int ALLY_START = RectStates.getLocationX()+4;
     int COLOR_START = ALLY_START+20;
     int FLAG_START = COLOR_START+15;
     int NAME_START = FLAG_START+25;
@@ -178,7 +174,7 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                        (cur_state == selected_line)?Color::yellow:ctTexteNormal);
 
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, FLAG_START, flag_pos );
+        flag->blt( dest, FLAG_START, flag_pos ); // full blit
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
             // XXX ALLY
@@ -186,19 +182,19 @@ void EndRoundView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
             if ( meWithHim && himWithMe )
             {
-                allyImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else if ( meWithHim )
             {
-                allyRequestImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyRequestImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else if ( himWithMe )
             {
-                allyOtherImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyOtherImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else
             {
-                noAllyImage.bltTrans(dest, ALLY_START, flag_pos );
+                noAllyImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
         }
 
@@ -224,113 +220,113 @@ public:
 static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
 {
     char statBuf[256];
-    int x = rect.min.x+5;
-    int y = rect.min.y+5;
+    int x = rect.getLocationX()+5;
+    int y = rect.getLocationY()+5;
     
-    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
-    snprintf(statBuf, sizeof(statBuf), "%5i Points", state->getTotal());
-    dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
-    y += 10;
-    dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
-    y += 5;
-    snprintf(statBuf, sizeof(statBuf), " Frags: %5i", state->getKills());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
-    y += 12;
-    snprintf(statBuf, sizeof(statBuf), "deaths: %5i", state->getLosses());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
-    x += 120;
-    y = rect.min.y+20;
-    snprintf(statBuf, sizeof(statBuf), "Objectives: %5i", state->getObjectivesHeld());
-    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
+//    snprintf(statBuf, sizeof(statBuf), "%5i Points", state->getTotal());
+//    dest.bltString(rect.max.x-100, y, statBuf, ctTexteOver);
+//    y += 10;
+//    dest.drawLine(x, y, rect.max.x-5, y, ctTexteOver);
+//    y += 5;
+//    snprintf(statBuf, sizeof(statBuf), " Frags: %5i", state->getKills());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    y += 12;
+//    snprintf(statBuf, sizeof(statBuf), "deaths: %5i", state->getLosses());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
+//    x += 120;
+//    y = rect.position.y+20;
+//    snprintf(statBuf, sizeof(statBuf), "Objectives: %5i", state->getObjectivesHeld());
+//    dest.bltString(x, y, statBuf, ctTexteNormal);
 }
 
 void EndRoundView::drawTeamStats(Surface& dest, unsigned int flagHeight)
 {
-    char statBuf[256];
-    iRect r((RectStates.getSizeX()/2)-2, RectStates.min.y+5, (RectStates.getSizeX()/2)+2, RectStates.max.y-20);
-    dest.fillRect(r, ctTexteDisable);
-
-    states.clear();
-    PlayerID i;
-    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
-    {
-        PlayerState* state = PlayerInterface::getPlayer(i);
-        if( state->isActive() )
-        {
-            states.push_back(state);
-        }
-    }
-    std::sort(states.begin(), states.end(), StatesSortByTeam());
-
-    Uint8 TeamWin = TeamManager::getTeamWin();
-
-    TeamManager::drawFlag(TeamWin, dest, RectWinner.min.x+(RectWinner.getSizeX()/2)-7, RectWinner.min.y+5 );
-
-    snprintf(statBuf, sizeof(statBuf),
-             "Winner is Team %s", TeamManager::getTeamName(TeamWin).substr(0,20).c_str());
-    dest.bltStringCenteredInRect(RectWinner,statBuf, Color::yellow);
-
-    snprintf(statBuf, sizeof(statBuf),
-             "frags: %5i  deaths: %5i  Objectives: %5i", 
-             TeamManager::getKills(TeamWin),
-             TeamManager::getLosses(TeamWin),
-             TeamManager::getObjectivesHeld(TeamWin));
-    dest.bltString(RectWinner.min.x+50, RectWinner.max.y-15,statBuf, ctTexteNormal);
-
-    int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
-    int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
-    Surface * flag = 0;
-    int cur_state = 1;
-
-    dest.bltString(0, cur_line_pos, "      Name             Points", ctTexteNormal);
-    dest.bltString(5+RectStates.getSizeX()/2, cur_line_pos, "      Name             Points", ctTexteNormal);
-    dest.drawLine(RectStates.min.x+5, cur_line_pos+10, RectStates.max.x-5, cur_line_pos+10, ctTexteNormal);
-
-    cur_line_pos += ENTRY_HEIGHT;
-    flag_pos += ENTRY_HEIGHT;
-    int current_Team = 0;
-    int FLAG_START = 3+RectStates.min.x+5;
-    int NAME_START = 3+RectStates.min.x+28;
-
-    iRect infopanel(RectStates.min.x+10,RectStates.max.y-50, RectStates.max.x-10, RectStates.max.y-5);
-    dest.fillRect(infopanel, ctWindowsbackground);
-    
-    for(std::vector<const PlayerState*>::iterator i = states.begin();
-            i != states.end(); ++i)
-    {
-        const PlayerState* state = *i;
-
-        if (current_Team != state->getTeamID())
-        {
-            cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
-            flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
-            cur_line_pos += ENTRY_HEIGHT;
-            flag_pos += ENTRY_HEIGHT;
-            current_Team = state->getTeamID();
-            FLAG_START = (3+RectStates.getSizeX()/2)+5;
-            NAME_START = (3+RectStates.getSizeX()/2)+28;
-            cur_state = 1;
-        }
-        snprintf(statBuf, sizeof(statBuf),
-                 "%-15s%7i", state->getName().c_str(), state->getTotal());
-        if (cur_state == selected_line)
-        {
-            if (selected_col == current_Team)
-            {
-                iRect r(FLAG_START, cur_line_pos-3, FLAG_START+235, cur_line_pos+11);
-                dest.fillRect(r, ctTexteOver);
-                DrawPanelUser(infopanel, dest, state);
-            } 
-        }
-        dest.bltString(NAME_START, cur_line_pos, statBuf, ctTexteNormal);
-
-        flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, FLAG_START, flag_pos );
-
-        cur_line_pos += ENTRY_HEIGHT;
-        flag_pos += ENTRY_HEIGHT;
-        ++cur_state;
-    }
+//    char statBuf[256];
+//    iRect r((RectStates.getSizeX()/2)-2, RectStates.position.y+5, (RectStates.getSizeX()/2)+2, RectStates.max.y-20);
+//    dest.fillRect(r, ctTexteDisable);
+//
+//    states.clear();
+//    PlayerID i;
+//    for( i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
+//    {
+//        PlayerState* state = PlayerInterface::getPlayer(i);
+//        if( state->isActive() )
+//        {
+//            states.push_back(state);
+//        }
+//    }
+//    std::sort(states.begin(), states.end(), StatesSortByTeam());
+//
+//    Uint8 TeamWin = TeamManager::getTeamWin();
+//
+//    TeamManager::drawFlag(TeamWin, dest, RectWinner.position.x+(RectWinner.getSizeX()/2)-7, RectWinner.position.y+5 );
+//
+//    snprintf(statBuf, sizeof(statBuf),
+//             "Winner is Team %s", TeamManager::getTeamName(TeamWin).substr(0,20).c_str());
+//    dest.bltStringCenteredInRect(RectWinner,statBuf, Color::yellow);
+//
+//    snprintf(statBuf, sizeof(statBuf),
+//             "frags: %5i  deaths: %5i  Objectives: %5i", 
+//             TeamManager::getKills(TeamWin),
+//             TeamManager::getLosses(TeamWin),
+//             TeamManager::getObjectivesHeld(TeamWin));
+//    dest.bltString(RectWinner.position.x+50, RectWinner.max.y-15,statBuf, ctTexteNormal);
+//
+//    int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+//    int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
+//    Surface * flag = 0;
+//    int cur_state = 1;
+//
+//    dest.bltString(0, cur_line_pos, "      Name             Points", ctTexteNormal);
+//    dest.bltString(5+RectStates.getSizeX()/2, cur_line_pos, "      Name             Points", ctTexteNormal);
+//    dest.drawLine(RectStates.position.x+5, cur_line_pos+10, RectStates.max.x-5, cur_line_pos+10, ctTexteNormal);
+//
+//    cur_line_pos += ENTRY_HEIGHT;
+//    flag_pos += ENTRY_HEIGHT;
+//    int current_Team = 0;
+//    int FLAG_START = 3+RectStates.position.x+5;
+//    int NAME_START = 3+RectStates.position.x+28;
+//
+//    iRect infopanel(RectStates.position.x+10,RectStates.max.y-50, RectStates.max.x-10, RectStates.max.y-5);
+//    dest.fillRect(infopanel, ctWindowsbackground);
+//    
+//    for(std::vector<const PlayerState*>::iterator i = states.begin();
+//            i != states.end(); ++i)
+//    {
+//        const PlayerState* state = *i;
+//
+//        if (current_Team != state->getTeamID())
+//        {
+//            cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+//            flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
+//            cur_line_pos += ENTRY_HEIGHT;
+//            flag_pos += ENTRY_HEIGHT;
+//            current_Team = state->getTeamID();
+//            FLAG_START = (3+RectStates.getSizeX()/2)+5;
+//            NAME_START = (3+RectStates.getSizeX()/2)+28;
+//            cur_state = 1;
+//        }
+//        snprintf(statBuf, sizeof(statBuf),
+//                 "%-15s%7i", state->getName().c_str(), state->getTotal());
+//        if (cur_state == selected_line)
+//        {
+//            if (selected_col == current_Team)
+//            {
+//                iRect r(FLAG_START, cur_line_pos-3, FLAG_START+235, cur_line_pos+11);
+//                dest.fillRect(r, ctTexteOver);
+//                DrawPanelUser(infopanel, dest, state);
+//            } 
+//        }
+//        dest.bltString(NAME_START, cur_line_pos, statBuf, ctTexteNormal);
+//
+//        flag = ResourceManager::getFlag(state->getFlag());
+//        flag->blt( dest, FLAG_START, flag_pos );
+//
+//        cur_line_pos += ENTRY_HEIGHT;
+//        flag_pos += ENTRY_HEIGHT;
+//        ++cur_state;
+//    }
 
 }
 
@@ -342,7 +338,7 @@ void EndRoundView::mouseMove(const iXY & prevPos, const iXY &newPos)
     if ( newPos.y >= TABLE_START )
     {
         selected_line = (newPos.y-TABLE_START) / ENTRY_HEIGHT;
-        if (newPos.x > RectStates.getSizeX()/2) selected_col = 1;
+        if (newPos.x > RectStates.getWidth()/2) selected_col = 1;
         else selected_col = 0;
     }
 }
@@ -357,9 +353,9 @@ void EndRoundView::doDeactivate()
     selected_line = -1;
 }
 
-void EndRoundView::checkResolution(iXY oldResolution, iXY newResolution)
+void EndRoundView::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
-    int x = (screen->getWidth() / 2) - 250;
-    int y = (screen->getHeight() / 2) - 250;
+    int x = (newResolution.x / 2) - 250;
+    int y = (newResolution.y / 2) - 250;
     moveTo(iXY(x, y));
 }

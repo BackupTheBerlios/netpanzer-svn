@@ -21,8 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CORETYPES_HPP
 #define	_CORETYPES_HPP
 
-// SDL.h included for the basic types [U|S]int[8|16|32]
-#include "SDL.h"
+#include <stdint.h>
 #include "Util/Endian.hpp"
 #include <string>
 
@@ -30,30 +29,30 @@ typedef std::string NPString;
 
 //#define __TEST_PLAYERID__
 
-typedef Sint32 PowerUpID;
+typedef int32_t PowerUpID;
 #define PowerUpID_toPortable(a) htol32(a)
 #define PowerUpID_fromPortable(a) ltoh32(a)
 
-typedef Uint16 ObjectiveID;
+typedef uint16_t ObjectiveID;
 #define ObjectiveID_toPortable(a) htol16(a)
 #define ObjectiveID_fromPortable(a) ltoh16(a)
 #define OBJECTIVE_NONE 0xffff
 
-typedef Uint16 UnitID;
+typedef uint16_t UnitID;
 #define UnitID_toPortable(a) htol16(a)
 #define UnitID_fromPortable(a) ltoh16(a)
 
-typedef Uint8 FlagID;
+typedef uint8_t FlagID;
 #define FLAG_WIDTH 20
 #define FLAG_HEIGHT 14
 
-typedef Uint8 TeamID;
+typedef uint8_t TeamID;
 #define MIN_TEAM_ID (0)
 #define MAX_TEAM_ID (0xfe)
 #define INVALID_TEAM_ID (0xff)
 
 #ifndef __TEST_PLAYERID__
-    typedef Uint8 PlayerID;
+    typedef uint8_t PlayerID;
     #define MIN_PLAYER_ID (0)
     #define MAX_PLAYER_ID (0xfe)
     #define INVALID_PLAYER_ID (0xff)

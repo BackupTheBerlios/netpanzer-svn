@@ -254,18 +254,13 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
     return isok;
 } // function
 
-vector<UnitProfile *> UnitProfileInterface::profiles;
+PtrArray<UnitProfile> UnitProfileInterface::profiles;
 
 void
 UnitProfileInterface::clearProfiles()
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
-    while ( i != profiles.end() )
-    {
-        delete *i;
-        i++;
-    }
-    profiles.clear();
+    profiles.deleteAll();
+    profiles.reset();
 }
 
 void UnitProfileInterface::doLoadUnitProfiles()
@@ -335,26 +330,23 @@ UnitProfile * UnitProfileInterface::getUnitProfile( unsigned short unit_type )
 UnitProfile *
 UnitProfileInterface::getProfileByName( const NPString& name )
 {
-    vector<UnitProfile *>::iterator i = profiles.begin();
-    while ( i != profiles.end() )
+    for ( size_t i = 0; i < profiles.getLastIndex(); i++ )
     {
-        if ( name.length() != (*i)->unitname.length() )
+        if ( name.length() != profiles[i]->unitname.length() )
         {
-            i++;
-            continue; // continue if size !=
+            continue;
         }
 
         std::string::size_type s = 0;
         while ( s < name.length()
-               && toupper(name[s]) == toupper((*i)->unitname[s]) )
+               && toupper(name[s]) == toupper(profiles[i]->unitname[s]) )
         {
             s++;
         }
         
         if ( s == name.length() )
-            return *i;
+            return profiles[i];
         
-        i++;
     }
     return 0; // null pointer warning
 }

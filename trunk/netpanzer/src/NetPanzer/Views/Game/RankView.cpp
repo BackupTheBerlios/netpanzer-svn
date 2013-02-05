@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define TABLE_HEADER_PIX_LEN (52*8)
 
-#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
+#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + (TABLE_BORDER * 2 ) + 14+2)
 
 char table_header[256];// =
 //        "      Name                 Frags Deaths Points Objs.";
@@ -63,10 +63,8 @@ static const char * stats_format = "%-20s%6i%7i%7i%6i";
 RankView::RankView() : GameTemplateView()
 {
     setSearchName("RankView");
-    setTitle(_("Rankings"));
-    setSubTitle(" - TAB");
+//    setTitle(_("Rankings"));
 
-    setAllowResize(false);
     moveTo(GameConfig::interface_rankposition_x, GameConfig::interface_rankposition_y);
     resize(iXY(WINDOW_WIDTH, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
@@ -88,31 +86,29 @@ RankView::RankView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void RankView::doDraw(Surface &viewArea, Surface &clientArea)
+void RankView::doDraw( Surface& dest )
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
     unsigned int newheight = HEADER_HEIGHT
                              + (TABLE_BORDER * 2)
-                             + (ENTRY_HEIGHT * PlayerInterface::countPlayers())
-                             + DEFAULT_MOVE_AREA_HEIGHT
-                             + (DEFAULT_BORDER_SIZE * 2);
+                             + (ENTRY_HEIGHT * PlayerInterface::countPlayers());
 
-    if ( newheight != (unsigned int)getSizeY() )
+    if ( newheight != (unsigned int)getHeight() )
     {
         resize(WINDOW_WIDTH, newheight);
         return; // this frame draws nothing
     }
     
-    bltViewBackground(viewArea);
+    bltViewBackground(dest);
 
-    clientArea.drawButtonBorder(
-            iRect(0, TABLE_BORDER_START, clientArea.getWidth()-1, clientArea.getHeight()-1),
+    dest.drawButtonBorder(
+            iRect(0, TABLE_BORDER_START, dest.getWidth()-1, dest.getHeight()-1),
             Color::gray64, Color::white);
 
-    clientArea.bltStringShadowed(0, 16, table_header, Color::red, Color::gray64);
-    drawPlayerStats(clientArea, flagHeight);
+    dest.bltStringShadowed(0, 16, table_header, Color::red, Color::gray64);
+    drawPlayerStats(dest, flagHeight);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw( dest);
 } // end doDraw
 
 class StatesSortByPoints
@@ -183,7 +179,7 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                                Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, FLAG_START, flag_pos );
+        flag->blt( dest, FLAG_START, flag_pos ); // full blit
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
             // XXX ALLY
@@ -191,19 +187,19 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());            
             if ( meWithHim && himWithMe )
             {
-                allyImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else if ( meWithHim )
             {
-                allyRequestImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyRequestImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else if ( himWithMe )
             {
-                allyOtherImage.bltTrans(dest, ALLY_START, flag_pos );
+                allyOtherImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
             else
             {
-                noAllyImage.bltTrans(dest, ALLY_START, flag_pos );
+                noAllyImage.bltTrans(dest, ALLY_START, flag_pos ); // blit full
             }
         }
 
@@ -218,8 +214,8 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
 void RankView::notifyMoveTo()
 {
-    GameConfig::interface_rankposition_x = min.x;
-    GameConfig::interface_rankposition_y = min.y;
+    GameConfig::interface_rankposition_x = getLocationX();
+    GameConfig::interface_rankposition_y = getLocationY();
 }
 
 void RankView::lMouseDown(const iXY& pos)

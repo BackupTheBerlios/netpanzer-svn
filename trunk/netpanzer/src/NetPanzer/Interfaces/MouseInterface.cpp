@@ -29,6 +29,7 @@ unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
 
 iXY MouseInterface::mouse_pos;
+iXY MouseInterface::mouse_offset;
 
 unsigned char MouseInterface::button_mask;
 
@@ -53,7 +54,6 @@ void MouseInterface::initialize()
                 continue;
             }
             surface->loadBMP(filename.c_str());
-            surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(std::exception& e) {
             LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));
@@ -119,6 +119,9 @@ void MouseInterface::setCursor(const char* cursorname)
         cursor = 0;
     } else {
         cursor = i->second;
+        mouse_offset.x = cursor->getWidth() / 2;
+        mouse_offset.y = cursor->getHeight() / 2;
+
     }
 }
 void

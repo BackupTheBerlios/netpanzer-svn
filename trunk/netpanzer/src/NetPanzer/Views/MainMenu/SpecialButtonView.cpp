@@ -30,10 +30,11 @@ void SpecialButtonView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     RMouseHackView::mouseMove(prevPos, newPos);
 
-    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
-        Desktop::setFocusView(this);
+    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this)
+    {
+        //Desktop::setFocusView(this);
 
-        COMMAND_PROCESSOR.closeSelectionBox();
+        //COMMAND_PROCESSOR.closeSelectionBox();
     }
 
 } // end SpecialButtonView::mouseMove

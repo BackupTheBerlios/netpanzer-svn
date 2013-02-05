@@ -313,8 +313,8 @@ int Particle2D::getFarAway(const fXYZ &worldPos)
 
     iXY gameViewCenter;
 
-    gameViewCenter.x = ((gameViewRect.max.x - gameViewRect.min.x) >> 1) + gameViewRect.min.x;
-    gameViewCenter.y = ((gameViewRect.max.y - gameViewRect.min.y) >> 1) + gameViewRect.min.y;
+    gameViewCenter.x = (gameViewRect.getWidth() >> 1) + gameViewRect.getLocationX();
+    gameViewCenter.y = (gameViewRect.getHeight() >> 1) + gameViewRect.getLocationY();
 
     iXY distanceFromGameView;
 

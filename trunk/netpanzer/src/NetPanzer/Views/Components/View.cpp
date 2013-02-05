@@ -29,54 +29,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <algorithm>
 
-const int RESIZE_WIDTH = 10;
-const int RESIZE_XMIN  = RESIZE_WIDTH;
-const int RESIZE_XMAX  = RESIZE_WIDTH * 3;
-const int RESIZE_YMIN  = RESIZE_WIDTH;
-const int RESIZE_YMAX  = RESIZE_WIDTH * 3;
-
 // add
 //---------------------------------------------------------------------------
 void View::add(Component *component)
 {
-    if ( component ) {
+    if ( component )
+    {
         components.push_back(component);
-        component->setParent(this);
     }
 } // end View::add
 
 // View
 //---------------------------------------------------------------------------
 View::View()
-    : currentscreen(0)
 {
     reset();
-} // end View::View
-
-// View
-//---------------------------------------------------------------------------
-View::View(const iXY &pos, const iXY &size, const char *title)
-{
-    reset();
-
-    // If the button is bordered, then put a close button on it.
-    //if (status & STATUS_ISBORDERED)
-    //LOG(("About to addButton"));
-    //addButton(iXY(getSizeX()-10, getSizeY()-10), "pics/buttons/wclose.raw", "Close the current window", View::toggleWindow);
-    //LOG(("Past addButton"));
-
-    moveTo(pos);
-    resize(size);
-    setTitle(title);
-
 } // end View::View
 
 // ~View
 //---------------------------------------------------------------------------
 View::~View()
 {
-    free(title);
-    free(subTitle);
     free(searchName);
 } // end ~View::View
 
@@ -86,245 +59,22 @@ View::~View()
 //---------------------------------------------------------------------------
 void View::reset()
 {
-    min.zero();
-    max.zero();
-    status                =  0;
+    zero();
+    status                = 0;
     searchName            = 0;
-    title                 = 0;
-    subTitle              = 0;
-    statusText            = 0;
     focusComponent        = 0;
 
     setSearchName("donut");
-    setTitle("donut");
-    setSubTitle("donut");
 
     //scrollBar             = 0;
 
     removeComponents();
 
-    moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
-    borderSize      = DEFAULT_BORDER_SIZE;
-    snapToTolerance = DEFAULT_SNAP_TOLERANCE;
-
-    setAllowResize(true);
     setAllowMove(true);
-    setBordered(true);
-    setVisible(false);
-    setDisplayStatusBar(false);
     setAlwaysOnBottom(false);
 
     //setScrollBar(false);
 } // end reset
-
-// drawBorder
-//---------------------------------------------------------------------------
-// Purpose: Draws the borders of the window.
-//---------------------------------------------------------------------------
-void View::drawBorder(Surface &viewArea)
-{
-    assert(this != 0);
-    
-    viewArea.drawWindowsBorder();
-} // end drawBorder
-
-// drawTitle
-//---------------------------------------------------------------------------
-// Purpose: Draws the title of the view and colors the move area background
-//          depending on whether the view is active.
-//---------------------------------------------------------------------------
-void View::drawTitle(Surface &viewArea)
-{
-    assert(this != 0);
-
-    iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
-
-    Surface s;
-    s.setTo(viewArea, r);
-
-    s.fill(getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
-
-    char strBuf[256];
-
-    sprintf(strBuf, "%s%s", title, subTitle);
-
-    s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
-
-    if (getResize()) {
-        {
-            // Bottom-Left resize.
-            iXY verticalPos(borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(borderSize + moveAreaHeight - 1, getSizeY() - borderSize);
-
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-        }
-
-        // Top-Left resize.
-        {
-            iXY verticalPos(borderSize, borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(borderSize + moveAreaHeight - 1, borderSize);
-
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-        }
-
-        // Top-Right resize.
-        {
-            iXY verticalPos(getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight, borderSize - 1);
-
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-        }
-
-        // Bottom-Right resize.
-        {
-            iXY verticalPos(getSizeX() - borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight + 1, getSizeY() - borderSize);
-
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-        }
-    }
-
-} // end View::drawTitle
 
 // draw
 //---------------------------------------------------------------------------
@@ -332,15 +82,14 @@ void View::draw(Surface& surface)
 {
     assert(this != 0);
 
-    if (!getVisible())
+    if ( ! isVisible() )
+    {
         return;
+    }
 
-    currentscreen = &surface; // hack
-    Surface* viewarea = getViewArea(surface);
-    Surface* clientarea = getClientArea(surface);
-    doDraw(*viewarea, *clientarea);
-    delete viewarea;
-    delete clientarea;
+    surface.setAbsoluteClip(*this);
+    doDraw(surface);
+    surface.resetClip();
 } // end draw
 
 // activate
@@ -349,7 +98,8 @@ void View::draw(Surface& surface)
 //---------------------------------------------------------------------------
 void View::activate()
 {
-    if (getActive()) {
+    if ( isActive() )
+    {
         return;
     }
 
@@ -366,7 +116,8 @@ void View::activate()
 //---------------------------------------------------------------------------
 void View::deactivate()
 {
-    if (!getActive()) {
+    if ( ! isActive() )
+    {
         return;
     }
 
@@ -380,28 +131,21 @@ void View::deactivate()
 //---------------------------------------------------------------------------
 // Purpose: Default implementation - draws all the componentList of the window.
 //---------------------------------------------------------------------------
-void View::doDraw(Surface &viewArea, Surface &clientArea)
+void View::doDraw( Surface &dest )
 {
-    if (getShowStatus()) {
-        drawStatus(clientArea);
-    }
-
     // Draw all non-selected components.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++) {
-        if (*i != focusComponent) {
-            (*i)->draw(clientArea);
+    for ( size_t n = 0; n < components.getLastIndex(); n++ )
+    {
+        if ( components[n] != focusComponent )
+        {
+            components[n]->draw(dest);
         }
     }
 
     // Now draw the selected component.
-    if (focusComponent != 0) {
-        focusComponent->draw(clientArea);
-    }
-
-    if (getBordered()) {
-        drawTitle(viewArea);
-        drawBorder(viewArea);
+    if (focusComponent != 0)
+    {
+        focusComponent->draw(dest);
     }
 } // end View::doDraw
 
@@ -412,15 +156,15 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
 void View::doActivate()
 {
     // Tell all the components the mouse entered the view.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {
-        if ((*i)->contains(MouseInterface::getMousePosition())) {
-            mMouseEvent me((*i),
+        if ( components[n]->contains(MouseInterface::getMousePosition()) )
+        {
+            mMouseEvent me(components[n],
                 mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, 
                 MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -433,84 +177,17 @@ void View::doActivate()
 //---------------------------------------------------------------------------
 void View::doDeactivate()
 {
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++ )
     {
-        mMouseEvent me((*i),
+        mMouseEvent me(components[n],
             mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, 
             MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
-        (*i)->actionPerformed(me);
+        components[n]->actionPerformed(me);
 
         actionPerformed(me);
     }
 } // end View::doDeactivate
-
-// getMouseActions
-//---------------------------------------------------------------------------
-// Purpose: Find the actions associated with the position of the mouse arrow
-//          cursor in the window.
-//---------------------------------------------------------------------------
-int View::getMouseActions(const iXY &pos) const
-{
-    assert(this != 0);
-
-    int actions = 0;
-
-    if (!getVisible() || !getActive()) {
-        return actions;
-    }
-
-    if (!getBordered()) {
-        return actions;
-    }
-
-    if (getResize()) {
-        // Now lets check for a window resize
-        iXY minOff;
-        iXY maxOff;
-
-        minOff.x = abs(pos.x); maxOff.x = abs(pos.x - getSizeX());
-        minOff.y = abs(pos.y); maxOff.y = abs(pos.y - getSizeY());
-
-        // Check the left,  then the right
-        if      (minOff.x < RESIZE_XMIN) actions |= MA_RESIZE_LEFT;
-        else if (maxOff.x < RESIZE_XMIN) actions |= MA_RESIZE_RIGHT;
-
-        // Check the top, then the bottom
-        if      (minOff.y < RESIZE_YMIN) actions |= MA_RESIZE_TOP;
-        else if (maxOff.y < RESIZE_YMIN) actions |= MA_RESIZE_BOTTOM;
-
-        // If a left or right was turned on, then give more area for selecting the
-        // resize area
-        if (actions & (MA_RESIZE_LEFT | MA_RESIZE_RIGHT)) {
-            if      (minOff.y < RESIZE_YMAX) actions |= MA_RESIZE_TOP;
-            else if (maxOff.y < RESIZE_YMAX) actions |= MA_RESIZE_BOTTOM;
-        }
-
-        if (actions & (MA_RESIZE_TOP | MA_RESIZE_BOTTOM)) {
-            if      (minOff.x < RESIZE_XMAX) actions |= MA_RESIZE_LEFT;
-            else if (maxOff.x < RESIZE_XMAX) actions |= MA_RESIZE_RIGHT;
-        }
-    }
-
-    // Check for moving the window via the move area.
-    if (getAllowMove()) {
-        //iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-        iRect titleBar(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight);
-        if (titleBar.contains(pos)) return actions |= MA_MOVE;
-    }
-
-    // Check for moving the window via the status bar.
-    //if (getAllowMove())
-    //{
-    //	//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-    //	iRect titleBar(borderSize, getSizeY() - borderSize - DEFAULT_STATUS_BAR_HEIGHT, getSizeX() - borderSize, getSizeY() - borderSize);
-    //	if (titleBar.contains(pos)) return actions |= MA_MOVE;
-    //}
-
-    return actions;
-} // end getMouseActions
 
 // getScreenToClientPos
 //---------------------------------------------------------------------------
@@ -521,13 +198,6 @@ int View::getMouseActions(const iXY &pos) const
 //---------------------------------------------------------------------------
 iXY View::getScreenToClientPos(const iXY &pos)
 {
-    assert(this != 0);
-
-    if (getBordered()) {
-        return iXY( pos.x - (min.x + borderSize),
-                    pos.y - (min.y + borderSize + moveAreaHeight));
-    }
-
     return getScreenToViewPos(pos);
 } // end View::getScreenToClientPos
 
@@ -541,42 +211,8 @@ iXY View::getScreenToViewPos(const iXY &pos)
 {
     assert(this != 0);
 
-    return iXY(pos.x - min.x, pos.y - min.y);
+    return pos - getLocation();
 } // end getScreenToViewPos
-
-// getViewArea
-//---------------------------------------------------------------------------
-// Purpose: Returns a Surface of the view's dimensions.
-//---------------------------------------------------------------------------
-Surface* View::getViewArea(Surface& dest)
-{
-    assert(this != 0);
-
-    iRect rect(min, max);
-    Surface *ns;
-    ns = new Surface();
-    ns->setTo(dest,rect);
-    return ns;
-} // end View::getViewArea
-
-// getClientArea
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-Surface* View::getClientArea(Surface& dest)
-{
-    Surface* viewarea = getViewArea(dest);
-    if (getBordered()) {
-        iRect rect( borderSize, borderSize+moveAreaHeight,
-                    getSizeX() - borderSize, getSizeY() - borderSize );
-        Surface *ns = new Surface();
-        ns->setTo(*viewarea, rect);
-        delete viewarea;
-        return ns;
-    }
-
-    return viewarea;
-} // end View::getClientArea
 
 // getClientRect
 //---------------------------------------------------------------------------
@@ -584,14 +220,7 @@ Surface* View::getClientArea(Surface& dest)
 //---------------------------------------------------------------------------
 iRect View::getClientRect() const
 {
-    if (getBordered()) {
-        return iRect( borderSize,
-                      borderSize + moveAreaHeight,
-                      getSizeX() - borderSize,
-                      getSizeY() - borderSize);
-    }
-
-    return iRect(0, 0, getSizeX(), getSizeY());
+    return iRect(0, 0, getWidth(), getHeight());
 
 } // end View::getClientRect
 
@@ -603,46 +232,35 @@ iRect View::getClientRect() const
 void View::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     // Check all components for a clicked event.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        bool containsPrev=(*i)->contains(prevPos);
-        bool containsNew=(*i)->contains(newPos);
-        if (containsPrev && !containsNew) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
+        bool containsPrev=components[n]->contains(prevPos);
+        bool containsNew=components[n]->contains(newPos);
+        if (containsPrev && !containsNew)
+        {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
 
-            (*i)->actionPerformed(me);
-
-            actionPerformed(me);
-        } else if (!containsPrev && containsNew) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
-
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
             actionPerformed(me);
-        } else if (containsNew && newPos!=prevPos) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
+        }
+        else if (!containsPrev && containsNew)
+        {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
+
+            actionPerformed(me);
+        }
+        else if (containsNew && newPos!=prevPos)
+        {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
+
+            components[n]->actionPerformed(me);
 
             actionPerformed(me);
         }
     }
-
-    /*  // THIS DOES NOT WORK!!!!!!!!!!
-    	bool flagNewPos  = contains(newPos);
-    	bool flagPrevPos = contains(prevPos);
-     
-    	// Check for status of mouseEnter and mouseExit.
-    	if (flagNewPos && !flagPrevPos)
-    	{
-    		mouseEnter(newPos);
-    	}
-    	else if (!flagNewPos && flagPrevPos)
-    	{
-    		mouseExit(prevPos);
-    	}
-    */
 } // end mouseMove
 
 // lMouseDown
@@ -653,15 +271,14 @@ void View::lMouseDown(const iXY &pos)
     Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(pos)) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
+        if (components[n]->contains(pos)) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
-            focusComponent = (*i);
+            focusComponent = components[n];
 
             actionPerformed(me);
         }
@@ -673,17 +290,14 @@ void View::lMouseDown(const iXY &pos)
 //---------------------------------------------------------------------------
 int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 {
-    Desktop::resetMouseActionOffset();
-
     // Check all components for a clicked event.
     {    
-        ComponentsIterator i;
-        for ( i=components.begin(); ! components.empty() && i != components.end(); i++ )
+        for ( size_t n = 0; n != components.getLastIndex(); n++)
         {        
-            if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
-                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+            if (components[n]->contains(downPos) && components[n]->contains(upPos)) {
+                mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-                (*i)->actionPerformed(me);
+                components[n]->actionPerformed(me);
 
                 actionPerformed(me);
             }
@@ -692,13 +306,12 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 
     // Report a mouse release to all components except for a clicked one.
     {    
-        ComponentsIterator i;
-        for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
+        for ( size_t n = 0; n != components.getLastIndex(); n++)
         {        
-            if ((*i)->contains(upPos)) {
-                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+            if (components[n]->contains(upPos)) {
+                mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-                (*i)->actionPerformed(me);
+                components[n]->actionPerformed(me);
 
                 actionPerformed(me);
             }
@@ -715,29 +328,20 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     //mouseMove(prevPos, newPos);
 
     // Check all components for a dragged event.
-    ComponentsIterator i;
-    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(newPos) && (*i)->contains(downPos) && newPos!=prevPos) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
+        if (components[n]->contains(newPos) && components[n]->contains(downPos) && newPos!=prevPos) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
-            focusComponent = (*i);
+            focusComponent = components[n];
 
             actionPerformed(me);
         }
     }
 
 } // end View::lMouseDrag
-
-// lMouseDouble
-//---------------------------------------------------------------------------
-void View::lMouseDouble(const iXY &pos)
-{
-    lMouseDown(pos);
-
-} // end View::lMouseDouble
 
 // rMouseDown
 //---------------------------------------------------------------------------
@@ -747,15 +351,14 @@ void View::rMouseDown(const iXY &pos)
     Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
-    ComponentsIterator i;
-    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(pos)) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
+        if (components[n]->contains(pos)) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
-            focusComponent = (*i);
+            focusComponent = components[n];
 
             actionPerformed(me);
         }
@@ -770,13 +373,12 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     int reportRelease = true;
 
     // Check all components for a clicked event.
-    ComponentsIterator i;
-    for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+        if (components[n]->contains(downPos) && components[n]->contains(upPos)) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
             reportRelease = false;
 
@@ -788,13 +390,12 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     // mouse press positions, then report a release to an
     if (reportRelease) {
         // Check all components for a release event.
-        ComponentsIterator i;
-        for ( i=components.begin(); ! components.empty() && i != components.end(); i++)
+        for ( size_t n = 0; n != components.getLastIndex(); n++)
         {        
-            if ((*i)->contains(upPos)) {
-                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+            if (components[n]->contains(upPos)) {
+                mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-                (*i)->actionPerformed(me);
+                components[n]->actionPerformed(me);
 
                 reportRelease = false;
 
@@ -819,29 +420,20 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     focusComponent = 0;
 
     // Check all components for a moved event.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(newPos)  && (*i)->contains(downPos) && newPos!=prevPos) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
+        if (components[n]->contains(newPos)  && components[n]->contains(downPos) && newPos!=prevPos) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
-            focusComponent = (*i);
+            focusComponent = components[n];
 
             actionPerformed(me);
         }
     }
 
 } // end View::rMouseDrag
-
-// rMouseDouble
-//---------------------------------------------------------------------------
-void View::rMouseDouble(const iXY &pos)
-{
-    rMouseDown(pos);
-
-} // end View::rMouseDouble
 
 // mouseEnter
 //---------------------------------------------------------------------------
@@ -850,13 +442,12 @@ void View::rMouseDouble(const iXY &pos)
 void View::mouseEnter(const iXY &pos)
 {
     // Check all components for a entered event.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(pos)) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
+        if (components[n]->contains(pos)) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -873,33 +464,18 @@ void View::mouseExit(const iXY &pos)
     assert(this != 0);
 
     // Check all components for a exited event.
-    ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( size_t n = 0; n != components.getLastIndex(); n++)
     {        
-        if ((*i)->contains(pos)) {
-            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
+        if (components[n]->contains(pos)) {
+            mMouseEvent me(components[n], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
 
-            (*i)->actionPerformed(me);
+            components[n]->actionPerformed(me);
 
             actionPerformed(me);
         }
     }
 
 } // end View::mouseExit
-
-// scrollBarMove
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
-{
-    (void) prevPos;
-    (void) newPos;
-    //if (scrollBar != 0)
-    //{
-    //	scrollBar->actionPerformed(newPos);
-    //}
-} // end scrollBarMove
 
 // setSearchName
 //---------------------------------------------------------------------------
@@ -918,112 +494,24 @@ void View::setSearchName(const char *searchName)
     }
 } // end View::setSearchName
 
-// setTitle
-//---------------------------------------------------------------------------
-// Purpose: Sets the title of the window.
-//---------------------------------------------------------------------------
-void View::setTitle(const char *title)
+// by default: keep the size and update view position to match new size
+void View::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
-    if (View::title != 0) {
-        free(View::title);
-        View::title = 0;
-    }
-
-    if (title != 0) {
-        View::title = strdup(title);
-        if (View::title == 0) {
-            throw Exception("ERROR: Unable to allocate title: %s", title);
-        }
-    }
-} // end View::setTitle
-
-// setSubTitle
-//---------------------------------------------------------------------------
-// Purpose: Sets the subTitle of the window.
-//---------------------------------------------------------------------------
-void View::setSubTitle(const char *subTitle)
-{
-    if (View::subTitle != 0) {
-        free(View::subTitle);
-        View::subTitle = 0;
-    }
-
-    if (subTitle != 0) {
-        View::subTitle = strdup(subTitle);
-        if (View::subTitle == 0) {
-            throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
-        }
-    }
-} // end View::setSubTitle
-
-// showStatus
-//---------------------------------------------------------------------------
-// Purpose: Sets the status bar text.
-//---------------------------------------------------------------------------
-void View::showStatus(const char *string)
-{
-    if (statusText != 0) {
-        free(statusText);
-        statusText = 0;
-    }
-
-    if (string != 0) {
-        statusText = strdup(string);
-        if(statusText == 0) {
-            throw Exception("ERROR: statusText == 0");
-        }
-    }
-
-} // end View::showStatus
-
-// drawStatus
-//---------------------------------------------------------------------------
-void View::drawStatus(Surface &dest)
-{
-    // Draw the status bar.
-    iRect clientRect(getClientRect());
-
-    iRect r(0,
-            clientRect.getSizeY() - DEFAULT_STATUS_BAR_HEIGHT,
-            clientRect.getSizeX(),
-            clientRect.getSizeY());
-
-    Surface s;
-    s.setTo(dest, r);
-    s.fill(Color::gray192);
-
-    // Draw the status text.
-    if (statusText != 0) {
-        int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
-
-        s.bltString(pos, pos, statusText, Color::black);
-    }
-} // end View::drawStatus
-
-// checkResolution
-//---------------------------------------------------------------------------
-// Purpose: Check position after resolution change
-//---------------------------------------------------------------------------
-void View::checkResolution(iXY oldResolution, iXY newResolution)
-{
-        iXY size = getSize();
-
-        min.x += (newResolution.x - oldResolution.x)/2;
-        min.y += (newResolution.y - oldResolution.y)/2;
-        max = min + size;
-} // end checkResolution
+    translate( (newResolution.x - oldResolution.x)/2,
+               (newResolution.y - oldResolution.y)/2);
+}
 
 void View::checkArea(iXY viewarea)
 {
-    if(min.x < 0)
-        moveTo(0, min.y);
-    if(min.y < 0)
-        moveTo(min.x, 0);
+    if ( getLocationX() < 0 )
+        setLocationX(0);
+    if ( getLocationY() < 0 )
+        setLocationY(0);
                                                                
-    if(max.x > viewarea.x)
-        moveTo(viewarea.x - getSize().x, min.y);
-    if(max.y > viewarea.y)
-        moveTo(min.x, viewarea.y - getSize().y);
+    if ( getEndX() > viewarea.x)
+        setLocationX(viewarea.x - getWidth());
+    if ( getEndY() > viewarea.y)
+        setLocationY(viewarea.y - getHeight());
 }
 
 // RESIZE CLIENT AREA
@@ -1033,18 +521,7 @@ void View::checkArea(iXY viewarea)
 //---------------------------------------------------------------------------
 void View::resizeClientArea(const iXY &size)
 {
-    // These variables constitue the gap space needed for the window borders and
-    // move area.
-    int xExtra = borderSize * 2;
-    int yExtra = xExtra + moveAreaHeight;
-
-    iXY destSize(size);
-
-    // Add the area for the borders and move area.
-    destSize.x += xExtra;
-    destSize.y += yExtra;
-
-    resize(destSize);
+    resize(size);
 } // end View::resizeClientArea
 
 // RESIZE
@@ -1053,9 +530,7 @@ void View::resizeClientArea(const iXY &size)
 //---------------------------------------------------------------------------
 void View::resize(const iXY &size)
 {
-    iXY destSize(size);
-
-    max = min + destSize;
+    setSize(size);
 } // end View::resize
 
 // moveTo
@@ -1065,39 +540,8 @@ void View::resize(const iXY &size)
 //---------------------------------------------------------------------------
 void View::moveTo(iXY destMin)
 {
-    iXY size = getSize();
-    min = destMin;
-    max = min + size;
+    setLocation(destMin);
 } // end moveTo
-
-// toggleView
-//---------------------------------------------------------------------------
-// Purpose: Toggle the visibility of this window.
-//---------------------------------------------------------------------------
-void View::toggleView()
-{
-    Desktop::toggleVisibility(searchName);
-} // end toggleView
-
-// setAllowResize
-//---------------------------------------------------------------------------
-// Purpose: Allows this view to be resized or not.
-//---------------------------------------------------------------------------
-void View::setAllowResize(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_ALLOW_RESIZE;
-    else                   status &= ~STATUS_ALLOW_RESIZE;
-} // end setAllowResize
-
-// setDisplayStatusBar
-//---------------------------------------------------------------------------
-// Purpose: Displays a status bar in the view or not.
-//---------------------------------------------------------------------------
-void View::setDisplayStatusBar(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_DISPLAY_STATUS_BAR;
-    else                   status &= ~STATUS_DISPLAY_STATUS_BAR;
-} // setDisplayStatusBar
 
 // setAlwaysOnBottom
 //---------------------------------------------------------------------------
@@ -1109,16 +553,6 @@ void View::setAlwaysOnBottom(const bool &newStatus)
     else                   status &= ~STATUS_ALWAYS_ON_BOTTOM;
 } // setAlwaysOnBottom
 
-// setBordered
-//---------------------------------------------------------------------------
-// Purpose: Turns on the borders for this view or not.
-//---------------------------------------------------------------------------
-void View::setBordered(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_BORDERED;
-    else                   status &= ~STATUS_BORDERED;
-} // end setBordered
-
 // setAllowMove
 //---------------------------------------------------------------------------
 void View::setAllowMove(const bool &newStatus)
@@ -1126,16 +560,6 @@ void View::setAllowMove(const bool &newStatus)
     if (newStatus == true) status |=  STATUS_ALLOW_MOVE;
     else                   status &= ~STATUS_ALLOW_MOVE;
 } // end setAllowMove
-
-// setVisible
-//---------------------------------------------------------------------------
-// Purpose: Makes this view visible or not.
-//---------------------------------------------------------------------------
-void View::setVisible(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_VISIBLE;
-    else                   status &= ~STATUS_VISIBLE;
-} // end setVisible
 
 // setActive
 //---------------------------------------------------------------------------

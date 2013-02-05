@@ -33,13 +33,12 @@ public:
 
     void init();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw( Surface& dest );
     virtual void processEvents();
 
-protected:
-    void checkResolution(iXY oldResolution, iXY newResolution);
-    
 private:
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    
 }; // end MiniMapView
 
 #endif // end __MiniMapView_hpp__

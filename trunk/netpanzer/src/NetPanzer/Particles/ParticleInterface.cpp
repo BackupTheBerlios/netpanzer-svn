@@ -19,27 +19,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Particles/ParticleInterface.hpp"
 #include "PuffParticle2D.hpp"
-#include "SmolderParticleSystem2D.hpp"
 #include "FlameParticle2D.hpp"
 #include "Particles/FlashParticle2D.hpp"
 #include "TemplateExplosionSystem.hpp"
-//#include "GroundExplosionParticle2D.hpp"
-//#include "GroundExplosionParticleSystem2D.hpp"
 #include "CloudParticle2D.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Physics.hpp"
-//#include "DirtKickParticle2D.hpp"
-#include "SparkParticle2D.hpp"
-#include "FireParticleSystem2D.hpp"
-//#include "RadarPingParticle2D.hpp"
-//#include "MovementDirtPuffParticle2D.hpp"
 #include "VectorPuffParticle2D.hpp"
 #include "Units/UnitTypes.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "ChunkTrajectoryParticle2D.hpp"
-//#include "SmokingTrajectoryParticle2D.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "TemplateMuzzleSystem.hpp"
 #include "Units/UnitGlobals.hpp"
@@ -66,21 +57,6 @@ vector<int> ParticleInterface::unitAttackFactorTable;
 //--------------------------------------------------------------------------
 ParticleInterface::ParticleInterface()
 {}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addDirtPuffParticle(const iXY&)
-{
-    //	addPuffParticle(worldPos, DIRT_PUFF, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addDirtPuffSystem(const iXY& worldPos,
-        const iRect& bounds)
-{
-    (void) worldPos;
-    (void) bounds;
-    //	addPuffSystem(worldPos, bounds, dirtPuffMaxParticleCount, DIRT_PUFF, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
-}
 
 // addUnitDamagePuffParticle
 //--------------------------------------------------------------------------
@@ -135,336 +111,6 @@ void ParticleInterface::addUnitDamagePuffParticle(const UnitState &unitState)
 } // end ParticleInterface::addUnitDamagePuffParticle
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addSmokePuffParticle(const iXY &worldPos)
-{
-    int particleType = rand() % 2;
-
-    if (particleType == 0) {
-        addSmokePuffParticle(worldPos, LIGHT);
-    } else if (particleType == 1) {
-        addSmokePuffParticle(worldPos, DARK);
-
-    } else {
-        assert(false);
-    }
-
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addSmokePuffParticle(const iXY &worldPos, float minScale, float randScale, int minFPS, int randFPS, int layer, float windScale /* = 1.0f */, float incrementScale /* = 0.0f */)
-{
-    int particleType = rand() % 2;
-
-    if (particleType == 0) {
-        addPuffParticle(worldPos, LIGHT, minScale, randScale, minFPS, randFPS, layer, windScale, incrementScale);
-    } else if (particleType == 1) {
-        addPuffParticle(worldPos, DARK, minScale, randScale, minFPS, randFPS, layer, windScale, incrementScale);
-
-    } else {
-        assert(false);
-    }
-
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addSmokePuffParticle(const iXY& worldPos,
-        PUFF_TYPE type)
-{
-    (void) worldPos;
-    (void) type;
-    //	addPuffParticle(worldPos, type, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer, smolderWindScale, smolderIncrementScale);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addPuffParticle(const iXY &worldPos, PUFF_TYPE type, float minScale, float randScale, int minFPS, int randFPS, int layer, float windScale /* = 1.0f */, float incrementScale /* = 0.0f */)
-{
-    (void) worldPos;
-    (void) type;
-    (void) minScale;
-    (void) randScale;
-    (void) minFPS;
-    (void) randFPS;
-    (void) layer;
-    (void) windScale;
-    (void) incrementScale;
-    try {
-        //	new PuffParticle2D(fXYZ(worldPos.x, 0, worldPos.y), type, minScale, randScale, minFPS, randFPS, layer, layer - 1, windScale);
-    } catch(...) {}
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addSmokePuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount)
-{
-    (void) worldPos;
-    (void) bounds;
-    (void) maxParticleCount;
-    //    int particleType = rand() % 2;
-    //
-    //    if      (particleType == 0)
-    //    {
-    //		addPuffSystem(worldPos, bounds, maxParticleCount, LIGHT, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
-    //    }
-    //    else if (particleType == 1)
-    //    {
-    //		addPuffSystem(worldPos, bounds, maxParticleCount, DARK, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
-    //    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addPuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, PUFF_TYPE particleType, float minScale, float randScale, int minFPS, int randFPS, int layer)
-{
-    (void) worldPos;
-    (void) bounds;
-    (void) maxParticleCount;
-    (void) particleType;
-    (void) minScale;
-    (void) randScale;
-    (void) minFPS;
-    (void) randFPS;
-    (void) layer;
-    //    // Make sure the the bounding box is not negative.
-    //    assert(bounds.getSize().x >= 0);
-    //    assert(bounds.getSize().y >= 0);
-    //
-    //	iRect r(bounds);
-    //
-    //    // If all 0's were entered, give the bounds a size of 1.
-    //    if(r.getSize().x == 0)
-    //    {
-    //        r.max.x = 1;
-    //        r.min.x = 0;
-    //    }
-    //    if(r.getSize().y == 0)
-    //    {
-    //        r.max.y = 1;
-    //        r.min.y = 0;
-    //    }
-    //
-    //    assert(maxParticleCount >= 1);
-    //
-    //    int particleCount = (rand() % maxParticleCount) + 1; // max maxParticleCount, min 1
-    //
-    //    // Generate the explosion particles
-    //    fXYZ offset;
-    //
-    //    for (int i = 0; i < particleCount; i++)
-    //    {
-    //        // Set the particle somewhere in the bounds of the explosion.
-    //        offset.x = worldPos.x + rand() % r.getSize().x;
-    //        offset.y = 0;
-    //        offset.z = worldPos.y + rand() % r.getSize().y;
-    //
-    //        // These particles have a hardcoded waitMax and waitMin.  They are the last 2 variables
-    //        // in the following statement.
-    //		  try {
-    //        new PuffParticle2D(offset, particleType, minScale, randScale, minFPS, randFPS, layer, layer - 1, smolderWindScale);
-    //		  } catch(...) {
-    //        }
-    //    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addVehicleExplosionFlameParticle(const iXY &worldPos)
-{
-    (void) worldPos;
-    //	addExplosionFlameParticle(worldPos, vehicleExplosionFlameMinScale, vehicleExplosionFlameRandScale, vehicleExplosionFlameLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addVehicleExplosionFlashParticle(const iXY &worldPos)
-{
-    (void) worldPos;
-    //	addFlashParticle(worldPos, vehicleExplosionFlashScaleMin, vehicleExplosionFlashScaleRand, vehicleExplosionFlashLifetime, vehicleExplosionFlashLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addMissleExplosionFlameParticle(const iXY &worldPos)
-{
-    (void) worldPos;
-    //	addExplosionFlameParticle(worldPos, missleExplosionFlameMinScale, missleExplosionFlameRandScale, missleExplosionFlameLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addMissleExplosionFlashParticle(const iXY &worldPos)
-{
-    (void) worldPos;
-    //	addFlashParticle(worldPos, missleExplosionFlashScaleMin, missleExplosionFlashScaleRand, missleExplosionFlashLifetime, missleExplosionFlashLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addFlashParticle(const iXY &worldPos, float minScale, float randScale, float lifetime, int layer, bool singleFrame /* = false */)
-{
-    try {
-        new FlashParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, lifetime, layer, singleFrame);
-    } catch(...) {
-        // ignrored
-    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addExplosionFlameParticle(const iXY &worldPos, const float &minScale, const float &randScale, const int &layer)
-{
-    (void) worldPos;
-    (void) minScale;
-    (void) randScale;
-    (void) layer;
-    try {
-        //	new ExplosionFireParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, layer);
-    } catch(...) {
-        // ignored
-    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addMissleBurnParticle(const iXY &worldPos)
-{
-    (void) worldPos;
-    //	addFlashParticle(worldPos, missleExplosionFlashScaleMin, missleExplosionFlashScaleRand, missleExplosionFlashLifetime, missleExplosionFlashLayer);
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxParticleSpeed)
-{
-    (void) worldPos;
-    (void) maxParticleSpeed;
-    // Chooses light or dark smoke.
-    int particleType = rand() % 2;
-
-    //iRect r(0, 0, 0, 0);
-
-    if      (particleType == 0) {
-        try {
-            //new ExplosionParticleSystem2D(pos, r, 1, maxParticleSpeed, LIGHT);
-        } catch(...) {
-            // ignored
-        }
-    } else if (particleType == 1) {
-        try {
-            //new ExplosionParticleSystem2D(pos, r, 1, maxParticleSpeed, DARK);
-        } catch(...) {
-            // ignored
-        }
-    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect &bounds)
-{
-    (void) worldPos;
-    (void) bounds;
-    //fXYZ  pos(worldPos.x, 0, worldPos.y);
-
-    try {
-        //new ExplosionParticleSystem2D(pos, bounds, dirtExplosionMaxParticleCount / 2, float(explosionParticleMaxSpeed) * 0.75f, DIRT_PUFF);
-    } catch(...) {}
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addGroundExplosionSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed)
-{
-    (void) worldPos;
-    (void) bounds;
-    (void) maxParticleCount;
-    (void) maxParticleSpeed;
-    //fXYZ  pos(worldPos.x, 0, worldPos.y);
-
-    try {
-        //new GroundExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed);
-    } catch(...) {}
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed)
-{
-    (void) worldPos;
-    (void) bounds;
-    (void) maxParticleCount;
-    (void) maxParticleSpeed;
-    // Chooses light or dark smoke.
-    int particleNum = rand() % 2;
-
-    PUFF_TYPE particleType;
-
-    if      (particleNum == 0) {
-        particleType = LIGHT;
-    } else if (particleNum == 1) {
-        particleType = DARK;
-    }
-    //if (particleNum == 2) { particleType = DIRT_PUFF; }
-
-    //fXYZ  pos(worldPos.x, 0, worldPos.y);
-
-    try {
-        //new ExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed, particleType);
-    } catch(...) {}
-
-    // Add an additional set of particles in the center of the larger explosion which
-    // move at a slower initialVelocity, since real explosions have a lot of smoke lingering
-    // in the middle of the smoke cloud.
-    int slowerParticleSpeed = maxParticleSpeed - 1;
-
-    if (slowerParticleSpeed > 0) {
-        try {
-            //new ExplosionParticleSystem2D(pos, bounds, maxParticleCount / 2, slowerParticleSpeed, particleType);
-        } catch(...) {}
-    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addSmolderSystem(const iXY &worldPos, const iRect &bounds, float lifetime, float percent)
-{
-    assert(percent > 0.0 && percent <= 100.0);
-
-    float waitMin = ((100 - percent) / 100.0) * 1.0;
-    float waitMax = ((100 - percent) / 100.0) * 0.3;
-
-    // Chooses light or dark smoke.
-    int particleType = rand() % 2;
-
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
-
-    if      (particleType == 0) {
-        try {
-            new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, LIGHT);
-        } catch(...) {}
-    }
-    else if (particleType == 1) {
-        try {
-            new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, DARK);
-        } catch(...) {}
-    }
-    else {
-        assert(false);
-    }
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addCloudParticle(const iXY &worldPos, const iXY &worldSize)
-{
-    (void) worldSize;
-
-    iXY shit;
-    MapInterface::getMapPointSize(&shit);
-
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
-
-    try {
-        new CloudParticle2D(pos, iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
-    } catch(...) {}
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addCloudParticleSystem(int maxParticleCount)
-{
-    iXY shit;
-    MapInterface::getMapPointSize(&shit);
-
-    for (int i = 0; i < maxParticleCount; i++) {
-        addCloudParticle(iXY(rand() % shit.x, rand() % shit.y), iXY(shit.x, shit.y));
-    }
-}
-
-//--------------------------------------------------------------------------
 void ParticleInterface::testSim()
 {
     static float groupTime0 = 0.0f;
@@ -484,8 +130,8 @@ void ParticleInterface::testSim()
 
         UnitState unitState;
 
-        unitState.location.x = gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
-        unitState.location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
+        unitState.location.x = gameViewRect.getLocationX() + 100 + (rand() % (gameViewRect.getWidth() - 200));
+        unitState.location.y = gameViewRect.getLocationY() + 100 + (rand() % (gameViewRect.getHeight() - 200));
 
         // Hack until all the units are actually used.
         unitState.unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
@@ -505,8 +151,8 @@ void ParticleInterface::testSim()
 
         iXY location;
 
-        location.x = gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
-        location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
+        location.x = gameViewRect.getLocationX() + 100 + (rand() % (gameViewRect.getWidth() - 200));
+        location.y = gameViewRect.getLocationY() + 100 + (rand() % (gameViewRect.getHeight() - 200));
 
         addMiss(location, rand() % UnitProfileInterface::getNumUnitTypes());
     }
@@ -600,53 +246,6 @@ void ParticleInterface::addHit(const UnitState &unitState)
                                      Particle2D::getFarAway(pos));
     } catch(...) {}
 
-
-    // Create some smoke in the middle of the explosion.
-    //iXY   size(unitParticleInfo[unitState.unit_type].minBounds.getSize() / 2);
-    //iRect bounds(-size, size);
-
-    //addSmolderSystem(unitState.location, bounds, 3.0f, 75.0f);
-    //	int num = rand() % 25;
-    //
-    //    // For fun, make a big explosion about every 25 explosions.
-    //	float minScale  = 0.9f;
-    //	float randScale = 0.5f;
-    //
-    //	float percentScale = (float(rand()) / float(RAND_MAX)) * randScale + minScale;
-    //
-    //	PUFF_TYPE puffType;
-    //
-    //	if (rand() % 2)
-    //	{
-    //		puffType = LIGHT;
-    //	} else
-    //	{
-    //		puffType = DARK;
-    //	}
-    //
-    //	new ExplosionParticleSystem2D(	fXYZ(worldPos.x, 0, worldPos.y),
-    //									iRect(-5, -5, 5, 5),
-    //									percentScale,
-    //									puffType);
-    //
-    //	addVehicleExplosionFlameParticle(worldPos);
-    //	addVehicleExplosionFlashParticle(worldPos);
-    //
-    //    num = rand() % 3;
-    //
-    //    if (num == 0)
-    //    {
-    //        num = rand() % 3;
-    //
-    //        if (num == 0)
-    //        {
-    //            int smolderLife    = rand() % 11 + 5;  // [5..15]
-    //            int smolderPercent = rand() % 51 + 50; // [50..100]
-    //
-    //            //addSmolderSystem(worldPos, iRect(-5, -5, 5, 5), smolderLife, smolderPercent);
-    //			//ConsoleInterface::postMessage("addSmolderSystem");
-    //        }
-    //    }
 }
 
 float ParticleInterface::getFrameRateAdjustment()
@@ -783,43 +382,6 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, Uint8 unitType)
-{
-    (void) worldPos;
-    (void) direction;
-    (void) unitType;
-    //	//addMissleFlashParticle(pos);
-    //
-    //	//missleLaunchPuffWaitGroup += TimerInterface::getTimeSlice();
-    //
-    //	//if (missleLaunchPuffWaitGroup > missleLaunchPuffWaitTotal)
-    //	//{
-    //		//missleLaunchPuffWaitGroup = 0.0f;
-    //		//missleLaunchPuffWaitTotal = MISSLE_FLIGHT_PUFF_RANDNUM;
-    //	fXYZ pos(worldPos.x, 0, worldPos.y);
-    //
-    //	new VectorPuffParticle2D(pos, -direction, missleLaunchPuffMinScale, missleLaunchPuffRandScale, missleLaunchPuffSpeedMin, missleLaunchPuffSpeedRand, missleLaunchPuffWaitMin, missleLaunchPuffWaitRand, missleLaunchPuffLifetimeMin, missleLaunchPuffLifetimeRand, missleLaunchPuffWindScale);
-    //	//for (int i = 0; i < 10; i++)
-    //	//{
-    //		//const int radius = 10;
-    //
-    //		//pos.x += (rand() % (radius << 1)) - radius;
-    //		//pos.y += (rand() % (radius << 1)) - radius;
-    //
-    //		//addSmokePuffParticle(pos);
-    //		//addSmokePuffParticle(pos, missleLaunchPuffMinScale, missleLaunchPuffRandScale, missleLaunchPuffMinFPS, missleLaunchPuffRandFPS, missleLaunchPuffLayer);
-    //	//}
-    //	//}
-}
-
-//--------------------------------------------------------------------------
-void ParticleInterface::addMissleExplosion(const iXY &worldPos)
-{
-    addMissleExplosionFlameParticle(worldPos);
-    addMissleExplosionFlashParticle(worldPos);
-}
-
-//--------------------------------------------------------------------------
 void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, Uint8 unitType)
 {
     // Cull out any muzzle puffs which are far away.
@@ -870,15 +432,6 @@ void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &directio
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addDirtKick(const iXY &worldPos)
-{
-    (void) worldPos;
-    try {
-        //new DirtKickParticle2D(fXYZ(worldPos.x, 0, worldPos.y));
-    } catch(...) {}
-}
-
-//--------------------------------------------------------------------------
 void ParticleInterface::addCloudParticle(int count /* = 1 */)
 {
     if ( count < 0 )
@@ -889,9 +442,17 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
     iXY shit;
     MapInterface::getMapPointSize(&shit);
 
-    for (int i = 0; i < count; i++) {
-        try {
-            new CloudParticle2D(fXYZ(rand() % shit.x, 0, rand() % shit.y), iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+    LOGGER.warning("Adding %d clouds", count);
+
+    for (int i = 0; i < count; i++)
+    {
+        try
+        {
+            int px = rand() % shit.x;
+            int py = rand() % shit.y;
+//            LOGGER.warning("Adding %d cloud @ %d,%d", i, px, py);
+            new CloudParticle2D(fXYZ(px, 0, py), iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+//            new CloudParticle2D(fXYZ(rand() % shit.x, 0, rand() % shit.y), iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
         } catch(...) {}
     }
 }
@@ -899,20 +460,11 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
 void ParticleInterface::initParticleSystems()
 {
     PuffParticle2D::init();
-    //SparkParticle2D::init();
     CloudParticle2D::init();
     FlameParticle2D::init();
     FlashParticle2D::init();
-    //FireParticleSystem2D::initColors();
-    //GroundExplosionParticle2D::init();
     ChunkTrajectoryParticle2D::init();
     CraterParticle2D::init();
-    //DirtKickParticle2D::init();
-    //RadarPingParticle2D::init();
-
-    //iXY shit;
-    //MapInterface::getMapPointSize(&shit);
-    //addCloudParticle(iXY(400, 400), iXY(shit.x, shit.y));
 
     rebuildUnitParticleData();
 }
@@ -992,16 +544,18 @@ void ParticleInterface::getUnitParticleInfo()
 //--------------------------------------------------------------------------
 void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips[36])
 {
-    // Copy all the packed images onto regular surfaces.
-    Surface source(packedSource.getWidth(), packedSource.getHeight(), packedSource.getFrameCount());
-    {
-        for (int i = 0; i < packedSource.getFrameCount(); i++) {
-            source.setFrame(i);
-            source.fill(0);
+    PtrArray<Surface> source(36);
 
-            packedSource.setFrame(i);
-            packedSource.blt(source, 0, 0);
-        }
+    // Copy all the packed images onto regular surfaces.
+    for (int i = 0; i < packedSource.getFrameCount(); i++)
+    {
+        packedSource.setFrame(i);
+
+        Surface *s = new Surface(packedSource.getWidth(), packedSource.getHeight());
+        s->fill(0);
+
+        packedSource.blt(*s, 0, 0);
+        source.push_back(s);
     }
 
     bool done = false;
@@ -1011,13 +565,11 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
     // Frame 0 - 8
     {for (int  i = 0; i < 9; i++)
         {
-            source.setFrame(i);
-
-            for (int offset = 0; offset < source.getCenterX(); offset++) {
+            for (int offset = 0; offset < source[i]->getCenterX(); offset++) {
                 int yy = offset;
-                for (int x = source.getWidth() - offset; x >= 0; x--) {
-                    if (source.getPixel(x, yy) != 0) {
-                        muzzleTips[i] = iXY(x, yy) - source.getCenter();
+                for (int x = source[i]->getWidth() - offset; x >= 0; x--) {
+                    if (source[i]->getPixel(x, yy) != 0) {
+                        muzzleTips[i] = iXY(x, yy) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1026,10 +578,10 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                     break;
                 }
 
-                int xx = source.getWidth() - 1 - offset;
-                for (unsigned int y = offset; y < source.getHeight(); y++) {
-                    if (source.getPixel(xx, y) != 0) {
-                        muzzleTips[i] = iXY(xx, y) - source.getCenter();
+                int xx = source[i]->getWidth() - 1 - offset;
+                for (unsigned int y = offset; y < source[i]->getHeight(); y++) {
+                    if (source[i]->getPixel(xx, y) != 0) {
+                        muzzleTips[i] = iXY(xx, y) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1047,13 +599,11 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
     // Frame 9 - 17
     {for (int i = 9; i < 18; i++)
         {
-            source.setFrame(i);
-
-            for (int offset = 0; offset < source.getCenterX(); offset++) {
+            for (int offset = 0; offset < source[i]->getCenterX(); offset++) {
                 int yy = offset;
-                for (unsigned int x = offset; x < source.getWidth(); x++) {
-                    if (source.getPixel(x, yy) != 0) {
-                        muzzleTips[i] = iXY(x, yy) - source.getCenter();
+                for (unsigned int x = offset; x < source[i]->getWidth(); x++) {
+                    if (source[i]->getPixel(x, yy) != 0) {
+                        muzzleTips[i] = iXY(x, yy) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1063,9 +613,9 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                 }
 
                 int xx = offset;
-                for (unsigned int y = offset; y < source.getHeight(); y++) {
-                    if (source.getPixel(xx, y) != 0) {
-                        muzzleTips[i] = iXY(xx, y) - source.getCenter();
+                for (unsigned int y = offset; y < source[i]->getHeight(); y++) {
+                    if (source[i]->getPixel(xx, y) != 0) {
+                        muzzleTips[i] = iXY(xx, y) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1083,13 +633,11 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
     // Frame 18 - 26
     {for (int i = 18; i < 27; i++)
         {
-            source.setFrame(i);
-
-            for (int offset = 0; offset < source.getCenterX(); offset++) {
-                int yy = source.getHeight() - 1 - offset;
-                for (int x = source.getWidth() - 1 - offset; x > 0; x--) {
-                    if (source.getPixel(x, yy) != 0) {
-                        muzzleTips[i] = iXY(x, yy) - source.getCenter();
+            for (int offset = 0; offset < source[i]->getCenterX(); offset++) {
+                int yy = source[i]->getHeight() - 1 - offset;
+                for (int x = source[i]->getWidth() - 1 - offset; x > 0; x--) {
+                    if (source[i]->getPixel(x, yy) != 0) {
+                        muzzleTips[i] = iXY(x, yy) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1099,9 +647,9 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                 }
 
                 int xx = offset;
-                for (int y = source.getHeight() - 1; y >= 0; y--) {
-                    if (source.getPixel(xx, y) != 0) {
-                        muzzleTips[i] = iXY(xx, y) - source.getCenter();
+                for (int y = source[i]->getHeight() - 1; y >= 0; y--) {
+                    if (source[i]->getPixel(xx, y) != 0) {
+                        muzzleTips[i] = iXY(xx, y) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1119,13 +667,11 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
     // Frame 27 - 35
     {for (int i = 27; i < 36; i++)
         {
-            source.setFrame(i);
-
-            for (unsigned int offset = 0; offset < (unsigned int)source.getCenterX(); offset++) {
-                int yy = source.getHeight() - 1 - offset;
-                for (unsigned int x = offset; x < source.getWidth(); x++) {
-                    if (source.getPixel(x, yy) != 0) {
-                        muzzleTips[i] = iXY(x, yy) - source.getCenter();
+            for (unsigned int offset = 0; offset < (unsigned int)source[i]->getCenterX(); offset++) {
+                int yy = source[i]->getHeight() - 1 - offset;
+                for (unsigned int x = offset; x < source[i]->getWidth(); x++) {
+                    if (source[i]->getPixel(x, yy) != 0) {
+                        muzzleTips[i] = iXY(x, yy) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1134,10 +680,10 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                     break;
                 }
 
-                int xx = source.getWidth() - 1 - offset;
-                for (int y = source.getHeight() - 1; y >= 0; y--) {
-                    if (source.getPixel(xx, y) != 0) {
-                        muzzleTips[i] = iXY(xx, y) - source.getCenter();
+                int xx = source[i]->getWidth() - 1 - offset;
+                for (int y = source[i]->getHeight() - 1; y >= 0; y--) {
+                    if (source[i]->getPixel(xx, y) != 0) {
+                        muzzleTips[i] = iXY(xx, y) - source[i]->getCenter();
                         done = true;
                     }
                 }
@@ -1150,6 +696,8 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
             done = false;
         }}
 
+    source.deleteAll();
+
 }
 
 // getMinBounds
@@ -1157,52 +705,52 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
 void ParticleInterface::getMinBounds(PackedSurface &packedSource, iRect &minBounds)
 {
     // Copy all the packed images onto regular surfaces.
-    Surface source(packedSource.getWidth(), packedSource.getHeight(), packedSource.getFrameCount());
-    for (int i = 0; i < packedSource.getFrameCount(); i++) {
-        source.setFrame(i);
-        source.fill(0);
+    Surface frame0(packedSource.getWidth(), packedSource.getHeight());
+    Surface frame9(packedSource.getWidth(), packedSource.getHeight());
 
-        packedSource.setFrame(i);
-        packedSource.blt(source, 0, 0);
-    }
+    frame0.fill(0);
+    packedSource.setFrame(0);
+    packedSource.blt(frame0, 0, 0);
+
+    frame9.fill(0);
+    packedSource.setFrame(9);
+    packedSource.blt(frame9, 0, 0);
 
     int x;
     int y;
 
     // Get the minY.
-    x = source.getCenterX();
+    x = frame0.getCenterX();
     y = 0;
-    source.setFrame(0);
-    while (source.getPixel(x, y) == 0) {
+    while (frame0.getPixel(x, y) == 0)
+    {
         y++;
-        minBounds.min.y = y;
+        minBounds.setLocationY(y);
     }
 
     // Get the maxY.
-    x = source.getCenterX();
-    y = source.getHeight() - 1;
-    source.setFrame(0);
-    while (source.getPixel(x, y) == 0) {
+    x = frame0.getCenterX();
+    y = frame0.getHeight() - 1;
+    while (frame0.getPixel(x, y) == 0)
+    {
         y--;
-        minBounds.max.y = y;
+        minBounds.setHeight(y);
     }
 
     // Get the minX.
     x = 0;
-    y = source.getCenterY();
-    source.setFrame(9);
-    while (source.getPixel(x, y) == 0) {
+    y = frame9.getCenterY();
+    while (frame9.getPixel(x, y) == 0) {
         x++;
-        minBounds.min.x = x;
+        minBounds.setLocationX(x);
     }
 
     // Get the maxX.
-    x = source.getWidth() - 1;
-    y = source.getCenterY();
-    source.setFrame(9);
-    while (source.getPixel(x, y) == 0) {
+    x = frame9.getWidth() - 1;
+    y = frame9.getCenterY();
+    while (frame9.getPixel(x, y) == 0) {
         x--;
-        minBounds.max.x = x;
+        minBounds.setWidth(x);
     }
 
     if (minBounds.getArea() > unitBodyMaxArea) {

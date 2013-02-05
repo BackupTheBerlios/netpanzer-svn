@@ -21,9 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 
 #include "TileInterface.hpp"
-#include "Classes/WorldMap.hpp"
+#include "Classes/MapFile.hpp"
 #include "Classes/SpawnList.hpp"
-#include "Classes/WadMapTable.hpp"
 
 class MapEventListener
 {
@@ -43,15 +42,11 @@ private:
     static MapListenerList listenerList;
     
 protected:
-    static WorldMap main_map;
+    static const MapFile* main_map;
     static SpawnList spawn_list;
-    static WadMapTable wad_mapping_table;
     static char map_path[256];
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
-
-protected:
-    static void generateMappingTable();
 
 public:
     static void addMapEventListener(MapEventListener *lis)
@@ -66,44 +61,44 @@ public:
     
     static void getMapPointSize(iXY *map_size)
     {
-        map_size->x = main_map.getWidth() * tile_set.getTileXsize();
-        map_size->y = main_map.getHeight() * tile_set.getTileYsize();
+        map_size->x = main_map->getWidth() * tile_set.getTileXsize();
+        map_size->y = main_map->getHeight() * tile_set.getTileYsize();
     }
 
     static iXY getSize()
     {
-        return iXY(main_map.getWidth(), main_map.getHeight());
+        return iXY(main_map->getWidth(), main_map->getHeight());
     }
 
     static size_t getWidth()
     {
-        return main_map.getWidth();
+        return main_map->getWidth();
     }
 
     static size_t getHeight()
     {
-        return main_map.getHeight();
+        return main_map->getHeight();
     }
 
-    static WorldMap::MapElementType MapValue(size_t x, size_t y)
+    static MapFile::ElementType MapValue(size_t x, size_t y)
     {
-        return main_map.getValue(x, y);
+        return main_map->getValue(x, y);
     }
 
-    static WorldMap::MapElementType MapValue(size_t offset)
+    static MapFile::ElementType MapValue(size_t offset)
     {
-        return main_map.getValue(offset);
+        return main_map->getValue(offset);
     }
 
     static size_t mapXYtoOffset(const iXY& map_loc)
     {
-        return map_loc.y * main_map.getWidth() + map_loc.x;
+        return map_loc.y * main_map->getWidth() + map_loc.x;
     }
 
     static void offsetToMapXY(size_t offset, iXY& map_loc)
     {
-        map_loc.y = offset/main_map.getWidth();
-        map_loc.x = offset%main_map.getWidth();
+        map_loc.y = offset/main_map->getWidth();
+        map_loc.x = offset%main_map->getWidth();
     }
 
     static int mapXtoPointX(const int x) { return (x*TILE_WIDTH) + (TILE_WIDTH/2); }
@@ -130,9 +125,9 @@ public:
         map_loc.y = pointYtoMapY(point.y);
     }
 
-    static WorldMap* getMap()
+    static const MapFile* getMap()
     {
-        return( &main_map );
+        return( main_map );
     }
 
     static bool inside(const iXY& map_loc)
@@ -149,12 +144,11 @@ protected:
     static void finishMapLoad();
 
 public:
-    static bool startMapLoad(const char *file_path, bool load_tiles, size_t partitions);
-    static bool loadMap( int *percent_complete );
+    static bool loadMap(const char *file_path, bool load_tiles);
 
     static bool isMapLoaded()
     {
-        return( main_map.isMapLoaded() );
+        return main_map != 0;
     }
 
     static unsigned char getMovementValue( const iXY& map_loc );

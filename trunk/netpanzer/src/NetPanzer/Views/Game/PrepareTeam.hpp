@@ -45,6 +45,9 @@ private:
     tPlayerStateBox * StateTeam1;
     tVScrollBar * scTeam2;
     tPlayerStateBox * StateTeam2;
+    
+    void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
+    
 public:
     PrepareTeam();
     virtual ~PrepareTeam()
@@ -52,8 +55,7 @@ public:
 
     virtual void doActivate();
     virtual void doDeactivate();
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void checkResolution(iXY oldResolution, iXY newResolution);
+    virtual void doDraw( Surface& dest );
     virtual void processEvents();
     void init();
 

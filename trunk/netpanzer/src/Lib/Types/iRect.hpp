@@ -22,95 +22,93 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 struct iRect
 {
-    iXY min;
-    iXY max;
-
+private:
+    iXY position;
+    iXY size;
+    
+public:
     inline iRect()
     {}
 
-    inline iRect(int x1, int y1, int x2, int y2)
+    inline iRect(int x, int y, int width, int height)
     {
-        min.x = x1;
-        min.y = y1;
-        max.x = x2;
-        max.y = y2;
+        position.x = x;
+        position.y = y;
+        size.x = width;
+        size.y = height;
     }
 
     inline iRect(const iRect &a)
     {
-        min = a.min;
-        max = a.max;
+        position = a.position;
+        size = a.size;
     }
 
-    inline iRect(const iXY &min, const iXY &max)
-    {
-        iRect::min = min;
-        iRect::max = max;
-    }
+    inline const iXY& getLocation() const { return position; }
+    inline int getLocationX()       const { return position.x; }
+    inline int getLocationY()       const { return position.y; }
+    inline int getEndX()            const { return position.x + size.x - 1; }
+    inline int getEndY()            const { return position.y + size.y - 1; }
+    
+    inline void setLocation(const int x, const int y) { position.x = x; position.y = y; }
+    inline void setLocation(const iXY& loc) { position = loc; }
+    inline void setLocationX(const int x)   { position.x = x; }
+    inline void setLocationY(const int y)   { position.y = y; }
+    
+    inline const iXY getMax() const { return position+size; }
+    
+    inline void setSize(const int x, const int y) { size.x = x; size.y = y; }
+    inline void setSize(const iXY& s) { size = s; }
+    inline void setWidth(const int w) { size.x = w; }
+    inline void setHeight(const int h) { size.y = h; }
+    
+    inline const iXY& getSize()  const { return size; }
+    inline unsigned getWidth()  const { return size.x; }
+    inline unsigned getHeight() const { return size.y; }
 
-    inline iXY getSize() const
-    {
-        return max - min;
-    }
+    inline void translate(iXY offset) { position += offset; }
+    inline void translate(const int x, const int y) { position.x += x; position.y += y; }
+    
+    inline void grow(const int x, const int y) { position.x-=x; position.y -=y; size.x +=x*2; size.y += y*2; }
 
-    inline int getSizeX() const
+    inline void scale(const float x, const float y)
     {
-        return max.x - min.x;
+        position.x *= x;
+        position.y *= y;
+        size.x *= x;
+        size.y *= y;
     }
-    inline int getSizeY() const
-    {
-        return max.y - min.y;
-    }
-
-    inline void translate(iXY offset)
-    {
-        max += offset;
-        min += offset;
-    }
-
-    bool isEmpty() const
-    {
-        return min.x >= max.x || min.y >= max.y;
-    }
+    
+    bool isEmpty() const { return (size.x <= 0) || (size.y <= 0); }
 
     inline int getArea() const
     {
-        iXY s = getSize();
-
-        if (s.x <= 0) return 0;
-        if (s.y <= 0) return 0;
-
-        return s.x * s.y;
+        int s = size.x * size.y;
+        return (s < 0) ? 0 : s;
     }
-
-    iRect operator | (const iRect &a);
 
     inline bool contains(const iXY &a) const
     {
-        return
-            a.x >= min.x && a.x < max.x &&
-            a.y >= min.y && a.y < max.y;
+        return ( a.x >= position.x ) && ( a.x <= (position.x+size.x) )
+            && ( a.y >= position.y ) && ( a.y <= (position.y+size.y) );
     }
 
     inline bool operator ==(const iRect &a)
     {
-        return min == a.min && max == a.max;
+        return position == a.position && size == a.size;
     }
 
     inline bool operator !=(const iRect &a)
     {
-        return min != a.min || max != a.max;
+        return position != a.position || size != a.size;
     }
 
-    inline void zero()
-    {
-        min.x = min.y = max.x = max.y = 0;
-    }
+    inline void zero() { position.x = position.y = size.x = size.y = 0; }
 
-    inline bool clip( const iRect &a )
+    inline bool clip( const iRect &a ) const
     {
-        if ( (a.min.y >= max.y) || (a.max.y <= min.y)	||
-             (a.min.x >= max.x) || (a.max.x <= min.x) )
+        if ( (a.position.y > (position.y + size.y)) || ((a.position.y + a.size.y) < position.y)
+          || (a.position.x > (position.x + size.x)) || ((a.position.x + a.size.x) < position.x) )
             return true;
 
         return false;

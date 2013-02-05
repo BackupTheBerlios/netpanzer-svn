@@ -73,11 +73,13 @@ optionmm::command_line::help(std::ostream& out)
 
     /// Figure out the longest long_name
     size_t ll = 0;
-    for (option_list::iterator o = _options.begin(); o != _options.end(); ++o)
-        if ((*o)->long_name().length() >= ll) ll = (*o)->long_name().length();
-    for (option_list::iterator p = _options.begin(); p != _options.end(); ++p) {
+    for (size_t o = 0; o < _options.getLastIndex(); o++ )
+        if (_options[o]->long_name().length() >= ll) ll = _options[o]->long_name().length();
+        
+    for (size_t p = 0; p < _options.getLastIndex(); ++p)
+    {
         out << "    ";
-        (*p)->print(ll, out);
+        _options[p]->print(ll, out);
         out << std::endl;
     }
     out << std::endl;
@@ -138,11 +140,12 @@ optionmm::command_line::handle_short(int& i)
     int  j     = 1;
     int  ret   = 0;
     bool gotit = false;
-    while (_argv[i] && _argv[i][j] && _argv[i][j] != '-') {
-        option_list::iterator o;
-        for (o = _options.begin(); o < _options.end(); o++) {
+    while (_argv[i] && _argv[i][j] && _argv[i][j] != '-')
+    {
+        size_t n;
+        for (n = 0; n < _options.getLastIndex(); n++) {
             char* arg = &(_argv[i][j]);
-            if ((ret = (*o)->handle(arg, _argv[i+1], i)) > 0) {
+            if ((ret = _options[n]->handle(arg, _argv[i+1], i)) > 0) {
                 int k = j;
                 // Eat away this argument.
                 while (_argv[i][k] != '\0') {
@@ -161,7 +164,7 @@ optionmm::command_line::handle_short(int& i)
             if (ret < 0) return false;
         }
         if (gotit) break;
-        if (o == _options.end() && _fail_on_unknown) {
+        if ( n == _options.getLastIndex() && _fail_on_unknown) {
             std::cerr << "Option `-" << _argv[i][j] << "' unknown, try `"
             << _program_name << " --help'" << std::endl;
             return false;
@@ -178,16 +181,16 @@ bool
 optionmm::command_line::handle_long(int& i)
 {
     int ret = 0;
-    std::string n(_argv[i]);
-    option_list::iterator o;
-    for (o = _options.begin(); o < _options.end(); o++) {
-        if ((ret = (*o)->handle(n, i)) > 0) {
+    std::string s(_argv[i]);
+    size_t n;
+    for (n = 0; n < _options.getLastIndex(); n++) {
+        if ((ret = _options[n]->handle(s, i)) > 0) {
             _argv[i] = 0;
             break;
         } else if (ret < 0) return false;
     }
-    if (o == _options.end() && _fail_on_unknown) {
-        std::cerr << "Option `" << n << "' unknown, try `"
+    if (n == _options.getLastIndex() && _fail_on_unknown) {
+        std::cerr << "Option `" << s << "' unknown, try `"
         << _program_name << " --help'" << std::endl;
         return false;
     }
