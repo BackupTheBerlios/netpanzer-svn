@@ -34,7 +34,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/StringUtil.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Game/PrepareTeam.hpp"
 #include "Network/PlayerRequests/PlayerReadyRequest.hpp"
 
@@ -155,7 +154,7 @@ void TeamManager::reset()
     resetTeamStats();
     if ( NetworkState::status == _network_state_client )
     {
-        PrepareTeam *v = (PrepareTeam*)Desktop::getView("PrepareTeam");
+        PrepareTeam *v = 0; //(PrepareTeam*)Desktop::getView("PrepareTeam");
         if ( v )
         {
             v->resetReady();

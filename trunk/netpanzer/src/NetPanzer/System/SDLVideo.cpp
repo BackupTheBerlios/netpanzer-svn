@@ -195,7 +195,6 @@ SDL_Surface* SDLVideo::getSurface()
  
 void SDLVideo::doScreenshoot()
 {
-    // this is called blind faith
     static NTimer timer(1000);
  
     if ( ! timer.isTimeOut() )

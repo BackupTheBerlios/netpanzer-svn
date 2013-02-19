@@ -45,7 +45,7 @@ void tHScrollBar::initScrollBar()
     bRisestate = NORMAL;
     bLeftstate = NORMAL;
     bRightstate = NORMAL;
-    background = ctWindowsbackground;
+    background_color = ctWindowsbackground;
     SmallChange = 1;
     LargeChange = 10;
 }
@@ -65,7 +65,7 @@ tHScrollBar::tHScrollBar(iXY pos, int Width, StateChangedCallback* newcallback)
 
 void tHScrollBar::actionPerformed(const mMouseEvent &me)
 {
-    if (!enabled) return;
+    if ( Max < 1 ) return;
     iRect rect_button_Left(position.x, position.y, position.x+bSize, position.y+bSize);
     iRect rect_button_Right(position.x+size.x-bSize, position.y, position.x+size.x, position.y+size.y);
     
@@ -146,7 +146,7 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
 
 void tHScrollBar::render()
 {
-    surface.fill(background);
+    surface.fill(background_color);
     surface.drawRect(surface.getRect(), ctWindowsBorder);
     if (bLeftstate == PRESSED)
     {
@@ -173,6 +173,7 @@ void tHScrollBar::render()
     {
         bRightNormal.bltTrans(surface, size.x-bSize, 0); // blit full
     }
+    
     if (bRisestate == OVER)
     {
         bRiseOver.bltTrans(surface, bSize+RisePos, 0); // blit full
@@ -196,8 +197,6 @@ void tHScrollBar::setPosition(int newPosition)
 void tHScrollBar::setMax(int newMax)
 {
     Max = newMax;
-    if (Max < 1) enabled = false;
-    else enabled = true;
 }
 
 void tHScrollBar::setMin(int newMin)
@@ -207,7 +206,7 @@ void tHScrollBar::setMin(int newMin)
 
 void tHScrollBar::setColor(PIX newColor)
 {
-    background = newColor;
+    background_color = newColor;
     dirty = true;
 }
 

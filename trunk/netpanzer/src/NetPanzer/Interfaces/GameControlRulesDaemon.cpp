@@ -36,7 +36,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitProfileInterface.hpp"
 
-#include "Views/Components/Desktop.hpp"
 #include "Views/Game/LoadingView.hpp"
 
 #include "Util/Log.hpp"
@@ -170,20 +169,20 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
     case _map_cycle_client_prepare_team :
     {
-        if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
-        {
-            Desktop::setVisibility("PrepareTeam", true);
-            TeamManager::reset();
-        }
-        if (Desktop::getVisible("PrepareTeam"))
-            WorldViewInterface::MoveCamera();
+//        if (!Desktop::getVisible("PrepareTeam")&& !Desktop::getVisible("GFlagSelectionView"))
+//        {
+//            Desktop::setVisibility("PrepareTeam", true);
+//            TeamManager::reset();
+//        }
+//        if (Desktop::getVisible("PrepareTeam"))
+//            WorldViewInterface::MoveCamera();
         return;
     }
     break;
 
     case _map_cycle_client_team_start :
     {
-        Desktop::setVisibility("PrepareTeam", false);
+//        Desktop::setVisibility("PrepareTeam", false);
         map_cycle_fsm_client_state = _map_cycle_client_idle;
         setStateServerInProgress();
         GameManager::startGameTimer();
@@ -214,8 +213,8 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         if ( GameControlRulesDaemon::execution_mode == _execution_mode_loop_back_server )
         {
-            Desktop::setVisibility("GameView", true);
-            Desktop::setVisibility("EndRoundView", true );
+//            Desktop::setVisibility("GameView", true);
+//            Desktop::setVisibility("EndRoundView", true );
         }
 
         SERVER->broadcastMessage(&view_control, sizeof(SystemViewControl));

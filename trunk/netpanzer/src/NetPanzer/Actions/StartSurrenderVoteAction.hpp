@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Action.hpp"
 #include "Network/PlayerRequests/StartSurrenderVoteRequest.hpp"
 #include "Classes/Network/NetworkClient.hpp"
-#include "Views/Components/Desktop.hpp"
 
 class StartSurrenderVoteAction : public Action
 {
@@ -33,11 +32,8 @@ public:
     
     void execute()
     {
-        if ( !Desktop::getVisible("PrepareTeam") && !Desktop::getVisible("GFlagSelectionView") )
-        {
-            StartSurrenderVoteRequest req;
-            CLIENT->sendMessage(&req, sizeof(req));
-        }
+        StartSurrenderVoteRequest req;
+        CLIENT->sendMessage(&req, sizeof(req));
     }
 };
 

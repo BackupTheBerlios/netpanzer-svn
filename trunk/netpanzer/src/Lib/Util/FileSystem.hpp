@@ -149,8 +149,7 @@ public:
  * documentation for details about the functions here. Most function names are
  * exactly the same as in physfs
  */
-void initialize(const char* argv0, const char* company,
-        const char* applicationname);
+bool initialize( const char* argv0, const char* applicationname );
 void shutdown();
 
 void addToSearchPath(const char* dir, bool append = true);

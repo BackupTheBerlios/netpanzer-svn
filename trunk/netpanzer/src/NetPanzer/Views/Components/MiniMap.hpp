@@ -33,6 +33,12 @@ public:
     
     void draw(Surface &dest);
     
+    void setSize(const int x, const int y)
+    {
+        Component::setSize(x, y);
+        mapimage.create(x,y);
+    }
+    
     virtual void render()
     {
         // nothing
@@ -43,7 +49,6 @@ public:
 protected:
     void onMapLoadedEvent()
     {
-        LOGGER.warning("onMapLoadedEvent received........");
         regenerate();
     }
     
@@ -60,6 +65,7 @@ private:
     float yratio;
     NTimer blinktimer;
     bool blinkstatus;
+    Surface mapimage;
 };
 
 #endif	/* _MINIMAP_HPP */

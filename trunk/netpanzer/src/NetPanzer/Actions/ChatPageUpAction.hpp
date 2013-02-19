@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Action.hpp"
 #include "Views/Game/ChatView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/tChatBox.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 
@@ -35,7 +34,7 @@ public:
     ChatPageUpAction() : Action(true) {}
     void execute()
     {
-        ChatView *v = (ChatView*)Desktop::getView("ChatView");
+        ChatView *v = 0; //(ChatView*)Desktop::getView("ChatView");
         if ( v )
         {
             tChatBox * cbox = v->getChatBox();

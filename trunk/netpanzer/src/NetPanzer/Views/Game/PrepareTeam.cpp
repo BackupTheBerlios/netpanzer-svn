@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PrepareTeam.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Theme.hpp"
 #include "2D/Palette.hpp"
@@ -66,8 +65,8 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
 //    setTitle(_("Prepare Team"));
 
     setAllowMove(false);
-    menuImage.loadBMP("pics/backgrounds/menus/menu/canon.bmp");
-    vsImage.loadBMP("pics/backgrounds/menus/menu/vs.bmp");
+    menuImage.loadBMP("pics/backgrounds/canon.bmp");
+    vsImage.loadBMP("pics/backgrounds/vs.bmp");
 
     moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2),
            (screen->getHeight()/2) - ( menuImage.getHeight()/1.5));
@@ -259,7 +258,6 @@ void PrepareTeam::doActivate()
     {
         init();
     }
-    Desktop::setActiveView(this);
 }
 
 void PrepareTeam::doDeactivate()

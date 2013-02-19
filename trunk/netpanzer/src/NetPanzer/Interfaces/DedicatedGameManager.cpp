@@ -239,7 +239,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 
     GameConfig::game_map->assign(GameManager::getNextMapName(""));
-
+    
+    ResourceManager::refreshMapList();
     GameManager::dedicatedLoadGameMap(GameConfig::game_map->c_str());
 
     UnitProfileInterface::loadUnitProfiles();

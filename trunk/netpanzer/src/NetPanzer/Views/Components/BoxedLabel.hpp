@@ -30,8 +30,8 @@ public:
      BoxedLabel(int x, int y, int w, const NPString& t, PIX color, PIX bgcolor, bool hasBorder = false)
     {
         text = t;
-        background = bgcolor;
-        foreground = color;
+        background_color = bgcolor;
+        text_color = color;
         position.x = x;
         position.y = y;
         setSize(w, 16);
@@ -41,12 +41,12 @@ public:
     void draw(Surface &dest)
     {
         iRect r(position.x, position.y, size.x, size.y);
-        dest.FillRoundRect(r, 3, background);
+        dest.FillRoundRect(r, 3, background_color);
         if ( bordered )
         {
             dest.RoundRect(r, 3, Color::lightGray);
         }
-        dest.bltStringCenteredInRect(r, getText().c_str(), foreground );
+        dest.bltStringCenteredInRect(r, getText().c_str(), text_color);
     }
     
     void render()
@@ -65,6 +65,8 @@ public:
 private:
     NPString text;
     bool bordered;
+    PIX background_color;
+    PIX text_color;
 };
 
 #endif	/* BOXEDLABEL_HPP */

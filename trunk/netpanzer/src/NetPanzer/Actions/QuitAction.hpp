@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/BaseGameManager.hpp"
 
+#include "2D/SceneManager.hpp"
+
 class QuitAction : public Action
 {
 public:
@@ -34,8 +36,10 @@ public:
     {
 //        Desktop::setVisibilityAllWindows(false);
         
-        GameManager::quitNetPanzerGame();
-        gamemanager->stopMainLoop();
+        SceneManager::endLoop();
+        
+//        GameManager::quitNetPanzerGame();
+//        gamemanager->stopMainLoop();
     }
 };
 

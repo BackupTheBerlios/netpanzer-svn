@@ -27,12 +27,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseEvent.hpp"
 
 #include <algorithm>
-#include "Views/Components/StateChangedCallback.hpp"
 #include "ArrayUtil/PtrArray.hpp"
 
 using namespace std;
 
-class View : public iRect, public StateChangedCallback
+class View : public iRect
 {
 private:
     friend class Desktop;
@@ -94,7 +93,11 @@ protected:
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
+public:
     virtual void doDraw( Surface& dest );
+    
+protected:
+    
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);

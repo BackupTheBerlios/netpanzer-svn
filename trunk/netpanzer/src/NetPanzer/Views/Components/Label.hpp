@@ -21,15 +21,16 @@
 
 #include "Component.hpp"
 #include "Core/CoreTypes.hpp"
+#include "2D/Color.hpp"
 
 class Label:public Component
 {
 public:
-    Label(int x, int y, const NPString& t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
+    Label(int x, int y, const NPString& t, PIX color, PIX shadow_color=Color::black, bool shadow=false)
     {
         text = t;
-        background = bgcolor;
-        foreground = color;
+        this->shadow_color = shadow_color;
+        text_color = color;
         shadowed = shadow;
         position.x = x;
         position.y = y;
@@ -52,6 +53,8 @@ public:
 private:
     NPString text;
     bool shadowed;
+    PIX shadow_color;
+    PIX text_color;
 };
 
 #endif

@@ -31,10 +31,10 @@ Button::Button()
     position.zero();
     label.clear();
     bstate = BNORMAL;
+    painted_bstate = BMAX_STATE;
     memset(borders, 0, sizeof(borders));
     extraBorder = 0;
     clickAction = 0;
-    dirty = true;
 }
 
 Button::~Button()
@@ -57,13 +57,147 @@ Button::setAction(Action* action)
     clickAction = action;
 }
 
+void Button::setTextColors(PIX normal, PIX over, PIX pressed, PIX disabled)
+{
+    textColors[BNORMAL] = normal;
+    textColors[BOVER] = over;
+    textColors[BPRESSED] = pressed;
+    textColors[BDISABLED] = disabled;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setLabel(const NPString& l)
+{
+    label = l;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setImage( PtrArray<Surface>& sl )
+{
+    background_images.deleteAll();
+    background_images.clear();
+
+    for ( size_t n = 0; n < sl.size(); n++ )
+    {
+        background_images.push_back(sl[n]);
+    }
+
+    sl.clear();
+
+    setSize(background_images[0]->getWidth(), background_images[0]->getHeight());
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::enable()
+{
+    if ( bstate == BDISABLED )
+    {
+        bstate = BNORMAL;
+    }
+}
+
+void Button::disable()
+{
+    if ( bstate != BDISABLED )
+    {
+        bstate = BDISABLED;
+    }
+}
+
+void Button::setExtraBorder()
+{
+    if ( !extraBorder )
+    {
+        extraBorder = 1;
+        setSize( size.x, size.y);
+        painted_bstate = BMAX_STATE;
+    }
+}
+
+void Button::clearExtraBorder()
+{
+    if ( extraBorder )
+    {
+        extraBorder = 0;
+        setSize( size.x, size.y);
+        painted_bstate = BMAX_STATE;
+    }
+}
+
+
+void Button::setUnitSelectionBorder()
+{
+    setExtraBorder();
+    borders[BNORMAL]   = Color::darkGray;
+    borders[BOVER]     = Color::red;
+    borders[BPRESSED]  = Color::darkGray;
+    borders[BDISABLED] = Color::darkGray;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setNormalBorder()
+{
+    setExtraBorder();
+    borders[BNORMAL]   = topLeftBorderColor;
+    borders[BOVER]     = topLeftBorderColor;
+    borders[BPRESSED]  = bottomRightBorderColor;
+    borders[BDISABLED] = Color::darkGray;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setRedGreenBorder()
+{
+    setExtraBorder();
+    borders[BNORMAL]   = 0;
+    borders[BOVER]     = Color::red;
+    borders[BPRESSED]  = Color::green;
+    borders[BDISABLED] = Color::darkGray;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::clearBorder()
+{
+    memset(borders, 0, sizeof(borders));
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setStateOffset(ButtonState state, int x, int y)
+{
+    state_offset[state].x = x;
+    state_offset[state].y = y;
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setSize(int x, int y)
+{
+    Component::setSize(x+(extraBorder*2), y+(extraBorder*2));
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::setTextButtonSize(int xsize)
+{
+    Component::setSize(xsize+(extraBorder*2), Surface::getFontHeight() + 4 + (extraBorder*2));
+    painted_bstate = BMAX_STATE;
+}
+
+void Button::draw(Surface& dest)
+{
+    if ( painted_bstate != bstate )
+    {
+        render();
+        painted_bstate = bstate;
+    }
+    
+    surface.bltTrans(dest, position.x, position.y);
+}
+
+
 // render
 void
 Button::render()
 {
     surface.fill(0);
-    dirty = false;
-    if (!visible) return;
+
     if ( background_images.size() == 1 )
     {
         background_images[0]->bltTrans(surface, extraBorder + state_offset[bstate].x, extraBorder + state_offset[bstate].y); // blit full
@@ -74,14 +208,12 @@ Button::render()
     }
     else
     {
-//        surface.fill(componentBodyColor);
         surface.FillRoundRect(surface.getRect(), 3, componentBodyColor);
     }
 
-    if ( borders[bstate][0]|extraBorder ) // only 1 | (binary or)
+    if ( borders[bstate] && extraBorder )
     {
-        surface.RoundRect(surface.getRect(), 3, borders[bstate][0]);
-//        surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
+        surface.RoundRect(surface.getRect(), 3, borders[bstate]);
     }
 
     if ( ! label.empty() )
@@ -96,7 +228,7 @@ Button::render()
 void
 Button::actionPerformed(const mMouseEvent &me)
 {
-    if ( bstate == BDISABLED || !visible)
+    if ( bstate == BDISABLED )
     {
         return;
     }
@@ -105,17 +237,14 @@ Button::actionPerformed(const mMouseEvent &me)
                 || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
     {
         bstate = BOVER;
-        dirty = true; // draw text in red
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED)
     {
         bstate = BNORMAL;
-        dirty = true; // draw defaults;
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
     {
         bstate = BPRESSED;
-        dirty = true;
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED)
     {
@@ -146,22 +275,6 @@ Button::createTextButton( const NPString& label,
         LOGGER.warning("No action defined for button '%s'", label.c_str());
     }
     return b;
-}
-
-void Button::setImage( PtrArray<Surface>& sl )
-{
-    background_images.deleteAll();
-    background_images.clear();
-
-    for ( size_t n = 0; n < sl.size(); n++ )
-    {
-        background_images.push_back(sl[n]);
-    }
-
-    sl.clear();
-
-    setSize(background_images[0]->getWidth(), background_images[0]->getHeight());
-    dirty = true;
 }
 
 Button *

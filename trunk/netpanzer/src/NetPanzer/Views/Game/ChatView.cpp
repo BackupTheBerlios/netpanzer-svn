@@ -21,10 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
-#include "Views/Components/Desktop.hpp"
-#include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
+#include "Views/Components/View.hpp"
 #include "Views/Components/Button.hpp"
+#include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tChatBox.hpp"
+#include "Views/Components/InputField.hpp"
+
 
 #include "Actions/Action.hpp"
 
@@ -140,7 +143,7 @@ ChatView::ChatView() : GameTemplateView()
     HideWindow = false;
 
     iRect r(0, 15, getWidth()-15, getHeight()-17);
-    ChatList = new tChatBox(r, 0);
+    ChatList = new tChatBox(r);
     vsbChat = new tVScrollBar();
     add(vsbChat);
     vsbChat->setLargeChange(ChatList->getNumVisibleLines() -1);
@@ -190,7 +193,8 @@ void ChatView::doDraw( Surface& dest )
 
 void ChatView::processEvents()
 {
-    if ( Desktop::getKeyboardFocusComponent() == input )
+//    if ( Desktop::getKeyboardFocusComponent() == input )
+    if ( false )
     {
         if ( (KeyboardInterface::getKeyPressed(SDLK_RETURN) || KeyboardInterface::getKeyPressed(SDLK_KP_ENTER) ) )
         {
@@ -248,10 +252,10 @@ void ChatView::minimizeChat()
     bHideWindow->disable();
     bShowWindow->enable();
     
-    if ( Desktop::getKeyboardFocusComponent() == input )
-    {
-        Desktop::setKeyboardFocusComponent(0);
-    }
+//    if ( Desktop::getKeyboardFocusComponent() == input )
+//    {
+//        Desktop::setKeyboardFocusComponent(0);
+//    }
     
     removeComponent(input);
     removeComponent(switchModeButton);
@@ -331,7 +335,7 @@ void ChatView::openChat()
         restoreChat();
     }
     
-    Desktop::setKeyboardFocusComponent(input);
+//    Desktop::setKeyboardFocusComponent(input);
 }
 
 void ChatView::openFriendsChat()
@@ -343,7 +347,7 @@ void ChatView::openFriendsChat()
     
     setChatFriends();
     
-    Desktop::setKeyboardFocusComponent(input);
+//    Desktop::setKeyboardFocusComponent(input);
 }
 
 void ChatView::switchChatMode()

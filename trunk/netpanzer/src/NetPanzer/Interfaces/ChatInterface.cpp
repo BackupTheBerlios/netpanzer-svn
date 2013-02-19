@@ -27,7 +27,6 @@
 #include "Classes/Network/NetworkClient.hpp"
 #include "Util/Log.hpp"
 #include "Views/Game/ChatView.hpp"
-#include "Views/Components/Desktop.hpp"
 
 #include "Scripts/ScriptManager.hpp"
 
@@ -125,7 +124,7 @@ void ChatInterface::clientHandleChatMessage(const NetMessage* message, size_t si
 
     LOGGER.debug("C: %s: %s", player_state->getName().c_str(), text.c_str());
 
-    ChatView *v = (ChatView*) Desktop::getView("ChatView");
+    ChatView *v = 0; // (ChatView*) Desktop::getView("ChatView");
     if (v)
         v->postMessage(color, true, player_state->getFlag(),
                        "%s: %s", player_state->getName().c_str(), text.c_str());
@@ -231,7 +230,7 @@ void ChatInterface::playerRequest_chat(const PlayerID player_id, const NPString&
         PlayerState *player_state = PlayerInterface::getPlayer(player_id);
         LOGGER.debug("C: %s: %s", player_state->getName().c_str(), text.c_str());
 
-        ChatView *v = (ChatView*) Desktop::getView("ChatView");
+        ChatView *v = 0; // (ChatView*) Desktop::getView("ChatView");
         if ( v )
         {
             v->postMessage(Color::white, true, player_state->getFlag(),
@@ -286,7 +285,7 @@ void ChatInterface::playerRequest_teamChat(const PlayerID player_id, const NPStr
 
         LOGGER.debug("C: %s: %s", player_state->getName().c_str(), message.c_str());
         
-        ChatView *v = (ChatView*) Desktop::getView("ChatView");
+        ChatView *v = 0; // (ChatView*) Desktop::getView("ChatView");
         if (v)
             v->postMessage(Color::yellow, true, player_state->getFlag(),
                            "%s: %s", player_state->getName().c_str(), message.c_str());

@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 #include "MouseEvent.hpp"
-#include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tStringListBox.hpp"
 
 class tPlayerStateBox : public tStringListBox
@@ -30,7 +29,7 @@ private:
     bool ShowTeam;
     Uint8 TeamNumber;
 public:
-    tPlayerStateBox(iRect rect, StateChangedCallback* newcallback);
+    tPlayerStateBox(iRect rect);
 
     virtual int getMaxItemWidth(const DataItem& data);
     virtual void onPaint(Surface &dst, const DataItem& data);

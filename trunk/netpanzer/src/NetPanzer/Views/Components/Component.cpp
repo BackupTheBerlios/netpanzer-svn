@@ -27,12 +27,8 @@ int Component::borderSize = 12;
 //---------------------------------------------------------------------------
 void Component::reset()
 {
-    foreground = gForeground;
-    background = gBackground;
     size.zero();
     position.zero();
-    enabled    = true;
-    visible    = true;
     surface.free();
 
 } // end Component::reset

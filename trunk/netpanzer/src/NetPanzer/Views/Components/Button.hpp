@@ -45,13 +45,6 @@ private:
     
 protected:
     
-    typedef enum
-    {
-        BORDER_TOP_LEFT    = 0,
-        BORDER_BOTTOM_RIGHT = 1,
-        BORDER_COLOR_MAX
-    } BorderColorDef;
-    
     std::string label;
        
     PIX textColors[BMAX_STATE];
@@ -61,19 +54,22 @@ protected:
    
     void render();
     ButtonState bstate;
+    ButtonState painted_bstate;
    
     void resetState()
     {
         bstate = BNORMAL;
-        dirty = true;
+        painted_bstate = BMAX_STATE;
     }
 
 public:
-    PIX borders[BMAX_STATE][BORDER_COLOR_MAX];
+    PIX borders[BMAX_STATE];
     
     Button();
 
     virtual ~Button();
+    
+    virtual void draw(Surface& dest);
 
     static Button * createTextButton(   const NPString& label,
                                         const iXY& loc,
@@ -87,132 +83,30 @@ public:
 
     void setAction( Action * action );
     
-    void setTextColors( PIX normal, PIX over, PIX pressed, PIX disabled)
-    {
-        textColors[BNORMAL] = normal;
-        textColors[BOVER] = over;
-        textColors[BPRESSED] = pressed;
-        textColors[BDISABLED] = disabled;
-    }
-
-    void setLabel(const std::string& l)
-    {
-        label = l;
-        dirty = true;
-    }
-   
+    void setTextColors( PIX normal, PIX over, PIX pressed, PIX disabled);
+    void setLabel(const NPString& l);
+    const std::string& getLabel() const { return label; }
     void setImage( PtrArray<Surface>& sl );
     
-    void enable()
-    {
-        if ( bstate == BDISABLED )
-        {
-            bstate = BNORMAL;
-            dirty = true;
-        }
-    }
+    void enable();
+    void disable();
+    bool isEnabled() const { return bstate != BDISABLED; }
     
-    void disable()
-    {
-        if ( bstate != BDISABLED )
-        {
-            bstate = BDISABLED;
-            dirty = true;
-        }
-    }
+    void setExtraBorder();
+    void clearExtraBorder();
+    void setUnitSelectionBorder();   
+    void setNormalBorder();
+    void setRedGreenBorder();
+    void clearBorder();
+
+    void setStateOffset(ButtonState state, int x, int y);
+       
+    void setSize(int x, int y);
+    void setTextButtonSize(int xsize);
     
-    bool isEnabled()
-    {
-        return bstate != BDISABLED;
-    }
+    unsigned getWidth() const { return size.x; }
+    unsigned getHeight() const { return size.y; }
     
-    void setUnitSelectionBorder()
-    {
-        setExtraBorder();
-        borders[BNORMAL][BORDER_TOP_LEFT]       = Color::darkGray;
-        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = Color::darkGray;
-        borders[BOVER][BORDER_TOP_LEFT]         = Color::red;
-        borders[BOVER][BORDER_BOTTOM_RIGHT]     = Color::red;
-        borders[BPRESSED][BORDER_TOP_LEFT]      = Color::darkGray;
-        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = Color::darkGray;
-        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
-        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
-        dirty = true;
-    }
-   
-    void setNormalBorder()
-    {
-        setExtraBorder();
-        borders[BNORMAL][BORDER_TOP_LEFT]       = topLeftBorderColor;
-        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = bottomRightBorderColor;
-        borders[BOVER][BORDER_TOP_LEFT]         = topLeftBorderColor;
-        borders[BOVER][BORDER_BOTTOM_RIGHT]     = bottomRightBorderColor;
-        borders[BPRESSED][BORDER_TOP_LEFT]      = bottomRightBorderColor;
-        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = topLeftBorderColor;
-        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
-        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
-        dirty = true;
-    }
-
-    void setRedGreenBorder()
-    {
-        setExtraBorder();
-        borders[BNORMAL][BORDER_TOP_LEFT]       = 0;
-        borders[BNORMAL][BORDER_BOTTOM_RIGHT]   = 0;
-        borders[BOVER][BORDER_TOP_LEFT]         = Color::red;
-        borders[BOVER][BORDER_BOTTOM_RIGHT]     = Color::darkRed;
-        borders[BPRESSED][BORDER_TOP_LEFT]      = Color::green;
-        borders[BPRESSED][BORDER_BOTTOM_RIGHT]  = Color::darkGreen;
-        borders[BDISABLED][BORDER_TOP_LEFT]     = Color::darkGray;
-        borders[BDISABLED][BORDER_BOTTOM_RIGHT] = Color::darkGray;
-        dirty = true;
-    }
-
-    void setStateOffset(ButtonState state, int x, int y)
-    {
-        state_offset[state].x = x;
-        state_offset[state].y = y;
-    }
-    
-    void clearBorder()
-    {
-        memset(borders, 0, sizeof(borders));
-        dirty = true;
-    }
-   
-    void setSize(int x, int y)
-    {
-        Component::setSize(x+(extraBorder*2), y+(extraBorder*2));
-    }
-
-    void setTextButtonSize(int xsize)
-    {
-        Component::setSize(xsize+(extraBorder*2), Surface::getFontHeight() + 4 + (extraBorder*2));
-    }
-   
-    void setExtraBorder()
-    {
-        if ( !extraBorder )
-        {
-            extraBorder = 1;
-            setSize( size.x, size.y);
-        }
-    }
-   
-    void clearExtraBorder()
-    {
-        if ( extraBorder )
-        {
-            extraBorder = 0;
-            setSize( size.x, size.y);
-        }
-    }
-
-    const std::string& getLabel() const
-    {
-        return label;
-    }
-
     virtual void actionPerformed(const mMouseEvent &me);
 }; // end Button
 

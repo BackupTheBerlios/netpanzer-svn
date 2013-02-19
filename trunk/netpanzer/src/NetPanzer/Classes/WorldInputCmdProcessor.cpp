@@ -49,7 +49,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 
 #include "Views/Game/VehicleSelectionView.hpp"
-#include "Views/Components/Desktop.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
 
@@ -328,21 +327,21 @@ WorldInputCmdProcessor::getManualControlStatus()
 void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
-    if (KeyboardInterface::getKeyPressed(SDLK_b)
-       && ! Desktop::getVisible("HelpScrollView") )
+    if (KeyboardInterface::getKeyPressed(SDLK_b) )
+//       && ! Desktop::getVisible("HelpScrollView") )
     {
         if ( PlayerInterface::getLocalPlayer()->isSelectingFlag()
             || GameConfig::game_changeflagtime == 0
             || Flagtimer.checkWithTimeOut(GameConfig::game_changeflagtime * 60000)
            )
         {
-            Desktop::toggleVisibility( "GFlagSelectionView" );
+//            Desktop::toggleVisibility( "GFlagSelectionView" );
         }
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_m) )
     {
-        Desktop::toggleVisibility( "MiniMapView" );
+//        Desktop::toggleVisibility( "MiniMapView" );
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_o) )
@@ -380,37 +379,24 @@ WorldInputCmdProcessor::evaluateKeyCommands()
         }
     }
 
-    if ( KeyboardInterface::getKeyPressed(SDLK_F1)
-       && ! Desktop::getVisible("GFlagSelectionView") ) {
-        Desktop::toggleVisibility( "HelpScrollView" );
-    }
+//    if ( KeyboardInterface::getKeyPressed(SDLK_F1)
+//       && ! Desktop::getVisible("GFlagSelectionView") ) {
+//        Desktop::toggleVisibility( "HelpScrollView" );
+//    }
 
     if (KeyboardInterface::getKeyPressed(SDLK_TAB) )
     {
-        if (GameConfig::game_teammode)
-            Desktop::toggleVisibility( "RankTeam" );
-        else
-            Desktop::toggleVisibility( "RankView" );
-    }
-
-    if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
-        Desktop::toggleVisibility( "DesktopView" );
-    }
-
-    if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
-        Desktop::toggleVisibility( "CodeStatsView" );
-    }
-
-    if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
-        //  DEBUG VIEW
-        Desktop::toggleVisibility( "LibView" );
+//        if (GameConfig::game_teammode)
+//            Desktop::toggleVisibility( "RankTeam" );
+//        else
+//            Desktop::toggleVisibility( "RankView" );
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
             && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
     {
-        ChatView *v = (ChatView*)Desktop::getView("ChatView");
+        ChatView *v = 0; // (ChatView*)Desktop::getView("ChatView");
         if ( v )
         {
             v->openChat();
@@ -420,7 +406,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) || KeyboardInterface::getKeyState(SDLK_RCTRL))
         && (KeyboardInterface::getKeyPressed(SDLK_RETURN) ))
     {
-        ChatView *v = (ChatView*)Desktop::getView("ChatView");
+        ChatView *v = 0; //(ChatView*)Desktop::getView("ChatView");
         if ( v )
         {
             v->openFriendsChat();
@@ -1098,10 +1084,6 @@ WorldInputCmdProcessor::closeSelectionBox()
 bool
 WorldInputCmdProcessor::isObjectiveSelected()
 {
-    if (Desktop::getVisible("VehicleSelectionView") == true) {
-        return true;
-    }
-
     return false;
 }
 

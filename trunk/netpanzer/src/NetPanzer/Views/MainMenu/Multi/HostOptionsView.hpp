@@ -18,13 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HostOptionsView_hpp__
 #define __HostOptionsView_hpp__
 
-#include "Views/MainMenu/RMouseHackView.hpp"
+#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
+#include "Core/CoreTypes.hpp"
 
 class Action;
 
 //---------------------------------------------------------------------------
-class HostOptionsView : public RMouseHackView
+class HostOptionsView : public View
 {
 private:
     void addMeterButtons(const iXY &pos);

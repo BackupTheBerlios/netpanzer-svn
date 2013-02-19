@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Action.hpp"
 
-#include "Views/Components/Desktop.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
-#include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/StrManager.hpp"
 #include "2D/Color.hpp"
@@ -39,33 +36,12 @@ public:
     DisconnectAction() : Action(true) {}
     void execute()
     {
-        MenuTemplateView * menuview = (MenuTemplateView*)Desktop::getView("MenuTemplateView");
-        OptionsTemplateView * optionsview  = (OptionsTemplateView*)Desktop::getView("OptionsView");
         
         GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
 
         GameManager::quitNetPanzerGame();
 
         GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
-
-        Desktop::setVisibilityAllWindows(false);
-
-        if ( menuview )
-        {
-            menuview->init();
-            menuview->setAlwaysOnBottom(true);
-            Desktop::remove(menuview);
-            Desktop::add(menuview, false);
-        }
-
-        Desktop::setVisibility("MenuTemplateView", true);
-        Desktop::setVisibility("MainView", true);
-
-        if ( optionsview )
-        {
-            optionsview->initButtons();
-            optionsview->setAlwaysOnBottom(true);
-        }
     }
 };
 

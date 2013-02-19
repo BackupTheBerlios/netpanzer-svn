@@ -56,33 +56,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Views/MainMenu/MenuTemplateView.hpp"
-#include "Views/MainMenu/MainMenuView.hpp"
-#include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/MainMenu/Multi/HostOptionsView.hpp"
-#include "Views/MainMenu/Multi/MapSelectionView.hpp"
-#include "Views/MainMenu/Multi/PlayerNameView.hpp"
-#include "Views/MainMenu/Multi/IPAddressView.hpp"
-#include "Views/MainMenu/Multi/ServerListView.hpp"
-
-#include "Views/Game/RankView.hpp"
-#include "Views/Game/RankTeam.hpp"
-#include "Views/Game/EndRoundView.hpp"
-#include "Views/Game/GFlagSelectionView.hpp"
-#include "Views/Game/PrepareTeam.hpp"
-#include "Views/Game/VehicleSelectionView.hpp"
-#include "Views/Game/CodeStatsView.hpp"
-#include "Views/Game/LibView.hpp"
-#include "Views/Game/HelpScrollView.hpp"
-#include "Views/Game/AreYouSureResignView.hpp"
-#include "Views/Game/AreYouSureExitView.hpp"
-#include "Views/Game/GameView.hpp"
-#include "Views/Game/MiniMapView.hpp"
-#include "Views/Game/DisconectedView.hpp"
 #include "Views/Game/LoadingView.hpp"
-#include "Views/Game/ChatView.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -166,61 +141,20 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    Desktop::add(new GameView(), false);
-    Desktop::add(new RankView(), false);
-    Desktop::add(new RankTeam(), false);
-    Desktop::add(new EndRoundView(), false);
-    Desktop::add(new GFlagSelectionView(), false);
-    Desktop::add(new VehicleSelectionView(), false );
-    Desktop::add(new MiniMapView(), false);
-    Desktop::add(new CodeStatsView(), false);
-    Desktop::add(new LibView(), false);
-    Desktop::add(new HelpScrollView(), false);
-
-    Desktop::add(new ChatView(), false);
-    Desktop::add(new PrepareTeam(), false);
-
-    LoadingView *lv = new LoadingView();
-    Desktop::add(lv, false);
-
-
-    Desktop::add(new MapSelectionView(), false);
-    Desktop::add(new MainMenuView(), false);
-    Desktop::add(new OptionsTemplateView(), false);
-    Desktop::add(new HostOptionsView(), false);
-    Desktop::add(new PlayerNameView(), false);
-    Desktop::add(new AreYouSureResignView(), false);
-    Desktop::add(new AreYouSureExitView(), false);
-    Desktop::add(new DisconectedView(), false);
-
-    Desktop::add(new IPAddressView(), false);
-    Desktop::add(new ServerListView(), false);
-
-    Desktop::add(new MenuTemplateView(), false);
-
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MenuTemplateView", true);
-    Desktop::setVisibility("MainView", true);
-
-    Desktop::checkResolution(iXY(800,480), iXY(screen->getWidth(),screen->getHeight()));
-    Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
-
 
     if ( gameconfig->quickConnect && gameconfig->needPassword )
     {
-        lv->setNeedPassword(true);
+//        lv->setNeedPassword(true);
     }
 
-    //Test for new UI
-    //testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
     MouseInterface::manageClickTimer();
-    Desktop::manage(MouseInterface::getMouseX(),
-               MouseInterface::getMouseY(), MouseInterface::getButtonMask());
+//    Desktop::manage(MouseInterface::getMouseX(),
+//               MouseInterface::getMouseY(), MouseInterface::getButtonMask());
 
     COMMAND_PROCESSOR.updateScrollStatus( MouseInterface::getMousePosition() );
 
@@ -229,16 +163,7 @@ void PlayerGameManager::inputLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::graphicsLoop()
 {
-    screen->lock();
-
-    screen->fill(0);
-
-    Desktop::draw(*screen);
-
-    MouseInterface::draw(*screen);
-
-    screen->unlock();
-    screen->copyToVideoFlip();
+   // empty
 }
 //-----------------------------------------------------------------
 bool PlayerGameManager::launchNetPanzerGame()
@@ -459,13 +384,13 @@ void PlayerGameManager::joinMultiPlayerGame()
     NetworkState::setNetworkStatus( _network_state_client );
 
     LoadingView::show();
-    LoadingView *lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
-    if ( ! lv->doesNeedPassword() )
-    {
-        CLIENT->joinServer(gameconfig->serverConnect, "");
-        ClientConnectDaemon::startConnectionProcess();
-        sound->playTankIdle();
-    }
+//    LoadingView *lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
+//    if ( ! lv->doesNeedPassword() )
+//    {
+//        CLIENT->joinServer(gameconfig->serverConnect, "");
+//        ClientConnectDaemon::startConnectionProcess();
+//        sound->playTankIdle();
+//    }
 
     ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 }
@@ -523,8 +448,8 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView"))
-    {
+//    if (Desktop::getVisible("GameView"))
+//    {
         if (   KeyboardInterface::getKeyState( SDLK_LALT )
             || KeyboardInterface::getKeyState( SDLK_RALT ) )
         {
@@ -540,40 +465,40 @@ void PlayerGameManager::processSystemKeys()
             Screen->doScreenshoot();
         }
 
-        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
-        {
-            if ( ! Desktop::getVisible("OptionsView") )
-            {
-                if ( Desktop::getVisible("HelpScrollView") )
-                {
-                    Desktop::toggleVisibility("HelpScrollView");
-                }
-                else if ( Desktop::getVisible("GFlagSelectionView") )
-                {
-                    Desktop::toggleVisibility("GFlagSelectionView");
-                }
-                else
-                {
-                    View *v = Desktop::getView("MenuTemplateView");
-                    assert(v != 0);
-                    ((MenuTemplateView *)v)->init();
-                    ((MenuTemplateView *)v)->setAlwaysOnBottom(false);
-                    
-                    v = Desktop::getView("OptionsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    Desktop::setVisibility("MenuTemplateView", true);
-                    Desktop::setVisibility("OptionsView", true);
-                    Desktop::setActiveView("OptionsView");
-                }
-            }
-            else
-            {
-                Desktop::setVisibility("MenuTemplateView", false);
-                Desktop::setVisibility("OptionsView", false);
-            }
-        }
-    }
+//        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
+//        {
+//            if ( ! Desktop::getVisible("OptionsView") )
+//            {
+//                if ( Desktop::getVisible("HelpScrollView") )
+//                {
+//                    Desktop::toggleVisibility("HelpScrollView");
+//                }
+//                else if ( Desktop::getVisible("GFlagSelectionView") )
+//                {
+//                    Desktop::toggleVisibility("GFlagSelectionView");
+//                }
+//                else
+//                {
+//                    View *v = Desktop::getView("MenuTemplateView");
+//                    assert(v != 0);
+//                    ((MenuTemplateView *)v)->init();
+//                    ((MenuTemplateView *)v)->setAlwaysOnBottom(false);
+//                    
+//                    v = Desktop::getView("OptionsView");
+//                    assert(v != 0);
+//                    ((OptionsTemplateView *)v)->initButtons();
+//                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
+//
+//                    Desktop::setVisibility("MenuTemplateView", true);
+//                    Desktop::setVisibility("OptionsView", true);
+//                    Desktop::setActiveView("OptionsView");
+//                }
+//            }
+//            else
+//            {
+//                Desktop::setVisibility("MenuTemplateView", false);
+//                Desktop::setVisibility("OptionsView", false);
+//            }
+//        }
+//    }
 }

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ParticleTweakView.hpp"
 
-#include "Views/Components/Desktop.hpp"
+#include "2D/Color.hpp"
 
 ParticleTweakView::ParticleTweakView() : View()
 {

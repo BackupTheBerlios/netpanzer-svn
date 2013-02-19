@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Components/Button.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/Separator.hpp"
 #include "Actions/Action.hpp"
 #include "Actions/ChangeIntVarAction.hpp"
@@ -79,7 +78,7 @@ public:
     {
         char strBuf[256];
         // XXX WARNING note efficient
-        const MapFile * m = ResourceManager::getMap(((MapSelectionView*)Desktop::getView("MapSelectionView"))->getCurrentSelectedMapName(), 0);
+        const MapFile * m = 0; //ResourceManager::getMap(((MapSelectionView*)Desktop::getView("MapSelectionView"))->getCurrentSelectedMapName(), 0);
         if ( m )
         {
             int objectiveCount = m->getOutpostCount();
@@ -232,7 +231,7 @@ public:
 
 // HostOptionsView
 //---------------------------------------------------------------------------
-HostOptionsView::HostOptionsView() : RMouseHackView()
+HostOptionsView::HostOptionsView() : View()
 {
     setSearchName("HostOptionsView");
 

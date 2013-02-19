@@ -58,7 +58,7 @@ protected:
     static iXY mouse_offset;
 
     static unsigned char button_mask;
-
+    
 public:
     enum {
         left_button   = SDL_BUTTON_LEFT,
@@ -75,7 +75,7 @@ public:
     };
 
     enum CursorType {
-        defaultcursor, noentry, move, select, target, allie, break_allie
+        defaultcursor, noentry, move, select, target, allie, break_allie, CURSOR_TYPE_MAX
     };
 
     static MouseEventQueue event_queue;

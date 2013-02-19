@@ -15,31 +15,23 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef __Component_hpp__
 #define __Component_hpp__
 
-#include <string>
-
-#include "2D/Color.hpp"
 #include "2D/Surface.hpp"
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "Util/Log.hpp"
 
 class mMouseEvent;
-class View;
 
 //--------------------------------------------------------------------------
 class Component
 {
 protected:
-    PIX     background;
-    PIX     foreground;
-    iXY     size;
     iXY     position;
+    iXY     size;
     Surface surface;
-    bool    enabled;
-    bool    visible;
     bool    dirty;
 
     static int borderSize;
@@ -47,7 +39,7 @@ protected:
     void reset();
 
 public:
-    Component()
+    Component() : clickAction(0)
     {
         reset();
     }
@@ -87,24 +79,6 @@ public:
         setLocation(p.x, p.y);
     }
 
-    void show()
-    {
-        if (!visible)
-        {
-            visible = true;
-            dirty=true;
-        }
-    }
-
-    void hide()
-    {
-        if (visible)
-        {
-            visible = false;
-            dirty=true;
-        }
-    }
-
     virtual void draw(Surface &dest)
     {
         if ( dirty )
@@ -116,10 +90,15 @@ public:
     virtual void render() = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
     virtual void handleKeyboard() {}
+    
+    inline void setClickAction(int ca) { clickAction = ca; }
+    inline int getClickAction() const { return clickAction; }
 
 private:
     Component(const Component&);
     void operator=(const Component&);
+    
+    int clickAction;
 }; // end Component
 
 #endif // end __Component_hpp__

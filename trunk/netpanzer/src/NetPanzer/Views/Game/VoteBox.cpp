@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/VoteManager.hpp"
 #include "2D/Surface.hpp"
 #include "Actions/Action.hpp"
+#include "Util/Log.hpp"
 
 class YesNoAction : public Action
 {

@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 #include "MouseEvent.hpp"
-
-class StateChangedCallback;
+#include "Core/CoreTypes.hpp"
 
 //--------------------------------------------------------------------------
 class Choice : public Component
@@ -36,7 +35,6 @@ private:
     bool                isOpen;
     size_t              mouseover;
     int                 real_y;
-    StateChangedCallback* callback;
 
     NPString label;
     
@@ -44,8 +42,7 @@ protected:
     virtual void onSelectionChanged() {}
 
 public:
-    Choice(StateChangedCallback* newcallback = 0)
-            : callback(newcallback)
+    Choice()
     {
         reset();
     }
@@ -67,16 +64,10 @@ public:
         return index;
     }
 
-    void   select(const std::string& item);
     void   select(size_t index);
     void   setMinWidth(int minWidth);
 
     void   setLabel(const NPString& label) { this->label = label; }
-    
-    void setStateChangedCallback(StateChangedCallback* newcallback)
-    {
-        callback = newcallback;
-    }
 
     virtual void draw(Surface &dest);
     virtual void render()

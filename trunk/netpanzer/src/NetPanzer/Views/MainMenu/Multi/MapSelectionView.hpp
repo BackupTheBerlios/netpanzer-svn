@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string.h>
 
-#include "Views/MainMenu/RMouseHackView.hpp"
+#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 #include "Core/CoreTypes.hpp"
 
@@ -44,7 +44,7 @@ class MapThumbnailComponent;
 class Label;
 
 //---------------------------------------------------------------------------
-class MapSelectionView : public RMouseHackView
+class MapSelectionView : public View
 {
 private:
     enum { BORDER_SPACE =   4 };

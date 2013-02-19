@@ -24,10 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
-#include "Views/Components/tVScrollBar.hpp"
-#include "Views/Components/tHScrollBar.hpp"
 
-class StateChangedCallback;
+class tVScrollBar;
+class tHScrollBar;
 
 class DataItem
 {
@@ -44,8 +43,6 @@ protected:
     void setHasHeader(bool b) { hasHeader = b; dirty = true; }
 
 private:
-    StateChangedCallback* callback;
-    
     enum { ItemHeight = 14 };
     
     tVScrollBar *VScrollBar;
@@ -67,21 +64,19 @@ private:
     bool Bordered;
     bool hasHeader;
     
+    PIX background_color;
+    
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
 public:
 
-    tStringListBox(iRect rect, StateChangedCallback* newcallback = 0);
+    tStringListBox(iRect rect);
     virtual ~tStringListBox() {}
 
     void setSelectable( bool b ) { Selectable = b; SelectedItem = List.end(); dirty = true;}
     void setBordered( bool b ) { Bordered = b; dirty = true; }
     
     virtual void setColor(PIX newColor);
-    virtual void setStateChangedCallback(StateChangedCallback* newcallback)
-    {
-        callback = newcallback;
-    }
     virtual void setVscrollBar(tVScrollBar *newVScrollBar);
     tVScrollBar * getVscrollBar() { return VScrollBar; }
     

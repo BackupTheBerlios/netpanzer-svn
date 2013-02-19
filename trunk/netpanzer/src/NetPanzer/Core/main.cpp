@@ -35,20 +35,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <optionmm/command_line.hpp>
 
 #include "Util/Log.hpp"
-//#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "Network/NetworkManager.hpp"
 
 #include "Scripts/ScriptManager.hpp"
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Interfaces/DedicatedGameManager.hpp"
-#include "Interfaces/BotGameManager.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
 #include "Actions/ActionManager.hpp"
+
+#include "2D/SceneManager.hpp"
+#include "Scenes/InitialScene.hpp"
+
+#include "Resources/ResourceManager.hpp"
+#include "Interfaces/StrManager.hpp"
 
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
@@ -56,16 +59,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //---------------------------------------------------------------------------
 
-static std::string pidfile;
-
 void shutdown()
 {
-#ifndef WIN32
-    if(pidfile != "") {
-        unlink(pidfile.c_str());
-    }
-#endif
-    
     SDL_Quit();
     if(gameconfig)
         gameconfig->saveConfig();
@@ -130,10 +125,6 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> connect_option('c', "connect",
             "Connect to the specified netpanzer server", "");
     commandline.add(&connect_option);
-    bool_option dedicated_option('d', "dedicated", "Run as dedicated server", false);
-    commandline.add(&dedicated_option);
-    option<std::string, true, false> bot_option('b', "bot", "Connect as bot to specific server", "");
-    commandline.add(&bot_option);
 
     bool_option need_password(0, "password", "Ask for password when connecting, only usefull on quick connect", false);
     commandline.add(&need_password);
@@ -151,23 +142,21 @@ BaseGameManager *initialise(int argc, char** argv)
     option<bool, false, false> protocol_option('\0', "protocol",
             "Show version of network protocol", false);
     commandline.add(&protocol_option);
-    option<std::string, true, false> pidfile_option(0, "pidfile",
-            "Create a pidfile at the specified location", "");
-    commandline.add(&pidfile_option);
+    
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
 
-    if(protocol_option.value()) {
+    if(protocol_option.value())
+    {
         std::cout << (int) NETPANZER_PROTOCOL_VERSION << std::endl;
         exit(0);
     }
 
-    if (debug_option.value()) {
+    if (debug_option.value())
+    {
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
         LOGGER.debug("debug option enabled");
-    } else if (dedicated_option.value()) {
-        LOGGER.setLogLevel(Logger::LEVEL_INFO);
     }
 
     // Initialize SDL (we have to start the video subsystem as well so that
@@ -177,51 +166,29 @@ BaseGameManager *initialise(int argc, char** argv)
         fprintf(stderr, "SDL_Init error: %s.\n", SDL_GetError());
         exit(1);
     }
+    
     SDL_EnableUNICODE(1);
 
     // Initialize libphysfs
     try {
-        filesystem::initialize(argv[0], "netpanzer", "netpanzer");
+        filesystem::initialize(argv[0], "netpanzer");
     } catch(std::exception& e) {
         fprintf(stderr, "%s", e.what());
         shutdown();
         exit(1);
     }
 
-#ifdef NP_DATADIR
-    try {
-	filesystem::addToSearchPath(NP_DATADIR);
-    } catch(...)
-    { }
-#endif
-
-#ifdef __APPLE__
-    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
-    try {
-      std::ostringstream dir;
-      dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
-      filesystem::addToSearchPath(dir.str().c_str());
-    } catch(...)
-    { }
-#endif
-
-    if(dedicated_option.value())
-        LOGGER.openLogFile("server");
-    else if(bot_option.value().size() > 0)
-        LOGGER.openLogFile("bot");
-    else
-        LOGGER.openLogFile("netpanzer");
+    LOGGER.openLogFile("netpanzer");
 
 #ifdef WIN32
-    // SDL redirects stdout and stderr to 2 textfiles, better open a new console
-    // for the dedicated server and the bot
-    
-    //if(dedicated_option.value() || bot_option.value().size() > 0) {
+// some times used for debug
+#if 0
         AllocConsole();
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
 //        freopen("CON", "r", stdin);
-    //}
+#endif
+
 #endif
 
     // Initialize random number generator
@@ -232,49 +199,45 @@ BaseGameManager *initialise(int argc, char** argv)
 #ifdef __USE_SVID
     srand48(time(0));
 #endif
-
-    // create a pidfile
-    pidfile = pidfile_option.value();
-#ifndef WIN32
-    if(pidfile != "") {
-        std::ofstream out(pidfile.c_str());
-        if(!out.good()) {
-            fprintf(stderr, "Couldn't create pidfile '%s'.\n", pidfile.c_str());
-            shutdown();
-            exit(1);
-        }
-        out << getpid() << std::endl;
-        out.close();
-    }
-#else
-    if(pidfile != "") {
-        fprintf(stderr, "Pidfiles not supported on win32.\n");
-    }
-#endif
     
     ScriptManager::initialize();
     
-    BaseGameManager *manager;
+    PlayerGameManager *manager;
     // finally initialize the game objects
     try {
-        if (dedicated_option.value()) {
-            manager = new DedicatedGameManager();
+        
+        if(!filesystem::exists("config"))
+            filesystem::mkdir("config");
+        
+        if ( game_config_option.value().empty() )
+        {
+            gameconfig = new GameConfig("/config/client.cfg");
         }
-        else if (bot_option.value().size() > 0) {
-            manager = new BotGameManager(bot_option.value());
-        } else {
-            manager = new PlayerGameManager();
+        else
+        {
+            gameconfig = new GameConfig(game_config_option.value(), false);
         }
-
-        manager->initialize(game_config_option.value());
+        
+        ResourceManager::initialize();
+        
+        manager = new PlayerGameManager();
+        manager->initialize();
+        
+        if (GameConfig::interface_language->length() != 0)
+        {
+            loadPOFile(*GameConfig::interface_language);
+        }
 
         // gameconfig exists now...
-        if(connect_option.value() != "") {
+        if(connect_option.value() != "")
+        {
             std::string connecthost = connect_option.value();
-            if(connecthost.find("netpanzer://") == 0) {
+            if(connecthost.find("netpanzer://") == 0)
+            {
                 connecthost = connecthost.substr(12, connecthost.size()-12);
                 std::string::size_type p = connecthost.find("/");
-                if(p != std::string::npos) {
+                if(p != std::string::npos)
+                {
                     if ( connecthost[p+1] == 'p' )
                     {
                         gameconfig->needPassword = true;
@@ -290,15 +253,20 @@ BaseGameManager *initialise(int argc, char** argv)
 
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
-        }                                                               
-        if (master_server_option.value().size() > 0) {
-            if (master_server_option.value() == "none") {
+        }
+        
+        if (master_server_option.value().size() > 0)
+        {
+            if (master_server_option.value() == "none")
+            {
                 *GameConfig::server_masterservers = "";
             }
-            else {
+            else
+            {
                 *GameConfig::server_masterservers = master_server_option.value();
             }
         }
+
         if ( port_option.value() )
         {
             GameConfig::server_port=port_option.value();
@@ -326,12 +294,18 @@ int netpanzer_main(int argc, char** argv)
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
-        if (manager->launchNetPanzerGame()) {
-            while(manager->mainLoop())
+//        if (manager->launchNetPanzerGame()) {
+//            while(manager->mainLoop())
+//                ;
+//        }
+        
+        if ( SceneManager::init(new InitialScene()) )
+        {
+            while ( SceneManager::run() )
                 ;
         }
 
-        manager->shutdown();
+//        manager->shutdown();
         delete manager;
         LOGGER.info("successfull shutdown.");
         shutdown();

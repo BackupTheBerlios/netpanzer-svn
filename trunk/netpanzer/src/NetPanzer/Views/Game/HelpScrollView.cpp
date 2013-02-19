@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HelpScrollView.hpp"
 #include "GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/StrManager.hpp"
 
@@ -30,7 +29,7 @@ void HelpScrollView::addhelpcmd(NPString cmd, NPString help)
     HelpBox->Add(helpBuf);
 }
 
-HelpScrollView::HelpScrollView() : SpecialButtonView()
+HelpScrollView::HelpScrollView() : View()
 {
     setSearchName("HelpScrollView");
 //    setTitle(_("Help Information"));
@@ -39,7 +38,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     moveTo(bodyTextRect.getLocation());
     resize(bodyTextRect.getSize());
     iRect r(0, 0, bodyTextRect.getWidth()-20, bodyTextRect.getHeight()-33);
-    HelpBox = new tStringListBox(r, 0);
+    HelpBox = new tStringListBox(r);
     VscrollBar = new tVScrollBar();
     add(VscrollBar);
     HscrollBar = new tHScrollBar();
@@ -147,9 +146,6 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
 void HelpScrollView::doDraw( Surface& dest )
 {
-    if (Desktop::getVisible("GameView")) {
-        bltViewBackground(dest);
-    }
 
     View::doDraw( dest );
 } // end HelpScrollView::doDraw
@@ -161,7 +157,7 @@ void HelpScrollView::doActivate()
 
 void HelpScrollView::processEvents()
 {
-    if ( Desktop::getVisible("GameView") )
-        COMMAND_PROCESSOR.process(false);
+//    if ( Desktop::getVisible("GameView") )
+//        COMMAND_PROCESSOR.process(false);
 }
 

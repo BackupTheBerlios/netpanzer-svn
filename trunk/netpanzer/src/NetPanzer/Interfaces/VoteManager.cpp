@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Game/VoteBox.hpp"
 
 bool   VoteManager::vote_in_progress = false;
@@ -60,8 +59,8 @@ void VoteManager::netMessageReceiveRequestVote(const NetMessage* message)
     
     votebox = new VoteBox(VoteStrings[vote_request->vote_type]);
     
-    Desktop::add(votebox);
-    Desktop::setVisibility("votebox", true);
+//    Desktop::add(votebox);
+//    Desktop::setVisibility("votebox", true);
 }
 
 void VoteManager::resetVote()
@@ -72,7 +71,7 @@ void VoteManager::resetVote()
     
     if (votebox)
     {
-        Desktop::remove(votebox);
+//        Desktop::remove(votebox);
     }
     
     player_vote = new Uint8 [PlayerInterface::getMaxPlayers()];
@@ -151,8 +150,8 @@ void VoteManager::checkPlayersVote()
 
 void VoteManager::playerVote(Uint8 responce)
 {
-    Desktop::setVisibility("votebox", false);
-    Desktop::remove(votebox);
+//    Desktop::setVisibility("votebox", false);
+//    Desktop::remove(votebox);
 
     PlayerSendVote vote_player;
     vote_player.set(PlayerInterface::getLocalPlayerIndex(), responce);

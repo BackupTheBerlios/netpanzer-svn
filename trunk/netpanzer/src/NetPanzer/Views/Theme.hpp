@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define ctTexteDisable              (15)
 
 // Image theme
-#define itButton                    ("pics/backgrounds/menus/buttons/default/b-black.bmp")
-#define itScroll                    ("pics/backgrounds/menus/buttons/default/scrollbutton.bmp")
+#define itButton                    ("pics/buttons/b-black.bmp")
+#define itScroll                    ("pics/buttons/scrollbutton.bmp")
 
     //TODO: Load theme from ini file
 //void LoadNPTheme();

@@ -42,7 +42,7 @@ void tVScrollBar::initScrollBar()
     bRisestate = NORMAL;
     bUpstate = NORMAL;
     bDownstate = NORMAL;
-    background = ctWindowsbackground;
+    background_color = ctWindowsbackground;
     SmallChange = 1;
     LargeChange = 10;
 }
@@ -62,7 +62,7 @@ tVScrollBar::tVScrollBar(iXY pos, int Height, StateChangedCallback* newcallback)
 
 void tVScrollBar::actionPerformed(const mMouseEvent &me)
 {
-    if (!enabled) return;
+    if ( Max < 1 ) return;
     iRect rect_button_up(position.x, position.y, position.x+bSize, position.y+bSize);
     iRect rect_button_Down(position.x, position.y+size.y-bSize, position.x+bSize, position.y+size.y);
     
@@ -189,9 +189,20 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
     }
 }
 
+void tVScrollBar::draw(Surface& dest)
+{
+    if ( dirty )
+    {
+        render();
+        dirty = false;
+    }
+    
+    dest.bltTrans(surface, position.x, position.y);
+}
+
 void tVScrollBar::render()
 {
-    surface.fill(background);
+    surface.fill(background_color);
     surface.drawRect(surface.getRect(), ctWindowsBorder);
     if (bUpstate == PRESSED)
     {
@@ -251,8 +262,6 @@ void tVScrollBar::setPosition(int newPosition)
 void tVScrollBar::setMax(int newMax)
 {
     Max = newMax;
-    if (Max < 1) enabled = false;
-    else enabled = true;
 }
 
 void tVScrollBar::setMin(int newMin)
@@ -262,7 +271,7 @@ void tVScrollBar::setMin(int newMin)
 
 void tVScrollBar::setColor(PIX newColor)
 {
-    background = newColor;
+    background_color = newColor;
     dirty = true;
 }
 

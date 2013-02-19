@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "GameTemplateView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Classes/ScreenSurface.hpp"
@@ -51,8 +50,7 @@ void GameTemplateView::doActivate()
 {
     View::doActivate();
 
-    Desktop::setFocusView(this);
-
+    
 } // end VehicleSelectionView::doActivate
 
 // mouseMove
@@ -61,11 +59,11 @@ void GameTemplateView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
 
-    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
-        Desktop::setFocusView(this);
-
-        COMMAND_PROCESSOR.closeSelectionBox();
-    }
+//    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
+//        Desktop::setFocusView(this);
+//
+//        COMMAND_PROCESSOR.closeSelectionBox();
+//    }
 
 } // end GameTemplateView::mouseMove
 

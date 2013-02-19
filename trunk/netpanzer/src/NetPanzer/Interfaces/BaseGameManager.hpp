@@ -53,7 +53,7 @@ public:
 
     virtual void shutdown();
 
-    virtual void initialize(const std::string& configfile = "");
+    virtual void initialize();
 
     /// mainloop, return false if you want to quit
     virtual bool mainLoop();

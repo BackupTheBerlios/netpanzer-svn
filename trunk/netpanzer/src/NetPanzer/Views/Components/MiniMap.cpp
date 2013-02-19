@@ -59,7 +59,7 @@ void
 MiniMap::draw(Surface &dest)
 {
     //regenerate();
-    surface.blt(dest,position.x, position.y); // full blit
+    mapimage.blt(dest,position.x, position.y); // full blit
     drawObjectives(dest);
     drawUnits(dest);
     drawWorldAndMouseBox(dest);
@@ -118,22 +118,22 @@ void
 MiniMap::regenerate()
 {
     LOGGER.warning("Regenerating minimap....");
-    PIX *ptr = surface.getFrame0();
+    PIX *ptr = mapimage.getMem();
     if ( !ptr )
         return;
     
-    xratio = (float)MapInterface::getWidth() / surface.getWidth();    
-    yratio = (float)MapInterface::getHeight() / surface.getHeight();
+    xratio = (float)MapInterface::getWidth() / mapimage.getWidth();    
+    yratio = (float)MapInterface::getHeight() / mapimage.getHeight();
     float mapx;
     float mapy = 0.0f;
     
     PIX *curline = ptr;
     PIX *curptr;
-    for ( int y=0; y<(int)surface.getHeight(); y++)
+    for ( int y=0; y<(int)mapimage.getHeight(); y++)
     {
         curptr = curline;
         mapx = 0.0f;
-        for ( int x=0; x<(int)surface.getWidth(); x++)
+        for ( int x=0; x<(int)mapimage.getWidth(); x++)
         {
             iXY pos(mapx,mapy);
             // XXX Beware, no check for limits, could raise assert and quit the game.
@@ -141,7 +141,7 @@ MiniMap::regenerate()
             curptr++;
             mapx += xratio;
         }
-        curline += surface.getPitch();
+        curline += mapimage.getPitch();
         mapy += yratio;
     }
 }

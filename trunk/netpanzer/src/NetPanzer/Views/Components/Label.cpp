@@ -24,11 +24,11 @@ Label::draw(Surface &dest)
 {    
     if ( shadowed )
     {
-        dest.bltStringShadowed(position.x, position.y, text.c_str(), foreground, componentBodyColor);
+        dest.bltStringShadowed(position.x, position.y, text.c_str(), text_color, shadow_color);
     }
     else
     {
-        dest.bltString(position.x, position.y, text.c_str(), foreground);
+        dest.bltString(position.x, position.y, text.c_str(), text_color);
     }
 }
 

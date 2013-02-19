@@ -108,34 +108,12 @@ struct iXY
     {
         x = y = 0;
     }
-
-    bool isZero() const
-    {
-        return x==0 && y==0;
-    }
-
-    double mag() const;
+    
     float  mag2() const
     {
         return float(x * x + y * y);
     }
 
-    int getArea() const
-    {
-        return x * y;
-    }
 };
-
-//---------------------------------------------------------------------------
-static inline double distance(const iXY &a, const iXY &b)
-{
-    return (a - b).mag();
-}
-
-//---------------------------------------------------------------------------
-static inline float distance2(const iXY &a, const iXY &b)
-{
-    return (a - b).mag2();
-}
 
 #endif // __iXY_hpp__

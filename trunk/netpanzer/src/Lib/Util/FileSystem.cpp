@@ -24,44 +24,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FileSystem.hpp"
 #include "physfs/physfs.h"
 
+#include "Core/CoreTypes.hpp"
+
 namespace filesystem
 {
 
-void initialize(const char* argv0, const char* ,
-                            const char* application)
+bool initialize( const char* argv0, const char* application )
 {
-    if(!PHYSFS_init(argv0))
+    if( !PHYSFS_init(argv0) )
         throw Exception("failure while initialising physfs: %s",
                         PHYSFS_getLastError());
 
     const char* basedir = PHYSFS_getBaseDir();
     const char* userdir = PHYSFS_getUserDir();
     const char* dirsep = PHYSFS_getDirSeparator();
-    char* writedir = new char[strlen(userdir) + strlen(application) + 2];
+    
+    NPString appdir(".");
+    appdir += application;
 
-    sprintf(writedir, "%s.%s", userdir, application);
-    if(!PHYSFS_setWriteDir(writedir)) {
+    NPString writedir(userdir);
+    writedir += appdir;
+    
+    if ( ! PHYSFS_setWriteDir(writedir.c_str()) )
+    {
         // try to create the directory...
-        char* mkdir = new char[strlen(application)+2];
-        sprintf(mkdir, ".%s", application);
-        if(!PHYSFS_setWriteDir(userdir) || ! PHYSFS_mkdir(mkdir)) {
-            delete[] writedir;
-            delete[] mkdir;
+        if ( ! PHYSFS_setWriteDir(userdir) || ! PHYSFS_mkdir(appdir.c_str()) )
+        {
             throw Exception("failed creating configuration directory: '%s': %s",
-                            writedir, PHYSFS_getLastError());
+                            writedir.c_str(), PHYSFS_getLastError());
         }
-        delete[] mkdir;
 
-        if (!PHYSFS_setWriteDir(writedir)) {
+        if ( ! PHYSFS_setWriteDir(writedir.c_str()) )
+        {
             throw Exception("couldn't set configuration directory to '%s': %s",
-                            writedir, PHYSFS_getLastError());
+                            writedir.c_str(), PHYSFS_getLastError());
         }
     }
 
-    PHYSFS_addToSearchPath(writedir, 0);
+    PHYSFS_addToSearchPath(writedir.c_str(), 0);
     PHYSFS_addToSearchPath(basedir, 1);
-
-
 
     /* Root out archives, and add them to search path... */
     const char* archiveExt = "zip";
@@ -89,10 +90,25 @@ void initialize(const char* argv0, const char* ,
         PHYSFS_freeList(rc);
     } /* if */
 
+#ifdef NP_DATADIR
+    try {
+	filesystem::addToSearchPath(NP_DATADIR);
+    } catch(...)
+    { }
+#endif
 
-    PHYSFS_removeFromSearchPath(writedir);
-    PHYSFS_addToSearchPath(writedir, 0);
-    delete[] writedir;
+#ifdef __APPLE__
+    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
+    try {
+      std::ostringstream dir;
+      dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
+      filesystem::addToSearchPath(dir.str().c_str());
+    } catch(...)
+    { }
+#endif
+    
+    PHYSFS_removeFromSearchPath(writedir.c_str());
+    PHYSFS_addToSearchPath(writedir.c_str(), 0);
 }
 
 void shutdown()

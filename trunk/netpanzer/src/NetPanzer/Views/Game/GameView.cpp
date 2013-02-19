@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "GameView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
@@ -153,11 +152,11 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
 
-    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this)
-    {
-        Desktop::setFocusView(this);
-        MouseInterface::setCursor("default.bmp");
-    }
+//    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this)
+//    {
+//        Desktop::setFocusView(this);
+//        MouseInterface::setCursor("default.bmp");
+//    }
 
 } // end GameView::mouseMove
 

@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
 
-#include "Views/Components/Desktop.hpp"
-
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Util/Log.hpp"
@@ -464,7 +462,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
     }
     if ( player_id == local_player_index && player_lists[player_id].isSelectingFlag() )
     {
-        Desktop::setVisibility("GFlagSelectionView", true);
+//        Desktop::setVisibility("GFlagSelectionView", true);
     }
     SDL_mutexV(mutex);
 }

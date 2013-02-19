@@ -17,7 +17,6 @@
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/StrManager.hpp"
 
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/ChatView.hpp"
@@ -27,6 +26,8 @@
 #include "Actions/Action.hpp"
 #include "Views/Components/InputField.hpp"
 #include "Actions/ActionManager.hpp"
+
+#include "Util/Log.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
@@ -110,7 +111,7 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/defaultMB.bmp");
+    backgroundSurface.loadBMP("pics/backgrounds/defaultMB.bmp");
     surface.create(455, 175);
     dirty=true;
 }
@@ -168,48 +169,46 @@ LoadingView::append(const NPString& text)
 void
 LoadingView::loadFinish()
 {
-    Desktop::setVisibilityAllWindows(false);
-
     // XXX rebuild the particle stuff here for units...
     ParticleInterface::rebuildUnitParticleData();
 
     // XXX this needed because has to create the special buttons for the
     // defined units, has to be here because it has to be the "netp" palette
     // and after loading the unit profiles
-    View * v = Desktop::getView("VehicleSelectionView");
+    View * v = 0; //Desktop::getView("VehicleSelectionView");
     if ( v )
     {
-        Desktop::remove(v);
+//        Desktop::remove(v);
         delete v;
     }
 
-    Desktop::add(new VehicleSelectionView());
+//    Desktop::add(new VehicleSelectionView());
 
     GameManager::setNetPanzerGameOptions();
-    Desktop::setVisibility("MiniMapView", true);
-    Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility("ChatView", true);
-    ChatView *cv = (ChatView*) Desktop::getView("ChatView");
+//    Desktop::setVisibility("MiniMapView", true);
+//    Desktop::setVisibility("GameView", true);
+//    Desktop::setVisibility("ChatView", true);
+    ChatView *cv = 0; // (ChatView*) Desktop::getView("ChatView");
     if (cv) cv->clear();
     
     if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
     {
-        Desktop::setVisibility("GFlagSelectionView", true);
-        Desktop::setActiveView("GFlagSelectionView");
+//        Desktop::setVisibility("GFlagSelectionView", true);
+//        Desktop::setActiveView("GFlagSelectionView");
     }
 }
 
 void
 LoadingView::show()
 {
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("LoadingView", true);
-    View *v = Desktop::getView("LoadingView");
-    Desktop::setFocusView(v);
+//    Desktop::setVisibilityAllWindows(false);
+//    Desktop::setVisibility("LoadingView", true);
+//    View *v = Desktop::getView("LoadingView");
+//    Desktop::setFocusView(v);
 }
 
 void
 LoadingView::hide()
 {
-    Desktop::setVisibility("LoadingView", false);
+//    Desktop::setVisibility("LoadingView", false);
 }

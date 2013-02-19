@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "Views/Components/View.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
 #include "Interfaces/MouseInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
@@ -268,7 +267,7 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
 void View::lMouseDown(const iXY &pos)
 {
     focusComponent = 0;
-    Desktop::setKeyboardFocusComponent(0);
+//    Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
     for ( size_t n = 0; n != components.getLastIndex(); n++)
@@ -348,7 +347,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 void View::rMouseDown(const iXY &pos)
 {
     focusComponent = 0;
-    Desktop::setKeyboardFocusComponent(0);
+//    Desktop::setKeyboardFocusComponent(0);
 
     // Check all components for a pressed event.
     for ( size_t n = 0; n != components.getLastIndex(); n++)

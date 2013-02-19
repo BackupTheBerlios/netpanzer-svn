@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
 
-tPlayerStateBox::tPlayerStateBox(iRect rect, StateChangedCallback* newcallback)
-        : tStringListBox(rect, newcallback)
+tPlayerStateBox::tPlayerStateBox(iRect rect)
+        : tStringListBox(rect)
 {
     DrawFlags = true;
     UpdateState(true);

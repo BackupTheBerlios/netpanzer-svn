@@ -19,13 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __CHATVIEW_HPP__
 #define __CHATVIEW_HPP__
 
-#include "Views/Components/tChatBox.hpp"
-#include "Views/Components/InputField.hpp"
-#include "Views/Components/tVScrollBar.hpp"
-#include "Views/Components/tHScrollBar.hpp"
 #include "Views/Game/GameTemplateView.hpp"
 
+#include "Core/CoreTypes.hpp"
+
 class Button;
+class tVScrollBar;
+class tChatBox;
+class InputField;
 
 class ChatView : public GameTemplateView
 {

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "MainMenuView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/tStringListBox.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 #include "Interfaces/GameManager.hpp"
@@ -37,7 +36,7 @@ static iRect mainNewsRect(0, 270, 612, 70);
 
 void MainMenuView::setNews(const std::string &news)
 {
-    MainMenuView * mmv = (MainMenuView*)Desktop::getView("MainView");
+    MainMenuView * mmv = 0; //(MainMenuView*)Desktop::getView("MainView");
     mmv->news_text->Clear();
     mmv->news_text->Add(_("NetPanzer news:"));
     mmv->news_text->AddBlock(news);
@@ -47,7 +46,7 @@ void MainMenuView::setNews(const std::string &news)
 
 // MainMenuView
 //---------------------------------------------------------------------------
-MainMenuView::MainMenuView() : RMouseHackView()
+MainMenuView::MainMenuView() : View()
 {
     setSearchName("MainView");
     
@@ -86,7 +85,7 @@ MainMenuView::MainMenuView() : RMouseHackView()
     add(news_text);
     add(sbar);
 
-//    xxx.loadBMP("pics/backgrounds/menus/buttons/default/page.bmp");
+//    xxx.loadBMP("pics/buttons/page.bmp");
     
 } // end MainMenuView::MainMenuView
 

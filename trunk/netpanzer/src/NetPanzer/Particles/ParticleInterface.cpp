@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TemplateExplosionSystem.hpp"
 #include "CloudParticle2D.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Interfaces/KeyboardInterface.hpp"
 #include "Physics.hpp"
 #include "VectorPuffParticle2D.hpp"
 #include "Units/UnitTypes.hpp"
@@ -37,6 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CraterParticle2D.hpp"
 #include "Util/Exception.hpp"
 #include "System/Sound.hpp"
+
+#include "Util/Log.hpp"
 
 
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;

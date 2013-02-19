@@ -18,8 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __tChatBox_hpp__
 #define __tChatBox_hpp__
 
-#include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tStringListBox.hpp"
+
+#include "Core/CoreTypes.hpp"
 
 class ChatMessage
 {
@@ -32,8 +33,8 @@ public:
 class tChatBox : public tStringListBox
 {
 public:
-    tChatBox(iRect rect, StateChangedCallback* newcallback)
-        : tStringListBox(rect, newcallback)
+    tChatBox(iRect rect)
+        : tStringListBox(rect)
     {
         setAutoWrap(true);
     }

@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Views/MainMenu/OptionsTemplateView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Components/BoxedLabel.hpp"
@@ -33,71 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "Actions/Action.hpp"
 #include "Actions/ChangeIntVarAction.hpp"
-
-class FullScreenModifiedAction : public Action
-{
-public:
-    FullScreenModifiedAction() : Action(false) {}
-    
-    void execute()
-    {
-        GameManager::setVideoMode();
-    }
-};
-
-class SoundModifiedAction : public Action
-{
-    CheckBox * cb;
-public:
-    SoundModifiedAction(CheckBox* cb) : Action(false), cb(cb) {}
-    
-    void execute()
-    {
-        delete sound;
-
-        if ( GameConfig::sound_enable )
-        {
-            sound = new SDLSound();
-            cb->setLabel(_("Enabled"));
-            
-            if ( GameControlRulesDaemon::getGameState() )
-            {
-                sound->playTankIdle();
-            }
-            
-            if ( GameConfig::sound_music )
-            {
-                sound->playMusic("sound/music/");
-            }
-        }
-        else
-        {
-            sound = new DummySound();
-            cb->setLabel(_("Disabled"));
-        }
-    }
-};
-
-class MusicModifiedAction : public Action
-{
-    CheckBox * cb;
-public:
-    MusicModifiedAction(CheckBox* cb) : Action(false), cb(cb) {}
-    
-    void execute()
-    {
-        if ( GameConfig::sound_music )
-        {
-            sound->playMusic("sound/music/");
-            cb->setLabel(_("Enabled"));
-        }
-        else
-        {
-            sound->stopMusic();
-            cb->setLabel(_("Disabled"));
-        }
-    }
-};
 
 class ScrollRateBoxedLabel : public BoxedLabel
 {
@@ -273,9 +207,78 @@ public:
 };
 
 
+class FullScreenCheckBox : public CheckBox
+{
+public:
+    FullScreenCheckBox(const int x, const int y, const NPString& label, bool* state)
+        : CheckBox(x, y, label, state)
+    { }
+    
+    void onStateChanged()
+    {
+        GameManager::setVideoMode();
+    }
+};
+
+class SoundCheckBox : public CheckBox
+{
+public:
+    SoundCheckBox(const int x, const int y, const NPString& label, bool* state)
+        : CheckBox(x, y, label, state)
+    { }
+    
+    void onStateChanged()
+    {
+        delete sound;
+
+        if ( GameConfig::sound_enable )
+        {
+            sound = new SDLSound();
+            setLabel(_("Enabled"));
+            
+            if ( GameControlRulesDaemon::getGameState() )
+            {
+                sound->playTankIdle();
+            }
+            
+            if ( GameConfig::sound_music )
+            {
+                sound->playMusic("sound/music/");
+            }
+        }
+        else
+        {
+            sound = new DummySound();
+            setLabel(_("Disabled"));
+        }
+    }
+};
+
+class MusicCheckBox : public CheckBox
+{
+public:
+    MusicCheckBox(const int x, const int y, const NPString& label, bool* state)
+        : CheckBox(x, y, label, state)
+    { }
+    
+    void onStateChanged()
+    {
+        if ( GameConfig::sound_music )
+        {
+            sound->playMusic("sound/music/");
+            setLabel(_("Enabled"));
+        }
+        else
+        {
+            sound->stopMusic();
+            setLabel(_("Disabled"));
+        }
+    }
+};
+
 // OptionsTemplateView
 //---------------------------------------------------------------------------
-OptionsTemplateView::OptionsTemplateView() : RMouseHackView()
+OptionsTemplateView::OptionsTemplateView() : View()
 {
     setSearchName("OptionsView");
 
@@ -308,7 +311,7 @@ void OptionsTemplateView::initButtons()
     add( new Separator( xTextStart, y, xTextEnd,  _("VISUAL"), componentActiveTextColor) );
     
     y += yOffset;
-    add( new CheckBox( xTextStart+col, y, _("Full screen"), &GameConfig::video_fullscreen, new FullScreenModifiedAction()) );
+    add( new FullScreenCheckBox( xTextStart+col, y, _("Full screen"), &GameConfig::video_fullscreen) );
     
     y += yOffset;
     add( new CheckBox( xTextStart+col, y, _("Draw All Shadows"), &GameConfig::video_shadows) );
@@ -339,11 +342,6 @@ void OptionsTemplateView::initButtons()
                new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100),
                new ScrollRateBoxedLabel() );
     
-//    add( new Label( x, y+3, _("Scroll Rate:"), windowTextColor) );
-//    x += optionsMeterStartX;
-//    add( Button::createTextButton( "<", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(-100)) );
-//    x += optionsMeterWidth + arrowButtonWidth;
-//    add( Button::createTextButton( ">", iXY(x - 1, y), arrowButtonWidth, new ChangeIntVarAction<GameConfig::interface_scrollrate, 500, 1000>(100)) );
     y += yOffset*3;
 
 // SOUND OPTIONS
@@ -355,9 +353,7 @@ void OptionsTemplateView::initButtons()
     add( new Label( x, y, _("Sound Status:"), windowTextColor) );
     x += optionsMeterStartX;
     
-    CheckBox * checkBoxSoundEnabled = new CheckBox( x, y-2, GameConfig::sound_enable?_("Enabled"):_("Disabled"), &GameConfig::sound_enable);
-    checkBoxSoundEnabled->setAction(new SoundModifiedAction(checkBoxSoundEnabled));
-    add(checkBoxSoundEnabled);
+    add( new SoundCheckBox( x, y-2, GameConfig::sound_enable?_("Enabled"):_("Disabled"), &GameConfig::sound_enable) );
     y += yOffset;
 
     x = xTextStart;
@@ -374,9 +370,7 @@ void OptionsTemplateView::initButtons()
     add( new Label( x, y, _("Music Status:"), windowTextColor) );
     x += optionsMeterStartX;
     
-    CheckBox * checkBoxMusicEnabled = new CheckBox( x, y-2, GameConfig::sound_music?_("Enabled"):_("Disabled"), &GameConfig::sound_music);
-    checkBoxMusicEnabled->setAction(new MusicModifiedAction(checkBoxMusicEnabled));
-    add(checkBoxMusicEnabled);
+    add( new MusicCheckBox( x, y-2, GameConfig::sound_music?_("Enabled"):_("Disabled"), &GameConfig::sound_music) );
     y += yOffset;
     
     addConfRow(iXY(xTextStart, y), _("Music Volume:"),

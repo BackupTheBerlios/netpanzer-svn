@@ -17,10 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <algorithm>
-#include "Views/Components/Choice.hpp"
-#include "Views/Components/View.hpp"
-#include "Views/Components/StateChangedCallback.hpp"
+#include "Choice.hpp"
 #include "ViewGlobals.hpp"
+
+#include "2D/Color.hpp"
 
 enum { ChoiceItemHeight = 14 };
 
@@ -47,24 +47,6 @@ void Choice::addItem(const std::string& item)
 }
 
 //---------------------------------------------------------------------------
-void Choice::select(const std::string& item)
-{
-    for(size_t i = 0; i < choiceList.size(); i++) {
-        if(choiceList[i] == item) {
-            if(index == i)
-                return;
-
-            mouseover = index = i;
-            onSelectionChanged();
-            if(callback)
-                callback->stateChanged(this);
-
-            return;
-        }
-    }
-}
-
-//---------------------------------------------------------------------------
 void Choice::select(size_t index)
 {
     assert(index < choiceList.size());
@@ -74,8 +56,6 @@ void Choice::select(size_t index)
 
     Choice::index = mouseover = index;
     onSelectionChanged();
-    if(callback)
-        callback->stateChanged(this);
 }
 
 //---------------------------------------------------------------------------
@@ -122,8 +102,6 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
         index = mouseover;
         onSelectionChanged();
-        if(callback)
-            callback->stateChanged(this);
     }
     else if ( me.getID() == mMouseEvent::MOUSE_EVENT_EXITED )
     {

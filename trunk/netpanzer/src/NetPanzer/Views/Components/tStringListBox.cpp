@@ -18,21 +18,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "Views/Components/tStringListBox.hpp"
+#include "Views/Components/tVScrollBar.hpp"
+#include "Views/Components/tHScrollBar.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 
 #include "Util/StringTokenizer.hpp"
 
+#include "2D/Color.hpp"
+
 #define MAX_CHAT_LINES (2000)
 
-tStringListBox::tStringListBox(iRect rect, StateChangedCallback* newcallback)
+tStringListBox::tStringListBox(iRect rect)
 {
     VScrollBar = 0;
     HScrollBar = 0;
-    callback = newcallback;
     setLocation(rect.getLocation());
     setSize(rect.getWidth(), rect.getHeight());
-    background = ctWindowsbackground;
+    background_color = ctWindowsbackground;
     StartItem = List.end();
     StartSubLine = 0;
     StartWidth = 0;
@@ -229,7 +232,7 @@ void tStringListBox::AddData(const std::string& S, void * D)
 
 void tStringListBox::render()
 {
-    surface.fill(background);
+    surface.fill(background_color);
     if ( Bordered )
     {
         surface.drawRect(surface.getRect(), ctWindowsBorder);
@@ -263,7 +266,7 @@ void tStringListBox::render()
     
     while ( (row < max_size_y) && (item != List.end()) )
     {
-        RowPaint.fill(background);
+        RowPaint.fill(background_color);
         if ( SelectedItem == item )
         {
             RowPaint.fill(ctTexteOver);
@@ -292,7 +295,7 @@ void tStringListBox::onPaint(Surface &dst, const DataItem& data, int SubLine)
 
 void tStringListBox::setColor(PIX newColor)
 {
-    background = newColor;
+    background_color = newColor;
     dirty = true;
 }
 

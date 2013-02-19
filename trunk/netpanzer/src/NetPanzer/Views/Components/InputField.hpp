@@ -32,8 +32,7 @@ class InputField : public Component
 protected:
     virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
-
-    void render();
+    void render() {}
 
 public:
     InputField(View * view = 0);

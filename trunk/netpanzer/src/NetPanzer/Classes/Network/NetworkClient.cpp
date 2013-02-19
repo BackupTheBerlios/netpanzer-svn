@@ -32,9 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 
-#include "Views/Components/Desktop.hpp"
 #include "Views/Game/LoadingView.hpp"
-#include "Views/Game/DisconectedView.hpp"
 
 NetworkClient *CLIENT = 0;
 
@@ -67,18 +65,7 @@ NetworkClient::onClientConnected(ClientSocket *s)
 void
 NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
 {
-    (void)s;
-    if ( ! Desktop::getVisible("LoadingView") )
-    {
-        DisconectedView *dv = (DisconectedView *)Desktop::getView("DisconectedView");
-        dv->setMsg(msg);
-
-        Desktop::setVisibility("DisconectedView", true);
-    }
-    else
-    {
-        ClientConnectDaemon::serverConnectionBroken();
-    }
+    ClientConnectDaemon::serverConnectionBroken();
     
     delete clientsocket;
     clientsocket=0;

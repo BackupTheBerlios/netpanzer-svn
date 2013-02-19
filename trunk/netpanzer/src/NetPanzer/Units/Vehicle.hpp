@@ -17,7 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #ifndef _VEHICLE_HPP
 #define _VEHICLE_HPP
-#include <string>
+
+#include "Core/CoreTypes.hpp"
 
 #include "Units/UnitBase.hpp"
 #include "Util/Timer.hpp"
@@ -75,8 +76,8 @@ protected:
 
     UnitSelectionBox select_info_box;
     
-    std::string soundSelect;
-    std::string fireSound;
+    NPString soundSelect;
+    NPString fireSound;
     unsigned short weaponType;
 
     Timer unit_state_timer;

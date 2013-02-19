@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManager.hpp"
 #include "Views/Components/Button.hpp"
 #include "Views/Components/Label.hpp"
-#include "Views/Components/Desktop.hpp"
 
 #include "2D/Palette.hpp"
 #include "Network/PlayerRequests/ChangeFlagRequest.hpp"
@@ -48,10 +47,8 @@ public:
         background_images.push_back(s);
 
         setExtraBorder();
-        borders[1][0] = Color::red;
-        borders[1][1] = Color::darkRed;
-        borders[2][0] = Color::green;
-        borders[2][1] = Color::darkGreen;
+        borders[1] = Color::red;
+        borders[2] = Color::green;
     }
 
     void actionPerformed( const mMouseEvent &e)
@@ -68,7 +65,7 @@ public:
 
             CLIENT->sendMessage(&req, sizeof(req));
 
-            Desktop::setVisibility("GFlagSelectionView", false);
+//            Desktop::setVisibility("GFlagSelectionView", false);
             COMMAND_PROCESSOR.Flagtimer.reset();
 //            PlayerInterface::getLocalPlayer()->setStateActive();
         }
@@ -147,7 +144,6 @@ void GFlagSelectionView::doActivate()
     {
         init();
     }
-    Desktop::setActiveView(this);
 }
 
 void GFlagSelectionView::doDeactivate()

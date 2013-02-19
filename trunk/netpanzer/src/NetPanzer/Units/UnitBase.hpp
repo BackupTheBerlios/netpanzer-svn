@@ -69,9 +69,6 @@ private:
     {
         return id;
     }
-
-protected:
-    UnitBase *groupLinkNext;
 };
 
 #endif // ** _UNITBASE_HPP

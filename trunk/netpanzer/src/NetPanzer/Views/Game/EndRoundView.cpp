@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "EndRoundView.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/TeamManager.hpp"

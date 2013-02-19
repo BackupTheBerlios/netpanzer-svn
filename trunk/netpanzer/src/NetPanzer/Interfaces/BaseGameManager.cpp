@@ -93,10 +93,7 @@ void BaseGameManager::shutdownSoundSubSystem()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
-    if(configfile == "")
-        gameconfig = new GameConfig("/config/client.cfg");
-    else
-        gameconfig = new GameConfig(configfile, false);
+    // die!
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameConfig()
@@ -165,18 +162,14 @@ void BaseGameManager::shutdownNetworkSubSystem()
 }
 //-----------------------------------------------------------------
 // boots up netPanzer; initializes all subsystems, game objects etc.
-void BaseGameManager::initialize(const std::string& configfile)
+void BaseGameManager::initialize()
 {
     try {
-        if(!filesystem::exists("config"))
-            filesystem::mkdir("config");
-        initializeGameConfig(configfile);
-        ResourceManager::initialize();
 
         initializeSoundSubSystem();
         initializeVideoSubSystem();
-        initializeGameObjects();
-        initializeNetworkSubSystem();
+//        initializeGameObjects();
+//        initializeNetworkSubSystem();
         initializeInputDevices();
     } catch(std::exception& e) {
         LOGGER.warning("Initialisation failed:\n%s", e.what());

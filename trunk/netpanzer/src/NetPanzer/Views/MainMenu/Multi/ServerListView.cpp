@@ -21,12 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <sstream>
-#include "IPAddressView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "MasterServer/ServerInfo.hpp"
 #include "Core/NetworkGlobals.hpp"
 
-#include "Views/Components/Desktop.hpp"
 #include "Interfaces/StrManager.hpp"
 #include "Views/Game/LoadingView.hpp"
 #include "Actions/Action.hpp"
@@ -42,6 +40,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 
 #include "Classes/GameServerInfo.hpp"
+
+#include "Util/Log.hpp"
 
 ServerListView* serverlistview = 0;
 
@@ -61,8 +61,8 @@ static const char masterserver_query[] = "\\list\\gamename\\netpanzer\\final\\";
 class ServerListBox : public tStringListBox
 {
 public:
-    ServerListBox(iRect rect, StateChangedCallback* newcallback)
-        : tStringListBox(rect, newcallback)
+    ServerListBox(iRect rect)
+        : tStringListBox(rect)
     {
         setAutoWrap(false);
         setHasHeader(true);
@@ -162,6 +162,13 @@ public:
     int getNumLines( int width, const DataItem& data)
     {
         return 1;
+    }
+    
+    void draw( Surface& dest )
+    {
+        dest.fillRect(iRect(position.x, position.y, size.x, size.y), Color::cyan);
+//        render();
+//        surface.bltTrans(dest, position.x, position.y );
     }
     
 };
@@ -395,8 +402,8 @@ ServerListView::ServerListView()
     lock_image.loadBMP("pics/default/lock.bmp");
     
     
-    iRect r(0, 0, bodyTextRect.getWidth()-20, 200);
-    ServerListBox * table = new ServerListBox(r, 0);
+    iRect r(0, 0, bodyTextRect.getWidth(), 200);
+    ServerListBox * table = new ServerListBox(r);
     tVScrollBar * sbar = new tVScrollBar();
     table->setVscrollBar(sbar);
     add(sbar);

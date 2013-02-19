@@ -55,6 +55,8 @@ private:
     int LargeChange;
     int SmallChange;
     
+    PIX background_color;
+    
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
     void initScrollBar();

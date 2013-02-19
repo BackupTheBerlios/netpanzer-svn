@@ -1251,24 +1251,24 @@ void Surface::circle(int cx, int cy, int radius, PIX color)
   x = 0;
   y = radius;
 
-//  while (y >= x) {
-//    putPixel(cx + x, cy + y, color);// down right corner
-//    putPixel(cx + y, cy + x, color);// down right corner
-//    putPixel(cx - x, cy + y, color);// up left corner
-//    putPixel(cx - y, cy + x, color);// up left corner
-//    putPixel(cx + x, cy - y, color);// up right corner
-//    putPixel(cx + y, cy - x, color);// up right corner
-//    putPixel(cx - x, cy - y, color);// down left corner
-//    putPixel(cx - y, cy - x, color);// down left corner
-//
-//    if (d < 0)
-//      d = d + (4 * x) + 6;
-//    else {
-//      d = d + 4 * (x - y) + 10;
-//      y--;
-//    }
-//    x++;
-//  }
+  while (y >= x) {
+    putPixel(cx + x, cy + y, color);// down right corner
+    putPixel(cx + y, cy + x, color);// down right corner
+    putPixel(cx - x, cy + y, color);// up left corner
+    putPixel(cx - y, cy + x, color);// up left corner
+    putPixel(cx + x, cy - y, color);// up right corner
+    putPixel(cx + y, cy - x, color);// up right corner
+    putPixel(cx - x, cy - y, color);// down left corner
+    putPixel(cx - y, cy - x, color);// down left corner
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
 }
 
 void Surface::FillCircle(int cx, int cy, int radius, PIX color)
@@ -1279,20 +1279,20 @@ void Surface::FillCircle(int cx, int cy, int radius, PIX color)
   x = 0;
   y = radius;
 
-//  while (y >= x) {
-//    drawHLine(cx - x, cy - y, x , color);
-//    drawHLine(cx - x, cy + y, x, color);
-//    drawHLine(cx - y, cy - x, y, color);
-//    drawHLine(cx - y, cy + x, y, color);
-//
-//    if (d < 0)
-//      d = d + (4 * x) + 6;
-//    else {
-//      d = d + 4 * (x - y) + 10;
-//      y--;
-//    }
-//    x++;
-//  }
+  while (y >= x) {
+    drawHLine(cx - x, cy - y, x , color);
+    drawHLine(cx - x, cy + y, x, color);
+    drawHLine(cx - y, cy - x, y, color);
+    drawHLine(cx - y, cy + x, y, color);
+
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+    x++;
+  }
 }
 
 void Surface::BltCircle(int cx, int cy, int radius, const PIX table[])

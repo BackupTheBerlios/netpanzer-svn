@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "InputField.hpp"
 #include "View.hpp"
 #include "2D/Color.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "SDL.h"
 #include "Actions/ActionManager.hpp"
@@ -46,11 +45,6 @@ InputField::InputField(View * view)
     
 }
 
-void InputField::render()
-{
-    draw(surface);
-}
-
 void InputField::draw(Surface &dest)
 {
     iRect r;
@@ -58,7 +52,7 @@ void InputField::draw(Surface &dest)
 
     dest.FillRoundRect(r, 3, Color::black);
 
-    bool inFocus = Desktop::getKeyboardFocusComponent() == this;
+    bool inFocus = has_focus; // Desktop::getKeyboardFocusComponent() == this;
 
     if ( inFocus )
     {
@@ -92,7 +86,8 @@ void InputField::actionPerformed(const mMouseEvent &me)
 {
     if ( me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED )
     {
-        Desktop::setKeyboardFocusComponent(this);
+        has_focus = true;
+//        Desktop::setKeyboardFocusComponent(this);
     }
 }
 

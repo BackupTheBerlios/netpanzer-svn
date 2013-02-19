@@ -66,6 +66,8 @@ public:
 
 class MapThumbnailComponent : public Component
 {
+private:
+    Surface mapimage;
 public:
     MapThumbnailComponent(int x, int y, int w, int h)
     {
@@ -73,7 +75,7 @@ public:
         position.y = y;
         size.x = w;
         size.y = h;
-        surface.create(w - 2, h - 2);
+        mapimage.create(w - 2, h - 2);
     }
     
     void draw(Surface &dest)
@@ -81,13 +83,13 @@ public:
         iRect r;
         getBounds(r);
         dest.drawRect(r, Color::lightGray);
-        surface.blt(dest, position.x+1, position.y+1); // full blit
+        mapimage.blt(dest, position.x+1, position.y+1); // full blit
     }
     
     void setImage(const Surface& from)
     {
         iRect r(0,0, size.x-2, size.y-2);
-        surface.bltScale(from, r);
+        mapimage.bltScale(from, r);
     }
     
     virtual void render()
@@ -103,7 +105,7 @@ public:
 
 // MapSelectionView
 //---------------------------------------------------------------------------
-MapSelectionView::MapSelectionView() : RMouseHackView()
+MapSelectionView::MapSelectionView() : View()
 {
     setSearchName("MapSelectionView");
 

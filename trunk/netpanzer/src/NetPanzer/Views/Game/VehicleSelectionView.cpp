@@ -40,7 +40,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitTypes.hpp"
 
 #include "Views/GameViewGlobals.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 #include "Views/Components/BoxedLabel.hpp"
@@ -70,7 +69,7 @@ static void sendOutpostStatus()
 
 static void bOK()
 {
-    Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//    Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
     sendOutpostStatus();
     changeMade = false;
 }
@@ -106,7 +105,7 @@ public:
         {
             resetState();
             if (vsvSelectedUnit == unitType && vsvUnitGenOn) {
-                Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//                Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
                 return;
             }
             
@@ -155,7 +154,7 @@ void activateVehicleSelectionView(ObjectiveID outpost_id)
         VehicleSelectionView::setPowerOff();
     }
 
-    Desktop::setVisibility( "VehicleSelectionView", true);
+//    Desktop::setVisibility( "VehicleSelectionView", true);
 }
 
 void toggleDisplayOutpostNames( void )
@@ -313,7 +312,7 @@ void VehicleSelectionView::doDraw( Surface& dest )
     Objective* obj = ObjectiveInterface::getObjective(CURRENT_SELECTED_OUTPOST_ID);
     if ( !obj || obj->occupying_player != PlayerInterface::getLocalPlayer() )
     {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
         changeMade = false;
         return;
     }
@@ -629,14 +628,14 @@ void VehicleSelectionView::checkMiniProductionRect(const std::string& string)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::doActivate()
 {
-    if (Desktop::getFocus() != this) {
-        iXY pos;
-
-        pos = MouseInterface::getMousePosition() - getSize() / 2;
-
-        moveTo(pos);
-        checkArea(iXY(screen->getWidth(),screen->getHeight()));
-    }
+//    if (Desktop::getFocus() != this) {
+//        iXY pos;
+//
+//        pos = MouseInterface::getMousePosition() - getSize() / 2;
+//
+//        moveTo(pos);
+//        checkArea(iXY(screen->getWidth(),screen->getHeight()));
+//    }
 
     GameTemplateView::doActivate();
 
@@ -755,7 +754,7 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
         }
 
         if (me.getSource()==buttonOk) {
-            Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//            Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
             sendOutpostStatus();
             changeMade = false;
         }

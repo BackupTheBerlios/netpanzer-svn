@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "LibView.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -229,7 +228,7 @@ void LibView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void LibView::doActivate()
 {
-    Desktop::setActiveView(this);
+//    Desktop::setActiveView(this);
 } // end LibView::doActivate
 
 // drawEnvironmentInfo

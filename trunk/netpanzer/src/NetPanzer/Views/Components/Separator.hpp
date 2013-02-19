@@ -31,7 +31,7 @@ public:
     Separator(int x, int y, int endx, const NPString& t, PIX color)
     {
         text = t;
-        foreground = color;
+        this->color = color;
         position.x = x;
         position.y = y;
         xend = endx - x;
@@ -39,11 +39,11 @@ public:
     
     void draw(Surface &dest)
     {
-        dest.drawHLine(position.x, position.y+5, 19, foreground);
+        dest.drawHLine(position.x, position.y+5, 19, color);
         dest.drawHLine(position.x+1, position.y+6, 19, Color::black);
-        dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  foreground, Color::black);
+        dest.bltStringShadowed(position.x+25,position.y, text.c_str(),  color, Color::black);
         int lentxt = 30+dest.getTextLength(text);
-        dest.drawHLine(position.x+lentxt,   position.y+5, xend - lentxt - 1, foreground);
+        dest.drawHLine(position.x+lentxt,   position.y+5, xend - lentxt - 1, color);
         dest.drawHLine(position.x+lentxt+1, position.y+6, xend - lentxt - 1, Color::black);
     }
     
@@ -60,6 +60,7 @@ public:
 private:
     NPString text;
     int xend;
+    PIX color;
 };
 
 #endif	/* SEPARATOR_HPP */

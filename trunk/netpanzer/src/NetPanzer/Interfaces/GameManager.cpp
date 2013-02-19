@@ -63,21 +63,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
-#include "Views/MainMenu/Multi/PlayerNameView.hpp"
-#include "Views/MainMenu/Multi/IPAddressView.hpp"
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
-#include "Views/Game/AreYouSureResignView.hpp"
-#include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/Game/MiniMapView.hpp"
 
@@ -168,18 +163,15 @@ void GameManager::setVideoMode()
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
     screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
-    Desktop::checkResolution(old_res, mode_res);
-    Desktop::checkViewPositions(mode_res);
+//    Desktop::checkResolution(old_res, mode_res);
+//    Desktop::checkViewPositions(mode_res);
     loadPalette("netp");
-    if (GameConfig::interface_language->length() != 0)
-    {
-        loadPOFile(*GameConfig::interface_language);
-    }
+    
     if(old_res == iXY(0,0)) {
         // users can get annoyed when they see a black screen for half a minute
         // so we display something here... (we're just hoping that palette1 is
         // not black)
-        drawTextCenteredOnScreen(_("Please wait... generating palettes"), 255);
+//        drawTextCenteredOnScreen(_("Please wait... generating palettes"), 255);
     }
 
 }
@@ -394,18 +386,18 @@ void GameManager::netMessageViewControl(const NetMessage* message)
     const SystemViewControl *view_control
         = (const SystemViewControl*) message;
 
-    if ( view_control->action_flags & _view_control_flag_close_all ) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GameView", true);
-    }
-
-    if ( view_control->action_flags & _view_control_flag_visible_on ) {
-        Desktop::setVisibility( view_control->view_name, true );
-    }
-
-    if ( view_control->action_flags & _view_control_flag_visible_off ) {
-        Desktop::setVisibility( view_control->view_name, false );
-    }
+//    if ( view_control->action_flags & _view_control_flag_close_all ) {
+//        Desktop::setVisibilityAllWindows(false);
+//        Desktop::setVisibility("GameView", true);
+//    }
+//
+//    if ( view_control->action_flags & _view_control_flag_visible_on ) {
+//        Desktop::setVisibility( view_control->view_name, true );
+//    }
+//
+//    if ( view_control->action_flags & _view_control_flag_visible_off ) {
+//        Desktop::setVisibility( view_control->view_name, false );
+//    }
 }
 
 // ******************************************************************
