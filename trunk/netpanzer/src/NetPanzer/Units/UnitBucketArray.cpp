@@ -32,13 +32,13 @@ UnitBucketArray::~UnitBucketArray( )
 }
 
 void
-UnitBucketArray::initialize( iXY map_size, iXY tile_size )
+UnitBucketArray::initialize( const iXY& map_size, const iXY& tile_size )
 {
     initialize( map_size, tile_size, 10, 10 );
 }
 
 void
-UnitBucketArray::initialize( iXY map_size, iXY tile_size,
+UnitBucketArray::initialize( const iXY& map_size, const iXY& tile_size,
         long x_super_sample, long y_super_sample )
 {
     unsigned long rows, columns;
@@ -278,7 +278,7 @@ UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
 }
 
 bool
-UnitBucketArray::deleteUnitBucketPointer(UnitID unit_id, iXY world_loc)
+UnitBucketArray::deleteUnitBucketPointer(UnitID unit_id, const iXY& world_loc)
 {
     long bucket_index;
 

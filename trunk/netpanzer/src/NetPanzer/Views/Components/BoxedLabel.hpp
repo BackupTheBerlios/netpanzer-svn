@@ -32,29 +32,22 @@ public:
         text = t;
         background_color = bgcolor;
         text_color = color;
-        position.x = x;
-        position.y = y;
+        setLocation(x, y);
         setSize(w, 16);
         bordered = hasBorder;
     }
     
     void draw(Surface &dest)
     {
-        iRect r(position.x, position.y, size.x, size.y);
-        dest.FillRoundRect(r, 3, background_color);
+        dest.FillRoundRect(rect, 3, background_color);
         if ( bordered )
         {
-            dest.RoundRect(r, 3, Color::lightGray);
+            dest.RoundRect(rect, 3, Color::lightGray);
         }
-        dest.bltStringCenteredInRect(r, getText().c_str(), text_color);
+        dest.bltStringCenteredInRect(rect, getText().c_str(), text_color);
     }
     
     void render()
-    {
-        // nothing
-    }
-    
-    void actionPerformed(const mMouseEvent &me)
     {
         // nothing
     }

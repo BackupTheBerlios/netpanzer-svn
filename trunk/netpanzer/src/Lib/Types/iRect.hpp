@@ -27,21 +27,28 @@ private:
     iXY size;
     
 public:
+    friend iRect operator+(const iRect& r, const iXY& xy);
+    
     inline iRect()
     {}
 
-    inline iRect(int x, int y, int width, int height)
+    inline iRect(const int x, const int y, const unsigned width, const unsigned height)
     {
         position.x = x;
         position.y = y;
         size.x = width;
         size.y = height;
     }
-
+    
     inline iRect(const iRect &a)
     {
         position = a.position;
         size = a.size;
+    }
+    
+    inline iRect(const iXY& pos, const iXY& siz) : position(pos), size(siz)
+    {
+        // empty
     }
 
     inline const iXY& getLocation() const { return position; }
@@ -86,11 +93,17 @@ public:
         int s = size.x * size.y;
         return (s < 0) ? 0 : s;
     }
-
+    
     inline bool contains(const iXY &a) const
     {
         return ( a.x >= position.x ) && ( a.x <= (position.x+size.x) )
             && ( a.y >= position.y ) && ( a.y <= (position.y+size.y) );
+    }
+    
+    inline bool contains(const int x, const int y) const
+    {
+        return ( x >= position.x ) && ( x <= (position.x+size.x) )
+            && ( y >= position.y ) && ( y <= (position.y+size.y) );
     }
 
     inline bool operator ==(const iRect &a)
@@ -100,7 +113,7 @@ public:
 
     inline bool operator !=(const iRect &a)
     {
-        return position != a.position || size != a.size;
+        return !(operator==(a));
     }
 
     inline void zero() { position.x = position.y = size.x = size.y = 0; }
@@ -114,5 +127,10 @@ public:
         return false;
     }
 };
+
+inline iRect operator+(const iRect& r, const iXY& xy)
+{
+    return iRect(r.position.x + xy.x, r.position.y + xy.y, r.size.x, r.size.y);
+}
 
 #endif // __iRect_hpp__

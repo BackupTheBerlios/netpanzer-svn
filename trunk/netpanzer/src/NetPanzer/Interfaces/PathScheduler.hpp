@@ -33,7 +33,7 @@ public:
     PathList  path;
     bool   valid;
 
-    inline void set( iXY start, iXY goal, PathList &path )
+    inline void set( const iXY& start, const iXY& goal, PathList &path )
     {
         PathCacheEntry::start = start;
         PathCacheEntry::goal = goal;

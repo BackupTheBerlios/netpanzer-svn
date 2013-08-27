@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LIB_FILESYSTEM_HPP__
 
 #include "Exception.hpp"
-#include "SDL.h"
 #include <stdlib.h>
 #include "physfs/physfs.h"
-#include "Core/CoreTypes.hpp"
+#include <stdint.h>
+#include <string>
 
 namespace filesystem
 {
@@ -71,24 +71,24 @@ class FileSystem;
 class ReadFile : public File
 {
 public:
-    ReadFile(const NPString& name);
+    ReadFile(const std::string& name);
     
     bool isEOF();	
 
     void read(void* buffer, size_t objsize, size_t objcount);
     size_t _read(void* buffer, size_t objsize, size_t objcount);
 
-    Sint8 read8();
+    int8_t read8();
 
-    Sint16 readSLE16();
-    Uint16 readULE16();
-    Sint16 readSBE16();
-    Uint16 readUBE16();
+    int16_t readSLE16();
+    uint16_t readULE16();
+    int16_t readSBE16();
+    uint16_t readUBE16();
 
-    Sint32 readSLE32();
-    Uint32 readULE32();
-    Sint32 readSBE32();
-    Uint32 readUBE32();
+    int32_t readSLE32();
+    uint32_t readULE32();
+    int32_t readSBE32();
+    uint32_t readUBE32();
 
     int64_t readSLE64();
     uint64_t readULE64();
@@ -97,19 +97,8 @@ public:
 
     void readLine(std::string& buffer);
 
-    // Returns the SDL_RWops structure which can be used in several SDL
-    // commands. Note that you have to free this structure with SDL_FreeRWops.
-    // (Most SDL commands also have a freesrc parameter in their calls which you
-    // can simply set to 1)
-    SDL_RWops* getSDLRWOps();
-
     /** for internal use only */
     ReadFile(PHYSFS_file* file);
-
-private:
-    static int RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum);
-    static int RWOps_Seek(SDL_RWops* context, int offset, int whence);
-    static int RWOps_Close(SDL_RWops* context);
 };
 
 //---------------------------------------------------------------------------
@@ -119,17 +108,17 @@ class WriteFile : public File
 public:
     void write(const void* buffer, size_t objsize, size_t objcount);
 
-    void write8(Sint8 val);
+    void write8(int8_t val);
 
-    void writeSLE16(Sint16 val);
-    void writeULE16(Uint16 val);
-    void writeSBE16(Sint16 val);
-    void writeUBE16(Uint16 val);
+    void writeSLE16(int16_t val);
+    void writeULE16(uint16_t val);
+    void writeSBE16(int16_t val);
+    void writeUBE16(uint16_t val);
 
-    void writeSLE32(Sint32 val);
-    void writeULE32(Uint32 val);
-    void writeSBE32(Sint32 val);
-    void writeUBE32(Uint32 val);
+    void writeSLE32(int32_t val);
+    void writeULE32(uint32_t val);
+    void writeSBE32(int32_t val);
+    void writeUBE32(uint32_t val);
 
     void writeSLE64(int64_t val);
     void writeULE64(uint64_t val);

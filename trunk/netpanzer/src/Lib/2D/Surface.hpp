@@ -22,28 +22,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
+#include <stdint.h>
 
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "Util/NoCopy.hpp"
 
-#include "SDL.h"
-
-class ColorTable;
-class Palette;
-typedef Uint8 PIX;
-
-// This must be called before any of the string blitting functions are used.
-void initFont();
+typedef uint8_t PIX;
 
 /////////////////////////////////////////////////////////////////////////////
 // class Surface
 /////////////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------------
-class Surface : public NoCopy
+class Surface
 {
 private:
+    Surface(const Surface&);
+    void operator=(const Surface&);
     static int totalSurfaceCount;  // The number of surfaces alive.
     static int totalByteCount;     // The number of bytes of the surfaces alive.
 
@@ -58,21 +54,25 @@ public:
     
     void create(unsigned int w, unsigned int h);
     void free();
+    void reset();
 
     // Accessor functions.
-    unsigned int getFullWidth()  const { return twidth; }
-    unsigned int getFullHeight() const { return theight; }
-    unsigned int getWidth()  const { return clip_rect.getWidth(); }
-    unsigned int getHeight() const { return clip_rect.getHeight(); }
+    unsigned int getWidth()  const { return twidth; }
+    unsigned int getHeight() const { return theight; }
     unsigned int getPitch()  const { return tpitch; }
     
     iXY     getCenter()     const { return iXY(getWidth()>>1, getHeight()>>1); }
     int     getCenterX()    const { return getWidth()>>1; }
     int     getCenterY()    const { return getHeight()>>1; }
 
-    bool   getDoesExist()   const { return frame0 != 0; }
+    bool   getDoesExist()   const { return mem != 0; }
     PIX   *getMem()         const { return mem; }
-    PIX   *getFrame0()      const { return frame0; }
+
+    PIX *pixPtr(unsigned int x, unsigned int y) const
+    {
+        assert( (y < getHeight()) && (x < getWidth()) );
+        return mem + (y * getPitch()) + x;
+    }
 
     iRect  getRect() const
     {
@@ -91,53 +91,18 @@ public:
         return *pixPtr(x,y);
     }
 
-    void drawRect(iRect bounds, const PIX &color);
-    void fillRect(iRect bounds, const PIX &color);
+    void drawRect(iRect bounds, const PIX color);
+    void fillRect(iRect bounds, const PIX color);
     bool grab(const Surface &s, iRect bounds);
-
-    void resetClip()
-    {
-        clip_rect.setLocation( 0, 0 );
-        clip_rect.setSize( twidth, theight );
-        mem = frame0;
-    }
-
-    void setAbsoluteClip(const iRect& clip)
-    {
-        unsigned x = clip.getLocationX();
-        unsigned y = clip.getLocationY();
-        if ( (x >= getFullWidth()) || (y >= getFullHeight()) )
-        {
-            resetClip();
-            return;
-        }
-
-        clip_rect.setLocation( clip.getLocationX(), clip.getLocationY() );
-        clip_rect.setSize(std::min(clip.getWidth(), twidth - x),
-                          std::min(clip.getHeight(), theight - y) );
-
-        mem = frame0 + (clip_rect.getLocationY() * getPitch()) + clip_rect.getLocationX();
-    }
 
 private:
     friend class ScreenSurface;
     friend class PackedSurface;
-    PIX   *mem;       // Pointer to upperleft most pixel
-    PIX   *frame0;    // Pointer to first frame
-    iRect clip_rect;
+    PIX   *mem;
     unsigned int twidth;
     unsigned int theight;
     unsigned int tpitch;     // Number of bytes from one row to the next.
 
-    void alloc(unsigned int w, unsigned int h);
-
-    PIX *pixPtr(unsigned int x, unsigned int y) const
-    {
-        assert((y * getPitch() + x) < getPitch() * getHeight());
-        return mem + (y * getPitch()) + x;
-    }
-
-    void        reset();
 
 public:
     void blt(Surface &dest, int x, int y) const;
@@ -146,17 +111,20 @@ public:
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect, const PIX table[]);
 
+    void bltAlphaColor(Surface &dest, int x, int y, const PIX color) const;
+    void bltRectAlphaColor(Surface &dest, int x, int y, const iRect& rect, const PIX color) const;
 
-    void drawHLine(int x1, int y,  int size, const PIX &color);
-    void drawVLine(int x,  int y1, int size, const PIX &color);
 
-    void drawLine(int x1, int y1, int x2, int y2, const PIX &color);
+    void drawHLine(int x1, int y,  int size, const PIX color);
+    void drawVLine(int x,  int y1, int size, const PIX color);
 
-    void drawLine(const iXY &a, const iXY &b, const PIX &color)
+    void drawLine(int x1, int y1, int x2, int y2, const PIX color);
+
+    void drawLine(const iXY &a, const iXY &b, const PIX color)
     {
         drawLine(a.x, a.y, b.x, b.y, color);
     }
-
+    
     // Surface Effects.
     void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
     void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor)
@@ -166,28 +134,25 @@ public:
 
     void drawWindowsBorder();
     
-    void fill(const PIX &color);
+    void fill(const PIX color);
     void flipVertical();
     void copy(const Surface &source);
 
     PIX getAverageColor();
 
-    // Text rendering functions
-    void renderText(const char *str, PIX color, PIX bgcolor);
-    
     // Blit a single character of text.
-    void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
-    void bltString(int x, int y, const char * str, const PIX& color);
-    void bltStringLen(int x, int y, const char * str, int len, const PIX& color);
+    void bltChar8x8(int x, int y, unsigned char character, const PIX color);
+    void bltString(int x, int y, const char * str, const PIX color);
+    void bltStringLen(int x, int y, const char * str, int len, const PIX color);
 
     // Blit a shadowed string of text.
-    void bltStringShadowed(int x, int y, const char *str, const PIX &textColor, const PIX &shadowColor);
+    void bltStringShadowed(int x, int y, const char *str, const PIX textColor, const PIX shadowColor);
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
     void bltStringCenter(const char *string, PIX color);
 
     void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
-    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
+    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color);
 
     void loadBMP(const char *fileName, bool needAlloc = true);
 
@@ -213,13 +178,13 @@ public:
     void BltRoundRect(iRect rect, int radius, const PIX table[]);
     void bltHLine(int x1, int y, int x2, const PIX table[]);
         
-    void frameToBuffer(Uint8* dest, size_t dest_len)
+    void frameToBuffer(uint8_t* dest, size_t dest_len)
     {
         size_t frame_len = getPitch()*getHeight();
         memcpy(dest, mem, std::min(frame_len, dest_len));
     }
 
-    void bufferToFrame(const Uint8* src, const size_t src_len)
+    void bufferToFrame(const uint8_t* src, const size_t src_len)
     {
         size_t frame_len = getPitch()*getHeight();
         memcpy(mem, src, std::min(frame_len, src_len));

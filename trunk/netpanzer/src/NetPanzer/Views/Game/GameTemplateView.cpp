@@ -58,13 +58,6 @@ void GameTemplateView::doActivate()
 void GameTemplateView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
-
-//    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
-//        Desktop::setFocusView(this);
-//
-//        COMMAND_PROCESSOR.closeSelectionBox();
-//    }
-
 } // end GameTemplateView::mouseMove
 
 // doDeactivate

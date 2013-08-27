@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "BresenhamLine.hpp"
 
-void BresenhamLine::set_path( iXY &start, iXY &end )
+void BresenhamLine::set_path( const iXY &start, const iXY &end )
 {
 
     finished = 0;

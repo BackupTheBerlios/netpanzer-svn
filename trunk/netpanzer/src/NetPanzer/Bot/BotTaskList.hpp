@@ -19,10 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define BOTTASKSLIST_H
 
 class BotTask;
+class UnitBase;
 
-#include "Units/UnitBase.hpp"
-
+#include "Core/CoreTypes.hpp"
 #include <map>
+
 typedef std::map<UnitID, BotTask*> bottasks_t;
 
 class BotTaskList {

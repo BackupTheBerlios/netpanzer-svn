@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 
-#include "SDL.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -218,11 +217,7 @@ BotPlayer::unitOccupyOupost(UnitBase *unit)
         // XXX hack, const occupation_pad_offset
         static const iXY occupation_pad_offset(224, 48);
 
-        iXY map_loc;
-        MapInterface::pointXYtoMapXY(
-                outpost->location + occupation_pad_offset,
-                map_loc);
-        moveUnit(unit, map_loc);
+        moveUnit(unit, MapInterface::pointToMap(outpost->location + occupation_pad_offset));
     }
 }
 //-----------------------------------------------------------------

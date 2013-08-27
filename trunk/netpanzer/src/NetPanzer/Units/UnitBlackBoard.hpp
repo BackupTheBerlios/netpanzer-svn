@@ -29,12 +29,12 @@ protected:
     
     static BitArray unit_loc_map;
 
-    static inline void markUnitLoc( iXY &unit_map_loc )
+    static inline void markUnitLoc( const iXY& unit_map_loc )
     {
         unit_loc_map.setBit( unit_map_loc.x, unit_map_loc.y );
     }
 
-    static inline void unmarkUnitLoc( iXY &unit_map_loc )
+    static inline void unmarkUnitLoc( const iXY& unit_map_loc )
     {
         unit_loc_map.clearBit( unit_map_loc.x, unit_map_loc.y );
     }
@@ -46,7 +46,7 @@ public:
 
     static void updateUnitLocs( void );
 
-    static inline bool unitOccupiesLoc( iXY &unit_map_loc )
+    static inline bool unitOccupiesLoc( const iXY& unit_map_loc )
     {
         return( unit_loc_map.getBit( unit_map_loc.x, unit_map_loc.y ) );
     }

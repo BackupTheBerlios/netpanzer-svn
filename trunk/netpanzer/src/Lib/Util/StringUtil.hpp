@@ -18,18 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __STRINGUTIL_HPP__
 #define __STRINGUTIL_HPP__
 
-#include "Core/CoreTypes.hpp"
 #include "string.h"
+#include <string>
 #include <vector>
 
 namespace StringUtil
 {
-    inline NPString trim(const NPString& str)
+    inline std::string trim(const std::string& str)
     {
-        NPString::size_type start = str.find_first_not_of(" \t\n\r");
-        NPString::size_type end = str.find_last_not_of(" \t\n\r");
+        std::string::size_type start = str.find_first_not_of(" \t\n\r");
+        std::string::size_type end = str.find_last_not_of(" \t\n\r");
 
-        return NPString(str, start, end-start+1);
+        return std::string(str, start, end-start+1);
     }
     
     struct cstr_sorter : public std::binary_function<const char*, const char*, bool>
@@ -41,7 +41,7 @@ namespace StringUtil
     };
 }
 
-void string_to_params( const NPString& str, std::vector<NPString>& parameters );
+void string_to_params( const std::string& str, std::vector<std::string>& parameters );
 
 #endif
 

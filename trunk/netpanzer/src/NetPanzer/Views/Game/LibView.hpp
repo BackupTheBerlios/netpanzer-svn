@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/CheckBox.hpp"
+#include "2D/Components/CheckBox.hpp"
 
 extern bool gDrawGameTiles;
 extern bool gDrawUnitTips;

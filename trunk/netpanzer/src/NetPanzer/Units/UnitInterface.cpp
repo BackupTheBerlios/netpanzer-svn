@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/Vehicle.hpp"
 
 #include "Types/iXY.hpp"
+#include "Types/iXY.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -67,7 +68,7 @@ unsigned long   UnitInterface::sync_units_total_units;
 unsigned long   UnitInterface::sync_units_in_sync_count;
 unsigned long   UnitInterface::sync_units_in_sync_partial_count;
 size_t          UnitInterface::units_per_player;
-Timer		UnitInterface::sync_units_packet_timer;
+Timer		    UnitInterface::sync_units_packet_timer;
 
 
 // ******************************************************************
@@ -535,9 +536,9 @@ bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr, iRect &boundi
 
     bucket_rect = unit_bucket_array.worldRectToBucketRect( bounding_rect );
 
-    for ( long row_index = bucket_rect.getLocationY(); row_index <= bucket_rect.getHeight(); row_index++ )
+    for ( long row_index = bucket_rect.getLocationY(); row_index <= int(bucket_rect.getHeight()); row_index++ )
     {
-        for ( long column_index = bucket_rect.getLocationX(); column_index <= bucket_rect.getWidth(); column_index++ )
+        for ( long column_index = bucket_rect.getLocationX(); column_index <= int(bucket_rect.getWidth()); column_index++ )
         {
             bucket_list = unit_bucket_array.getBucket( row_index, column_index );
 

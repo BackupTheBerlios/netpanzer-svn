@@ -37,15 +37,10 @@ protected:
     iXY current_loc;
     iXY ini_loc;
 
-    bool verifyLocation( iXY &loc );
-
-protected:
-    //long level;
-    //long direction;
-    //iXY ini_loc;
+    bool verifyLocation( const iXY& loc );
 
 public:
-    void reset( iXY ini_map_loc );
+    void reset( const iXY& ini_map_loc );
 
     bool getNextEmptyLoc( iXY *loc );
 

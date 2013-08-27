@@ -34,13 +34,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static iRect mainTextRect(0, 0, 612, 270);
 static iRect mainNewsRect(0, 270, 612, 70);
 
-void MainMenuView::setNews(const std::string &news)
-{
-    MainMenuView * mmv = 0; //(MainMenuView*)Desktop::getView("MainView");
-    mmv->news_text->Clear();
-    mmv->news_text->Add(_("NetPanzer news:"));
-    mmv->news_text->AddBlock(news);
-}
+//void MainMenuView::setNews(const std::string &news)
+//{
+//    MainMenuView * mmv = 0; //(MainMenuView*)Desktop::getView("MainView");
+//    mmv->news_text->Clear();
+//    mmv->news_text->Add(_("NetPanzer news:"));
+//    mmv->news_text->AddBlock(news);
+//}
 
 //static Surface xxx;
 

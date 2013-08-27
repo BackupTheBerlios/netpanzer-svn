@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/MapFile.hpp"
 #include "Classes/SpawnList.hpp"
 
+#include "Types/iXY.hpp"
+
 class MapEventListener
 {
 public:
@@ -119,6 +121,11 @@ public:
     static int pointXtoMapX(const int x) { return x/TILE_WIDTH; }
     static int pointYtoMapY(const int y) { return y/TILE_HEIGHT; }
 
+    static inline iXY pointToMap(const iXY& p)
+    {
+        return iXY( p.x/TILE_WIDTH, p.y/TILE_HEIGHT );
+    }
+    
     static void pointXYtoMapXY(const iXY& point, iXY& map_loc)
     {
         map_loc.x = pointXtoMapX(point.x);

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PrepareTeam.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 #include "Views/Theme.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/PlayerInterface.hpp"

@@ -29,19 +29,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define MAX_CHAT_LINES (2000)
 
-tStringListBox::tStringListBox(iRect rect)
+tStringListBox::tStringListBox(iRect rrect)
 {
     VScrollBar = 0;
     HScrollBar = 0;
-    setLocation(rect.getLocation());
-    setSize(rect.getWidth(), rect.getHeight());
+    setLocation(rrect.getLocation());
+    setSize(rrect.getSize());
     background_color = ctWindowsbackground;
     StartItem = List.end();
     StartSubLine = 0;
     StartWidth = 0;
     TotalLines = 0;
     TotalPosition = 0;
-    MaxItemWidth = size.x;
+    MaxItemWidth = rect.getWidth();
     SelectedItem = List.end();
     AutoScroll = false;
     AutoWrap = false;
@@ -49,6 +49,17 @@ tStringListBox::tStringListBox(iRect rect)
     Bordered = true;
     dirty = true;
     hasHeader = false;
+}
+
+void tStringListBox::draw(Surface& dest)
+{
+    if ( dirty )
+    {
+        render();
+        dirty = false;
+    }
+    
+    surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
 }
 
 void tStringListBox::Clear()
@@ -60,7 +71,7 @@ void tStringListBox::Clear()
     StartSubLine = 0;
     TotalLines = 0;
     TotalPosition = 0;
-    MaxItemWidth = size.x;
+    MaxItemWidth = rect.getWidth();
 
     if (VScrollBar)
     {
@@ -85,7 +96,7 @@ void tStringListBox::actionPerformed(const mMouseEvent &me)
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
         (me.getModifiers() & InputEvent::BUTTON1_MASK)) 
     {
-        int contents_start = position.y + 4;
+        int contents_start = rect.getLocationY() + 4;
         if ( hasHeader )
         {
             contents_start += ItemHeight;
@@ -138,7 +149,7 @@ void tStringListBox::AddBlock(const std::string& S)
 
 void tStringListBox::AddData(const std::string& S, void * D)
 {
-    int DisplaySize = size.x - 6;
+    int DisplaySize = rect.getWidth() - 6;
     
     DataItem data;
     data.text = S;
@@ -192,7 +203,7 @@ void tStringListBox::AddData(const std::string& S, void * D)
     
     if (HScrollBar)
     {
-        HScrollBar->setMax(MaxItemWidth-size.x);
+        HScrollBar->setMax(MaxItemWidth-rect.getWidth());
     }
     
     if (AutoScroll && VScrollBar) 
@@ -242,7 +253,7 @@ void tStringListBox::render()
     int maxw = 0;
     if ( AutoWrap )
     {
-        maxw = size.x - 6;
+        maxw = rect.getWidth() - 6;
     }
     else
     {
@@ -250,11 +261,11 @@ void tStringListBox::render()
     }
     
     Surface RowPaint(maxw, ItemHeight);
-    Surface Bitmap(size.x-6, ItemHeight);
+    Surface Bitmap(rect.getWidth()-6, ItemHeight);
     
     if ( hasHeader )
     {
-        Surface hh(size.x - 2, ItemHeight);
+        Surface hh(rect.getWidth() - 2, ItemHeight);
         paintHeader(hh);
         hh.blt(surface, 1, 1); // full blit
         row += ItemHeight;
@@ -262,7 +273,7 @@ void tStringListBox::render()
     
     std::list<DataItem>::iterator item = StartItem;
     int subline_num = StartSubLine;
-    int max_size_y = size.y - ItemHeight;
+    int max_size_y = rect.getHeight() - ItemHeight;
     
     while ( (row < max_size_y) && (item != List.end()) )
     {
@@ -274,7 +285,7 @@ void tStringListBox::render()
         
         onPaint(RowPaint, *item, subline_num);
         
-        iRect r(StartWidth, 0, StartWidth+(size.x-6), ItemHeight);
+        iRect r(StartWidth, 0, StartWidth+(rect.getWidth()-6), ItemHeight);
         Bitmap.grab(RowPaint, r);
         Bitmap.blt(surface, 3, row); // full blit
         
@@ -304,8 +315,8 @@ void tStringListBox::setVscrollBar(tVScrollBar *newVScrollBar)
     VScrollBar = newVScrollBar;
     if (VScrollBar)
     {
-        VScrollBar->setLocation(position.x+size.x, position.y);
-        VScrollBar->setHeight(size.y);
+        VScrollBar->setLocation(rect.getLocationX()+rect.getWidth(), rect.getLocationY());
+        VScrollBar->setHeight(rect.getHeight());
         VScrollBar->setStateChangedCallback(this);
         VScrollBar->setMax(List.size()-getNumVisibleLines());
     }
@@ -316,11 +327,11 @@ void tStringListBox::setHscrollBar(tHScrollBar *newHScrollBar)
     HScrollBar = newHScrollBar;
     if (HScrollBar)
     {
-        HScrollBar->setLocation(position.x, position.y+size.y);
-        HScrollBar->setWidth(size.x);
+        HScrollBar->setLocation(rect.getLocationX(), rect.getLocationY()+rect.getHeight());
+        HScrollBar->setWidth(rect.getWidth());
         HScrollBar->setStateChangedCallback(this);
         HScrollBar->setSmallChange(3);
-        HScrollBar->setMax(MaxItemWidth-size.x);
+        HScrollBar->setMax(MaxItemWidth-rect.getWidth());
     }
 }
 
@@ -366,15 +377,14 @@ void tStringListBox::stateChanged(Component* source)
 
 void tStringListBox::setLocation(int x, int y)
 {
-    position.x = x;
-    position.y = y;
+    Component::setLocation(x, y);
     if (VScrollBar)
     {
-        VScrollBar->setLocation(position.x+size.x, position.y);
+        VScrollBar->setLocation(rect.getEndX() + 1, rect.getLocationY());
     }
     if (HScrollBar)
     {
-        HScrollBar->setLocation(position.x, position.y+size.y);
+        HScrollBar->setLocation(rect.getLocationX(), rect.getEndY() + 1);
     }
 }
 
@@ -387,7 +397,7 @@ void tStringListBox::setAutoWrap(bool autowrap)
         if ( autowrap )
         {
             int NumLines = 0;
-            int DisplaySize = size.x - 6;
+            int DisplaySize = rect.getWidth() - 6;
             int c;
             
             std::list<DataItem>::iterator i = List.begin();

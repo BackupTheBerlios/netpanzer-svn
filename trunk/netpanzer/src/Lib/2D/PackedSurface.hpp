@@ -23,16 +23,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
-#include "Util/NoCopy.hpp"
-#include "ColorTable.hpp"
 #include "ArrayUtil/PtrArray.hpp"
+
+#include <assert.h>
 
 class Surface;
 class PackedSurface;
 
 //--------------------------------------------------------------------------
-class PackedSurface : public NoCopy
+class PackedSurface
 {
+private:
+    PackedSurface(const PackedSurface&);
+    void operator=(const PackedSurface&);
+
 public:
     static int totalDrawCount;     // The number of bytes of the surfaces alive.
 
@@ -44,7 +48,7 @@ public:
         blt(dest, pos.x, pos.y);
     }
 
-    void bltBlend(Surface &dest, int x, int y, ColorTable &colorTable) const;
+    void bltBlend(Surface &dest, int x, int y, const uint8_t * blendTable) const;
 
     void free();
 

@@ -49,7 +49,7 @@ void Weapon::init()
     gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
 }
 
-Weapon::Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
+Weapon::Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, const iXY &start, const iXY &end)
 {
     // I use this to line things up, so leave this in here when this
     // get redone.  thank you.

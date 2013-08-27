@@ -73,12 +73,12 @@ void ConsoleInterface::initialize( long size )
     stdout_pipe = false;
 }
 
-void ConsoleInterface::setToSurfaceSize( iXY pix )
+void ConsoleInterface::setToSurfaceSize( const iXY& size )
 {
-    surface_size = pix;
+    surface_size = size;
 
     bounds.setLocation(5, 5);
-    bounds.setSize(pix - iXY(5, 5));
+    bounds.setSize(size - iXY(5, 5));
 
     int CHAR_XPIX = 8; // XXX hardcoded
     max_char_per_line = bounds.getWidth() / CHAR_XPIX;

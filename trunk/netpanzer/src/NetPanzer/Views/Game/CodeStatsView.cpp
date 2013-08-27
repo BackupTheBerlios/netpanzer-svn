@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkInterface.hpp"
 #include "Actions/Action.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,
@@ -67,7 +67,7 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
     setAllowMove(true);
 
-    moveTo(iXY(0, 0));
+    moveTo(0, 0);
 
     iXY  area_size = iXY(280, 280) ;
     long bXOffset;
@@ -76,16 +76,16 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     resizeClientArea(area_size);
 
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton("Net",    iXY(0, INFO_AREA_Y_OFFSET),              bXOffset-3,    new SetDisplayModeAction(_display_mode_network_stats)));
-    add( Button::createTextButton("Sprite", iXY(bXOffset+1, INFO_AREA_Y_OFFSET),     bXOffset-4,    new SetDisplayModeAction(_display_mode_sorter_stats)));
-    add( Button::createTextButton("Unit",   iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new SetDisplayModeAction(_display_mode_unit_stats)));
+//    add( Button::createTextButton("Net",    iXY(0, INFO_AREA_Y_OFFSET),              bXOffset-3,    new SetDisplayModeAction(_display_mode_network_stats)));
+//    add( Button::createTextButton("Sprite", iXY(bXOffset+1, INFO_AREA_Y_OFFSET),     bXOffset-4,    new SetDisplayModeAction(_display_mode_sorter_stats)));
+//    add( Button::createTextButton("Unit",   iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new SetDisplayModeAction(_display_mode_unit_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
-    add( Button::createTextButton("Path",   iXY(0, INFO_AREA_Y_OFFSET),              area_size.x-2, new SetDisplayModeAction(_display_mode_pathing_stats)));
+//    add( Button::createTextButton("Path",   iXY(0, INFO_AREA_Y_OFFSET),              area_size.x-2, new SetDisplayModeAction(_display_mode_pathing_stats)));
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton("NetLog", iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new UpdateNetworkStatsAction()));
+//    add( Button::createTextButton("NetLog", iXY((bXOffset*2)+1, INFO_AREA_Y_OFFSET), bXOffset-2,    new UpdateNetworkStatsAction()));
 
     INFO_AREA_Y_OFFSET += 18;
 

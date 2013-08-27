@@ -27,8 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Math.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "2D/Palette.hpp"
 
-ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
+ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, const iXY &start, const iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
 {
     velocity = gShellVelocity;
@@ -50,7 +51,7 @@ ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned sh
 
     shell.setDrawModeSolid();
 
-    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setDrawModeBlend(Palette::blendDarkenALittle());
     shellShadow.setData(gShellPackedSurface);
     shellShadow.setFrame(getGoalAngle(start, end));
     shellShadow.setSpriteHeight(weaponShadowLayer);

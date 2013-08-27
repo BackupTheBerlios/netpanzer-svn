@@ -182,7 +182,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
 #ifdef WIN32
 // some times used for debug
-#if 0
+#if 1
         AllocConsole();
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
@@ -286,7 +286,6 @@ int netpanzer_main(int argc, char** argv)
     network::NetworkManager::initialize();
     
     ActionManager::initialize();
-    
     BaseGameManager *manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");

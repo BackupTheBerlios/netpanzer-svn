@@ -28,8 +28,7 @@ class InfoBar : public Component
 public:
     InfoBar(int x, int y)
     {
-        position.x = x;
-        position.y = y;
+        rect.setLocation(x, y);
     }
     
     void draw(Surface &dest);

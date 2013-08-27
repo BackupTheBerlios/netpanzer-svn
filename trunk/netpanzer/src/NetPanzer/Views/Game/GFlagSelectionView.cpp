@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/GameViewGlobals.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "Views/Components/Button.hpp"
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Button.hpp"
+#include "2D/Components/Label.hpp"
 
 #include "2D/Palette.hpp"
 #include "Network/PlayerRequests/ChangeFlagRequest.hpp"
@@ -97,7 +97,7 @@ void GFlagSelectionView::init()
 
     int tx = rect.getLocationX() + 20;
     int ty = rect.getLocationY() + 14 + (FLAG_HEIGHT - Surface::getFontHeight()) / 2;
-    add( new Label(tx, ty, "Current:", windowTextColor, windowTextColorShadow, true) );
+    add( new Label(tx, ty, "Current:", windowTextColor) );
 
     loc_player_flag.x = tx + Surface::getTextLength("Current:") + BORDER_SPACE;
     loc_player_flag.y = rect.getLocationY() + 14;
@@ -106,7 +106,7 @@ void GFlagSelectionView::init()
 
     int yOffset = FLAG_HEIGHT + 8;
 
-    int x = flagStartOffset.x;
+    unsigned x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
     PtrArray<Surface> game_flags;
@@ -119,7 +119,7 @@ void GFlagSelectionView::init()
 
         x += FLAG_WIDTH + 8;
 
-        if (x > flagStartOffset.x + rect.getWidth() - 20 - FLAG_WIDTH)
+        if ( x > flagStartOffset.x + rect.getWidth() - 20 - FLAG_WIDTH)
         {
             x = flagStartOffset.x;
             y += yOffset;
@@ -130,7 +130,7 @@ void GFlagSelectionView::init()
 
 void GFlagSelectionView::doDraw( Surface& dest )
 {
-    dest.BltRoundRect(rect, 14, Palette::darkGray256.getColorArray());
+    dest.BltRoundRect(rect, 14, Palette::filterDarkGray());
     dest.RoundRect(rect,14, Color::gray);
 
     ResourceManager::getFlag(PlayerInterface::getLocalPlayerIndex())->blt(dest, loc_player_flag.x, loc_player_flag.y); // full blit

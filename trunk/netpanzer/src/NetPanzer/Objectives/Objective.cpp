@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 
-Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
+Objective::Objective(ObjectiveID id, const iXY& location, BoundBox area)
 {
     this->id = id;
     this->location = location;
@@ -44,8 +44,10 @@ Objective::Objective(ObjectiveID id, iXY location, BoundBox area)
     MapInterface::pointXYtoMapXY( location, outpost_map_loc );
     selection_box.setLocation(location + iXY( -224, -128 ));
     selection_box.setSize( 288, 160 );
-    this->area.min = iXY( -400, -144 );
-    this->area.max = iXY(  304,  240 );
+    this->area.setLocation( -400, -144 );
+    this->area.setSize(704, 384);
+//    this->area.min = iXY( -400, -144 );
+//    this->area.max = iXY(  304,  240 );
     outpost_type = 0;
 
     unit_generation_type = 0;
@@ -157,13 +159,11 @@ Objective::checkOccupationStatus()
 
         if ( GameConfig::game_base_capture_mode == 1 )
         {
-            iXY occupation_pad_loc(location);
-            occupation_pad_loc += occupation_pad_offset;
-            bounding_area = capture_area.getAbsRect( occupation_pad_loc );
+            bounding_area = capture_area.getAbsRect( location + occupation_pad_offset );
         }
         else if ( GameConfig::game_base_capture_mode == 2 )
         {
-            bounding_area = area.getAbsRect(location);
+            bounding_area = area + location;
         }
 
         PlayerState *player = UnitInterface::querySinglePlayerInArea(bounding_area);

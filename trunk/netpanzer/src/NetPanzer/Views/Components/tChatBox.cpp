@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 
+#include "2D/Color.hpp"
+
 int tChatBox::getMaxItemWidth(const DataItem& data)
 {
     return Surface::getTextLength(data.text)+34;

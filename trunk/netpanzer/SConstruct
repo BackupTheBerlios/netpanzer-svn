@@ -82,7 +82,11 @@ vars.AddVariables(
     EnumVariable('with_stackprotector', 'Enable gcc stack protector (requires glibc 2.7)', 'no', allowed_values=('no', 'yes')),
 )
 
-env = Environment(ENV = os.environ, variables = vars)
+
+if sys.platform == 'win32':
+    env = Environment(tools = ['mingw'], ENV = os.environ, variables = vars)
+else:
+    env = Environment(ENV = os.environ, variables = vars)
 
 Help(vars.GenerateHelpText(env))
 
@@ -195,7 +199,8 @@ if env['with_lua'] == 'internal':
 if env['with_physfs'] == 'internal':
     physfsenv = env.Clone()
     
-networkenv = env.Clone()    
+networkenv = env.Clone()
+freetypeenv = env.Clone()
 
 ################################################################
 # Configure Environments
@@ -208,6 +213,8 @@ if env['with_physfs'] == 'internal':
 
 if env['with_lua'] == 'internal':
     env.Append( CPPPATH = [ 'src/Lib/lua/etc', 'src/Lib/lua/src' ] )
+
+eto = env.Clone();
 
 # for this platform
 if thisplatform == 'darwin':
@@ -245,6 +252,8 @@ else:
     # SDL_mixer when using mingw crosscompilation
     env.Append( LIBS = ['SDL_mixer' ] )
 
+fdg = env.Clone();
+
 ################################################################
 # Makes libs
 ################################################################
@@ -272,12 +281,19 @@ if env['with_physfs'] == 'internal':
     physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
     MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
+# BUILDS FREETYPE
+
+env.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
+env.StaticLibrary( libpath + 'npfreetype', [ 'src/Lib/freetype/ftsystem.c', 'src/Lib/freetype/ftinit.c', 'src/Lib/freetype/ftdebug.c','src/Lib/freetype/ftbase.c','src/Lib/freetype/truetype.c','src/Lib/freetype/raster.c','src/Lib/freetype/smooth.c','src/Lib/freetype/sfnt.c'] )
+
+
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
-MakeStaticLib(env, 'np2d', '2D', '*.c*')
+env.Append( CPPPATH = ['src/Lib/freetype/include'] )
+MakeStaticLib(env, 'np2d', '2D 2D/Components', '*.cpp')
 
 # BUILDS REST OF LIBRARIES
-MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm','*.cpp')
+MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm GameInput','*.cpp')
 
 ################################################################
 # NetPanzer source dirs
@@ -285,6 +301,7 @@ MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm','*.cpp')
 
 npdirs = """
     Actions Bot Classes Classes/AI Classes/Network Core Interfaces Network
+    Scenes Scenes/Common Scenes/MainMenu
     Objectives Particles PowerUps Resources Scripts System Units Weapons
     Views Views/Components Views/Game Views/MainMenu Views/MainMenu/Multi
     Views/MainMenu/Multi/MasterServer Views/MainMenu/Options
@@ -302,6 +319,7 @@ else:
     wanted_libs.append(env['with_lua'])
     
 wanted_libs.append('npnetwork');
+wanted_libs.append('npfreetype');
 wanted_libs.append('nplibs');
 
 if env['with_physfs'] == 'internal':
@@ -319,5 +337,17 @@ Alias('pak2bmp',pak2bmp)
 
 bmp2pak = env.Program( binpath+'bmp2pak'+exeappend, 'support/tools/bmp2pak.cpp')
 Alias('bmp2pak',bmp2pak)
+
+eto.Prepend( LIBS = ['npphysfs'] )
+eto.Prepend( LIBPATH = libpath )
+colorgen = eto.Program( binpath+'colorgen'+exeappend, 'support/tools/colorgen.cpp')
+Alias('colorgen',colorgen)
+
+fdg.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
+fdg.Append( CXXFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
+fdg.Prepend( LIBS = ['np2d', 'nplibs', 'npfreetype', 'npphysfs'] )
+fdg.Prepend( LIBPATH = libpath )
+fontdatagen = fdg.Program( binpath+'fontdatagen'+exeappend, 'support/tools/fontdatagen.cpp')
+Alias('fontdatagen',fontdatagen)
 
 Default(netpanzer)

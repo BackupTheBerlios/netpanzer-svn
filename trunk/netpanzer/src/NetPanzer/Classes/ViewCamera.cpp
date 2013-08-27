@@ -50,7 +50,7 @@ void ViewCamera::scrollPlusX( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.x >= 0) && (view.x <= map_size.x) )
+    if ( (view.x >= 0) && (view.x <= int(map_size.x)) )
     {
         loc.x = view.x;
     }
@@ -66,7 +66,7 @@ void ViewCamera::scrollMinusX( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.x >= 0) && (view.x <= map_size.x) )
+    if ( (view.x >= 0) && (view.x <= int(map_size.x)) )
     {
         loc.x = view.x;
     }
@@ -82,7 +82,7 @@ void ViewCamera::scrollMinusY( long scroll_increment )
 
     getMapPointSize( &map_size );
 
-    if ( (view.y >= 0) && (view.y <= map_size.y) )
+    if ( (view.y >= 0) && (view.y <= int(map_size.y)) )
     {
         loc.y = view.y;
     }
@@ -98,7 +98,7 @@ void ViewCamera::scrollPlusY( long scroll_increment )
 
     getMapPointSize( &map_size );
     
-    if ( (view.y >= 0) && (view.y <= map_size.y) )
+    if ( (view.y >= 0) && (view.y <= int(map_size.y)) )
     {
         loc.y = view.y;
     }

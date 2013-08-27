@@ -30,9 +30,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 #include "Actions/Action.hpp"
-#include "Views/Components/Button.hpp"
-#include "Views/Components/Separator.hpp"
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Button.hpp"
+#include "2D/Components/Separator.hpp"
+#include "2D/Components/Label.hpp"
 
 #include "Resources/ResourceManager.hpp"
 
@@ -71,24 +71,20 @@ private:
 public:
     MapThumbnailComponent(int x, int y, int w, int h)
     {
-        position.x = x;
-        position.y = y;
-        size.x = w;
-        size.y = h;
+        setLocation(x, y);
+        setSize(w, h);
         mapimage.create(w - 2, h - 2);
     }
     
     void draw(Surface &dest)
     {
-        iRect r;
-        getBounds(r);
-        dest.drawRect(r, Color::lightGray);
-        mapimage.blt(dest, position.x+1, position.y+1); // full blit
+        dest.drawRect(rect, Color::lightGray);
+        mapimage.blt(dest, rect.getLocationX()+1, rect.getLocationY()+1); // full blit
     }
     
     void setImage(const Surface& from)
     {
-        iRect r(0,0, size.x-2, size.y-2);
+        iRect r(0,0, rect.getWidth()-2, rect.getHeight()-2);
         mapimage.bltScale(from, r);
     }
     
@@ -135,12 +131,12 @@ void MapSelectionView::init()
 
     iXY pos(MAP_SIZE + BORDER_SPACE * 2, getHeight() - 22 - BORDER_SPACE);
 
-    Button * b = Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, -1));
+    Button * b;// = Button::createTextButton( "<", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, -1));
     b->setSize(arrowButtonWidth-1, 20);
     add( b );
     
     pos.x += arrowButtonWidth + 2;
-    b = Button::createTextButton( ">", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, 1));
+//    b = Button::createTextButton( ">", pos, arrowButtonWidth - 1, new ChangeSelectedMapAction(this, 1));
     b->setSize(arrowButtonWidth-1, 20);
     add( b );
 
@@ -149,11 +145,11 @@ void MapSelectionView::init()
     
     const int lx = MAP_SIZE + BORDER_SPACE * 2;
     int ly = BORDER_SPACE + 16;
-    name_label = new Label(lx, ly, "", windowTextColor, windowTextColorShadow);
+    name_label = new Label(lx, ly, "", windowTextColor);
     ly += 15;
-    size_label = new Label(lx, ly, "", windowTextColor, windowTextColorShadow);
+    size_label = new Label(lx, ly, "", windowTextColor);
     ly += 15;
-    objectives_label = new Label(lx, ly, "", windowTextColor, windowTextColorShadow);
+    objectives_label = new Label(lx, ly, "", windowTextColor);
 
     add(name_label);
     add(size_label);

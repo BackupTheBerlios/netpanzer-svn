@@ -49,7 +49,7 @@ EndRoundView::EndRoundView() : GameTemplateView()
 
     int x = (screen->getWidth() / 2) - 250;
     int y = (screen->getHeight() / 2) - 250;
-    moveTo(iXY(x, y));
+    moveTo(x, y);
     resize(iXY(500, 500));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
@@ -75,10 +75,10 @@ EndRoundView::EndRoundView() : GameTemplateView()
 void EndRoundView::doDraw( Surface& dest )
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    dest.BltRoundRect(RectWinner, 14, Palette::green256.getColorArray());
+    dest.BltRoundRect(RectWinner, 14, Palette::filterGreen());
     dest.RoundRect(RectWinner,14, ctWindowsBorder);
 
-    dest.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
+    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
     dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
     if (GameConfig::game_teammode) drawTeamStats(dest, flagHeight);
@@ -218,9 +218,9 @@ public:
 
 static void DrawPanelUser(iRect rect, Surface& dest, const PlayerState* state)
 {
-    char statBuf[256];
-    int x = rect.getLocationX()+5;
-    int y = rect.getLocationY()+5;
+//    char statBuf[256];
+//    int x = rect.getLocationX()+5;
+//    int y = rect.getLocationY()+5;
     
 //    dest.bltString(x, y, state->getName().c_str(), ctTexteOver);
 //    snprintf(statBuf, sizeof(statBuf), "%5i Points", state->getTotal());
@@ -356,5 +356,5 @@ void EndRoundView::onDesktopResized( const iXY& oldResolution, const iXY& newRes
 {
     int x = (newResolution.x / 2) - 250;
     int y = (newResolution.y / 2) - 250;
-    moveTo(iXY(x, y));
+    moveTo(x, y);
 }

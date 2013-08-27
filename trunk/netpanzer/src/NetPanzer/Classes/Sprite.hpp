@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
 
+#include "Types/iXY.hpp"
+
 #define _MAX_HEIGHT_LEVELS 8
 
 class Sprite
@@ -33,14 +35,13 @@ public:
     iXY attach_offset;
 
     unsigned char height;
-    bool       visible;
+    bool          visible;
 
 public:
     Sprite();
-	virtual ~Sprite()
-	{ }
+    virtual ~Sprite() {}
 
-    inline void setWorldPos(const iXY &worldPos )
+    inline void setWorldPos(const iXY& worldPos )
     {
         world_pos = worldPos;
     }
@@ -120,17 +121,9 @@ public:
 class SpritePacked : public PackedSurface, public Sprite
 {
 private:
-    enum DRAW_MODE
-    {
-        BLEND,
-        SOLID
-    };
-
-    ColorTable *colorTable;
-    DRAW_MODE   drawMode;
+    const uint8_t * blendTable;
 
 public:
-
     SpritePacked();
 
     SpritePacked( PackedSurface &source );
@@ -138,15 +131,14 @@ public:
     virtual ~SpritePacked()
     { }
 
-    inline void setDrawModeBlend(ColorTable *colorTable)
+    inline void setDrawModeBlend( const uint8_t * table )
     {
-        SpritePacked::colorTable = colorTable;
-        SpritePacked::drawMode   = BLEND;
+        blendTable = table;
     }
 
     inline void setDrawModeSolid()
     {
-        drawMode = SOLID;
+        blendTable = 0;
     }
 
 

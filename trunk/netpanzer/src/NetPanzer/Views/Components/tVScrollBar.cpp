@@ -63,8 +63,8 @@ tVScrollBar::tVScrollBar(iXY pos, int Height, StateChangedCallback* newcallback)
 void tVScrollBar::actionPerformed(const mMouseEvent &me)
 {
     if ( Max < 1 ) return;
-    iRect rect_button_up(position.x, position.y, position.x+bSize, position.y+bSize);
-    iRect rect_button_Down(position.x, position.y+size.y-bSize, position.x+bSize, position.y+size.y);
+    iRect rect_button_up(rect.getLocationX(), rect.getLocationY(), rect.getLocationX()+bSize, rect.getLocationY()+bSize);
+    iRect rect_button_Down(rect.getLocationX(), rect.getLocationY()+rect.getHeight()-bSize, rect.getLocationX()+bSize, rect.getLocationY()+rect.getHeight());
     
     if (rect_button_up.contains(iXY(me.getX(), me.getY())))
     {
@@ -106,7 +106,7 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
         dirty = true;
     }
 
-    int bar_min = position.y+bSize+RisePos;
+    int bar_min = rect.getLocationY()+bSize+RisePos;
     int bar_max = bar_min + bSize;
     
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
@@ -135,8 +135,8 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
     
     if ( (bRisestate == PRESSED) && (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED) )
     {
-        int scroll_begin = position.y+bSize;
-        int scroll_end = scroll_begin + (size.y - (bSize * 2));
+        int scroll_begin = rect.getLocationY()+bSize;
+        int scroll_end = scroll_begin + (rect.getHeight() - (bSize * 2));
         int mouse_y = me.getY();
         if ( mouse_y < scroll_begin )
         {
@@ -147,8 +147,8 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
             mouse_y = scroll_end;
         }
         
-        int base_y = mouse_y - (position.y+bSize);
-        int total_size = size.y-(bSize * 2);
+        int base_y = mouse_y - (rect.getLocationY()+bSize);
+        int total_size = rect.getHeight()-(bSize * 2);
         
         int new_pos = 0;
         if ( base_y > 0 )
@@ -197,7 +197,7 @@ void tVScrollBar::draw(Surface& dest)
         dirty = false;
     }
     
-    dest.bltTrans(surface, position.x, position.y);
+    dest.bltTrans(surface, rect.getLocationX(), rect.getLocationY());
 }
 
 void tVScrollBar::render()
@@ -219,15 +219,15 @@ void tVScrollBar::render()
 
     if (bDownstate == PRESSED)
     {
-        bDownOver.bltTrans(surface, 1, size.y-(bSize-1)); // blit full
+        bDownOver.bltTrans(surface, 1, rect.getHeight()-(bSize-1)); // blit full
     }
     else if (bDownstate == OVER)
     {
-        bDownOver.bltTrans(surface, 0, size.y-bSize); // blit full
+        bDownOver.bltTrans(surface, 0, rect.getHeight()-bSize); // blit full
     } 
     else
     {
-        bDownNormal.bltTrans(surface, 0, size.y-bSize); // blit full
+        bDownNormal.bltTrans(surface, 0, rect.getHeight()-bSize); // blit full
     }
     
     if ( (bRisestate == OVER) || (bRisestate == PRESSED) )
@@ -252,7 +252,7 @@ void tVScrollBar::setPosition(int newPosition)
     }
     else
     {
-        RisePos = ((Position-Min) * (size.y-(bSize*3))) / R+1; // XXX / R+1 or (R+1) it is different...
+        RisePos = ((Position-Min) * (rect.getHeight()-(bSize*3))) / R+1; // XXX / R+1 or (R+1) it is different...
     }
     dirty = true;
     

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "2D/Surface.hpp"
+#include "2D/Palette.hpp"
 
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -59,7 +60,7 @@ void
 MiniMap::draw(Surface &dest)
 {
     //regenerate();
-    mapimage.blt(dest,position.x, position.y); // full blit
+    mapimage.blt(dest,rect.getLocationX(), rect.getLocationY()); // full blit
     drawObjectives(dest);
     drawUnits(dest);
     drawWorldAndMouseBox(dest);
@@ -78,7 +79,7 @@ MiniMap::actionPerformed(const mMouseEvent &me)
         case mMouseEvent::MOUSE_EVENT_PRESSED:
             if ( me.getModifiers() & InputEvent::BUTTON1_MASK)
             {
-                iXY pos = mousepos+position;
+                iXY pos = mousepos+rect.getLocation();
                 pos.x = int(float(pos.x) * xratio)*32;
                 pos.y = int(float(pos.y) * yratio)*32;
 
@@ -182,10 +183,10 @@ MiniMap::drawObjectives(Surface &dest)
             color = Color::white;
         }
 
-        map_rect = obj->area.getAbsRect( obj->location );
+        map_rect = obj->area + obj->location;
 
         map_rect.scale(1/(xratio*32), 1/(yratio*32));
-        map_rect.translate(position);
+        map_rect.translate(rect.getLocation());
         
         dest.drawRect( map_rect, color);
         
@@ -201,11 +202,11 @@ MiniMap::drawObjectives(Surface &dest)
             //Only draw our unit collection location
             iXY objdest, src;
             MapInterface::mapXYtoPointXY(obj->unit_collection_loc, objdest);
-            objdest.x = int(float(objdest.x/32) / xratio)+position.x;
-            objdest.y = int(float(objdest.y/32) / yratio)+position.y;
+            objdest.x = int(float(objdest.x/32) / xratio)+rect.getLocationX();
+            objdest.y = int(float(objdest.y/32) / yratio)+rect.getLocationY();
             
-            src.x  = int(float(obj->location.x/32) / xratio)+position.x;
-            src.y  = int(float(obj->location.y/32) / yratio)+position.y;
+            src.x  = int(float(obj->location.x/32) / xratio)+rect.getLocationX();
+            src.y  = int(float(obj->location.y/32) / yratio)+rect.getLocationY();
             dest.drawLine(src.x, src.y, objdest.x, objdest.y, color);
         }
     }
@@ -222,8 +223,8 @@ MiniMap::drawUnits(Surface &dest)
         PIX color;
         bool forceLarge = false;
         UnitState& unit_state = unit->unit_state;
-        iXY map_loc = iXY( int(float(unit_state.location.x/32) / xratio)+position.x,
-                           int(float(unit_state.location.y/32) / yratio)+position.y);
+        iXY map_loc = iXY( int(float(unit_state.location.x/32) / xratio)+rect.getLocationX(),
+                                   int(float(unit_state.location.y/32) / yratio)+rect.getLocationY());
 
         if ( unit->player_id == PlayerInterface::getLocalPlayerIndex())
         {
@@ -274,7 +275,7 @@ MiniMap::drawUnits(Surface &dest)
 }
 
 void
-MiniMap::drawUnit(Surface &dest, const iXY loc, PIX color, bool forceLarge)
+MiniMap::drawUnit(Surface &dest, const iXY& loc, PIX color, bool forceLarge)
 {
     dest.putPixel( loc.x  , loc.y  , color );
     if ( gameconfig->radar_unitsize == _mini_map_unit_size_large || forceLarge )
@@ -292,9 +293,9 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
     WorldViewInterface::getViewWindow(&world_win);
 
     world_win.scale(1/(xratio*32), 1/(yratio*32));
-    world_win.translate(position);
+    world_win.translate(rect.getLocation());
     
-    dest.bltLookup(world_win, Palette::darkGray256.getColorArray());
+    dest.bltLookup(world_win, Palette::filterDarkGray());
     dest.drawBoxCorners(world_win, 5, Color::white);
     
     if ( mouseinside )
@@ -306,7 +307,7 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
         {
             world_win.setLocationY(0);
         }
-        else if ( world_win.getEndY() > dest.getHeight() )
+        else if ( world_win.getEndY() > int(dest.getHeight()) )
         {
             world_win.setLocationY(dest.getHeight() - world_win.getHeight());
         }
@@ -315,7 +316,7 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
         {
             world_win.setLocationX(0);
         }
-        else if ( world_win.getEndX() > dest.getWidth() )
+        else if ( world_win.getEndX() > int(dest.getWidth()) )
         {
             world_win.setLocationX(dest.getWidth() - world_win.getWidth());
         }

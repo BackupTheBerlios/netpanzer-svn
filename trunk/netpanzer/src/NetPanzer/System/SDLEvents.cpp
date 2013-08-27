@@ -16,17 +16,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-#include <ctype.h>
 #include "SDL.h"
-#include "Interfaces/KeyboardInterface.hpp"
-#include "Interfaces/MouseInterface.hpp"
-#include "SDLVideo.hpp"
-#include "2D/Palette.hpp"
-#include "Interfaces/GameConfig.hpp"
-#include "Interfaces/GameManager.hpp"
-#include "Util/Log.hpp"
-#include "Actions/ActionManager.hpp"
 
 static SDLKey key_ascii_conversion[] =
 {
@@ -78,68 +68,4 @@ static SDLKey translate_key(SDL_keysym *keysym)
     }
 
     return key;
-}
-
-void handleSDLEvents()
-{
-    static SDL_Event event;
-
-    KeyboardInterface::sampleKeyboard();
-    while(SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            ActionManager::runAction("quit");
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            MouseInterface::onMouseButtonDown(&event.button);
-            break;
-        case SDL_MOUSEBUTTONUP:
-            MouseInterface::onMouseButtonUp(&event.button);
-            break;
-        case SDL_MOUSEMOTION:
-            MouseInterface::onMouseMoved(&event.motion);
-            break;
-        case SDL_KEYDOWN: {
-//                LOGGER.debug("Pressed key : scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
-                KeyboardInterface::keyPressed(translate_key(&event.key.keysym));
-
-                if ( (event.key.keysym.unicode & 0xFF80) == 0 )
-                {
-                  char c = event.key.keysym.unicode & 0x7F;
-                  if ( isprint(c) )
-                  {
-                      KeyboardInterface::putChar(c);
-                  }
-                  else
-                  {
-                      // extended chars, first push a 0
-                      KeyboardInterface::putChar(0);
-                      KeyboardInterface::putChar(event.key.keysym.sym);
-                  }
-                }
-                else
-                {
-                    // international character ignored for now
-                }
-
-                break;
-            }
-        case SDL_KEYUP:
-//            LOGGER.debug("Released key: scancode[%d] unicode[%d]", event.key.keysym.sym, event.key.keysym.unicode);
-            KeyboardInterface::keyReleased(translate_key(&event.key.keysym));
-            break;
-       
-        case SDL_ACTIVEEVENT:
-            if ( (event.active.state&SDL_APPACTIVE)
-                 && (event.active.gain==1)
-                 && GameConfig::video_fullscreen )
-                Screen->setPalette(Palette::color);
-             break;
-        case SDL_VIDEORESIZE:
-            GameConfig::video_width = event.resize.w;
-            GameConfig::video_height = event.resize.h;
-            GameManager::setVideoMode();
-            break;
-        }
-    }
 }

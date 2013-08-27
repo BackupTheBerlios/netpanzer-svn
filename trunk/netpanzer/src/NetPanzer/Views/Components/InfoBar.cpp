@@ -44,8 +44,8 @@ static const char* bars =
 void
 InfoBar::draw(Surface &dest)
 {
-    iRect r(position.x, position.y, dest.getWidth(), position.y+12);
-    dest.bltLookup(r, Palette::darkGray256.getColorArray());
+    iRect r(rect.getLocationX(), rect.getLocationY(), dest.getWidth(), rect.getLocationY()+12);
+    dest.bltLookup(r, Palette::filterDarkGray());
 
     char buf[512];
     char titles[512];
@@ -79,8 +79,8 @@ InfoBar::draw(Surface &dest)
              
              TimerInterface::getFPSAvg()
              );
-    int posx = position.x + 2;
-    int posy = position.y + 2;
+    int posx = rect.getLocationX() + 2;
+    int posy = rect.getLocationY() + 2;
     dest.bltStringShadowed(posx, posy, titles, titles_color, Color::black);
     dest.bltStringShadowed(posx, posy, bars, bars_color, Color::black);
     dest.bltStringShadowed(posx, posy, buf, format_color, Color::black);

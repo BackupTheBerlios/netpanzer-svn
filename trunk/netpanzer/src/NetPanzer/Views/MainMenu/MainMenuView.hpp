@@ -37,7 +37,7 @@ public:
     MainMenuView();
     ~MainMenuView();
 
-    static void setNews(const std::string& news);
+    static void setNews(const std::string& news){}
     
 }; // end MainMenuView
 

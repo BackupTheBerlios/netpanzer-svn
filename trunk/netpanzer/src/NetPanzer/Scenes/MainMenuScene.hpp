@@ -9,6 +9,7 @@
 #define	MAINMENUSCENE_HPP
 
 #include "2D/Scene.hpp"
+#include "MainMenu/IntroLayer.hpp"
 
 class MainMenuLayer;
 
@@ -24,10 +25,7 @@ private:
     
     MainMenuLayer * menu_layer;
     
-    void handleMouseLocation(int x, int y);
-    void handleMouseDown(int x, int y, int button);
-    void handleMouseUp(int x, int y, int button);
-    
+    void onBecomeActive();
 };
 
 #endif	/* MAINMENUSCENE_HPP */

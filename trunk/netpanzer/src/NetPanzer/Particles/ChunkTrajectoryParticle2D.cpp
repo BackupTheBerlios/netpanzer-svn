@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
+#include "2D/Palette.hpp"
 
 
 PackedSurface ChunkTrajectoryParticle2D::staticPackedGroundChunks;
@@ -87,7 +88,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
     staticPackedGroundChunks.setFrame(index);
 
     packedSurfaceShadow.setData(staticPackedGroundChunks);
-    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
 
     if (ParticleInterface::gParticlesCanHaveSmoke && canHaveSmoke) {
         hasSmoke = rand() % 3;

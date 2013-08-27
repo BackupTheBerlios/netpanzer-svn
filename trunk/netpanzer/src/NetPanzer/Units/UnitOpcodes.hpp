@@ -150,7 +150,7 @@ public:
         activate = false;
     }
 
-    void setTarget(iXY pos)
+    void setTarget(const iXY& pos)
     {
         target_x = htol16(pos.x);
         target_y = htol16(pos.y);
@@ -204,7 +204,7 @@ public:
         opcode = _UNIT_OPCODE_FIRE_WEAPON;
     }
 
-    void setTarget(iXY target)
+    void setTarget(const iXY& target)
     {
         x = htol16(target.x);
         y = htol16(target.y);

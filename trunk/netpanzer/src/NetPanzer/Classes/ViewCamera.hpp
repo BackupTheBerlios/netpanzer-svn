@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/TileInterface.hpp"
 
+#include "Types/iXY.hpp"
+
 class ViewCamera : private MapInterface
 {
 protected:
@@ -58,9 +60,9 @@ public:
         view_win->setSize(view_size);
     }
 
-    inline long getCameraDistance( const iXY &world_loc )
+    inline unsigned getCameraDistance( const iXY &world_loc )
     {
-        return( (long) (loc - world_loc).mag2() );
+        return (loc - world_loc).mag2();
     }
 };
 

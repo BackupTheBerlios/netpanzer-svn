@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "RankTeam.hpp"
+#include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -60,7 +61,7 @@ void RankTeam::doDraw( Surface& dest )
         RectStates = getClientRect();
         return; // this frame draws nothing
     }
-    dest.BltRoundRect(RectStates, 14, Palette::darkbrown256.getColorArray());
+    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
     dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
     drawTeamStats(dest);

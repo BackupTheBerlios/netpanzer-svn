@@ -190,7 +190,8 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             MapInterface::mapXYtoPointXY( loc, world );
 
             objective_obj = new Objective(objective_index, world,
-                    BoundBox( -48, -32, 48, 32 )
+//                    BoundBox( -48, -32, 48, 32 )
+                    BoundBox( iXY(48, 32) )
                     );
             
             strcpy(objective_obj->name, name.c_str());

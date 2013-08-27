@@ -17,14 +17,14 @@
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/StrManager.hpp"
 
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Label.hpp"
+#include "2D/Components/InputField.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/ChatView.hpp"
 
 #include "Particles/ParticleInterface.hpp"
 
 #include "Actions/Action.hpp"
-#include "Views/Components/InputField.hpp"
 #include "Actions/ActionManager.hpp"
 
 #include "Util/Log.hpp"
@@ -65,9 +65,9 @@ LoadingView::init()
                        ? ActionManager::getAction("quit")
                        : ActionManager::getAction("disconnect");
     
-    add( Button::createTextButton(_("Abort"), iXY(340, 15), 100, onAbort));
+    add( Button::createTextButton(_("Abort"), iXY(340, 15), 100));
 
-    okButton = Button::createTextButton(_("Enter"), iXY(340,100), 100, new BeginPasswordConnectAction(this));
+    okButton = Button::createTextButton(_("Enter"), iXY(340,100), 100); // new BeginPasswordConnectAction(this)
     
     passwordLabel = new Label(340, 68, _("Game Password"), Color::white);
 
@@ -131,7 +131,7 @@ LoadingView::setNeedPassword(bool need_password)
         this->need_password = need_password;
         if ( need_password )
         {
-            password->setText("");
+            password->clearText();
             add(password);
             add(okButton);
             add(passwordLabel);
@@ -145,70 +145,70 @@ LoadingView::setNeedPassword(bool need_password)
     }
 }
 
-void
-LoadingView::update(const NPString& text)
-{
-    LOGGER.info("Loading: %s", text.c_str());
-    lines.pop_back();
-    lines.push_back(text);
-    dirty=true;
-}
+//void
+//LoadingView::update(const NPString& text)
+//{
+//    LOGGER.info("Loading: %s", text.c_str());
+//    lines.pop_back();
+//    lines.push_back(text);
+//    dirty=true;
+//}
 
-void
-LoadingView::append(const NPString& text)
-{
-    LOGGER.info("Loading: %s", text.c_str());
-    if ( lines.size() >= LINELIMIT )
-    {
-        lines.pop_front();
-    }
-    lines.push_back(text);
-    dirty=true;
-}
+//void
+//LoadingView::append(const NPString& text)
+//{
+//    LOGGER.info("Loading: %s", text.c_str());
+//    if ( lines.size() >= LINELIMIT )
+//    {
+//        lines.pop_front();
+//    }
+//    lines.push_back(text);
+//    dirty=true;
+//}
 
-void
-LoadingView::loadFinish()
-{
-    // XXX rebuild the particle stuff here for units...
-    ParticleInterface::rebuildUnitParticleData();
+//void
+//LoadingView::loadFinish()
+//{
+//    // XXX rebuild the particle stuff here for units...
+//    ParticleInterface::rebuildUnitParticleData();
+//
+//    // XXX this needed because has to create the special buttons for the
+//    // defined units, has to be here because it has to be the "netp" palette
+//    // and after loading the unit profiles
+//    View * v = 0; //Desktop::getView("VehicleSelectionView");
+//    if ( v )
+//    {
+////        Desktop::remove(v);
+//        delete v;
+//    }
+//
+////    Desktop::add(new VehicleSelectionView());
+//
+//    GameManager::setNetPanzerGameOptions();
+////    Desktop::setVisibility("MiniMapView", true);
+////    Desktop::setVisibility("GameView", true);
+////    Desktop::setVisibility("ChatView", true);
+//    ChatView *cv = 0; // (ChatView*) Desktop::getView("ChatView");
+//    if (cv) cv->clear();
+//    
+//    if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
+//    {
+////        Desktop::setVisibility("GFlagSelectionView", true);
+////        Desktop::setActiveView("GFlagSelectionView");
+//    }
+//}
 
-    // XXX this needed because has to create the special buttons for the
-    // defined units, has to be here because it has to be the "netp" palette
-    // and after loading the unit profiles
-    View * v = 0; //Desktop::getView("VehicleSelectionView");
-    if ( v )
-    {
-//        Desktop::remove(v);
-        delete v;
-    }
+//void
+//LoadingView::show()
+//{
+////    Desktop::setVisibilityAllWindows(false);
+////    Desktop::setVisibility("LoadingView", true);
+////    View *v = Desktop::getView("LoadingView");
+////    Desktop::setFocusView(v);
+//}
 
-//    Desktop::add(new VehicleSelectionView());
-
-    GameManager::setNetPanzerGameOptions();
-//    Desktop::setVisibility("MiniMapView", true);
-//    Desktop::setVisibility("GameView", true);
-//    Desktop::setVisibility("ChatView", true);
-    ChatView *cv = 0; // (ChatView*) Desktop::getView("ChatView");
-    if (cv) cv->clear();
-    
-    if ( PlayerInterface::getLocalPlayer()->isSelectingFlag() )
-    {
-//        Desktop::setVisibility("GFlagSelectionView", true);
-//        Desktop::setActiveView("GFlagSelectionView");
-    }
-}
-
-void
-LoadingView::show()
-{
-//    Desktop::setVisibilityAllWindows(false);
-//    Desktop::setVisibility("LoadingView", true);
-//    View *v = Desktop::getView("LoadingView");
-//    Desktop::setFocusView(v);
-}
-
-void
-LoadingView::hide()
-{
-//    Desktop::setVisibility("LoadingView", false);
-}
+//void
+//LoadingView::hide()
+//{
+////    Desktop::setVisibility("LoadingView", false);
+//}

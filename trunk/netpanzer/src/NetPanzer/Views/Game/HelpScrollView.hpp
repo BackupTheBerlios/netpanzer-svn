@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 #include "Views/Components/tStringListBox.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tHScrollBar.hpp"

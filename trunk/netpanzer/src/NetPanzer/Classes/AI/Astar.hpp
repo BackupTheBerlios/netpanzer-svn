@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitBlackBoard.hpp"
 #include "Classes/AI/PathList.hpp"
 #include "Units/UnitBase.hpp"
+#include "Types/iXY.hpp"
 
 enum { _path_request_full, _path_request_update };
 enum { _slot_status_free, _slot_status_busy, _slot_status_wait, _slot_status_flush };
@@ -105,7 +106,7 @@ private:
     bool dynamic_node_management_flag;
 
 protected:
-    unsigned long mapXYtoAbsloc( iXY map_loc );
+    unsigned long mapXYtoAbsloc( const iXY& map_loc );
 
     AstarNode current_node;
     AstarNode goal_node;
@@ -139,7 +140,7 @@ protected:
 
     void initializePath( iXY &start, iXY &goal, unsigned short path_type );
 
-    long heuristic( iXY &pointA, iXY &pointB );
+    long heuristic( const iXY &pointA, const iXY &pointB );
 
     unsigned char generateSucc( unsigned short direction, AstarNode *node,
                                 AstarNode *succ );

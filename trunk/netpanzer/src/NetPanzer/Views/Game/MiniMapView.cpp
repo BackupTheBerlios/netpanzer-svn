@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MiniMapView.hpp"
 #include "Views/Components/MiniMap.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
+#include "2D/Color.hpp"
 
 // MiniMapView
 //---------------------------------------------------------------------------

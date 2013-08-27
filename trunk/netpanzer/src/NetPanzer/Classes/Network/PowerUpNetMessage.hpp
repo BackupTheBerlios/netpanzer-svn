@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _POWERUP_NET_MESSAGE_HPP
 
 #include "Core/CoreTypes.hpp"
+#include "Types/iXY.hpp"
 #include "NetMessage.hpp"
 
 #include "Units/UnitBase.hpp"

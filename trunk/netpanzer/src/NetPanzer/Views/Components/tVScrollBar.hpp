@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __tVScrollBar_hpp__
 #define __tVScrollBar_hpp__
 
+#include "2D/Surface.hpp"
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 #include "Views/Components/View.hpp"
@@ -35,6 +36,9 @@ private:
         PRESSED=   2,
     } ;
     StateChangedCallback* callback;
+    
+    Surface surface;
+    bool dirty;
     
     BState bUpstate;
     Surface bUpOver;
@@ -83,6 +87,13 @@ public:
     void setStateChangedCallback(StateChangedCallback* newcallback)
     {
         callback = newcallback;
+    }
+    
+    void setSize(const int x, const int y)
+    {
+        Component::setSize(x, y);
+        surface.create(x,y);
+        dirty=true;
     }
 }; 
 

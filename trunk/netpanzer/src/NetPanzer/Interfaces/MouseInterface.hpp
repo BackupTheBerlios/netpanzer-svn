@@ -24,21 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SDL.h"
 #include "2D/Surface.hpp"
-#include "Util/NTimer.hpp"
-
-class MouseEvent
-{
-public:
-    enum {
-        EVENT_DOWN = SDL_MOUSEBUTTONDOWN,
-        EVENT_UP = SDL_MOUSEBUTTONUP
-    };
-    unsigned char button;
-    unsigned char event;
-    iXY pos;
-};
-
-typedef std::deque<MouseEvent> MouseEventQueue;
+#include "GameInput/InputManager.hpp"
 
 class MouseInterface
 {
@@ -46,39 +32,18 @@ private:
     static Surface * cursor;
     static unsigned char cursor_x_size;
     static unsigned char cursor_y_size;
-    static NTimer clicktimer;
-    static int clickcount;
-    static int releasecount;
 
     typedef std::map<std::string,Surface*> cursors_t;
     static cursors_t cursors;
 
 protected:
-    static iXY mouse_pos;
     static iXY mouse_offset;
-
-    static unsigned char button_mask;
     
 public:
-    enum {
-        left_button   = SDL_BUTTON_LEFT,
-        middle_button = SDL_BUTTON_MIDDLE,
-        right_button  = SDL_BUTTON_RIGHT,
-        wheel_up      = SDL_BUTTON_WHEELUP,
-        wheel_down    = SDL_BUTTON_WHEELDOWN
-    };
-    
-    enum {
-        left_button_mask   = SDL_BUTTON_LMASK,
-        middle_button_mask = SDL_BUTTON_MMASK,
-        right_button_mask  = SDL_BUTTON_RMASK
-    };
 
     enum CursorType {
         defaultcursor, noentry, move, select, target, allie, break_allie, CURSOR_TYPE_MAX
     };
-
-    static MouseEventQueue event_queue;
 
     static void initialize();
     static void shutdown();
@@ -87,37 +52,12 @@ public:
     {
         if (cursor)
         {
-            cursor->bltTrans(dest, mouse_pos.x - mouse_offset.x, mouse_pos.y - mouse_offset.y); // full blit
+            cursor->bltTrans(dest, GameInput::InputManager::getMouseX() - mouse_offset.x,
+                                   GameInput::InputManager::getMouseY() - mouse_offset.y);
         }
     }
 
-    static inline void getMousePosition( int *x, int *y )
-    {
-        *x = mouse_pos.x;
-        *y = mouse_pos.y;
-    }
-
-    static inline unsigned char getButtonMask()
-    {
-        return( button_mask );
-    }
-
-    static void onMouseButtonDown(SDL_MouseButtonEvent *e);
-    static void onMouseButtonUp(SDL_MouseButtonEvent *e);
-    static void manageClickTimer();
-
     static void setCursor(const char* cursorname);
-    static inline void onMouseMoved(SDL_MouseMotionEvent *e)
-    {
-        mouse_pos.x = e->x;
-        mouse_pos.y = e->y;
-    }
-    
-    static inline iXY getMousePosition()   { return mouse_pos; }
-    
-    static inline unsigned int getMouseX() { return mouse_pos.x; }
-    static inline unsigned int getMouseY() { return mouse_pos.y; }
-    
 };
 
 #endif // ** _MOUSEINTERFACE_HPP

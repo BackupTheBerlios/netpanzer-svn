@@ -26,71 +26,6 @@ typedef std::map<NPString, NPString> t_tblLanguage;
 static t_tblLanguage tblLanguage;
 static bool isLngLoaded = false;
 
-
-std::string UTF8ToUnicode(const std::string text)
-{
-    std::string UTF8;
-    size_t pos = 0;
-    while (pos <= text.size())
-    {
-        int count;
-        int utf8;
-        char c = text[pos++];
-
-
-        if (!(c & 0x80))
-        {
-            UTF8 += c;// ascii
-            continue;
-        }
-
-        if ((c & 0xE0) == 0xC0)
-        {
-            utf8 = (c & 0x1F);
-            count = 1;
-        }
-        else if ((c & 0xF0) == 0xE0)
-        {
-            utf8 = (c & 0x0F);
-            count = 2;
-        }
-        else if ((c & 0xF8) == 0xF0)
-        {
-            utf8 = (c & 0x07);
-            count = 3;
-        }
-        else if ((c & 0xFC) == 0xF8)
-        {
-            utf8 = (c & 0x03);
-            count = 4;
-        }
-        else if (( c & 0xFE) == 0xFC)
-        {
-            utf8 = (c & 0x01);
-            count = 5;
-        }
-        else
-        {
-            LOGGER.debug("Invalid utf8");
-            continue;
-        }
-
-        while (count--)
-        {
-            c = text[pos++];
-            if ((c & 0xC0) != 0x80)
-            {
-                LOGGER.debug("Invalid utf8");
-                continue;
-            }
-            utf8 <<= 6;
-            utf8 |= (c & 0x3F);
-        }
-        UTF8 += utf8-34;
-    }
-    return UTF8;
-}
-
 void loadPOFile(const NPString& fileName)
 {
     NPString nplFile = "Languages/"+fileName;
@@ -109,7 +44,7 @@ void loadPOFile(const NPString& fileName)
     while(!in.eof())
     {
         NPString line, currmsg;
-        getline(in, line);
+        std::getline(in, line);
         const char *c = line.c_str();
 
         while(isspace(*c) && *c != 0)
@@ -126,7 +61,7 @@ void loadPOFile(const NPString& fileName)
                 if (msgstr.empty())
                     tblLanguage[msgid] = msgid;
                 else
-                    tblLanguage[msgid] = UTF8ToUnicode(msgstr);
+                    tblLanguage[msgid] = msgstr;
             }
             state = MSGID;
             msgid.clear();

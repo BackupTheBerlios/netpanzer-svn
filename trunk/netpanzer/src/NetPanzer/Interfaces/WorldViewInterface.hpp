@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WORLDVIEWINTERFACE_HPP
 
 #include "Classes/ViewCamera.hpp"
+#include "Types/iXY.hpp"
 
 class WorldViewInterface
 {
@@ -64,7 +65,7 @@ public:
         main_camera->setCamera(world_loc);
     }
 
-    static inline void setCameraSize(unsigned long view_size_x, unsigned long view_size_y)
+    static inline void setCameraSize(unsigned view_size_x, unsigned view_size_y)
     {
         main_camera->setCameraSize( iXY( view_size_x, view_size_y ) );
     }

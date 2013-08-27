@@ -56,7 +56,7 @@ private:
     void regenerate();
     void drawObjectives(Surface &dest);
     void drawUnits(Surface &dest);
-    void drawUnit(Surface &dest, const iXY loc, PIX color, bool forceLarge);
+    void drawUnit(Surface &dest, const iXY& loc, PIX color, bool forceLarge);
     void drawWorldAndMouseBox(Surface &dest);
     bool mouseinside;
     bool moving;

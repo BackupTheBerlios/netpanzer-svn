@@ -22,14 +22,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystemGlobals.hpp"
 #include "MapSelectionView.hpp"
 #include "Views/GameViewGlobals.hpp"
-#include "Views/Components/Label.hpp"
-#include "Views/Components/Button.hpp"
-#include "Views/Components/Separator.hpp"
+#include "2D/Components/Label.hpp"
+#include "2D/Components/Button.hpp"
+#include "2D/Components/Separator.hpp"
 #include "Actions/Action.hpp"
 #include "Actions/ChangeIntVarAction.hpp"
 #include "Views/Components/BoxedLabel.hpp"
-#include "Views/Components/CheckBox.hpp"
-#include "Views/Components/Choice.hpp"
+#include "2D/Components/CheckBox.hpp"
+#include "2D/Components/Choice.hpp"
 #include "Classes/MapFile.hpp"
 #include "Resources/ResourceManager.hpp"
 
@@ -129,7 +129,7 @@ class GameTypeChoice : public Choice
 public:
     GameTypeChoice(int x, int y, int w) : Choice()
     {
-        setLabel(_("Game Type"));
+//        setLabel(_("Game Type"));
         addItem(_("Objective"));
         addItem(_("Frag Limit"));
         addItem(_("Time Limit"));
@@ -168,7 +168,7 @@ class WindSpeedChoice : public Choice
 public:
     WindSpeedChoice(int x, int y, int w) : Choice()
     {
-        setLabel(_("Wind Speed"));
+//        setLabel(_("Wind Speed"));
         addItem(_("Calm"));
         addItem(_("Breezy"));
         addItem(_("Brisk Winds"));
@@ -204,7 +204,7 @@ class CloudCoverageChoice : public Choice
 public:
     CloudCoverageChoice(int x, int y, int w) : Choice()
     {
-        setLabel(_("Cloud Coverage"));
+//        setLabel(_("Cloud Coverage"));
         addItem(_("Clear"));
         addItem(_("Broken"));
         addItem(_("Partly Cloudy"));
@@ -244,7 +244,7 @@ HostOptionsView::HostOptionsView() : View()
     
     addMeterButtons(iXY(BORDER_SPACE, BORDER_SPACE+16));
     
-    add( new Label(4, getHeight() - Surface::getFontHeight(), _("Note: Use the right mouse button to accomplish fast mouse clicking."), windowTextColor, 0 ) );
+//    add( new Label(4, getHeight() - Surface::getFontHeight(), _("Note: Use the right mouse button to accomplish fast mouse clicking."), windowTextColor ) );
 
 } // end HostOptionsView::HostOptionsView
 
@@ -263,15 +263,15 @@ void HostOptionsView::addConfRow(   const iXY pos,
                                     Component* meter)
 {
     iXY p(pos);
-    add( new Label(p.x, p.y+3, label, windowTextColor, windowTextColorShadow, true) );
+//    add( new Label(p.x, p.y+3, label, windowTextColor) );
     p.x += xControlStart - 1;
-    add( Button::createTextButton( "<", p, arrowButtonWidth-2, decreaseAction));
+//    add( Button::createTextButton( "<", p, arrowButtonWidth-2, decreaseAction));
     p.x += arrowButtonWidth + 3;
     meter->setLocation(p);
     meter->setSize(meterWidth, 16);
     add(meter);
     p.x += meterWidth + 3;
-    add( Button::createTextButton( ">", p, arrowButtonWidth-2, increaseAction));
+//    add( Button::createTextButton( ">", p, arrowButtonWidth-2, increaseAction));
 }
 
 // addMeterButtons
@@ -328,8 +328,8 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
 
     add( new WindSpeedChoice(xChoiceOffset, 100 + 16, minWidth) );
     
-    add( new CheckBox(2, 125 + 16, _("Public"), &GameConfig::server_public) );
-
-    add( new CheckBox(120, 125 + 16, _("PowerUps"), &GameConfig::game_powerups) );
+//    add( new CheckBox(2, 125 + 16, _("Public"), &GameConfig::server_public) );
+//
+//    add( new CheckBox(120, 125 + 16, _("PowerUps"), &GameConfig::game_powerups) );
     
 } // end HostOptionsView::addMeterButtons

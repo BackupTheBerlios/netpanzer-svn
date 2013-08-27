@@ -57,7 +57,7 @@ void VoteManager::netMessageReceiveRequestVote(const NetMessage* message)
     const PlayerVoteRequested* vote_request
     = (const PlayerVoteRequested *) message;
     
-    votebox = new VoteBox(VoteStrings[vote_request->vote_type]);
+//    votebox = new VoteBox(VoteStrings[vote_request->vote_type]);
     
 //    Desktop::add(votebox);
 //    Desktop::setVisibility("votebox", true);

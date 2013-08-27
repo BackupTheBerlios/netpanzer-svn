@@ -152,7 +152,7 @@ void Astar::initializePath(iXY &start, iXY &goal, unsigned short path_type)
     total_pathing_time += now() - timer_ini_mark;
 }
 
-unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
+unsigned long Astar::mapXYtoAbsloc( const iXY& map_loc )
 {
     unsigned long abs;
 
@@ -167,7 +167,7 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
 }
 
 
-long Astar::heuristic( iXY &pointA, iXY &pointB )
+long Astar::heuristic( const iXY &pointA, const iXY &pointB )
 {
     long delta_x;
     long delta_y;

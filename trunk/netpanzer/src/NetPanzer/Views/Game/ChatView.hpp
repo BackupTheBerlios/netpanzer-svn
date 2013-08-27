@@ -53,7 +53,7 @@ public:
 
     virtual void doDraw( Surface& dest );
     virtual void processEvents();
-    void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... );
+    void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... ){}
     void clear();
     
     void minimizeChat();
@@ -62,8 +62,8 @@ public:
     void setChatFriends();
     void setChatAll();
     
-    void openChat();
-    void openFriendsChat();
+    void openChat(){}
+    void openFriendsChat(){}
     
     void switchChatMode();
     

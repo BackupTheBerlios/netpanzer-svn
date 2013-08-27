@@ -24,113 +24,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 
 #include "Scripts/ScriptManager.hpp"
+#include "Util/Log.hpp"
+#include "Color.hpp"
 
 bool  Palette::loaded = false;
 
-std::string Palette::name;
+uint8_t Palette::full_alpha16[256*256*16];
 
-ColorTable Palette::colorTable2080;
-ColorTable Palette::colorTable4060;
-ColorTable Palette::colorTable6040;
-ColorTable Palette::colorTable8020;
-ColorTable Palette::colorTableBrighten;
-ColorTable Palette::colorTableDarkenALot;
-ColorTable Palette::colorTableDarkenALittle;
-ColorTable Palette::colorTableLightDark;
-ColorTable Palette::darkGray256;
-ColorTable Palette::darkbrown256;
-ColorTable Palette::brightness256;
-ColorTable Palette::green256;
-SDL_Color   Palette::color[PALETTE_LENGTH];
+uint8_t Palette::blend_darkenalot[256*256];
+uint8_t Palette::blend_darkenalittle[256*256];
+uint8_t Palette::blend_lightdark[256*256];
+uint8_t Palette::blend_brighten[256*256];
 
-// Palette
-//---------------------------------------------------------------------------
-Palette::Palette()
-{
-} // end Palette::Palette
+uint8_t Palette::blend_2080[256*256];
+uint8_t Palette::blend_4060[256*256];
+uint8_t Palette::blend_6040[256*256];
+uint8_t Palette::blend_8020[256*256];
 
-// setColors
-//---------------------------------------------------------------------------
-void Palette::setColors()
-{
-    ScriptManager::runFileInTable("scripts/initcolors.lua", "Color");
-} // end Palette::setColors
+uint8_t Palette::filter_darkgray[256];
+uint8_t Palette::filter_darkbrown[256];
+uint8_t Palette::filter_brightness[256];
+uint8_t Palette::filter_green[256];
 
-// setColorTables
-//---------------------------------------------------------------------------
-// Purpose: Creates some palettes which are specifically set to certain
-//          best matched colors in the palette.
-//---------------------------------------------------------------------------
-void Palette::setColorTables()
-{
-    int num;
-    
-    // 256 shades of dark gray.
-    darkGray256.init(256);
-    for (num = 0; num < 256; num++) {
-        int c = color[num].r/3;// dark gray
-        darkGray256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
-    }
-
-    darkbrown256.init(256);
-    for (num = 0; num < 256; num++) {
-        // the magic values are for palete color 33
-        int r = abs(color[num].r - 0x16)/4.5;
-        int g = abs(color[num].g - 0x1a)/4.5;
-        int b = abs(color[num].b - 0x19)/4.5;
-        darkbrown256.setColor(num, int(findNearestColor(0x16 + r,0x1a + g,0x19 + b)));
-    }
-
-    green256.init(256);
-    for (num = 0; num < 256; num++) {
-        // the magic values are for palete color 41
-        int r = abs(color[num].r - 0x1b)/3;
-        int g = abs(color[num].g - 0x3e)/3;
-        int b = abs(color[num].b - 0x21)/3;
-        green256.setColor(num, int(findNearestColor(0x1b + r,0x3e + g,0x21 + b)));
-    }
-
-    // 256 brightness values.
-    brightness256.init(256);
-    for (num = 0; num < 256; num++) {
-        int c = color[num].r/1.3;// dark gray
-        brightness256.setColor(num, int(findNearestColor(c, c, c))); // dark gray
-    }
-
-    char tablePath[512];
-    snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
-    if(!filesystem::exists(tablePath)) {
-        filesystem::mkdir(tablePath);
-    }
-    char strBuf[512];
-
-    // Best color match.
-    sprintf(strBuf, "%s/2080.tbl", tablePath);
-    colorTable2080.create(20, 80, strBuf);
-
-    sprintf(strBuf, "%s/4060.tbl", tablePath);
-    colorTable4060.create(40, 60, strBuf);
-
-    sprintf(strBuf, "%s/6040.tbl", tablePath);
-    colorTable6040.create(60, 40, strBuf);
-
-    sprintf(strBuf, "%s/8020.tbl", tablePath);
-    colorTable8020.create(80, 20, strBuf);
-
-    // Brighten.
-    sprintf(strBuf, "%s/Brighten.tbl", tablePath);
-    colorTableBrighten.createBrightenFilter(strBuf, 256);
-
-    // Darken.
-    sprintf(strBuf, "%s/DarkenALot.tbl", tablePath);
-    colorTableDarkenALot.createDarkenFilter(strBuf, 0.5f);
-    
-    sprintf(strBuf, "%s/DarkenALittle.tbl", tablePath);
-    colorTableDarkenALittle.createDarkenFilter(strBuf, 0.15f);
-
-    sprintf(strBuf, "%s/LightDark.tbl", tablePath);
-    colorTableLightDark.createLightDarkFilter(strBuf);
-} // end setColorTables
+RGBColor   Palette::color[PALETTE_LENGTH];
 
 // loadACT
 //---------------------------------------------------------------------------
@@ -139,8 +55,7 @@ void Palette::setColorTables()
 //---------------------------------------------------------------------------
 void Palette::loadACT(const std::string& newname)
 {
-    name = newname;
-    std::string filename = "wads/" + name + ".act";
+    std::string filename = "wads/" + newname + ".act";
 
     filesystem::ReadFile file(filename);
     if ( file.isOpen() )
@@ -188,6 +103,18 @@ Uint8 Palette::findNearestColor(int r, int g, int b, const bool &ignoreIndexZero
 
 } // end Palette::findNearestColor
 
+static bool loadTable(const char * fname, uint8_t * buffer, size_t size)
+{
+    filesystem::ReadFile f(fname);
+    if ( f.isOpen() )
+    {
+        f.read(buffer, size, 1);
+        LOGGER.warning("Loaded '%s'",fname);
+    }
+
+    return f.isOpen();
+}
+
 // init
 //---------------------------------------------------------------------------
 void Palette::init(const std::string& name)
@@ -195,8 +122,25 @@ void Palette::init(const std::string& name)
     if (!loaded)
     {
         loadACT(name);
-        setColors();
-        setColorTables();
+
+        Color::updateColors();
+
+        loadTable("cache/filters/blend_darkenalot.tbl",    blend_darkenalot,    256*256);
+        loadTable("cache/filters/blend_darkenalittle.tbl", blend_darkenalittle, 256*256);
+        loadTable("cache/filters/blend_lightdark.tbl",     blend_lightdark,     256*256);
+        loadTable("cache/filters/blend_brighten.tbl",      blend_brighten,      256*256);
+        loadTable("cache/filters/blend_2080.tbl",          blend_2080,          256*256);
+        loadTable("cache/filters/blend_4060.tbl",          blend_4060,          256*256);
+        loadTable("cache/filters/blend_6040.tbl",          blend_6040,          256*256);
+        loadTable("cache/filters/blend_8020.tbl",          blend_8020,          256*256);
+
+        loadTable("cache/filters/filter_darkgray.fil",     filter_darkgray,     256);
+        loadTable("cache/filters/filter_darkbrown.fil",    filter_darkbrown,    256);
+        loadTable("cache/filters/filter_brightness.fil",   filter_brightness,   256);
+        loadTable("cache/filters/filter_green.fil",        filter_green,        256);
+        
+        loadTable("cache/filters/full_alpha16.tbl",        full_alpha16,        256*256*16);
+
         loaded = true;
     }
 } // end Palette::init

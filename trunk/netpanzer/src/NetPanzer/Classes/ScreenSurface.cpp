@@ -30,22 +30,18 @@ ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
     theight=height;
     tpitch = width;
 
-    clip_rect.setLocation( 0, 0);
-    clip_rect.setSize( width, height);
 }
 
 ScreenSurface::~ScreenSurface()
 {
-    frame0 = 0;
     mem = 0;
 }
 
 void ScreenSurface::lock()
 {
     assert(getDoesExist() == false);
-    draw->lockDoubleBuffer( (unsigned char **) &frame0 );
+    draw->lockDoubleBuffer( (unsigned char **) &mem );
     tpitch = draw->getSurface()->pitch;
-    mem = frame0 + (clip_rect.getLocationY() * getPitch()) + clip_rect.getLocationX();
 //    mem = frame0;
 }
 
@@ -53,7 +49,6 @@ void ScreenSurface::unlock()
 {
     assert(getDoesExist() == true);
     draw->unlockDoubleBuffer();
-    frame0 = 0;
     mem = 0;
 }
 

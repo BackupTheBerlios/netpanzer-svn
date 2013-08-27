@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SelectionList.hpp"
 #include "Interfaces/MouseInterface.hpp"
 #include "Util/NTimer.hpp"
+#include "Types/iXY.hpp"
 
 class WorldInputCmdProcessor
 {
@@ -69,10 +70,10 @@ protected:
     void sendAttackCommand(const iXY &world_pos);
     void sendAllianceRequest(const iXY &world_pos, bool make_break);
 
-    void evalLeftMButtonDownEvents(const MouseEvent &event);
-    void evalLeftMButtonUpEvents(const MouseEvent &event);
-    void evalLeftMButtonEvents(const MouseEvent &event);
-    void evalRightMButtonEvents(const MouseEvent &event);
+    void evalLeftMButtonDownEvents();
+    void evalLeftMButtonUpEvents();
+    void evalLeftMButtonEvents();
+    void evalRightMButtonEvents();
 
     void evaluateMouseEvents();
 

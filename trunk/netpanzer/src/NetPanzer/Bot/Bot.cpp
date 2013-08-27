@@ -46,29 +46,31 @@ Bot::initialize(Bot *bot)
 void
 Bot::shutdown()
 {
-    if (s_bot) {
+    if (s_bot)
+    {
         delete s_bot;
         s_bot = 0;
     }
 }
 //-----------------------------------------------------------------
 void
-Bot::moveUnit(UnitBase *unit, iXY map_pos)
+Bot::moveUnit(UnitBase *unit, const iXY& map_pos)
 {
     assert(unit != 0);
+    iXY p;
 
     PlacementMatrix matrix;
     matrix.reset(map_pos);
-    matrix.getNextEmptyLoc(&map_pos);
+    matrix.getNextEmptyLoc(&p);
 
     MoveUnitRequest comm_mesg;
     comm_mesg.setUnitId(unit->id);
-    comm_mesg.setMapPos(map_pos);
+    comm_mesg.setMapPos(p);
 
     CLIENT->sendMessage(&comm_mesg, sizeof(comm_mesg));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
-    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
+    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, p.x, p.y);
 }
 //-----------------------------------------------------------------
 void
@@ -88,7 +90,7 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
 }
 //-----------------------------------------------------------------
 void
-Bot::manualFire(UnitBase *unit, iXY world_pos)
+Bot::manualFire(UnitBase *unit, const iXY& world_pos)
 {
     assert(unit != 0);
 
@@ -102,7 +104,7 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
 }
 //-----------------------------------------------------------------
 void
-Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
+Bot::produceUnit(const ObjectiveID outpostID, const int selectedProduce)
 {
     LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
                  outpostID, selectedProduce);

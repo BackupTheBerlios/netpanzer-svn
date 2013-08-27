@@ -570,8 +570,7 @@ WorldInputCmdProcessor::selectBoundBoxUnits()
     select_success = working_list.selectBounded(r, addunits);
 
     if ( select_success == false ) {
-        iXY box_size;
-        box_size = box_release - box_press;
+        iXY box_size = box_release - box_press;
         if ( (box_size.x > 40) || (box_size.y > 40) )
             select_success = true;
 
@@ -588,7 +587,7 @@ WorldInputCmdProcessor::evaluateMouseEvents()
     iXY world_pos;
     iXY mouse_pos;
 
-    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
+//    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
     WorldViewInterface::getViewWindow( &world_win );
 
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
@@ -602,23 +601,24 @@ WorldInputCmdProcessor::evaluateMouseEvents()
         }
     }
 
-    while( !MouseInterface::event_queue.empty() ) {
-        MouseEvent event = MouseInterface::event_queue.front();
-        MouseInterface::event_queue.pop_front();
-
-        if( event.button == MouseInterface::left_button )
-            evalLeftMButtonEvents(event);
-
-        if( event.button == MouseInterface::right_button )
-            evalRightMButtonEvents(event);
-    }
+//    while( !MouseInterface::event_queue.empty() ) {
+//        MouseEvent event = MouseInterface::event_queue.front();
+//        MouseInterface::event_queue.pop_front();
+//
+//        if( event.button == MouseInterface::left_button )
+//            evalLeftMButtonEvents(event);
+//
+//        if( event.button == MouseInterface::right_button )
+//            evalRightMButtonEvents(event);
+//    }
 }
 
-void WorldInputCmdProcessor::evalLeftMButtonDownEvents(const MouseEvent &event)
+void WorldInputCmdProcessor::evalLeftMButtonDownEvents()
 {
     iXY world_pos;
-    WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
-
+    // event.pos is mouse position
+//    WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
+    
     if ( (manual_control_state == true) ||
           KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
           KeyboardInterface::getKeyState( SDLK_RCTRL ))
@@ -659,12 +659,13 @@ void WorldInputCmdProcessor::evalLeftMButtonDownEvents(const MouseEvent &event)
             break;
     }
 }
-void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
+void WorldInputCmdProcessor::evalLeftMButtonUpEvents()
 {
     iXY world_pos;
     unsigned char click_status;
 
-    WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
+    // event.pos is mouse position
+//    WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
     if (selection_box_active)
     {
         selection_box_active = false;
@@ -759,34 +760,34 @@ void WorldInputCmdProcessor::evalLeftMButtonUpEvents(const MouseEvent &event)
     }
 }
 void
-WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
+WorldInputCmdProcessor::evalLeftMButtonEvents()
 {
-    if(event.event == MouseEvent::EVENT_DOWN) evalLeftMButtonDownEvents(event);
-    else if(event.event == MouseEvent::EVENT_UP) evalLeftMButtonUpEvents(event);
+//    if(event.event == MouseEvent::EVENT_DOWN) evalLeftMButtonDownEvents(event);
+//    else if(event.event == MouseEvent::EVENT_UP) evalLeftMButtonUpEvents(event);
 }
 
-void WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
+void WorldInputCmdProcessor::evalRightMButtonEvents()
 {
-    static NTimer mtimer(75);
-    if (event.event == MouseEvent::EVENT_DOWN )
-    {
-        right_mouse_scroll=true;
-        right_mouse_scroll_moved = false;
-        right_mouse_scroll_pos=event.pos;
-        right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
-        mtimer.reset();
-    }
-
-    if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP )
-    {
-        right_mouse_scroll=false;
-        if ( ! right_mouse_scroll_moved && mtimer.isTimeOut() )
-        {
-            // simple right click on the same position after timeout
-            working_list.unGroup();
-        }
-        return;
-    }
+//    static NTimer mtimer(75);
+//    if (event.event == MouseEvent::EVENT_DOWN )
+//    {
+//        right_mouse_scroll=true;
+//        right_mouse_scroll_moved = false;
+//        right_mouse_scroll_pos=event.pos;
+//        right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
+//        mtimer.reset();
+//    }
+//
+//    if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP )
+//    {
+//        right_mouse_scroll=false;
+//        if ( ! right_mouse_scroll_moved && mtimer.isTimeOut() )
+//        {
+//            // simple right click on the same position after timeout
+//            working_list.unGroup();
+//        }
+//        return;
+//    }
 }
 
 void
@@ -998,14 +999,7 @@ WorldInputCmdProcessor::process(bool process_mouse)
 void
 WorldInputCmdProcessor::inFocus()
 {
-    iXY world_pos;
-    iXY mouse_pos;
-
-    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
-
     WorldViewInterface::getViewWindow( &world_win );
-    WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
-
     selection_box_active = false;
 }
 
@@ -1027,40 +1021,13 @@ WorldInputCmdProcessor::draw()
     if (outpost_goal_selection != OBJECTIVE_NONE)
     {
         iXY mouse_pos;
-        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
+//        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
         WorldViewInterface::getViewWindow( &world_win );
         iXY pos;
         WorldViewInterface::worldXYtoClientXY(world_win, output_pos_press,&pos);
         screen->drawLine(pos, mouse_pos, Color::blue);
     }
-
-//    WorldViewInterface::getViewWindow(&world_win);
-
-//    iXY mpos = MouseInterface::getMousePosition();
-//    iXY wpos;
-//    iXY mappos;
-
-//    WorldViewInterface::clientXYtoWorldXY(world_win, mpos, &wpos);
-//    MapInterface::pointXYtoMapXY( wpos, mappos );
-
-//    iXY mappos2(mappos.x+1, mappos.y+1);
-
-//    iXY wp1, wp2;
-//    iXY r1, r2;
-
-//    MapInterface::mapXYtoPointXY(mappos,  wp1);
-//    MapInterface::mapXYtoPointXY(mappos2, wp2);
-
-//    wp1.x -= 16;
-//    wp1.y -= 16;
-//    wp2.x -= 16;
-//    wp2.y -= 16;
-
-//    WorldViewInterface::worldXYtoClientXY(world_win, wp1, &r1);
-//    WorldViewInterface::worldXYtoClientXY(world_win, wp2, &r2);
-
-//    screen->drawRect(iRect(r1, r2), Color::white);
 }
 
 void
@@ -1069,7 +1036,7 @@ WorldInputCmdProcessor::closeSelectionBox()
     iXY world_pos;
     iXY mouse_pos;
 
-    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
+//    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
     WorldViewInterface::getViewWindow( &world_win );
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );

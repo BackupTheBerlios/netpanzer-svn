@@ -206,7 +206,7 @@ protected:
 
     // ** Message Handlers
     
-    iXY             pending_moveToLocation;
+    iXY         pending_moveToLocation;
     UnitID          pending_enemyUnit;
     unsigned char   pending_command; 
     bool	    pending_AI_comm;
@@ -225,7 +225,7 @@ protected:
     void selfDestruct();
     
 public:
-    Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc);
+    Vehicle(PlayerState* player, unsigned char utype, UnitID id, const iXY& initial_loc);
 
     virtual void updateState();
 

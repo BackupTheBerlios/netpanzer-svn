@@ -61,6 +61,71 @@ public:
     Mix_Chunk* getData() const { return chunk; }
 };
 
+static int RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
+{
+    filesystem::ReadFile* file = (filesystem::ReadFile*) context->hidden.unknown.data1;
+    return file->_read(ptr, size, maxnum);
+}
+
+static int RWOps_Seek(SDL_RWops* context, int offset, int whence)
+{
+    filesystem::ReadFile* file = (filesystem::ReadFile*) context->hidden.unknown.data1;
+    try { // catch exceptions
+        switch(whence) {
+        case SEEK_SET: file->seek(offset); break;
+        case SEEK_CUR: file->seek(file->tell() + offset); break;
+        case SEEK_END: file->seek(file->fileLength() + offset); break;
+        }
+    } catch(...) {
+        return -1;
+    }
+
+    return file->tell();
+}
+
+static int RWOps_Close(SDL_RWops* context)
+{
+    filesystem::ReadFile* file = (filesystem::ReadFile*) context->hidden.unknown.data1;
+    delete file;
+    SDL_FreeRW(context);
+    return 0;
+}
+
+static int RWOps_Write(SDL_RWops *, const void *, int , int )
+{
+  return 0;
+}
+
+
+static SDL_RWops* getFileForSDL(const char * filename)
+{
+    filesystem::ReadFile * file = new filesystem::ReadFile(filename);
+
+    if ( ! file->isOpen() )
+    {
+        delete file;
+        return 0;
+    }
+
+    SDL_RWops * rwops = SDL_AllocRW();
+    if ( ! rwops )
+    {
+        delete file;
+        return 0;
+    }
+
+    rwops->seek =RWOps_Seek;
+    rwops->read =RWOps_Read;
+    rwops->write=RWOps_Write;
+    rwops->close=RWOps_Close;
+    rwops->type =0xdeadbeef;
+    rwops->hidden.unknown.data1 = file;
+
+    return rwops;
+}
+
+
+
 
 musics_t SDLSound::musicfiles;
 musics_t::iterator SDLSound::currentsong;
@@ -232,8 +297,9 @@ void SDLSound::loadSound(const char* directory)
         {
             try
             {
-                filesystem::ReadFile *file = new filesystem::ReadFile(filename);
-                Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
+                SDL_RWops * ops = getFileForSDL(filename.c_str());
+                if ( ! ops ) continue;
+                Mix_Chunk *chunk = Mix_LoadWAV_RW(ops, 1);
                 if (chunk)
                 {
                     std::string idName = getIdName(*i);
@@ -347,8 +413,9 @@ void SDLSound::nextSong()
          * use LoadMUS_RW from newer SDL_mixers
          */
         try {
-            filesystem::ReadFile * file = new filesystem::ReadFile(toplay);
-            music = Mix_LoadMUS_RW(file->getSDLRWOps());
+            SDL_RWops * ops = getFileForSDL(toplay);
+            if ( ! ops ) break; // XXX ???
+            music = Mix_LoadMUS_RW(ops);
             if (music) {
                 if (Mix_PlayMusic(music, 1) == 0) {
                     LOG (("Start playing song '%s'", toplay));

@@ -28,18 +28,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
 
-iXY MouseInterface::mouse_pos;
 iXY MouseInterface::mouse_offset;
 
-unsigned char MouseInterface::button_mask;
-
-MouseEventQueue MouseInterface::event_queue;
 MouseInterface::cursors_t MouseInterface::cursors;
 Surface * MouseInterface::cursor;
-
-NTimer MouseInterface::clicktimer;
-int MouseInterface::clickcount;
-int MouseInterface::releasecount;
 
 void MouseInterface::initialize()
 {
@@ -62,53 +54,15 @@ void MouseInterface::initialize()
     filesystem::freeList(cursorfiles);
 
     setCursor("default.bmp");
-    clicktimer.setTimeOut(150);
-    clickcount = 0;
-    releasecount = 0;
 }
 
 void MouseInterface::shutdown()
 {
+    cursor = 0;
     cursors_t::iterator i = cursors.begin();
     for( ; i != cursors.end(); i++) {
         delete i->second;
     }
-}
-
-void
-MouseInterface::onMouseButtonDown(SDL_MouseButtonEvent *e)
-{
-    if ( ! clickcount )
-    {
-        clicktimer.reset();
-    }
-    
-    clickcount++;
-    
-    MouseEvent event;
-    button_mask |= SDL_BUTTON(e->button);
-    event.button = e->button;
-    event.event = MouseEvent::EVENT_DOWN;
-    event.pos.x = e->x;
-    event.pos.y = e->y;
-    event_queue.push_back(event);
-}
-
-void
-MouseInterface::onMouseButtonUp(SDL_MouseButtonEvent *e)
-{
-    if ( clickcount )
-    {
-        releasecount++;
-    }
-    
-    MouseEvent event;
-    button_mask &= ~(SDL_BUTTON(e->button));
-    event.button = e->button;
-    event.event = MouseEvent::EVENT_UP;
-    event.pos.x = e->x;
-    event.pos.y = e->y;
-    event_queue.push_back(event);
 }
 
 void MouseInterface::setCursor(const char* cursorname)
@@ -122,15 +76,5 @@ void MouseInterface::setCursor(const char* cursorname)
         mouse_offset.x = cursor->getWidth() / 2;
         mouse_offset.y = cursor->getHeight() / 2;
 
-    }
-}
-void
-MouseInterface::manageClickTimer()
-{
-    if ( clickcount && clicktimer.isTimeOut() )
-    {
-        //LOGGER.warning("Mouse click count and release count = %d, %d", clickcount, releasecount);
-        clickcount=0;
-        releasecount=0;
     }
 }

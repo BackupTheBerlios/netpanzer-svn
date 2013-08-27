@@ -48,7 +48,7 @@ protected:
     short Octant_5_6();
 
 public:
-    void set_path(iXY &start, iXY &end);
+    void set_path(const iXY &start, const iXY &end);
 
     short increment(iXY *update, short times);
 };

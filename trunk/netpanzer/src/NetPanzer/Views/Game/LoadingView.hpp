@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/View.hpp"
-#include "Views/Components/Button.hpp"
-#include "Views/Components/InputField.hpp"
+#include "2D/Components/Button.hpp"
+#include "2D/Components/InputField.hpp"
 #include "2D/Surface.hpp"
 #include <list>
 
@@ -40,11 +40,11 @@ public:
 
     virtual ~LoadingView() {}
 
-    static void update(const NPString& text);
-    static void append(const NPString& text);
-    static void loadFinish();
-    static void show();
-    static void hide();
+    static void update(const NPString& text){}
+    static void append(const NPString& text){}
+    static void loadFinish(){}
+    static void show(){}
+    static void hide(){}
 
     virtual void init();
     virtual void doActivate();
@@ -56,7 +56,8 @@ public:
     void setNeedPassword(bool need_password);
     bool doesNeedPassword() const { return need_password; }
     
-    const char * getPassword() { return password->getText().c_str(); }
+    // @todo fix this
+    const char * getPassword() { return ""; /* password->getText().c_str(); */}
 
 private:
     static std::list<NPString> lines;

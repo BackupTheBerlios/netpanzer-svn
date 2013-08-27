@@ -44,7 +44,7 @@ void ProjectileInterface::resetLogic()
 void ProjectileInterface::newProjectile( unsigned short projectile_type,
         unsigned short owner_type_id,
         UnitID &owner, unsigned short damage,
-        iXY &start, iXY &end )
+        const iXY& start, const iXY& end )
 {
     Projectile *temp;
 

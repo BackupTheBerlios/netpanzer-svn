@@ -30,16 +30,14 @@ Sprite::Sprite( )
 SpritePacked::SpritePacked()
         : Sprite()
 {
-    colorTable = 0;
-    drawMode   = SOLID;
+    blendTable = 0;
 }
 
 SpritePacked::SpritePacked( PackedSurface &source )
         : Sprite()
 {
     setTo( source );
-    colorTable = 0;
-    drawMode   = SOLID;
+    blendTable = 0;
 }
 
 bool SpritePacked::isVisible(const iRect &world_win ) const
@@ -53,12 +51,12 @@ void SpritePacked::blit( Surface *surface, const iRect &world_win )
 
     blit_offset = (world_pos + attach_offset) - world_win.getLocation();
 
-    if (drawMode == BLEND) {
-        bltBlend(*surface, blit_offset.x, blit_offset.y, *colorTable);
-
-    } else if (drawMode == SOLID) {
+    if ( blendTable )
+    {
+        bltBlend(*surface, blit_offset.x, blit_offset.y, blendTable);
+    }
+    else
+    {
         blt(*surface, blit_offset);
-    } else {
-        assert(false);
     }
 }

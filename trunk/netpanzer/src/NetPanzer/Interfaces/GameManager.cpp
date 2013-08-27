@@ -65,7 +65,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
-#include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/Game/RankView.hpp"
@@ -94,34 +93,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 time_t GameManager::game_start_time = 0;
 time_t GameManager::game_elapsed_time_offset = 0;
 
-static Surface hostLoadSurface;
-
-// ******************************************************************
-
-void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
-{
-//        Surface text;
-//        text.renderText(string, color, 0);
-        screen->lock();
-
-        screen->fill(0);
-//        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
-//        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
-//        text.blt(*screen,x,y); // full blit
-
-        screen->bltStringCenter(string, color);
-
-        screen->unlock();
-        screen->copyToVideoFlip();
-}
-
 // ******************************************************************
 
 void GameManager::loadPalette(const std::string& palette_name)
 {
     if ( Screen ) {
         Palette::init(palette_name);
-        Screen->setPalette(Palette::color);
+        Screen->setPalette((SDL_Color*)Palette::color); // @todo FIX THIS SOME OTHER DAY
     }
 }
 
@@ -163,16 +141,8 @@ void GameManager::setVideoMode()
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
     screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
-//    Desktop::checkResolution(old_res, mode_res);
-//    Desktop::checkViewPositions(mode_res);
+
     loadPalette("netp");
-    
-    if(old_res == iXY(0,0)) {
-        // users can get annoyed when they see a black screen for half a minute
-        // so we display something here... (we're just hoping that palette1 is
-        // not black)
-//        drawTextCenteredOnScreen(_("Please wait... generating palettes"), 255);
-    }
 
 }
 

@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Label.hpp"
 #include "Network/PlayerRequests/BreakAllianceRequest.hpp"
 #include "Network/PlayerRequests/AllianceRequest.hpp"
 

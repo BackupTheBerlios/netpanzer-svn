@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/NetworkState.hpp"
+#include "2D/Palette.hpp"
 
 SpritePacked PowerUp::POWERUP_ANIM;
 SpritePacked PowerUp::POWERUP_ANIM_SHADOW;
@@ -46,7 +47,7 @@ PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 }
 
 PowerUp::PowerUp(iXY map_loc, int type)
@@ -64,7 +65,7 @@ PowerUp::PowerUp(iXY map_loc, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 }
 
 bool PowerUp::isPowerUpHit(UnitID *unit_id)

@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Actions/ActionManager.hpp"
 #include "Resources/ResourceManager.hpp"
 
+#include "2D/Color.hpp"
+
 #include <sstream>
 
 static int npmodule_say (lua_State *L)

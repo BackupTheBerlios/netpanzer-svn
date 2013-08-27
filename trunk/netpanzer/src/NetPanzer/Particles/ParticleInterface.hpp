@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "PuffParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
-#include "Units/UnitTypes.hpp"
 #include "Units/UnitState.hpp"
 
 #include <vector>
@@ -46,7 +45,7 @@ class ParticleInterface
 {
 private:
     static std::vector<UnitParticleInfo> unitParticleInfo;
-    static int unitBodyMaxArea;
+    static unsigned unitBodyMaxArea;
 
     static void getUnitParticleInfo();
     static void getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips [36]);

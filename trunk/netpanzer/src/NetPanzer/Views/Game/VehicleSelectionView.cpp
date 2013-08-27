@@ -37,11 +37,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitProfileInterface.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Units/UnitTypes.hpp"
 
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Label.hpp"
+#include "2D/Palette.hpp"
 #include "Views/Components/BoxedLabel.hpp"
 
 #include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
@@ -139,28 +139,28 @@ bool    VehicleSelectionView::displayOutpostNames = true;
 
 
 
-void activateVehicleSelectionView(ObjectiveID outpost_id)
-{
-    CURRENT_SELECTED_OUTPOST_ID = outpost_id;
-
-    Objective* obj = ObjectiveInterface::getObjective(outpost_id);
-
-    vsvSelectedUnit = obj->unit_generation_type;
-    vsvUnitGenOn    = obj->unit_generation_on_flag;
-
-    if (vsvUnitGenOn) {
-        VehicleSelectionView::setPowerOn();
-    } else {
-        VehicleSelectionView::setPowerOff();
-    }
-
+//void activateVehicleSelectionView(ObjectiveID outpost_id)
+//{
+//    CURRENT_SELECTED_OUTPOST_ID = outpost_id;
+//
+//    Objective* obj = ObjectiveInterface::getObjective(outpost_id);
+//
+//    vsvSelectedUnit = obj->unit_generation_type;
+//    vsvUnitGenOn    = obj->unit_generation_on_flag;
+//
+//    if (vsvUnitGenOn) {
+//        VehicleSelectionView::setPowerOn();
+//    } else {
+//        VehicleSelectionView::setPowerOff();
+//    }
+//
 //    Desktop::setVisibility( "VehicleSelectionView", true);
-}
+//}
 
-void toggleDisplayOutpostNames( void )
-{
-    VehicleSelectionView::displayOutpostNames = !VehicleSelectionView::displayOutpostNames;
-}
+//void toggleDisplayOutpostNames( void )
+//{
+//    VehicleSelectionView::displayOutpostNames = !VehicleSelectionView::displayOutpostNames;
+//}
 
 // VehicleSelectionView
 //---------------------------------------------------------------------------
@@ -521,7 +521,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             continue;
         }
 
-        miniProductionRect.setLocation(obj->area.getAbsRect(obj->location).getLocation() - gameViewRect.getLocation());
+        // @todo set the correct view location
+//        miniProductionRect.setLocation(obj->area.getAbsRect(obj->location).getLocation() - gameViewRect.getLocation());
         miniProductionRect.setSize(140, owned ? 50: 20);
         if ( obj->occupying_player ) 
         {
@@ -561,7 +562,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             if ( ! obj->unit_generation_on_flag )
             {
                 // Objective is off.
-                dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
@@ -580,7 +581,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                         ((int)tleft) / 60,
                         ((int)tleft) % 60);
                 checkMiniProductionRect(timeLeftBuf);
-                dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
 
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.x += unitImages[0]->getWidth();
@@ -598,7 +599,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         }
         else
         {
-            dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+            dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
             if ( obj->occupying_player) 
             {
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
@@ -628,15 +629,6 @@ void VehicleSelectionView::checkMiniProductionRect(const std::string& string)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::doActivate()
 {
-//    if (Desktop::getFocus() != this) {
-//        iXY pos;
-//
-//        pos = MouseInterface::getMousePosition() - getSize() / 2;
-//
-//        moveTo(pos);
-//        checkArea(iXY(screen->getWidth(),screen->getHeight()));
-//    }
-
     GameTemplateView::doActivate();
 
 } // end VehicleSelectionView::doActivate

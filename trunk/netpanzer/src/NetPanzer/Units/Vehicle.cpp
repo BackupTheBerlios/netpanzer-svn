@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "System/Sound.hpp"
-
+#include "2D/Palette.hpp"
 
 // NOTE: Temp unit new sprites put in
 #include "Interfaces/GameConfig.hpp"
@@ -75,7 +75,7 @@ enum{ _rotate_and_move, _rotate_stop_move };
 
 enum { PENDING_COMMAND_MOVE, PENDING_COMMAND_ATTACK };
 
-Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc)
+Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, const iXY& initial_loc)
     : UnitBase(player->getID(), id)
 {
     smolderWait    = 0.0f;
@@ -97,8 +97,8 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
 
     in_sync_flag = true;
 
-    body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-    turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    body_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
+    turret_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 
     ai_fsm_transition_complete = false;
 
@@ -187,7 +187,7 @@ void Vehicle::setUnitProperties( unsigned char utype )
         weaponType = Weapon::_bullet;
     }
     int bsize = profile->boundBox / 2;
-    select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
+    select_info_box.setBoxAttributes( BoundBox( iXY(bsize, bsize)), Color::blue);
 }
 
 

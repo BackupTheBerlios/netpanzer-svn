@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //#include <vector>
 #include <list>
 #include <string>
+#include "2D/Surface.hpp"
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
@@ -41,9 +42,12 @@ class tStringListBox : public Component, public StateChangedCallback
 protected:
     std::list<DataItem> List;
     void setHasHeader(bool b) { hasHeader = b; dirty = true; }
+    bool    dirty;
 
 private:
     enum { ItemHeight = 14 };
+    
+    Surface surface;
     
     tVScrollBar *VScrollBar;
     tHScrollBar *HScrollBar;
@@ -66,6 +70,7 @@ private:
     
     PIX background_color;
     
+    void draw(Surface& dest);
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
 public:
@@ -85,7 +90,7 @@ public:
     virtual int getMaxItemWidth(const DataItem& data);
     virtual std::string getTextItem();
     
-    int getNumVisibleLines() { return (size.y-5)/ItemHeight; }
+    int getNumVisibleLines() { return (getHeight()-5)/ItemHeight; }
     
     virtual void AddBlock(const std::string& S);
     virtual void Add(const std::string& S) { AddData(S, 0); }
@@ -100,6 +105,18 @@ public:
     virtual void setLocation(int x, int y);
     virtual void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     virtual void setAutoScroll(bool Value){AutoScroll = Value;}
+    
+    void setSize(const iXY& siz)
+    {
+        setSize(siz.x, siz.y);
+    }
+    
+    void setSize(const int x, const int y)
+    {
+        Component::setSize(x, y);
+        surface.create(x,y);
+        dirty=true;
+    }
     
     void setAutoWrap(bool autowrap);
     

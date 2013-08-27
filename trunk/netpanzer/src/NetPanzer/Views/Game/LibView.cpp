@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameView.hpp"
 #include "Particles/CraterParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 #include "Actions/Action.hpp"
 
 bool gDrawGameTiles = true;
@@ -59,9 +59,9 @@ LibView::LibView() : GameTemplateView()
     moveTo(0, 0);
     resize(325, 375);
 
-    add( Button::createTextButton("Surface",    iXY((getClientRect().getWidth() / 3) * 0, 0),       (getClientRect().getWidth() / 3) - 3, new SetDisplayModeAction(LIBVIEW_MODE_SURFACE_INFO)));
-    add( Button::createTextButton("Particles",  iXY(((getClientRect().getWidth() / 3) * 1) + 1, 0), (getClientRect().getWidth() / 3) - 4, new SetDisplayModeAction(LIBVIEW_MODE_PARTICLE_INFO)));
-    add( Button::createTextButton("Environment",iXY(((getClientRect().getWidth() / 3) * 2) + 1, 0), (getClientRect().getWidth() / 3) - 2, new SetDisplayModeAction(LIBVIEW_MODE_ENVIRONMENT_INFO)));
+//    add( Button::createTextButton("Surface",    iXY((getClientRect().getWidth() / 3) * 0, 0),       (getClientRect().getWidth() / 3) - 3, new SetDisplayModeAction(LIBVIEW_MODE_SURFACE_INFO)));
+//    add( Button::createTextButton("Particles",  iXY(((getClientRect().getWidth() / 3) * 1) + 1, 0), (getClientRect().getWidth() / 3) - 4, new SetDisplayModeAction(LIBVIEW_MODE_PARTICLE_INFO)));
+//    add( Button::createTextButton("Environment",iXY(((getClientRect().getWidth() / 3) * 2) + 1, 0), (getClientRect().getWidth() / 3) - 2, new SetDisplayModeAction(LIBVIEW_MODE_ENVIRONMENT_INFO)));
 
 } // end LibView::LibView
 
@@ -125,17 +125,6 @@ void LibView::drawSurfaceInfo(Surface &dest, iXY pos)
     pos.y += yOffset;
 
     sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", PackedSurface::getTotalByteCount(), PackedSurface::getTotalByteCount() / 1024, float(PackedSurface::getTotalByteCount()) / 1024.0f / 1024.0f);
-    dest.bltString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    dest.bltString(pos.x, pos.y, "-- ColorTable Info --", Color::green);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Count:     %d", ColorTable::getTotalColorArrayCount());
-    dest.bltString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", ColorTable::getTotalByteCount(), ColorTable::getTotalByteCount() / 1024, float(ColorTable::getTotalByteCount()) / 1024.0f / 1024.0f);
     dest.bltString(pos.x, pos.y, strBuf, Color::white);
     pos.y += yOffset;
 }

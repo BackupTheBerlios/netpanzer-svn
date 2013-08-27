@@ -20,21 +20,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Units/UnitBlackBoard.hpp"
 
-void PlacementMatrix::reset( iXY ini_map_loc )
+void PlacementMatrix::reset( const iXY& ini_map_loc )
 {
     ini_loc = ini_map_loc;
-    current_offset = iXY( 0, 0 );
-    current_loc =	ini_loc;
+    current_loc = ini_map_loc;
+    current_offset.zero();
     run_length = 0;
     run_counter = 0;
     placement_state = _placement_state_base_case;
 }
 
-bool PlacementMatrix::verifyLocation( iXY &loc )
+bool PlacementMatrix::verifyLocation( const iXY& loc )
 {
-    long x_offset, y_offset;
     iXY succ;
-    unsigned long direction_index;
 
     if ( ( MapInterface::getMovementValue( loc ) >= 0xFF) ||
             ( UnitBlackBoard::unitOccupiesLoc( loc ) == true )
@@ -43,51 +41,20 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
     }
 
 
-    for ( direction_index = 0; direction_index < 9; direction_index++ ) {
-        switch( direction_index ) {
-        case 0: {
-                x_offset =  0; y_offset =  0;
-            }
-            break;
-        case 1: {
-                x_offset =  1; y_offset =  0;
-            }
-            break;
-        case 2: {
-                x_offset =  1; y_offset = -1;
-            }
-            break;
-        case 3: {
-                x_offset =  0; y_offset = -1;
-            }
-            break;
-        case 4: {
-                x_offset = -1; y_offset = -1;
-            }
-            break;
-        case 5: {
-                x_offset = -1; y_offset =  0;
-            }
-            break;
-        case 6: {
-                x_offset = -1; y_offset =  1;
-            }
-            break;
-        case 7: {
-                x_offset =  0; y_offset =  1;
-            }
-            break;
-        case 8: {
-                x_offset =  1; y_offset =  1;
-            }
-            break;
-        default:
-            assert(false);
-            return false;
-        } // ** switch
-
-        succ.x = loc.x + (x_offset);
-        succ.y = loc.y + (y_offset);
+    for ( unsigned i = 0; i < 9; i++ )
+    {
+        switch( i )
+        {
+            case 0: succ = loc + iXY( 0, 0); break;
+            case 1: succ = loc + iXY( 1, 0); break;
+            case 2: succ = loc + iXY( 1, 1); break;
+            case 3: succ = loc + iXY( 0,-1); break;
+            case 4: succ = loc + iXY(-1,-1); break;
+            case 5: succ = loc + iXY(-1, 0); break;
+            case 6: succ = loc + iXY(-1, 1); break;
+            case 7: succ = loc + iXY( 0, 1); break;
+            case 8: succ = loc + iXY( 1,-1); break;
+        }
 
         if ( ( MapInterface::getMovementValue( succ ) < 0xFF) &&
                 ( UnitBlackBoard::unitOccupiesLoc( succ ) == false )
@@ -105,9 +72,11 @@ bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
 {
     bool end_cycle = false;
 
-    do {
-        switch( placement_state ) {
-        case _placement_state_base_case : {
+    do
+    {
+        switch( placement_state )
+        {
+            case _placement_state_base_case : {
                 placement_state = _placement_state_top_run;
                 current_offset.x -= 2;
                 current_offset.y -= 2;
@@ -120,7 +89,7 @@ bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
                 }
 
             }
-            break;
+                break;
 
         case _placement_state_top_run : {
                 if ( run_counter >= run_length ) {

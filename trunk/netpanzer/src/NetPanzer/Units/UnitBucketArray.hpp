@@ -65,8 +65,8 @@ public:
     UnitBucketArray( );
     ~UnitBucketArray( );
 
-    void initialize( iXY map_size, iXY tile_size);
-    void initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample );
+    void initialize( const iXY& map_size, const iXY& tile_size);
+    void initialize( const iXY& map_size, const iXY& tile_size, long x_super_sample, long y_super_sample );
 
     inline long getXSample( void )
     {
@@ -93,7 +93,7 @@ public:
         return( bucket_index );
     }
 
-    inline unsigned long worldLocToBucketIndex( iXY world_loc )
+    inline unsigned long worldLocToBucketIndex( const iXY& world_loc )
     {
         long bucket_index;
 
@@ -148,7 +148,7 @@ public:
 
     bool moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
 
-    bool deleteUnitBucketPointer( UnitID unit_id, iXY world_loc );
+    bool deleteUnitBucketPointer( UnitID unit_id, const iXY& world_loc );
 };
 
 #endif // ** _UNIT_BUCKET_ARRAY_HPP

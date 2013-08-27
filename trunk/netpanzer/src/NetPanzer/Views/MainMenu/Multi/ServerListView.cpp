@@ -166,7 +166,7 @@ public:
     
     void draw( Surface& dest )
     {
-        dest.fillRect(iRect(position.x, position.y, size.x, size.y), Color::cyan);
+        dest.fillRect(rect, Color::cyan);
 //        render();
 //        surface.bltTrans(dest, position.x, position.y );
     }
@@ -390,11 +390,11 @@ ServerListView::ServerListView()
 
     add( Button::createTextButton( _("Get new List"),
                                    iXY(getClientRect().getWidth()-206, getClientRect().getHeight() - Surface::getFontHeight() * 2),
-                                   120,  new GetNewListAction()));
+                                   120));
 
     add( Button::createTextButton( _("Refresh"),
                                    iXY(getClientRect().getWidth()-82, getClientRect().getHeight() - Surface::getFontHeight() * 2),
-                                   80,  new RefreshServerListAction()));
+                                   80));
     
     // XXX ugly
     serverlistview = this;

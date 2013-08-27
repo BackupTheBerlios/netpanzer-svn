@@ -18,18 +18,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOTTASKS_H
 #define BOTTASKS_H
 
-#include "Units/UnitBase.hpp"
-#include "BotTaskList.hpp"
+#include "Types/iXY.hpp"
 
 class BotTask {
     private:
         iXY m_lastLoc;
         int m_task;
     public:
-        BotTask(iXY loc, int task) { m_lastLoc = loc; m_task = task; }
+        BotTask(const iXY& loc, int task) { m_lastLoc = loc; m_task = task; }
 
-        void setLastLoc(iXY loc) { m_lastLoc = loc; }
-        iXY getLastLoc() { return m_lastLoc; }
+        void setLastLoc(const iXY& loc) { m_lastLoc = loc; }
+        const iXY& getLastLoc() { return m_lastLoc; }
 
         void setTask(int task) { m_task = task; }
         int getTask() { return m_task; }

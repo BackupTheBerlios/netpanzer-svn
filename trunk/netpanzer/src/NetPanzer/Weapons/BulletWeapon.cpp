@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 float BulletWeapon::velocity = gBulletVelocity;
 
-BulletWeapon::	BulletWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
+BulletWeapon::	BulletWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, const iXY &start, const iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
 {
     setSurface();

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "Units/UnitState.hpp"
+#include "Types/iXY.hpp"
 
 class UnitOpcode;
 class SpriteSorter;
@@ -53,9 +54,9 @@ public:
     virtual void selfDestruct() = 0;
     bool isWeaponInRange(const iXY& loc) const
     {
-        int x = loc.x - unit_state.location.x;
-        int y = loc.y - unit_state.location.y;
-        return (unsigned)(x*x + y*y) < unit_state.weapon_range;
+//        int x = loc.x - unit_state.location.x;
+//        int y = loc.y - unit_state.location.y;
+        return (loc - unit_state.location).mag2() < unit_state.weapon_range;
     }
 
 private:

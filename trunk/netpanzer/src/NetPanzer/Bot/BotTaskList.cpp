@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BotTaskList.hpp"
 #include "BotTask.hpp"
 #include "Util/Log.hpp"
+#include "Units/UnitBase.hpp"
 
 //-----------------------------------------------------------------
 BotTaskList::~BotTaskList()
@@ -45,8 +46,7 @@ void BotTaskList::setUnitTask(UnitBase *unit, int task)
 {
     bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {
-        iXY curLoc = unit->unit_state.location;
-        m_tasks[unit->id] = new BotTask(curLoc, task);
+        m_tasks[unit->id] = new BotTask(unit->unit_state.location, task);
     }
     else {
         it->second->setTask(task);
@@ -64,7 +64,7 @@ int BotTaskList::queryUnitTask(UnitBase *unit)
     }
     else {
         adjustLastUnitLoc(unit);
-        return m_tasks[unit->id]->getTask();
+        return it->second->getTask();
     }
 }
 

@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDL.h"
 #include <map>
 
+
+
 #include "ArrayUtil/PtrArray.hpp"
 #include "Core/CoreTypes.hpp"
 
@@ -46,7 +48,7 @@ protected:
     void onSocketError(TCPSocket *so);
     void startHeartbeat();
     
-private:
+private: int x;
     NTimer nextHeartbeat;
     string hb_message;
     PtrArray<NPString> mslist;

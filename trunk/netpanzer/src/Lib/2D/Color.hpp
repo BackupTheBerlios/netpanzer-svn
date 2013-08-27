@@ -18,9 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Color_hpp__
 #define __Color_hpp__
 
-#include "Core/CoreTypes.hpp"
+#include <stdint.h>
 
-//---------------------------------------------------------------------------
 class Color
 {
 public:
@@ -98,9 +97,7 @@ public:
     static uint8_t gray192;
     static uint8_t gray224;
 
-private:
-    friend class ScriptManager;
-    static void registerScript(const NPString& table_name);
+    static void updateColors();
 }
 ; // end Color
 

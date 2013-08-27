@@ -49,117 +49,87 @@ private:
     enum { STATUS_ALLOW_MOVE         = (1U << 2) };
     enum { STATUS_ALWAYS_ON_BOTTOM   = (1U << 3) };
     
-    inline void show() { status |=  STATUS_VISIBLE; }
-    inline void hide() { status &= ~STATUS_VISIBLE; }
+    inline void show() {}
+    inline void hide() {}
     
 public:
-    View();
-    virtual ~View();
+    View(){}
+    virtual ~View(){}
 
     inline const char *getSearchName() const { return searchName; }
     
-    inline bool isVisible() const { return status & STATUS_VISIBLE; }
-    inline bool isActive() const  { return status & STATUS_ACTIVE; }
-    inline bool isMovable() const { return status & STATUS_ALLOW_MOVE; }
-    inline bool isAlwaysOnBottom() const { return status & STATUS_ALWAYS_ON_BOTTOM; }
+    inline bool isVisible() const { return false; }
+    inline bool isActive() const  { return false; }
+    inline bool isMovable() const { return false; }
+    inline bool isAlwaysOnBottom() const { return false; }
 
 protected:
-    void add(Component *Component);
+    void add(Component *Component){}
     
     virtual void     actionPerformed(mMouseEvent ) {}
-    virtual void     onDesktopResized( const iXY& oldResolution, const iXY& newResolution);
-    virtual void     onShow() {};
-    virtual void     onHide() {};
+    virtual void     onDesktopResized( const iXY& oldResolution, const iXY& newResolution){}
+    virtual void     onShow() {}
+    virtual void     onHide() {}
     
-    void        reset     ();
-    void        activate  ();
-    void        deactivate();
+    void        reset     (){}
+    void        activate  (){}
+    void        deactivate(){}
 
     // View Status Functions.
-    void setAllowMove       (const bool &newStatus);
-    void setActive          (const bool &newStatus);
+    void setAllowMove       (const bool &newStatus){}
+    void setActive          (const bool &newStatus){}
 
     // SearchName, Title, and SubTitle functions.
-    void  setSearchName(const char *searchName);
+    void  setSearchName(const char *searchName){}
 
     /////////////////////////////////
-    void draw(Surface& drawon);
+    void draw(Surface& drawon){}
     
     /** Ensures the view is inside the screen, XXX REVIEW */
-    void checkArea(iXY viewarea);
+    void checkArea(iXY viewarea){}
     
-    iXY  getScreenToClientPos(const iXY &pos);
-    iXY  getScreenToViewPos(const iXY &pos);
+    iXY  getScreenToClientPos(const iXY &pos){return iXY(0,0);}
+    iXY  getScreenToViewPos(const iXY &pos){return iXY(0,0);}
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
 public:
-    virtual void doDraw( Surface& dest );
+    virtual void doDraw( Surface& dest ){}
     
 protected:
     
-    virtual void doActivate();
-    virtual void doDeactivate();
-    virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
-    virtual void lMouseDown(const iXY &pos);
-    virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-    virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-    virtual void rMouseDown(const iXY &pos);
-    virtual void rMouseUp(const iXY &downPos, const iXY &upPos);
-    virtual void rMouseUp();
-    virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
+    virtual void doActivate(){}
+    virtual void doDeactivate(){}
+    virtual void mouseMove(const iXY &prevPos, const iXY &newPos){}
+    virtual void lMouseDown(const iXY &pos){}
+    virtual int  lMouseUp(const iXY &downPos, const iXY &upPos){return 0;}
+    virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos){}
+    virtual void rMouseDown(const iXY &pos){}
+    virtual void rMouseUp(const iXY &downPos, const iXY &upPos){}
+    virtual void rMouseUp(){}
+    virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos){}
 
-    virtual void mouseEnter(const iXY &pos);
-    virtual void mouseExit(const iXY &pos);
+    virtual void mouseEnter(const iXY &pos){}
+    virtual void mouseExit(const iXY &pos){}
 
-    void resize(const iXY &size);
-    inline void resize(const int &x, const int &y)
-    {
-        resize(iXY(x, y));
-    }
+    void resize(const iXY &size){}
+    inline void resize(const int &x, const int &y) {}
 
-    void resizeClientArea(const iXY &size);
-    inline void resizeClientArea(const int &x, const int &y)
-    {
-        resizeClientArea(iXY(x, y));
-    }
+    void resizeClientArea(const iXY &size) {}
+    inline void resizeClientArea(const int &x, const int &y) {}
 
 public:
     virtual void processEvents() {}
 
     // Hack city, should be protected???????
-    void setAlwaysOnBottom(const bool &newStatus);
+    void setAlwaysOnBottom(const bool &newStatus){}
 
-    void moveTo(iXY destMin);
-    inline void moveTo(const int &x, const int &y)
-    {
-        moveTo(iXY(x, y));
-    }
+    void moveTo(iXY destMin){}
+    inline void moveTo(const int &x, const int &y) {}
+    void removeComponents() {}
+    void removeComponent(Component *c) {}
 
-    void removeComponents()
-    {
-        components.deleteAll();
-        components.reset();
-        focusComponent      = 0;
-    }
-
-    void removeComponent(Component *c)
-    {
-        for ( size_t n = 0; n < components.getLastIndex(); n++ )
-        {
-            if ( components[n] == c )
-            {
-                components.erase(n);
-            }
-        }
-
-        if ( focusComponent == c )
-        {
-            focusComponent = 0;
-        }
-    }
-    
-    iRect getClientRect() const;
+    iRect getClientRect() const { return iRect(0,0,0,0); }
 };
 
 #endif // end __View_hpp__

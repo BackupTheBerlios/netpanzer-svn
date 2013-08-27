@@ -27,7 +27,7 @@ class CraterCacheInfo
 {
 public:
     iRect     bounds;
-    iXY       pos;
+    iXY   pos;
 };
 
 // CraterParticle2D

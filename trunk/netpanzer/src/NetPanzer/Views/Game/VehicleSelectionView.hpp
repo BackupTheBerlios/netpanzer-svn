@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameTemplateView.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Views/Components/Component.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 
 
 // The following may be used some day.
@@ -54,8 +54,11 @@ public:
 extern int vsvSelectedUnit;     // Vehicle Selection View Selected Unit
 extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
 
-void activateVehicleSelectionView( ObjectiveID outpost_id );
-void toggleDisplayOutpostNames( void );
+#define activateVehicleSelectionView(x)
+#define toggleDisplayOutpostNames()
+
+//void activateVehicleSelectionView( ObjectiveID outpost_id ){}
+//void toggleDisplayOutpostNames( void ){}
 
 class BoxedLabel;
 

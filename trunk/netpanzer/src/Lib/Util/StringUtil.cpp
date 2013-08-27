@@ -19,19 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StringUtil.hpp"
 
-void string_to_params( const NPString& str, std::vector<NPString>& parameters )
+void string_to_params( const std::string& str, std::vector<std::string>& parameters )
 {
     parameters.clear();
 
     static const char* limiters[] = { ", \t", "\"" };
 
-    NPString::size_type start = 0;
-    NPString::size_type end = 0;
+    std::string::size_type start = 0;
+    std::string::size_type end = 0;
 
     do
     {
         start = str.find_first_not_of(" \t", start);
-        if ( start != NPString::npos )
+        if ( start != std::string::npos )
         {
             int limit_index = 0;
             if ( str[start] == '"' && start < str.length()-1 )
@@ -42,12 +42,12 @@ void string_to_params( const NPString& str, std::vector<NPString>& parameters )
 
             end = str.find_first_of(limiters[limit_index], start);
 
-            parameters.push_back( str.substr(start, end != NPString::npos ? end-start : end) );
+            parameters.push_back( str.substr(start, end != std::string::npos ? end-start : end) );
 
-            if ( end != NPString::npos )
+            if ( end != std::string::npos )
             {
                 start = str.find_first_not_of(limiters[limit_index], end);
             }
         }
-    } while ( start != NPString::npos && end != NPString::npos );
+    } while ( start != std::string::npos && end != std::string::npos );
 }

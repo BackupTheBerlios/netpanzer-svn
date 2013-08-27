@@ -21,9 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class UnitBase;
 class iXY;
 
+#include "Core/CoreTypes.hpp"
 #include "BotTaskList.hpp"
 
-class Bot {
+class Bot
+{
     static class Bot *s_bot;
     public:
         static void initialize(Bot *bot);
@@ -33,10 +35,10 @@ class Bot {
         virtual ~Bot() {}
         virtual void processEvents() = 0;
 
-        void moveUnit(UnitBase *unit, iXY map_pos);
-        void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
-        void manualFire(UnitBase *unit, iXY world_pos);
-        void produceUnit(ObjectiveID outpostID, int selectedProduce);
+        void moveUnit   (UnitBase *unit, const iXY& map_pos);
+        void attackUnit (UnitBase *unit, UnitBase *enemyUnit);
+        void manualFire (UnitBase *unit, const iXY& world_pos);
+        void produceUnit(const ObjectiveID outpostID, const int selectedProduce);
     protected:
         BotTaskList m_tasks;
 };

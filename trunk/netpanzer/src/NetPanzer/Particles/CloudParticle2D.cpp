@@ -66,16 +66,16 @@ void CloudParticle2D::setRandomSurface()
     packedSurfaceShadow.setData(staticPackedCloud);
     packedSurfaceShadow.setFrame(randFrame);
 
-    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
 
     int randColorTable = rand() % 3;
 
     if (randColorTable == 0) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+        packedSurface.setDrawModeBlend(Palette::blend2080());
     } else if(randColorTable == 1) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+        packedSurface.setDrawModeBlend(Palette::blend4060());
     } else if(randColorTable == 2) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+        packedSurface.setDrawModeBlend(Palette::blend6040());
     } else {
         assert(false);
     }

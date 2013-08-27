@@ -51,6 +51,8 @@ typedef uint8_t TeamID;
 #define MAX_TEAM_ID (0xfe)
 #define INVALID_TEAM_ID (0xff)
 
+typedef uint8_t UnitType;
+
 #ifndef __TEST_PLAYERID__
     typedef uint8_t PlayerID;
     #define MIN_PLAYER_ID (0)

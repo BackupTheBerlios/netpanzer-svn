@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Physics.hpp"
 #include "VectorPuffParticle2D.hpp"
-#include "Units/UnitTypes.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "ChunkTrajectoryParticle2D.hpp"
@@ -38,10 +37,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 
 #include "Util/Log.hpp"
+#include "2D/Color.hpp"
 
 
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
-int ParticleInterface::unitBodyMaxArea                   = 0;
+unsigned ParticleInterface::unitBodyMaxArea                   = 0;
 int ParticleInterface::gParticlesCanHaveSmoke            = 1;
 int ParticleInterface::gSolidColorExplosionParticles     = 0;
 int ParticleInterface::gTestSim                          = 0;
@@ -66,7 +66,7 @@ void ParticleInterface::addUnitDamagePuffParticle(const UnitState &unitState)
     iXY pos(unitState.location);
 
     iXY size     = unitParticleInfo[unitState.unit_type].minBounds.getSize();
-    iXY halfSize = size / 2;
+    iXY halfSize(size.x / 2, size.y /2 );
 
     fXYZ newPos;
 
@@ -502,7 +502,7 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 
             assert(size.x > 0 && size.y > 0);
 
-            iXY halfSize = size / 2;
+            iXY halfSize(size.x/2, size.y/2);
 
             pos.x += (rand() % size.x) - halfSize.x;
             pos.z += (rand() % size.y) - halfSize.y;

@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 
 #include "Core/CoreTypes.hpp"
+#include "Types/BoundBox.hpp"
 #include "Resources/ResourceManager.hpp"
-#include "ArrayUtil/BoundBox.hpp"
 #include "Classes/Sprite.hpp"
 
 class SelectionBoxSprite : public Sprite

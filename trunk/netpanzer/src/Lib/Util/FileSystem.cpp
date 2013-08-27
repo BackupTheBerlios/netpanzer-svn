@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FileSystem.hpp"
 #include "physfs/physfs.h"
 
-#include "Core/CoreTypes.hpp"
-
 namespace filesystem
 {
 
@@ -39,10 +37,10 @@ bool initialize( const char* argv0, const char* application )
     const char* userdir = PHYSFS_getUserDir();
     const char* dirsep = PHYSFS_getDirSeparator();
     
-    NPString appdir(".");
+    std::string appdir(".");
     appdir += application;
 
-    NPString writedir(userdir);
+    std::string writedir(userdir);
     writedir += appdir;
     
     if ( ! PHYSFS_setWriteDir(writedir.c_str()) )
@@ -109,6 +107,7 @@ bool initialize( const char* argv0, const char* application )
     
     PHYSFS_removeFromSearchPath(writedir.c_str());
     PHYSFS_addToSearchPath(writedir.c_str(), 0);
+    return true;
 }
 
 void shutdown()
@@ -269,7 +268,7 @@ ReadFile::ReadFile(PHYSFS_file* file)
         : File(file)
 {}
 
-ReadFile::ReadFile(const NPString& name)
+ReadFile::ReadFile(const std::string& name)
 {
     PHYSFS_file* newfile = PHYSFS_openRead(name.c_str());
     if ( !newfile )
@@ -329,124 +328,73 @@ bool ReadFile::isEOF()
     return isOpen() && PHYSFS_eof(file);
 }
 
-SDL_RWops* ReadFile::getSDLRWOps()
+int8_t ReadFile::read8()
 {
-    SDL_RWops* rwops = (SDL_RWops*) malloc(sizeof(SDL_RWops));
-    memset(rwops, 0, sizeof(SDL_RWops));
-    rwops->read = RWOps_Read;
-    rwops->seek = RWOps_Seek;
-    rwops->close = RWOps_Close;
-    rwops->hidden.unknown.data1 = this;
-
-    return rwops;
-}
-
-int ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
-{
-    ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
-    try {
-	file->read(ptr, size, maxnum);
-    } catch(FileReadException& e) {
-	return e.getReadCount();
-    } catch(...) {
-	return 0;
-    }
-
-    return maxnum;
-}
-
-int ReadFile::RWOps_Seek(SDL_RWops* context, int offset, int whence)
-{
-    ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
-    try { // catch exceptions
-        switch(whence) {
-        case SEEK_SET: file->seek(offset); break;
-        case SEEK_CUR: file->seek(file->tell() + offset); break;
-        case SEEK_END: file->seek(file->fileLength() + offset); break;
-        }
-    } catch(...) {
-        LOG(("Unexpected exception while seeking in file."));
-        return -1;
-    }
-
-    return file->tell();
-}
-
-int ReadFile::RWOps_Close(SDL_RWops* context)
-{
-    ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
-    delete file;
-    context->hidden.unknown.data1 = 0;
-    return 1;
-}
-
-Sint8 ReadFile::read8()
-{
-    Sint8 val;
+    int8_t val;
     if(PHYSFS_read(file, &val, 1, 1) != 1)
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Sint16 ReadFile::readSLE16()
+int16_t ReadFile::readSLE16()
 {
-    Sint16 val;
+    int16_t val;
     if(!PHYSFS_readSLE16(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Uint16 ReadFile::readULE16()
+uint16_t ReadFile::readULE16()
 {
-    Uint16 val;
+    uint16_t val;
     if(!PHYSFS_readULE16(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Sint16 ReadFile::readSBE16()
+int16_t ReadFile::readSBE16()
 {
-    Sint16 val;
+    int16_t val;
     if(!PHYSFS_readSBE16(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Uint16 ReadFile::readUBE16()
+uint16_t ReadFile::readUBE16()
 {
-    Uint16 val;
+    uint16_t val;
     if(!PHYSFS_readUBE16(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Sint32 ReadFile::readSLE32()
+int32_t ReadFile::readSLE32()
 {
-    Sint32 val;
+    int32_t val;
     if(!PHYSFS_readSLE32(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Uint32 ReadFile::readULE32()
+uint32_t ReadFile::readULE32()
 {
-    Uint32 val;
+    uint32_t val;
     if(!PHYSFS_readULE32(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Sint32 ReadFile::readSBE32()
+int32_t ReadFile::readSBE32()
 {
-    Sint32 val;
+    int32_t val;
     if(!PHYSFS_readSBE32(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
 }
 
-Uint32 ReadFile::readUBE32()
+uint32_t ReadFile::readUBE32()
 {
-    Uint32 val;
+    uint32_t val;
     if(!PHYSFS_readUBE32(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
@@ -511,55 +459,55 @@ void WriteFile::write(const void* buffer, size_t objsize, size_t objcount)
 		"write not possible (disk full)?");
 }
 
-void WriteFile::write8(Sint8 val)
+void WriteFile::write8(int8_t val)
 {
     if(PHYSFS_write(file, &val, 1, 1) != 1)
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSLE16(Sint16 val)
+void WriteFile::writeSLE16(int16_t val)
 {
     if(!PHYSFS_writeSLE16(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeULE16(Uint16 val)
+void WriteFile::writeULE16(uint16_t val)
 {
     if(!PHYSFS_writeULE16(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSBE16(Sint16 val)
+void WriteFile::writeSBE16(int16_t val)
 {
     if(!PHYSFS_writeSBE16(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeUBE16(Uint16 val)
+void WriteFile::writeUBE16(uint16_t val)
 {
     if(!PHYSFS_writeUBE16(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSLE32(Sint32 val)
+void WriteFile::writeSLE32(int32_t val)
 {
     if(!PHYSFS_writeSLE32(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeULE32(Uint32 val)
+void WriteFile::writeULE32(uint32_t val)
 {
     if(!PHYSFS_writeULE32(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSBE32(Sint32 val)
+void WriteFile::writeSBE32(int32_t val)
 {
     if(!PHYSFS_writeSBE32(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeUBE32(Uint32 val)
+void WriteFile::writeUBE32(uint32_t val)
 {
     if(!PHYSFS_writeUBE32(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());

@@ -157,7 +157,7 @@ void TeamManager::reset()
         PrepareTeam *v = 0; //(PrepareTeam*)Desktop::getView("PrepareTeam");
         if ( v )
         {
-            v->resetReady();
+//            v->resetReady();
         }
     }
 }

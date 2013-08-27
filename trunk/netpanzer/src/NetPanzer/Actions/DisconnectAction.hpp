@@ -22,13 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	DISCONNECTACTION_HPP
 
 #include "Action.hpp"
-
 #include "Interfaces/GameManager.hpp"
-#include "Interfaces/StrManager.hpp"
-#include "2D/Color.hpp"
-
-#include "Util/Log.hpp"
-
 
 class DisconnectAction : public Action
 {
@@ -36,12 +30,7 @@ public:
     DisconnectAction() : Action(true) {}
     void execute()
     {
-        
-        GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
-
         GameManager::quitNetPanzerGame();
-
-        GameManager::drawTextCenteredOnScreen(_("Loading Main View..."), Color::white);
     }
 };
 

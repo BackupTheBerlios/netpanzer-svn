@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _OBJECTIVE_HPP
 
 #include "Core/CoreTypes.hpp"
-#include "ArrayUtil/BoundBox.hpp"
+#include "Types/iXY.hpp"
+#include "Types/BoundBox.hpp"
 #include "Util/Timer.hpp"
 
 class PlayerState;
@@ -34,7 +35,7 @@ public:
     char          name[64];
     iXY           location;
     BoundBox      capture_area;
-    BoundBox      area;
+    iRect         area;
     PlayerState*  occupying_player;
 
 // from outpost
@@ -50,7 +51,7 @@ public:
     Timer occupation_status_timer;
     Timer unit_generation_timer;
 
-    Objective(ObjectiveID ID, iXY location, BoundBox area );
+    Objective(ObjectiveID ID, const iXY& location, BoundBox area );
     ~Objective() { }
 
     void changeOwner( PlayerState * new_owner );

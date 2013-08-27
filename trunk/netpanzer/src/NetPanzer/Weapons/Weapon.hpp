@@ -73,7 +73,7 @@ protected:
 
 public:
 
-    Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
+    Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, const iXY &start, const iXY &end);
 
     virtual ~Weapon()
     { }

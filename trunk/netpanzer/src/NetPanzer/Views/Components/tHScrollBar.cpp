@@ -63,11 +63,22 @@ tHScrollBar::tHScrollBar(iXY pos, int Width, StateChangedCallback* newcallback)
     dirty = true;
 }
 
+void tHScrollBar::draw(Surface& dest)
+{
+    if ( dirty )
+    {
+        render();
+        dirty = false;
+    }
+    
+    surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
+}
+
 void tHScrollBar::actionPerformed(const mMouseEvent &me)
 {
     if ( Max < 1 ) return;
-    iRect rect_button_Left(position.x, position.y, position.x+bSize, position.y+bSize);
-    iRect rect_button_Right(position.x+size.x-bSize, position.y, position.x+size.x, position.y+size.y);
+    iRect rect_button_Left(rect.getLocationX(), rect.getLocationY(), rect.getLocationX()+bSize, rect.getLocationY()+bSize);
+    iRect rect_button_Right(rect.getLocationX()+rect.getWidth()-bSize, rect.getLocationY(), rect.getLocationX()+rect.getWidth(), rect.getLocationY()+rect.getHeight());
     
     if (rect_button_Left.contains(iXY(me.getX(), me.getY())))
     {
@@ -111,7 +122,7 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
 
     if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
     {
-        if (me.getX() < (position.x+bSize+RisePos)) 
+        if (me.getX() < (rect.getLocationX()+bSize+RisePos)) 
         {
             if (Position-LargeChange > Min) setPosition(Position-LargeChange);
             else setPosition(Min);
@@ -119,7 +130,7 @@ void tHScrollBar::actionPerformed(const mMouseEvent &me)
                 callback->stateChanged(this);
             return;
         }
-        if (me.getX() > (position.x+bSize+RisePos+bSize))
+        if (me.getX() > (rect.getLocationX()+bSize+RisePos+bSize))
         {
             if (Position+LargeChange < Max) setPosition(Position+LargeChange);
             else setPosition(Max);
@@ -163,15 +174,15 @@ void tHScrollBar::render()
 
     if (bRightstate == PRESSED)
     {
-        bRightOver.bltTrans(surface, size.x-(bSize-1), 1); // blit full
+        bRightOver.bltTrans(surface, rect.getWidth()-(bSize-1), 1); // blit full
     }
     else if (bRightstate == OVER)
     {
-        bRightOver.bltTrans(surface, size.x-bSize, 0); // blit full
+        bRightOver.bltTrans(surface, rect.getWidth()-bSize, 0); // blit full
     } 
     else
     {
-        bRightNormal.bltTrans(surface, size.x-bSize, 0); // blit full
+        bRightNormal.bltTrans(surface, rect.getWidth()-bSize, 0); // blit full
     }
     
     if (bRisestate == OVER)
@@ -190,7 +201,7 @@ void tHScrollBar::setPosition(int newPosition)
     Position = newPosition;
     int R = Max - Min;
     if (R == 0) RisePos = 0;
-    else RisePos = ((Position-Min) * (size.x-(bSize*3))) / R+1 ;
+    else RisePos = ((Position-Min) * (rect.getWidth()-(bSize*3))) / R+1 ;
     dirty = true;
 }
 

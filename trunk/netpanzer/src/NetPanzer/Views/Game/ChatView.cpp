@@ -23,11 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Views/Theme.hpp"
 #include "Views/Components/View.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Components/Button.hpp"
 #include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tChatBox.hpp"
-#include "Views/Components/InputField.hpp"
-
+#include "2D/Components/InputField.hpp"
+#include "2D/Palette.hpp"
 
 #include "Actions/Action.hpp"
 
@@ -72,7 +72,7 @@ static Button* createTitlebarButton(int x, int y, const Surface& button_images, 
 
     Surface *bimage = new Surface(15,15);
     button_images.blt(*bimage, 0, 0);
-    bimage->bltLookup(bimage->getRect(), Palette::darkGray256.getColorArray());
+    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
     bg.push_back(bimage);
 
     bimage = new Surface(15,15);
@@ -85,16 +85,13 @@ static Button* createTitlebarButton(int x, int y, const Surface& button_images, 
 
     bimage = new Surface(15,15);
     button_images.blt(*bimage, 0, 0);
-    bimage->bltLookup(bimage->getRect(), Palette::darkGray256.getColorArray());
+    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
     bg.push_back(bimage);
 
     Button *b = new Button();
     b->setImage(bg);
     b->setLocation( x, y);
     b->setStateOffset(Button::BPRESSED, 1, 1);
-    
-    b->setAction(action);
-    
     return b;
 }
 
@@ -152,11 +149,11 @@ ChatView::ChatView() : GameTemplateView()
     ChatList->setAutoScroll(true);
     add(ChatList);
     
-    input = new InputField(this);
+    input = new InputField();
     input->setLocation(2 + 16,getHeight()-16);
     input->setSize(getWidth()-(5 + 17),16);
     input->setMaxTextLength(500);
-    input->setExcludedChars("\\�`�");
+    input->setExcludedChars(UString("\\�`�"));
     
     add(input);
     
@@ -166,7 +163,7 @@ ChatView::ChatView() : GameTemplateView()
     switchModeButton->setSize(16, 16);
     switchModeButton->setLabel(">");
     switchModeButton->setStateOffset(Button::BPRESSED, 1, 1);
-    switchModeButton->setAction(new SwitchChatModeAction(this));
+//    switchModeButton->setAction(new SwitchChatModeAction(this));
     
     switchModeButton->setTextColors(Color::gray, Color::yellow, Color::gray, Color::darkGray);
     
@@ -186,7 +183,7 @@ ChatView::ChatView() : GameTemplateView()
 
 void ChatView::doDraw( Surface& dest )
 {
-    dest.bltLookup(dest.getRect(), Palette::brightness256.getColorArray());
+    dest.bltLookup(dest.getRect(), Palette::filterBrightness());
     dest.bltString(35, 4, "Chat View", ctTexteNormal);
     View::doDraw( dest );
 }
@@ -200,7 +197,8 @@ void ChatView::processEvents()
         {
             if ( input->getText().length() != 0 )
             {
-                const NPString& msg = input->getText();
+                // @todo fix this
+                const NPString& msg = ""; //input->getText();
 
                 if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
                 {
@@ -214,7 +212,7 @@ void ChatView::processEvents()
                     }
                 }
 
-                input->setText("");
+                input->clearText();
             }
         }
     }
@@ -277,17 +275,17 @@ void ChatView::restoreChat()
     add(input);
 }
 
-void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
-{
-    char temp_str[256];
-    va_list vap;
-
-    va_start( vap, format );
-    vsnprintf( temp_str, 256, format, vap );
-    va_end( vap );
-
-    ChatList->AddChat(temp_str, msgcolor, hasFlag, flag);
-}
+//void ChatView::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
+//{
+//    char temp_str[256];
+//    va_list vap;
+//
+//    va_start( vap, format );
+//    vsnprintf( temp_str, 256, format, vap );
+//    va_end( vap );
+//
+//    ChatList->AddChat(temp_str, msgcolor, hasFlag, flag);
+//}
 
 void ChatView::onDesktopResized(const iXY& oldResolution, const iXY& newResolution)
 {
@@ -328,27 +326,27 @@ void ChatView::setChatAll()
     }
 }
 
-void ChatView::openChat()
-{
-    if ( HideWindow )
-    {
-        restoreChat();
-    }
-    
-//    Desktop::setKeyboardFocusComponent(input);
-}
+//void ChatView::openChat()
+//{
+//    if ( HideWindow )
+//    {
+//        restoreChat();
+//    }
+//    
+////    Desktop::setKeyboardFocusComponent(input);
+//}
 
-void ChatView::openFriendsChat()
-{
-    if ( HideWindow )
-    {
-        restoreChat();
-    }
-    
-    setChatFriends();
-    
-//    Desktop::setKeyboardFocusComponent(input);
-}
+//void ChatView::openFriendsChat()
+//{
+//    if ( HideWindow )
+//    {
+//        restoreChat();
+//    }
+//    
+//    setChatFriends();
+//    
+////    Desktop::setKeyboardFocusComponent(input);
+//}
 
 void ChatView::switchChatMode()
 {

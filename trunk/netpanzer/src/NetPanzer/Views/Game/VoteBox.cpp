@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/ScreenSurface.hpp"
 #include "Views/Game/VoteBox.hpp"
-#include "Views/Components/Button.hpp"
-#include "Views/Components/Label.hpp"
+#include "2D/Components/Button.hpp"
+#include "2D/Components/Label.hpp"
 #include "Views/Theme.hpp"
 #include "Interfaces/VoteManager.hpp"
 #include "2D/Surface.hpp"
@@ -56,13 +56,13 @@ VoteBox::VoteBox(NPString msg) : GameTemplateView()
     
     add(Button::createNewSpecialButton("Yes",
                                        iXY(sizex/2-55, 35),
-                                       50,
-                                       new YesNoAction(vote_yes)));
+                                       50));
+//                                       new YesNoAction(vote_yes)));
     
     add(Button::createNewSpecialButton("No",
                                        iXY(sizex/2+5, 35),
-                                       50,
-                                       new YesNoAction(vote_no)));
+                                       50));
+//                                       new YesNoAction(vote_no)));
     
     LOGGER.warning("VoteBox %s", msg.c_str());
 }

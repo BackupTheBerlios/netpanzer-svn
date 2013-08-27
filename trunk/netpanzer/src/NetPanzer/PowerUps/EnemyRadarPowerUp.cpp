@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "EnemyRadarPowerUp.hpp"
 
 #include <stdlib.h>
-#include "Units/UnitTypes.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
@@ -33,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "System/Sound.hpp"
 #include "Util/NTimer.hpp"
+
+#include "2D/Color.hpp"
 
 static NTimer radarTimer(180000);
 static bool radarActive = false;

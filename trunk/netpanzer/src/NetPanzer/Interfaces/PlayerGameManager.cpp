@@ -68,7 +68,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/SDLSound.hpp"
 #include "System/SDLVideo.hpp"
 #include "System/DummySound.hpp"
-#include "System/SDLEvents.hpp"
 
 #include "Util/TimerInterface.hpp"
 #include "Util/Math.hpp"
@@ -81,6 +80,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scripts/ScriptManager.hpp"
 #include "Actions/ActionManager.hpp"
+#include "2D/TextRenderingSystem.hpp"
 
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
@@ -96,7 +96,7 @@ void PlayerGameManager::initializeVideoSubSystem()
     LOGGER.info("Initializing video mode");
     sdlVideo = new SDLVideo();
     Screen = sdlVideo;
-    initFont();
+    TextRenderingSystem::initialize();
     GameManager::setVideoMode();
 }
 
@@ -136,7 +136,6 @@ void PlayerGameManager::initializeSoundSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeInputDevices()
 {
-    MouseInterface::initialize();
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
@@ -152,11 +151,6 @@ void PlayerGameManager::initializeWindowSubSystem()
 void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
-    MouseInterface::manageClickTimer();
-//    Desktop::manage(MouseInterface::getMouseX(),
-//               MouseInterface::getMouseY(), MouseInterface::getButtonMask());
-
-    COMMAND_PROCESSOR.updateScrollStatus( MouseInterface::getMousePosition() );
 
     BaseGameManager::inputLoop();
 }
@@ -410,7 +404,7 @@ bool PlayerGameManager::mainLoop()
     if ( heartbeat )
         heartbeat->checkHeartbeat();
 
-    handleSDLEvents();
+//    handleSDLEvents();
 
     if ( NetworkState::getNetworkStatus() == _network_state_server )
     {

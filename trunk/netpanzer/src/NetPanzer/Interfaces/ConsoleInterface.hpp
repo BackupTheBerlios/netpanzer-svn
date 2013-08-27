@@ -62,7 +62,7 @@ protected:
 public:
     static void initialize( long size );
 
-    static void setToSurfaceSize( iXY pix );
+    static void setToSurfaceSize( const iXY& size );
 
     static void setStdoutPipe( bool on_off );
 

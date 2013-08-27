@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TimeStamp_hpp__
 #define __TimeStamp_hpp__
 
-#include "SDL.h"
+#include <stdint.h>
 
 /**
  * Defines a way to record a point in time.  The actual value
@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class TimeStamp
 {
 private:
-    typedef Uint32 Ticks;
+    typedef uint32_t Ticks;
     Ticks v; // ticks count
 
     inline static double ticksToSecs(Ticks t)
@@ -106,7 +106,7 @@ public:
     }
 
     /** returns the ticks count. This is intended for network packets only! */
-    Uint32 getNetworkTicks() const
+    uint32_t getNetworkTicks() const
     {
         return v;
     }

@@ -27,7 +27,7 @@ class ShellWeapon : public Weapon
     virtual void fsmFlight();
 
 public:
-    ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
+    ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, const iXY &start, const iXY &end);
 
     virtual void updateStatus();
 

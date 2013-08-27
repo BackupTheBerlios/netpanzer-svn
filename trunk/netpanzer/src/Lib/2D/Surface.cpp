@@ -24,18 +24,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <algorithm>
 
+#include "Surface.hpp"
+
 #include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
 #include "Types/fXY.hpp"
 #include "Util/TimerInterface.hpp"
 #include "Util/Exception.hpp"
 #include "Palette.hpp"
-#include "Surface.hpp"
 #include "ArrayUtil/PtrArray.hpp"
+
+#include "Color.hpp"
+
+#include "ft2build.h"
+#include FT_FREETYPE_H
 
 using std::swap;
 
-extern char staticNewFont[15280];
 #define FONT_HEIGHT 10
 #define FONT_WIDTH 8
 #define FONT_MAXCHAR 191
@@ -53,11 +58,11 @@ inline void orderCoords(T &a, T &b)
 class BitmapFileHeader
 {
 public:
-    Uint16    bfType;
-    Uint32   bfSize;
-    Uint16    bfReserved1;
-    Uint16    bfReserved2;
-    Uint32   bfOffBits;
+    uint16_t    bfType;
+    uint32_t   bfSize;
+    uint16_t    bfReserved1;
+    uint16_t    bfReserved2;
+    uint32_t   bfOffBits;
 
     BitmapFileHeader(filesystem::ReadFile& file);
 };
@@ -78,37 +83,35 @@ BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile& file)
 class BitmapInfoHeader
 {
 public:
-    Uint32  biSize;
-    Uint32  biWidth;
-    Uint32  biHeight;
-    Uint16   biPlanes;
-    Uint16   biBitCount;
-    Uint32  biCompression;
-    Uint32  biSizeImage;
-    Uint32  biXPelsPerMeter;
-    Uint32  biYPelsPerMeter;
-    Uint32  biClrUsed;
-    Uint32  biClrImportant;
+    uint32_t  biXY;
+    uint32_t  biWidth;
+    uint32_t  biHeight;
+    uint16_t   biPlanes;
+    uint16_t   biBitCount;
+    uint32_t  biCompression;
+    uint32_t  biXYImage;
+    uint32_t  biXPelsPerMeter;
+    uint32_t  biYPelsPerMeter;
+    uint32_t  biClrUsed;
+    uint32_t  biClrImportant;
 
     BitmapInfoHeader(filesystem::ReadFile& file);
 };
 
 BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile& file)
 {
-    biSize = file.readULE32();
+    biXY = file.readULE32();
     biWidth = file.readULE32();
     biHeight = file.readULE32();
     biPlanes = file.readULE16();
     biBitCount = file.readULE16();
     biCompression = file.readULE32();
-    biSizeImage = file.readULE32();
+    biXYImage = file.readULE32();
     biXPelsPerMeter = file.readULE32();
     biYPelsPerMeter = file.readULE32();
     biClrUsed = file.readULE32();
     biClrImportant = file.readULE32();
 }
-
-PtrArray<Surface> ascii8x8;
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -130,7 +133,7 @@ Surface::Surface(unsigned int w, unsigned int h)
 {
     reset();
 
-    alloc( w, h);
+    create( w, h);
 
     totalSurfaceCount++;
     totalByteCount += sizeof(Surface);
@@ -155,16 +158,15 @@ Surface::~Surface()
 //---------------------------------------------------------------------------
 void Surface::free()
 {
-    if ( frame0 )
+    if ( mem )
     {
-        ::free(frame0);
+        ::free(mem);
 
         totalByteCount -= getPitch() * getHeight() * sizeof(PIX);
 
         assert(totalByteCount >= 0);
     }
 
-    frame0     = 0;
     mem        = 0;
 }
 
@@ -177,46 +179,9 @@ void Surface::reset()
     twidth      = 0;
     theight     = 0;
     tpitch      = 0;
-    clip_rect.setLocation( 0, 0);
-    clip_rect.setSize( 0, 0);
 
     mem         = 0;
-    frame0      = 0;
 } // end Surface::reset
-
-// alloc
-//---------------------------------------------------------------------------
-// Purpose: Allocates memory for the surface, while setting the pix.x, pix.y,
-//          xCenter, yCenter, and stride.  If successful, true is returned,
-//          otherwise false is returned.
-//---------------------------------------------------------------------------
-void
-Surface::alloc(unsigned int w, unsigned int h)
-{
-    assert(this != 0);
-
-    free();
-
-    twidth = w;
-    theight= h;
-    tpitch = w;
-    clip_rect.setLocation( 0, 0);
-    clip_rect.setSize( w, h);
-    
-    size_t requestedBytes = getPitch() * getHeight();
-
-    if (requestedBytes > 0)
-    {
-        frame0 = (PIX *) malloc(requestedBytes);
-
-        if (frame0 == 0)
-            throw Exception("out of memory while allocating surface.");
-
-        totalByteCount += requestedBytes;
-    }
-
-    Surface::mem        = frame0;
-} // end Surface::alloc
 
 // grab
 //---------------------------------------------------------------------------
@@ -230,7 +195,7 @@ bool Surface::grab(const Surface &source,
 
     free();
 
-    alloc(bounds.getWidth(), bounds.getHeight());
+    create(bounds.getWidth(), bounds.getHeight());
     source.blt(*this, -bounds.getLocationX(), -bounds.getLocationY()); // full blit
 
     return true;
@@ -351,8 +316,8 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
         x = 0;
     }
 
-    int dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
-    int dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
+    unsigned dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    unsigned dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
 
     int srcAdjustment  = getPitch()      - dest_cols;
     int destAdjustment = dest.getPitch() - dest_cols;
@@ -372,9 +337,9 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
     PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
     PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
     
-    for (unsigned int row = 0; row < dest_lines; row++)
+    for (unsigned row = 0; row < dest_lines; row++)
     {
-        for (unsigned int col = 0; col < dest_cols; col++)
+        for (unsigned col = 0; col < dest_cols; col++)
         {
             if (*sPtr != 0)
                 *dPtr = *sPtr;
@@ -395,7 +360,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
 //          clipping on the bounds of the object. The non-transparent pixels
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
-void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) const
+void Surface::bltTransColor(Surface &dest, int x, int y, const PIX color) const
 {
     int source_lines = getHeight();
     int source_cols = getWidth();
@@ -444,8 +409,8 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
         x = 0;
     }
 
-    int dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
-    int dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
+    unsigned dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    unsigned dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
 
     int srcAdjustment  = getPitch()      - dest_cols;
     int destAdjustment = dest.getPitch() - dest_cols;
@@ -465,9 +430,9 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
     PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
     PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
 
-    for (unsigned int row = 0; row < dest_lines; row++)
+    for (unsigned row = 0; row < dest_lines; row++)
     {
-        for (unsigned int col = 0; col < dest_cols; col++)
+        for (unsigned col = 0; col < dest_cols; col++)
         {
             if (*sPtr != 0)
                 *dPtr = color;
@@ -484,7 +449,7 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) cons
 //---------------------------------------------------------------------------
 // Purpose: Draws a horizontal drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawHLine(int x, int y, int size, const PIX &color)
+void Surface::drawHLine(int x, int y, int size, const PIX color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -521,7 +486,7 @@ void Surface::drawHLine(int x, int y, int size, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Draws a vertical drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawVLine(int x, int y, int size, const PIX &color)
+void Surface::drawVLine(int x, int y, int size, const PIX color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -562,7 +527,7 @@ void Surface::drawVLine(int x, int y, int size, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Fills the Surface will the specified color.
 //---------------------------------------------------------------------------
-void Surface::fill(const PIX &color)
+void Surface::fill(const PIX color)
 {
     if ( !getWidth() || !getHeight() ) return;
 
@@ -588,7 +553,7 @@ void Surface::fill(const PIX &color)
 // Purpose: Fills the specified rectangle in the calling Surface with the
 //          specified color.
 //---------------------------------------------------------------------------
-void Surface::fillRect(iRect bounds, const PIX &color)
+void Surface::fillRect(iRect bounds, const PIX color)
 {
     assert(getDoesExist());
 
@@ -625,7 +590,7 @@ void Surface::fillRect(iRect bounds, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Draws a rectagle in the specified color on the calling Surface.
 //---------------------------------------------------------------------------
-void Surface::drawRect(iRect bounds, const PIX &color)
+void Surface::drawRect(iRect bounds, const PIX color)
 {
     assert(getDoesExist());
 
@@ -661,7 +626,7 @@ void Surface::drawRect(iRect bounds, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Draws a drawLine with any slope.
 //---------------------------------------------------------------------------
-void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color)
+void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -740,7 +705,7 @@ void Surface::flipVertical()
     PIX * newMem = (PIX*)malloc(getPitch() * getHeight());
     PIX * ptr = newMem;
 
-    PIX * bottomPtr = frame0 + (getPitch() * (getHeight()-1));
+    PIX * bottomPtr = mem + (getPitch() * (getHeight()-1));
     for ( unsigned y = 0; y < getHeight(); y++ )
     {
         memcpy(ptr, bottomPtr, getPitch());
@@ -748,8 +713,8 @@ void Surface::flipVertical()
         ptr += getPitch();
     }
 
-    frame0 = newMem;
-    resetClip();
+    ::free(mem);
+    mem = newMem;
 } // end Surface::flipVertical
 
 // copy
@@ -762,8 +727,8 @@ void Surface::copy(const Surface &source)
     if(!source.getDoesExist())
         return;
 
-    create(source.getFullWidth(), source.getFullHeight());
-    memcpy(frame0, source.frame0, getFullHeight()*getPitch());
+    create(source.getWidth(), source.getHeight());
+    memcpy(mem, source.mem, getHeight()*getPitch());
 
 } // end Surface::copy
 
@@ -800,16 +765,16 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[])
         source_start_x = 0;
     }
 
-    int dest_lines = std::min(getHeight() - source_start_y, (unsigned)source_lines);
-    int dest_cols = std::min(getWidth() - source_start_x, (unsigned)source_cols);
+    unsigned dest_lines = std::min(getHeight() - source_start_y, (unsigned)source_lines);
+    unsigned dest_cols = std::min(getWidth() - source_start_x, (unsigned)source_cols);
 
     int srcAdjustment  = getPitch()      - dest_cols;
 
     PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
 
-    for (unsigned int row = 0; row < dest_lines; row++)
+    for (unsigned row = 0; row < dest_lines; row++)
     {
-        for (unsigned int col = 0; col < dest_cols; col++)
+        for (unsigned col = 0; col < dest_cols; col++)
         {
             *sPtr = table[*sPtr];
             sPtr++;
@@ -938,27 +903,131 @@ PIX Surface::getAverageColor()
     return Palette::findNearestColor(avgR, avgG, avgB);
 } // end Surface::getAverageColor
 
-// initFont
-//---------------------------------------------------------------------------
-// Purpose: Load all the characters into a surface of 128 frames.  Then the
-//          characters can be accesed by changing the frame appropriately.
-//---------------------------------------------------------------------------
-void initFont()
+void Surface::bltAlphaColor(Surface &dest, int x, int y, const PIX color) const
 {
-    for ( int c = 0; c < FONT_MAXCHAR; c++)\
+    int source_lines = getHeight();
+    int source_cols = getWidth();
+    int source_start_x = 0;
+    int source_start_y = 0;
+
+    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
     {
-        Surface *s = new Surface(FONT_WIDTH, FONT_HEIGHT);
-        char * fptr = (char *)&staticNewFont+ (c * (FONT_WIDTH*FONT_HEIGHT));
-        PIX * dptr = s->getMem();
-        memcpy(dptr,fptr,(FONT_WIDTH*FONT_HEIGHT));
-        ascii8x8.push_back(s);
+        return;
     }
-} // Surface::initFont
+
+    if ( y < 0 )
+    {
+        if ( -y >= source_lines )
+        {
+            return;
+        }
+
+        source_lines += y;
+        source_start_y -= y;
+        y = 0;
+    }
+
+    if ( x < 0 )
+    {
+        if ( -x >= source_cols )
+        {
+            return;
+        }
+        source_cols += x;
+        source_start_x -= x;
+        x = 0;
+    }
+
+    unsigned dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    unsigned dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
+
+    int srcAdjustment  = getPitch()      - dest_cols;
+    int destAdjustment = dest.getPitch() - dest_cols;
+
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
+    
+    uint8_t * cbase = &Palette::fullAlphaTable()[color*(16*256)];
+
+    for (unsigned row = 0; row < dest_lines; row++)
+    {
+        for (unsigned col = 0; col < dest_cols; col++)
+        {
+            *dPtr = cbase[(*sPtr * 256) + *dPtr];
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+}
+
+void Surface::bltRectAlphaColor(Surface& dest, int x, int y, const iRect& rect, const PIX color) const
+{
+    int source_lines = std::min<int>(rect.getHeight(), getHeight()-rect.getLocationY());
+    int source_cols = std::min<int>(rect.getWidth(), getWidth()-rect.getLocationX());
+    int source_start_x = rect.getLocationX();
+    int source_start_y = rect.getLocationY();
+
+    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
+    {
+        return;
+    }
+
+    if ( y < 0 )
+    {
+        if ( -y >= source_lines )
+        {
+            return;
+        }
+
+        source_lines += y;
+        source_start_y -= y;
+        y = 0;
+    }
+
+    if ( x < 0 )
+    {
+        if ( -x >= source_cols )
+        {
+            return;
+        }
+        source_cols += x;
+        source_start_x -= x;
+        x = 0;
+    }
+
+    unsigned dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
+    unsigned dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
+
+    int srcAdjustment  = getPitch()      - dest_cols;
+    int destAdjustment = dest.getPitch() - dest_cols;
+
+    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
+    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
+    
+    uint8_t * cbase = &Palette::fullAlphaTable()[color*(16*256)];
+
+    for (unsigned row = 0; row < dest_lines; row++)
+    {
+        for (unsigned col = 0; col < dest_cols; col++)
+        {
+            *dPtr = cbase[(*sPtr * 256) + *dPtr];
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+}
 
 unsigned int
 Surface::getFontHeight()
 {
-    return FONT_HEIGHT;
+    return 16;
+//    return FONT_HEIGHT;
 }
 
 int Surface::getTextLength(const char* text)
@@ -966,67 +1035,17 @@ int Surface::getTextLength(const char* text)
     return FONT_WIDTH * strlen(text);
 }
 
-// renderText
-//---------------------------------------------------------------------------
-// Purpose: Renders a string of text to the surface using color and background
-//          color. The surface is created, if it was already created and is
-//          the exact size needed, clears it and use it, if size is different
-//          will delete it and create new one
-// Parameters:
-//   str     = string to render
-//   color   = foreground color
-//   bgcolor = background color
-//---------------------------------------------------------------------------
-void
-Surface::renderText(const char *str, PIX color, PIX bgcolor)
-{
-    if ( !str )
-        return;
-
-    int len = strlen(str);
-    if ( !len )
-        return;
-
-    unsigned int need_width = len * FONT_WIDTH;
-    unsigned int need_height = FONT_HEIGHT;
-
-    if ( frame0 != 0 ) {
-        if ( getWidth() != need_width || getHeight() != need_height ) {
-            free();
-            create( need_width, need_height);
-        }
-    } else {
-        create( need_width, need_height);
-    }
-
-    for ( int line = 0; line < FONT_HEIGHT; ++line) {
-        PIX * dptr = getFrame0() + (line * (int)getPitch());
-        const char * pstr = str;
-        for ( unsigned char c = *pstr; c; c= *(++pstr)) {
-            c-=32;
-            if ( c >=FONT_MAXCHAR ) c = ' ';
-             char * fptr = staticNewFont + (c*(FONT_HEIGHT*FONT_WIDTH))+FONT_WIDTH*line;
-            PIX * eptr = dptr+FONT_WIDTH;
-            do {
-                *(dptr++) = *(fptr++)?color:bgcolor;
-            } while ( dptr < eptr );
-
-        }
-
-    }
-}
-
 // bltChar8x8
 //---------------------------------------------------------------------------
 // Purpose: Blits the specied rom character to the screen at the specified
 //          location.
 //---------------------------------------------------------------------------
-void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color)
+void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX color)
 {
     if (character > 31) character-=32;
     if (character >= FONT_MAXCHAR)
         return;
-    ascii8x8[character]->bltTransColor(*this, x, y, color);
+//    ascii8x8[character]->bltTransColor(*this, x, y, color);
 } // end Surface::bltChar8x8
 
 // bltString
@@ -1035,16 +1054,9 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
-{
-    for (int index = 0; str[index] != 0; index++) {
-        // Don't attempt blank spaces.
-        if (str[index] == 32) {
-            continue;
-        }
 
-        bltChar8x8(x + (index << 3), y, str[index], color);
-    }
+void Surface::bltString(int x, int y, const char * str, const PIX color)
+{
 } // end Surface::bltString
 
 // bltStringLen
@@ -1053,7 +1065,7 @@ void Surface::bltString(int x, int y, const char * str, const Uint8 &color)
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringLen(int x, int y, const char * str, int len, const Uint8 &color)
+void Surface::bltStringLen(int x, int y, const char * str, int len, const PIX color)
 {
     for (int index = 0; (index < len) && str[index] != 0; index++) {
         // Don't attempt blank spaces.
@@ -1067,7 +1079,7 @@ void Surface::bltStringLen(int x, int y, const char * str, int len, const Uint8 
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &textColor, const Uint8 &shadowColor)
+void Surface::bltStringShadowed(int x, int y, char const *str, const PIX textColor, const PIX shadowColor)
 {
     for (int index = 0; str[index] != 0; index++) {
         bltChar8x8(x + (index << 3) + 1, y + 1, str[index], shadowColor);
@@ -1106,7 +1118,7 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
+void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color)
 {
     int length = strlen(string);
 
@@ -1126,7 +1138,22 @@ void
 Surface::create(unsigned int w, unsigned int h)
 {
     free();
-    alloc( w, h);
+
+    size_t requestedBytes = w * h;
+
+    if (requestedBytes > 0)
+    {
+        mem = (PIX *) malloc(requestedBytes);
+
+        if ( ! mem )
+            throw Exception("out of memory while allocating surface.");
+
+        totalByteCount += requestedBytes;
+    }
+
+    twidth = w;
+    theight= h;
+    tpitch = w;
 } // end Surface::create
 
 void Surface::loadBMP(const char *fileName, bool needAlloc)
@@ -1155,7 +1182,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
         if (needAlloc)
         {
             LOGGER.warning("Loading '%s' size %dx%d", fileName,info_header.biWidth, info_header.biHeight );
-            alloc(info_header.biWidth, info_header.biHeight);
+            create(info_header.biWidth, info_header.biHeight);
 
         } else {
             LOGGER.warning("Loading '%s' size %dx%d preallocated: %dx%d", fileName,info_header.biWidth, info_header.biHeight, getWidth(), getHeight() );

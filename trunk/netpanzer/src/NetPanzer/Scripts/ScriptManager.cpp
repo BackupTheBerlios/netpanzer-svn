@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScriptHelper.hpp"
 #include "Util/FileSystem.hpp"
 
-#include "2D/Color.hpp"
 #include "Util/Log.hpp"
 
 #include "Interfaces/ChatInterface.hpp"
@@ -121,9 +120,6 @@ ScriptManager::initialize()
         {
             luaL_openlibs(luavm);
         }
-
-        Color::registerScript("Color");
-//        ParticleInterface::registerScript("particles");
 
         GameConfig::registerScript("config");
 

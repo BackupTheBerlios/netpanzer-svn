@@ -461,7 +461,7 @@ int PackedSurface::nextFrame()
 
 // bltBlend
 //--------------------------------------------------------------------------
-void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &colorTable) const
+void PackedSurface::bltBlend(Surface &dest, int destX, int destY, const uint8_t * blendTable) const
 {
     totalDrawCount++;
 
@@ -502,7 +502,6 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
         srcMax.y = pix.y;
     }
 
-    const Uint8 *cTable = colorTable.getColorArray();
     const int  *table  = &rowOffsetTable[int(curFrame)*pix.y];
 
     if (needClipX) {
@@ -546,13 +545,13 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
 
                 // Clip current span against right edge
                 if (x2 > srcMax.x) {
-                    bltBlendSpan(destRowPtr + x1, data, srcMax.x - x1, cTable);
+                    bltBlendSpan(destRowPtr + x1, data, srcMax.x - x1, blendTable);
 
                     rowData = rowEnd;
                     goto nextRow;
                 }
 
-                bltBlendSpan(destRowPtr + x1, data, x2 - x1, cTable);
+                bltBlendSpan(destRowPtr + x1, data, x2 - x1, blendTable);
 
                 if (rowData >= rowEnd) goto nextRow;
                 span = (SpanHead *)rowData;
@@ -581,7 +580,7 @@ nextRow:
                 SpanHead *span = (SpanHead *)rowData;
 
                 bltBlendSpan(destRowPtr + ltoh16(span->x1),
-                    (const PIX *)(span + 1), ltoh16(span->len), cTable);
+                    (const PIX *)(span + 1), ltoh16(span->len), blendTable);
 
                 rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
             }

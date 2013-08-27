@@ -77,15 +77,15 @@ void GameView::setSize(iXY size)
 //---------------------------------------------------------------------------
 void GameView::init()
 {
-    resize(iXY(screen->getWidth(), screen->getHeight()));
-    moveTo(iXY(0, 0));
+    resize(screen->getWidth(), screen->getHeight());
+    moveTo(0, 0);
 } // end GameView::init
 void
 GameView::onDesktopResized( const iXY& oldResolution, const iXY& newResolution)
 {
     (void)oldResolution;
-    resize(iXY(newResolution.x, newResolution.y));
-    moveTo(iXY(0,0));
+    resize(newResolution.x, newResolution.y);
+    moveTo(0,0);
 }
 // doDraw
 //---------------------------------------------------------------------------
@@ -135,7 +135,6 @@ void GameView::doDraw( Surface& dest )
 void GameView::doActivate()
 {
     View::doActivate();
-    MouseInterface::event_queue.clear();
     COMMAND_PROCESSOR.inFocus();
 } // end GameView::doActivate
 
@@ -151,13 +150,6 @@ void GameView::processEvents()
 void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
-
-//    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this)
-//    {
-//        Desktop::setFocusView(this);
-//        MouseInterface::setCursor("default.bmp");
-//    }
-
 } // end GameView::mouseMove
 
 void
@@ -182,7 +174,7 @@ blitTile(Surface &dest, unsigned short tile, int x, int y)
         x = 0;
     }
     
-    PIX * destptr = dest.getFrame0();
+    PIX * destptr = dest.getMem();
     destptr += (y * dest.getPitch()) + x;
 
     

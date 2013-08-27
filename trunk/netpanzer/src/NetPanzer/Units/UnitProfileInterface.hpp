@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace std;
 
-#include "Units/UnitTypes.hpp"
 #include "Units/UnitState.hpp"
 #include "2D/PackedSurface.hpp"
 

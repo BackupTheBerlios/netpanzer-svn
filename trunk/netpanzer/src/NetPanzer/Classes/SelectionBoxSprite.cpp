@@ -26,25 +26,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 bool SelectionBoxSprite::isVisible(const iRect &world_win) const
 {
-    if (
-        (world_win.contains( world_pos + selection_area.min ) && (visible == true ) ) ||
-        (world_win.contains( world_pos + selection_area.max ) && (visible == true ) )
-    )
-        return( true );
-
-    return( false );
+    return visible
+        && (  world_win.contains(world_pos - selection_area.siz)
+           || world_win.contains(world_pos + selection_area.siz) );
 }
 
 
 void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
 {
-    iXY min_abs, max_abs;
 
     if ( box_state == false )
         return;
 
-    min_abs = (world_pos + selection_area.min) - world_win.getLocation();
-    max_abs = (world_pos + selection_area.max) - world_win.getLocation();
+    iXY min_abs(world_pos), max_abs;
+    
+    min_abs = (world_pos - selection_area.siz) - world_win.getLocation();
+    max_abs = (world_pos + selection_area.siz) - world_win.getLocation();
 
     if( (min_abs.x >= 0 ) ) {
         surface->drawVLine(min_abs.x, min_abs.y, max_abs.y, box_color);
@@ -77,8 +74,8 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 {
     iXY min_abs, max_abs;
 
-    min_abs = (world_pos + selection_area.min) - world_win.getLocation();
-    max_abs = (world_pos + selection_area.max) - world_win.getLocation();
+    min_abs = (world_pos - selection_area.siz) - world_win.getLocation();
+    max_abs = (world_pos + selection_area.siz) - world_win.getLocation();
 
     iRect screen_rect;
     screen_rect.setLocation(min_abs);
@@ -127,7 +124,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         screen_rect.translate(1, screen_rect.getHeight()-6);
         screen_rect.setSize(screen_rect.getWidth()-2, 5);
-        surface->bltLookup(screen_rect, Palette::darkGray256.getColorArray());
+        surface->bltLookup(screen_rect, Palette::filterDarkGray());
 
         screen_rect.grow(-1,-1);
         screen_rect.setWidth(hit_bar_size);

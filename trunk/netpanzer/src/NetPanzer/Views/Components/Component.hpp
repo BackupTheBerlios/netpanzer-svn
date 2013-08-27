@@ -20,26 +20,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Component_hpp__
 
 #include "2D/Surface.hpp"
-#include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
+#include "2D/ComponentEvents.hpp"
 
 class mMouseEvent;
+namespace GameInput { class InputState; }
 
 //--------------------------------------------------------------------------
 class Component
 {
 protected:
-    iXY     position;
-    iXY     size;
-    Surface surface;
-    bool    dirty;
+    iRect   rect;
 
     static int borderSize;
 
-    void reset();
+    ComponentEvents * events;
+
+    void reset() { rect.zero(); }
 
 public:
-    Component() : clickAction(0)
+    Component() : events(0)
     {
         reset();
     }
@@ -48,57 +48,51 @@ public:
     {
     }
 
+    void setComponentEvents(ComponentEvents *ce) { events = ce; }
+
     // Accessor functions.
-    void getBounds(iRect &r)
-    {
-        r.setLocation(position);
-        r.setSize(size);
-    }
-    bool contains(const int x, const int y) const;
-    bool contains(const iXY& p) const { return contains(p.x, p.y); }
-
-    void setBounds(const iRect &r)
-    {
-        position  = r.getLocation();
-        size = r.getSize();
-        //surface.create(r.getSizeX(), r.getSizeY(), 1);
-        dirty = true;
-    }
-
-    virtual void setSize(const int x, const int y)
-    {
-        size.x=x;
-        size.y=y;
-        surface.create(x,y);
-        dirty=true;
-    }
-
-    virtual void setLocation(const int x, const int y);
-    void setLocation(const iXY &p)
-    {
-        setLocation(p.x, p.y);
-    }
-
-    virtual void draw(Surface &dest)
-    {
-        if ( dirty )
-            render();
-
-        surface.bltTrans(dest, position.x, position.y ); // blit full
-    }
-
-    virtual void render() = 0;
-    virtual void actionPerformed(const mMouseEvent &me) = 0;
-    virtual void handleKeyboard() {}
+    inline void getBounds(iRect &r) { r = rect; }
     
-    inline void setClickAction(int ca) { clickAction = ca; }
-    inline int getClickAction() const { return clickAction; }
+    inline bool contains(const int x, const int y) const { return rect.contains(x, y); }
+    inline bool contains(const iXY& p) const { return rect.contains(p); }
+
+    virtual void setSize(const int x, const int y) { rect.setSize(x, y); }
+
+    inline int      getLocationX() const { return rect.getLocationX(); }
+    inline int      getLocationY() const { return rect.getLocationY(); }
+    inline unsigned getWidth()     const { return rect.getWidth(); }
+    inline unsigned getHeight()    const { return rect.getHeight(); }
+
+    virtual void setLocation(const int x, const int y) { rect.setLocation(x, y); }
+    void setLocation(const iXY &p) { setLocation(p.x, p.y); }
+
+    virtual void draw(Surface &dest) = 0;
+
+    virtual void actionPerformed(const mMouseEvent &me) {}
+    virtual void handleKeyboard() {}
+
+    virtual void onSelectStart() {}
+    virtual void onSelectStop() {}
+
+    virtual void onHoverStart() {}
+    virtual void onHoverStop() {}
+    
+    virtual void onFocusStart() {}
+    virtual void onFocusStop() {}
+    virtual void handleInput( GameInput::InputState * input ) { (void)input; }
+    
+    virtual void onPointerMove(int x, int y) {}
+
+    virtual void onMousePress(int button) {}
+    virtual void onMouseRelease(int button) {}
+    virtual void onMouseClick(int button) {} // @todo do we want this event?
+
+    virtual void onMouseMove(int x, int y) {}
+    virtual void onMouseDrag(int x, int y, int button) {}
 
 private:
     Component(const Component&);
     void operator=(const Component&);
-    
-    int clickAction;
 }; // end Component
 
 #endif // end __Component_hpp__
