@@ -24,6 +24,7 @@
 
 #include "Scenes/Common/OptionsLayer.hpp"
 #include "Scenes/MainMenu/IntroLayer.hpp"
+#include "Scenes/MainMenu/HostGameLayer.hpp"
 
 #include "2D/Components/Slider.hpp"
 
@@ -128,8 +129,9 @@ private:
     Button * button_help;
     Button * button_exit;
 
-    IntroLayer   * intro_layer;
-    OptionsLayer * options_layer;
+    IntroLayer    * intro_layer;
+    OptionsLayer  * options_layer;
+    HostGameLayer * hostgame_layer;
 
     struct Events {
         enum
@@ -148,6 +150,7 @@ public:
     MainMenuLayer() : ComponentLayer(0)
     {
         options_layer = 0;
+        hostgame_layer = 0;
 
         panel_darkgray = new DarkGrayPanel();
         panel_darkgray->setSize(MENU_WIDTH, MENU_HEIGHT-26-26);
@@ -182,6 +185,11 @@ public:
         {
             delete options_layer;
         }
+        
+        if ( hostgame_layer )
+        {
+            delete hostgame_layer;
+        }
     }
     
     void logic()
@@ -204,7 +212,12 @@ private:
                 break;
 
             case Events::ShowHost:
-                LOGGER.warning("Clicked on Host!!!");
+                if ( hostgame_layer == 0 )
+                {
+                    hostgame_layer = new HostGameLayer();
+                }
+
+                setSubLayer( hostgame_layer );
                 break;
 
             case Events::ShowOptions:

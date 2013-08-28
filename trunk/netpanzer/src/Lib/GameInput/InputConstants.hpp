@@ -38,6 +38,8 @@ namespace GameInput
         Action_StartRight,
         Action_StopRight,
         
+        Action_ScreenShot,
+        
         ActionMAX
     };
     

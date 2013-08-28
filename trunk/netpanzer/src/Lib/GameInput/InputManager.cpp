@@ -117,6 +117,12 @@ namespace GameInput
                 mapped_input->setAction( pressed ? Action_StartRight : Action_StopRight );
                 break;
                 
+            case SDLK_F9:
+                if ( pressed )
+                {
+                    mapped_input->setAction(Action_ScreenShot);
+                }
+                break;
             default: ;
         }
 
@@ -260,6 +266,10 @@ namespace GameInput
 
                         case SDLK_DELETE:
                             text_input_events->push(TextInput_Delete);
+                            break;
+                            
+                        case SDLK_F9: // @todo this wont work
+                            mapped_input->setAction(Action_ScreenShot);
                             break;
                             
                         default:

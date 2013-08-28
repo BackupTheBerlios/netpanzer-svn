@@ -15,7 +15,6 @@ class CheckBox;
 class Choice;
 class Slider;
 class Label;
-class Slider;
 
 class ModalMessageLayer;
 

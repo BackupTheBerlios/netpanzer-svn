@@ -45,6 +45,7 @@ static void loopSleep()
 #include "System/SDLVideo.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "System/SDLVideo.hpp"
 
 static Scene * current_scene = 0;
 static bool shall_run = false;
@@ -73,6 +74,12 @@ private:
             GameConfig::video_height= GameInput::InputManager::getResizeHeight();
             GameManager::setVideoMode();
         }
+        
+        if ( input->hasAction(GameInput::Action_ScreenShot) )
+        {
+            Screen->doScreenshoot();
+        }
+        
         return true;
     }
 };

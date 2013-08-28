@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Util/TimerInterface.hpp"
 #include "2D/PackedSurface.hpp"

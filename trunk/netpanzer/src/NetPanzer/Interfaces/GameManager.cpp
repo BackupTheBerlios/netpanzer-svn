@@ -65,8 +65,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
-#include "Views/MainMenu/Multi/HostOptionsView.hpp"
-#include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "Views/Game/CodeStatsView.hpp"

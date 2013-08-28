@@ -211,7 +211,8 @@ void SDLVideo::doScreenshoot()
  
     std::string bmpfile = filesystem::getRealWriteName(buf);
     SDL_SaveBMP(frontBuffer, bmpfile.c_str());
-    ConsoleInterface::postMessage(Color::cyan, false, 0, _("Screenshoot saved as: %s"), buf);
+    LOGGER.info("Screenshoot saved as: %s", buf);
+//    ConsoleInterface::postMessage(Color::cyan, false, 0, _("Screenshoot saved as: %s"), buf);
     timer.reset();
 }
  

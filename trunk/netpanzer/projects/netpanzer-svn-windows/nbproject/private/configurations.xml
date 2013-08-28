@@ -1579,10 +1579,6 @@
                   <in>ServerQueryThread.cpp</in>
                   <in>ServerQueryThread.hpp</in>
                 </df>
-                <in>HostOptionsView.cpp</in>
-                <in>HostOptionsView.hpp</in>
-                <in>MapSelectionView.cpp</in>
-                <in>MapSelectionView.hpp</in>
                 <in>ServerListView.cpp</in>
                 <in>ServerListView.hpp</in>
               </df>
