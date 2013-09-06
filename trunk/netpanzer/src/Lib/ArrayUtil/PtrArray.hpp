@@ -82,6 +82,11 @@ public:
         return data[i];
     }
     
+    inline const T* operator[](size_t i) const
+    {
+        return data[i];
+    }
+    
     inline T* get(size_t i) const
     {
         return data[i];

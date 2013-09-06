@@ -31,7 +31,7 @@ public:
         rect.setLocation(x, y);
     }
     
-    void draw(Surface &dest);
+    void draw(Surface &dest) const;
     
     virtual void render()
     {

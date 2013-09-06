@@ -42,7 +42,7 @@ static const char* bars =
 
 
 void
-InfoBar::draw(Surface &dest)
+InfoBar::draw(Surface &dest) const
 {
     iRect r(rect.getLocationX(), rect.getLocationY(), dest.getWidth(), rect.getLocationY()+12);
     dest.bltLookup(r, Palette::filterDarkGray());

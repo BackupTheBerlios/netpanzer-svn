@@ -35,9 +35,12 @@ public:
     TextRenderer();
     TextRenderer(const char * utf8str);
     TextRenderer(const UString& str);
+    TextRenderer(const UString& str, const int width, const int firstLineOffset);
 
     void setText(const char * utf8str);
     void setText(const UString& str);
+    void setMultilineText(const UString& str, const int width, const int firstLineOffset = 0);
+    
     void setColor(PIX new_color) { color = new_color; }
 
     inline unsigned getWidth() const  { return surface.getWidth(); }

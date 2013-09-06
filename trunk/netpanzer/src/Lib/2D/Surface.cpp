@@ -1147,7 +1147,7 @@ Surface::create(unsigned int w, unsigned int h)
 
         if ( ! mem )
             throw Exception("out of memory while allocating surface.");
-
+        
         totalByteCount += requestedBytes;
     }
 

@@ -51,7 +51,7 @@ public:
         hh = image.getHeight()/2;
     }
     
-    void draw()
+    void draw() const
     {
         screen->fill(0);
         
@@ -66,13 +66,11 @@ public:
 class DarkGrayPanel : public Component
 {
 public:
-    void draw(Surface& dest)
+    void draw(Surface& dest) const
     {
         dest.BltRoundRect(rect, 10, Palette::filterDarkGray());
         dest.RoundRect(rect, 10, Color::gray);
     }
-
-    void render(){};
 };
 
 static Button* createMainMenuButton(const NPString& label, const unsigned event, const bool inverted = false)
@@ -190,11 +188,6 @@ public:
         {
             delete hostgame_layer;
         }
-    }
-    
-    void logic()
-    {
-        
     }
     
 private:

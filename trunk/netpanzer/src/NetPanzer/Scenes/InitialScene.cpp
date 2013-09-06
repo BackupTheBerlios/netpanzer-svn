@@ -18,7 +18,7 @@ class InitialLayer : public Layer
     TextRenderer loading_text;
 
 #ifdef TEST_TEXT
-    TextRenderer t1, t2, t3;
+    TextRenderer t1, t2, t3, t4;
 #endif
 
 public:
@@ -26,12 +26,13 @@ public:
     {
 #ifdef TEST_TEXT
         t1.setText("JljKygL. L我L");
-        t2.setText("这是什么东西");
-        t3.setText("Êtes-vous sûr de vouloir quitter netPanzer ?");
+        t2.setMultilineText(UString("这是什么东西"),50);
+        t3.setText(UString("Êtes-vous sûr de vouloir quitter netPanzer ?"));
+        t4.setMultilineText(UString("Êtes-vous sûr de vouloir quitter netPanzer ?"), 125, 25);
 #endif
     }
     
-    void draw() // const
+    void draw() const
     {
         screen->fill(Color::black);
         loading_text.drawCenter(*screen);
@@ -39,7 +40,8 @@ public:
 #ifdef TEST_TEXT
         t1.draw(*screen, 100, 100);
         t2.draw(*screen, 100, 120);
-        t3.draw(*screen, 100, 140);
+        t3.draw(*screen, 100, 200);
+        t4.draw(*screen, 100, 220, Color::yellow);
 #endif
     }
     

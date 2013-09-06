@@ -46,12 +46,7 @@ public:
     size_t getTextWidth() const { return text_render.getWidth(); }
     size_t getTextHeight() const { return text_render.getHeight(); }
     
-    void draw(Surface &dest);
-    
-    virtual void render()
-    {
-        // nothing
-    }
+    void draw(Surface &dest) const;
     
 private:
     TextRenderer text_render;

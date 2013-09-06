@@ -70,7 +70,7 @@ private:
     
     PIX background_color;
     
-    void draw(Surface& dest);
+    void draw(Surface& dest) const;
     virtual void render();
     virtual void actionPerformed(const mMouseEvent &me);
 public:

@@ -37,7 +37,7 @@ public:
         bordered = hasBorder;
     }
     
-    void draw(Surface &dest)
+    void draw(Surface &dest) const
     {
         dest.FillRoundRect(rect, 3, background_color);
         if ( bordered )

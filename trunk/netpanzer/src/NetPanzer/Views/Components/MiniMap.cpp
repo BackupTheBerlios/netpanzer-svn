@@ -57,13 +57,13 @@ MiniMap::~MiniMap()
 }
 
 void
-MiniMap::draw(Surface &dest)
+MiniMap::draw(Surface &dest) const
 {
     //regenerate();
     mapimage.blt(dest,rect.getLocationX(), rect.getLocationY()); // full blit
-    drawObjectives(dest);
-    drawUnits(dest);
-    drawWorldAndMouseBox(dest);
+//    drawObjectives(dest);
+//    drawUnits(dest);
+//    drawWorldAndMouseBox(dest);
 }
 
 void

@@ -47,7 +47,8 @@ protected:
     void setModal(bool modal) { this->modal = modal; }
     
 private:
-    void draw();
+    void draw() const;
+    virtual void logic();
     Component * reverseSearchComponentAt( const int x, const int y);
 
     bool handleInput( GameInput::InputState * input );

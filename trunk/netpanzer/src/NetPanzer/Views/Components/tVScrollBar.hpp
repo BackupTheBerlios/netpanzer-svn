@@ -65,7 +65,7 @@ private:
     virtual void actionPerformed(const mMouseEvent &me);
     void initScrollBar();
     
-    void draw(Surface& dest);
+    void draw(Surface& dest) const;
     
 public:
 

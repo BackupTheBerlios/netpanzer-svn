@@ -24,13 +24,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Components/Label.hpp"
 #include "2D/Components/InputField.hpp"
+#include "2D/Components/ScrollableList.hpp"
+#include "2D/Components/AreaComponent.hpp"
 
 #include "2D/Color.hpp"
 
 #include "Types/UString.hpp"
+#include "Interfaces/StrManager.hpp"
+#include "Util/StringTokenizer.hpp"
+
+#define MENU_WIDTH  (640)
+#define MENU_HEIGHT (480-26-26)
+
+#ifndef PACKAGE_VERSION
+	#define PACKAGE_VERSION "testing"
+#endif
 
 IntroLayer::IntroLayer() : ComponentLayer(0)
 {
+    area = new AreaComponent( MENU_WIDTH, MENU_HEIGHT );
+    
     label = new Label( UString("The input field"), Color::white);
     input_field = new InputField();
     input_field->setMaxTextLength(20);
@@ -39,6 +52,24 @@ IntroLayer::IntroLayer() : ComponentLayer(0)
     input_field->setText(UString("Jafgjy this is a very long line lets see what happens"));
 //    input_field->setText(UString("12345"));
     
+    intro_text = new ScrollableList(MENU_WIDTH-20, MENU_HEIGHT-150);
+
+    char Buf[1024];    
+    snprintf(Buf, sizeof(Buf), 
+                _("Main Menu Message %s"),
+                PACKAGE_VERSION);
+    
+    std::string s(Buf);
+    StringTokenizer tok(s,'\n');
+    
+    while ( tok.hasMore() )
+    {
+        intro_text->addLine(UString(tok.getNextToken(true).c_str()));
+    }
+    
+    
+    addComponent(area);
+    addComponent(intro_text);
     addComponent(label);
     addComponent(input_field);
 }
@@ -50,11 +81,20 @@ IntroLayer::~IntroLayer()
 
 void IntroLayer::recalculateComponentLocations()
 {
-    int mx = screen->getWidth();
-    int my = screen->getHeight();
+    int sw = screen->getWidth();
+    int sh = screen->getHeight();
     
-    label->setLocation(mx/2, my/2);
-    input_field->setLocation(mx/2, (my/2) + 30);
+    area->setLocation((sw/2) - (area->getWidth()/2), ((sh/2) - (area->getHeight()/2)) );
+
+    int x = area->getLocationX() + 10;
+    int y = area->getLocationY() + 10;
+    
+    intro_text->setLocation(x, y);
+    
+    y += intro_text->getHeight();
+    
+    label->setLocation(x, y+20);
+    input_field->setLocation(x, y + 50);
 }
 
 void IntroLayer::handleComponentEvents()

@@ -135,11 +135,13 @@ namespace GameInput
             case RawAxis_MouseX:
                 mapped_input->setAbsoluteAxis(Axis_RelativePointerX, value - mouse_x);
                 mouse_x = value;
+                mapped_input->setAction(Action_PointerMove);
                 break;
 
             case RawAxis_MouseY:
                 mapped_input->setAbsoluteAxis(Axis_RelativePointerY, value - mouse_y);
                 mouse_y = value;
+                mapped_input->setAction(Action_PointerMove);
                 break;
 
             default: ;

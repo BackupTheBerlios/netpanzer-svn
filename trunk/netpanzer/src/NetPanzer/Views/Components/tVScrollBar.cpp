@@ -189,15 +189,15 @@ void tVScrollBar::actionPerformed(const mMouseEvent &me)
     }
 }
 
-void tVScrollBar::draw(Surface& dest)
+void tVScrollBar::draw(Surface& dest) const
 {
-    if ( dirty )
-    {
-        render();
-        dirty = false;
-    }
+//    if ( dirty )
+//    {
+//        render();
+//        dirty = false;
+//    }
     
-    dest.bltTrans(surface, rect.getLocationX(), rect.getLocationY());
+//    dest.bltTrans(surface, rect.getLocationX(), rect.getLocationY());
 }
 
 void tVScrollBar::render()

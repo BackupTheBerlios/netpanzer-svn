@@ -31,6 +31,8 @@ private:
 
     bool isAlreadyAdded( const Layer * layer );
     void onEnterCurrentScene();
+    
+    void layersLogic() const;
 
 protected:
     bool addLayer(Layer * layer);
@@ -38,14 +40,15 @@ protected:
 
     virtual void onBecomeActive() {}
 
+    virtual void logic() {}
+    
 public:
     Scene() : layers(0) {}
     virtual ~Scene() {}
     
     void draw() const;
+    void doLogic() { layersLogic(); logic(); }
     
-    
-    virtual void logic() = 0;
 };
 
 

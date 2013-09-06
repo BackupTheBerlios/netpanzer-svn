@@ -54,9 +54,7 @@ private:
 
     PIX textColor;
     
-    void render() {}
-    
-    void draw(Surface& s);
+    void draw(Surface& s) const;
     
 };
 

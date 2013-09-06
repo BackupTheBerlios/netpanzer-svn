@@ -19,7 +19,7 @@
 #include "Label.hpp"
 
 void
-Label::draw(Surface &dest)
+Label::draw(Surface &dest) const
 {
     text_render.draw(dest, rect.getLocationX(), rect.getLocationY(), text_color);
 }

@@ -100,18 +100,15 @@ bool SceneManager::init(Scene* first_scene)
 
 bool SceneManager::run()
 {
-    screen->lock();
-    
-    current_scene->draw();
-    
-    MouseInterface::draw(*screen);
-    
-    screen->unlock();
-    screen->copyToVideoFlip();
-    
     GameInput::InputManager::logic();
     
-    current_scene->logic();
+    current_scene->doLogic();
+    
+    screen->lock();
+    current_scene->draw();
+    MouseInterface::draw(*screen);
+    screen->unlock();
+    screen->copyToVideoFlip();
     
     loopSleep();
         

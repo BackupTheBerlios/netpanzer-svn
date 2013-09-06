@@ -13,42 +13,29 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Created on March 4, 2013, 12:53 AM
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+ * 
+ * Created on August 29, 2013, 9:48 PM
  */
 
-#ifndef INTROLAYER_HPP
-#define	INTROLAYER_HPP
+#ifndef JOINGAMELAYER_HPP
+#define	JOINGAMELAYER_HPP
 
 #include "2D/ComponentLayer.hpp"
 
-class Component;
-class CheckBox;
-class Choice;
-class Slider;
-class Label;
-class Slider;
-class InputField;
-class ScrollableList;
-
-class IntroLayer : public ComponentLayer
+class JoinGameLayer : public ComponentLayer
 {
 public:
-    IntroLayer();
-    ~IntroLayer();
+    JoinGameLayer();
+    ~JoinGameLayer();
     
 private:
     void recalculateComponentLocations();
     void handleComponentEvents();
     
-    Component   * area;
-    ScrollableList * intro_text;
-    
-    Label       * label;
-    InputField  * input_field;
+    Component * area;
     
 };
 
-#endif	/* INTROLAYER_HPP */
+#endif	/* JOINGAMELAYER_HPP */
 

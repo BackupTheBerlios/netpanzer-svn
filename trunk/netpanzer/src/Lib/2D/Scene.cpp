@@ -128,3 +128,13 @@ void Scene::draw() const
         lay = lay->next_layer;
     }
 }
+
+void Scene::layersLogic() const
+{
+    Layer * lay = layers;
+    while ( lay )
+    {
+        lay->logic();
+        lay = lay->next_layer;
+    }
+}

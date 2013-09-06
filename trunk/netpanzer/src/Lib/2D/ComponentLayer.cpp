@@ -47,16 +47,8 @@ void ComponentLayer::addComponent(Component* c)
     visible_components.push_back(c);
 }
 
-void ComponentLayer::draw()
+void ComponentLayer::draw() const
 {
-    if ( (prev_screen_x != screen->getWidth())
-       ||(prev_screen_y != screen->getHeight()) )
-    {
-        recalculateComponentLocations();
-        prev_screen_x = screen->getWidth();
-        prev_screen_y = screen->getHeight();
-    }
-
     for ( size_t n = 0; n < visible_components.size(); n++ )
     {
         if ( visible_components[n] != keyfocus_component )
@@ -73,6 +65,33 @@ void ComponentLayer::draw()
     if ( sublayer )
     {
         sublayer->draw();
+    }
+}
+
+void ComponentLayer::logic()
+{
+    if ( (prev_screen_x != screen->getWidth())
+       ||(prev_screen_y != screen->getHeight()) )
+    {
+        recalculateComponentLocations();
+        prev_screen_x = screen->getWidth();
+        prev_screen_y = screen->getHeight();
+    }
+    
+    int i = visible_components.size();
+    if ( i ) do
+    {
+        i -= 1;
+        visible_components[i]->logic();
+    } while ( i );
+    
+    if ( sublayer )
+        sublayer->logic();
+
+    if ( ! component_events.empty() )
+    {
+        handleComponentEvents();
+        component_events.reset();
     }
 }
 
@@ -154,6 +173,12 @@ bool ComponentLayer::handleInput( GameInput::InputState * input )
                     keyfocus_component = 0;
                 }
             }
+            
+            if ( hover_component && input->hasAction(GameInput::Action_PointerMove) )
+            {
+                hover_component->onPointerMove(input->getAxis(GameInput::Axis_RelativePointerX),
+                                               input->getAxis(GameInput::Axis_RelativePointerY));
+            }
         }
         else // there is a component that is "Selecting" (mouse-pressing)
         {
@@ -174,6 +199,12 @@ bool ComponentLayer::handleInput( GameInput::InputState * input )
                 }
             }
             
+            if ( input->hasAction(GameInput::Action_PointerMove) )
+            {
+                select_component->onPointerMove(input->getAxis(GameInput::Axis_RelativePointerX),
+                                                input->getAxis(GameInput::Axis_RelativePointerY));
+            }
+            
             if ( input->hasAction(GameInput::Action_StopSelect) )
             {
                 select_component->onSelectStop();
@@ -185,12 +216,6 @@ bool ComponentLayer::handleInput( GameInput::InputState * input )
     if ( keyfocus_component )
     {
         keyfocus_component->handleInput(input);
-    }
-
-    if ( ! component_events.empty() )
-    {
-        handleComponentEvents();
-        component_events.reset();
     }
 
     return handled_by_sublayer || modal || hover_component || select_component;

@@ -34,10 +34,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define inactiveWindowTitleTextColor (Color::gray)
 #define inactiveWindowTitleBodyColor (componentBodyColor)
 
-extern Uint8 gForeground;
-extern Uint8 gBackground;
-
-void setForeground(Uint8 color);
-void setBackground(Uint8 color);
-
 #endif // end __ViewGlobals_hpp__

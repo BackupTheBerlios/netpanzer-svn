@@ -38,7 +38,7 @@ void CheckBox::setLabel(const NPString& label)
     setSize( label_render.getWidth() + TextRenderingSystem::line_height(), TextRenderingSystem::line_height());
 }
 
-void CheckBox::draw(Surface& s)
+void CheckBox::draw(Surface& s) const
 {
     iRect r(rect.getLocation(), iXY(TextRenderingSystem::line_height(), TextRenderingSystem::line_height()));
     r.grow(-4, -4);

@@ -51,13 +51,13 @@ tStringListBox::tStringListBox(iRect rrect)
     hasHeader = false;
 }
 
-void tStringListBox::draw(Surface& dest)
+void tStringListBox::draw(Surface& dest) const
 {
-    if ( dirty )
-    {
-        render();
-        dirty = false;
-    }
+//    if ( dirty )
+//    {
+//        render();
+//        dirty = false;
+//    }
     
     surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
 }

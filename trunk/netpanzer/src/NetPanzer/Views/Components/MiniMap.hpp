@@ -31,7 +31,7 @@ public:
     MiniMap(int x, int y, int w, int h);
     virtual ~MiniMap();
     
-    void draw(Surface &dest);
+    void draw(Surface &dest) const;
     
     void setSize(const int x, const int y)
     {

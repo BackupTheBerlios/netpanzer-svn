@@ -19,8 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NewsGetter.hpp"
 #include "Util/Log.hpp"
 
-#include "Views/MainMenu/MainMenuView.hpp"
-
 NewsGetter::NewsGetter()
 {
     LOGGER.debug("New news getter");
@@ -34,10 +32,10 @@ void NewsGetter::onSocketError(network::TCPSocket *so)
 {
     HTTPClientSocket::onSocketError(so);
     LOGGER.debug("news getter error");
-    MainMenuView::setNews("Error loading news");
+//    MainMenuView::setNews("Error loading news");
 }
 
 void NewsGetter::onContentFinished()
 {
-    MainMenuView::setNews(content);
+//    MainMenuView::setNews(content);
 }

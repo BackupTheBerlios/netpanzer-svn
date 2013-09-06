@@ -40,6 +40,12 @@ TextRenderer::TextRenderer(const UString& str)
     color = Color::white;
 }
 
+TextRenderer::TextRenderer(const UString& str, const int width, const int firstLineOffset)
+{
+    setMultilineText(str, width, firstLineOffset);
+    color = Color::white;
+}
+
 void TextRenderer::setText(const char * utf8str)
 {
     UString str(utf8str);
@@ -56,4 +62,16 @@ void TextRenderer::setText(const UString& str)
     }
     
     TextRenderingSystem::renderString(str, surface);
+}
+
+void TextRenderer::setMultilineText(const UString& str, const int width, const int firstLineOffset)
+{
+    const int height = TextRenderingSystem::getMultilineStringHeight(str, width, firstLineOffset);
+    
+    if ( (surface.getWidth() != (unsigned)width) || (surface.getHeight() != (unsigned)height) )
+    {
+        surface.create( width, height);
+    }
+    
+    TextRenderingSystem::renderMultilineString(str, surface, firstLineOffset);
 }

@@ -36,7 +36,7 @@ private:
         PRESSED=   2,
     } ;
     
-    void draw(Surface& dest);
+    void draw(Surface& dest) const;
     
     StateChangedCallback* callback;
     

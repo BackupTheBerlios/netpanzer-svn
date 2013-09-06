@@ -73,35 +73,15 @@ void Choice::select(size_t index)
 
 // draw
 //---------------------------------------------------------------------------
-void Choice::draw(Surface &dest)
+void Choice::draw(Surface &dest) const
 {
-    iRect   r;
-    getBounds(r);
-
-    if ( selecting && (rect.getLocationY() == real_y) )
-    {
-        // Make sure the choice fits on the screen.
-        if ( static_cast<unsigned>(rect.getEndY()) >= dest.getHeight() )
-        {
-            // Check to see if it will fit above the base position.
-            if ( (rect.getLocationY() + TextRenderingSystem::line_height()) - rect.getHeight() > 0)
-            {
-                // Since it fits above, put it there.
-                rect.translate(0,-(rect.getHeight() - TextRenderingSystem::line_height()));
-            }
-            else
-            {
-                // Since it does not fit above, just put it below and keep it on the screen.
-                rect.translate(0,-(rect.getEndY() + 1 - dest.getHeight()));
-            }
-        }
-    }
+    iRect   r(rect);
 
     dest.RoundRect(iRect(r.getLocationX(), r.getLocationY(), r.getWidth() - 2, r.getHeight() - 2), 4, Color::gray96);
     dest.RoundRect(iRect(r.getLocationX()+1, r.getLocationY()+1, r.getWidth() - 1, r.getHeight() - 1), 4, componentActiveTextColor);
     dest.FillRoundRect(iRect(r.getLocationX()+1, r.getLocationY()+1, r.getWidth() - 2, r.getHeight() - 2), 4, componentBodyColor);
 
-    TextRenderer *t;
+    const TextRenderer *t;
 
     int width = r.getWidth();
 
@@ -139,6 +119,29 @@ void Choice::draw(Surface &dest)
     }
     //isOpen = 0;
 } // end Choice::draw
+
+void Choice::logic()
+{
+    // @todo fix/redo the choice fit test
+//    if ( selecting && (rect.getLocationY() == real_y) )
+//    {
+//        // Make sure the choice fits on the screen.
+//        if ( static_cast<unsigned>(rect.getEndY()) >= dest.getHeight() )
+//        {
+//            // Check to see if it will fit above the base position.
+//            if ( (rect.getLocationY() + TextRenderingSystem::line_height()) - rect.getHeight() > 0)
+//            {
+//                // Since it fits above, put it there.
+//                rect.translate(0,-(rect.getHeight() - TextRenderingSystem::line_height()));
+//            }
+//            else
+//            {
+//                // Since it does not fit above, just put it below and keep it on the screen.
+//                rect.translate(0,-(rect.getEndY() + 1 - dest.getHeight()));
+//            }
+//        }
+//    }
+}
 
 // setMinWidth
 //---------------------------------------------------------------------------

@@ -86,22 +86,13 @@ void InputField::onFocusStop()
     last_event = 0;
 }
 
-void InputField::draw(Surface &dest)
+void InputField::draw(Surface &dest) const
 {
-    iRect r;
-    getBounds(r);
+    iRect r(rect);
 
     dest.FillRoundRect(r, 3, Color::black);
 
-    if ( has_focus )
-    {
-        checkRepeatKey();
-        dest.RoundRect(r, 3, Color::gray64);
-    }
-    else
-    {
-        dest.RoundRect(r, 3, Color::white);
-    }
+    dest.RoundRect(r, 3, has_focus ? Color::gray64 : Color::white);
     
     r.grow(-2,-2);
 
@@ -123,6 +114,14 @@ void InputField::draw(Surface &dest)
     {
         strrect.setLocation(0, 0);
         text_renderer.drawPart(dest, r.getLocationX(), r.getLocationY(), strrect, text_color);
+    }
+}
+
+void InputField::logic()
+{
+    if ( has_focus )
+    {
+        checkRepeatKey();
     }
 }
 

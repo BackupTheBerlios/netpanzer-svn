@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Actions/Action.hpp"
 #include "2D/ComponentEvents.hpp"
+#include "Util/NTimer.hpp"
 
 Button::Button()
 {
@@ -35,6 +36,10 @@ Button::Button()
     extraBorder = 0;
     clickEvent = 0;
     selecting = false;
+    
+    repeat_timer.setTimeOut(0);
+    repeat_initial = 0;
+    repeat_other = 0;
 }
 
 Button::~Button()
@@ -167,7 +172,12 @@ void Button::setTextButtonSize(int xsize)
     painted_bstate = BMAX_STATE;
 }
 
-void Button::draw(Surface& dest)
+void Button::draw(Surface& dest) const
+{
+    surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
+}
+
+void Button::logic()
 {
     if ( painted_bstate != bstate )
     {
@@ -175,9 +185,14 @@ void Button::draw(Surface& dest)
         painted_bstate = bstate;
     }
     
-    surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
+    if ( repeat_other && selecting && (bstate == BPRESSED) && repeat_timer.isTimeOut())
+    {
+        events->push(clickEvent);
+        repeat_timer.setTimeOut(repeat_other);
+        repeat_timer.reset();
+    }
+    
 }
-
 
 // render
 void
@@ -219,6 +234,12 @@ void Button::onSelectStart()
     {
         bstate = BPRESSED;
         selecting = true;
+        if ( repeat_other )
+        {
+            events->push(clickEvent);
+            repeat_timer.setTimeOut(repeat_initial);
+            repeat_timer.reset();
+        }
     }
 }
 
@@ -226,7 +247,10 @@ void Button::onSelectStop()
 {
     if ( bstate == BPRESSED )
     {
-        events->push(clickEvent);
+        if ( ! repeat_other )
+        {
+            events->push(clickEvent);
+        }
         bstate = BOVER;
     }
     
@@ -237,7 +261,20 @@ void Button::onHoverStart()
 {
     if ( bstate != BDISABLED )
     {
-        bstate = selecting ? BPRESSED : BOVER;
+        if ( selecting )
+        {
+            bstate = BPRESSED;
+            if ( repeat_other )
+            {
+                events->push(clickEvent);
+                repeat_timer.setTimeOut(repeat_initial);
+                repeat_timer.reset();
+            }   
+        }
+        else
+        {
+            bstate = BOVER;
+        }
     }
 }
 

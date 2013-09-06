@@ -134,7 +134,7 @@ public:
         mapimage.create(w - 2, h - 2);
     }
     
-    void draw(Surface &dest)
+    void draw(Surface &dest) const
     {
         dest.drawRect(rect, Color::lightGray);
         mapimage.blt(dest, rect.getLocationX()+1, rect.getLocationY()+1); // full blit
@@ -144,11 +144,6 @@ public:
     {
         iRect r(0,0, rect.getWidth()-2, rect.getHeight()-2);
         mapimage.bltScale(from, r);
-    }
-    
-    virtual void render()
-    {
-        // nothing
     }
     
     void actionPerformed(const mMouseEvent &me)
@@ -226,61 +221,35 @@ HostGameLayer::HostGameLayer() : ComponentLayer(0)
     
     char number[50];
     
+#define ADD_SLIDER(name, label, minv, maxv, defv, event, strv) \
+    label_##name = new Label( UString(label), Color::yellow); \
+    slider_##name = new Slider( minv, maxv, defv, SLIDER_SIZE, event); \
+    label_##name##_value = new Label( UString(strv), Color::white); \
+    addComponent(label_##name); \
+    addComponent(slider_##name); \
+    addComponent(label_##name##_value)
+
     snprintf(number, sizeof(number), "%d", GameConfig::game_maxplayers);
-    label_maxplayers = new Label( UString(_("Max Players")), Color::yellow);
-    slider_maxplayers = new Slider( 2, 16, GameConfig::game_maxplayers, SLIDER_SIZE, Events::ChangeMaxPlayers);
-    label_maxplayers_value = new Label( UString(number), Color::white);
+    ADD_SLIDER(maxplayers,  _("Max Players"),               2,   16, GameConfig::game_maxplayers, Events::ChangeMaxPlayers, number);
 
     snprintf(number, sizeof(number), "%d", GameConfig::game_maxunits);
-    label_maxunits = new Label( UString(_("Game Max Unit Count")), Color::yellow);
-    slider_maxunits = new Slider( 2, 1000, GameConfig::game_maxunits, SLIDER_SIZE, Events::ChangeMaxUnits);
-    label_maxunits_value = new Label( UString(number), Color::white);
+    ADD_SLIDER(maxunits,    _("Game Max Unit Count"),       2, 1000, GameConfig::game_maxunits, Events::ChangeMaxUnits, number);
 
     snprintf(number, sizeof(number), "%d%%", GameConfig::game_occupationpercentage);
-    label_occupation = new Label( UString(_("Objective Capture Percent")), Color::yellow);
-    slider_occupation = new Slider( 5, 100, GameConfig::game_occupationpercentage, SLIDER_SIZE, Events::ChangeOccupation);
-    label_occupation_value = new Label( UString(number), Color::white);
+    ADD_SLIDER(occupation,  _("Objective Capture Percent"), 5,  100, GameConfig::game_occupationpercentage, Events::ChangeOccupation, number);
     
     snprintf(number, sizeof(number), "%02d:%02d", GameConfig::game_timelimit / 60, GameConfig::game_timelimit % 60 );
-    label_timelimit = new Label( UString(_("Time Limit")), Color::yellow);
-    slider_timelimit = new Slider( 5, 240, GameConfig::game_timelimit, SLIDER_SIZE, Events::ChangeTimeLimit);
-    label_timelimit_value = new Label( UString(number), Color::white);
+    ADD_SLIDER(timelimit,   _("Time Limit"),                5,  240, GameConfig::game_timelimit, Events::ChangeTimeLimit, number);
     
     snprintf(number, sizeof(number), "%d", GameConfig::game_fraglimit);
-    label_fraglimit = new Label( UString(_("Frag Limit")), Color::yellow);
-    slider_fraglimit = new Slider( 5, 1000, GameConfig::game_fraglimit, SLIDER_SIZE, Events::ChangeFragLimit);
-    label_fraglimit_value = new Label( UString(number), Color::white);
+    ADD_SLIDER(fraglimit,   _("Frag Limit"),                5, 1000, GameConfig::game_fraglimit, Events::ChangeFragLimit, number);
     
-    label_clouds = new Label( UString(_("Cloud Coverage")), Color::yellow);
-    slider_clouds = new Slider( 0, 4, GameConfig::game_cloudcoverage, SLIDER_SIZE, Events::ChangeClouds);
-    label_clouds_value = new Label( UString(getCloudText(GameConfig::game_cloudcoverage)), Color::white);
+    ADD_SLIDER(clouds,      _("Cloud Coverage"),            0,    4, GameConfig::game_cloudcoverage, Events::ChangeClouds, getCloudText(GameConfig::game_cloudcoverage));
     
-    label_wind = new Label( UString(_("Wind")), Color::yellow);
     const int windIndex = getWindIndex(GameConfig::game_windspeed);
-    slider_wind = new Slider( 0, 4, windIndex, SLIDER_SIZE, Events::ChangeWind);
-    label_wind_value = new Label( UString(getWindText(windIndex)), Color::white);
+    ADD_SLIDER(wind,        _("Wind"),                      0,    4, windIndex, Events::ChangeWind, getWindText(windIndex));
     
-    addComponent(label_maxplayers);
-    addComponent(slider_maxplayers);
-    addComponent(label_maxplayers_value);
-    addComponent(label_maxunits);
-    addComponent(slider_maxunits);
-    addComponent(label_maxunits_value);
-    addComponent(label_occupation);
-    addComponent(slider_occupation);
-    addComponent(label_occupation_value);
-    addComponent(label_timelimit);
-    addComponent(slider_timelimit);
-    addComponent(label_timelimit_value);
-    addComponent(label_fraglimit);
-    addComponent(slider_fraglimit);
-    addComponent(label_fraglimit_value);
-    addComponent(label_clouds);
-    addComponent(slider_clouds);
-    addComponent(label_clouds_value);
-    addComponent(label_wind);
-    addComponent(slider_wind);
-    addComponent(label_wind_value);
+#undef ADD_SLIDER
     
     refreshMaps();
     setSelectedMap("");
@@ -322,46 +291,22 @@ void HostGameLayer::recalculateComponentLocations()
     choice_gametype->setLocation(choice_x, y + TextRenderingSystem::line_height());
     
     y += 104 + 30; // 30 is the button size, haha
-    
-    label_maxplayers->setLocation(x, y);
-    slider_maxplayers->setLocation(x + SLIDER_OFFSET, y);
-    label_maxplayers_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
-    
-    y += 30;
-    
-    label_maxunits->setLocation(x, y);
-    slider_maxunits->setLocation(x + SLIDER_OFFSET, y);
-    label_maxunits_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
 
-    y += 30;
+#define SLIDER_LOCATION(name) \
+    label_##name ->setLocation(x, y); \
+    slider_##name ->setLocation(x + SLIDER_OFFSET, y); \
+    label_##name##_value ->setLocation(x + SLIDER_VALUE_OFFSET, y); \
+    y += 30
+
+    SLIDER_LOCATION(maxplayers);
+    SLIDER_LOCATION(maxunits);
+    SLIDER_LOCATION(occupation);
+    SLIDER_LOCATION(timelimit);
+    SLIDER_LOCATION(fraglimit);
+    SLIDER_LOCATION(clouds);
+    SLIDER_LOCATION(wind);
     
-    label_occupation->setLocation(x, y);
-    slider_occupation->setLocation(x + SLIDER_OFFSET, y);
-    label_occupation_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
-    
-    y += 30;
-    
-    label_timelimit->setLocation(x, y);
-    slider_timelimit->setLocation(x + SLIDER_OFFSET, y);
-    label_timelimit_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
-    
-    y += 30;
-    
-    label_fraglimit->setLocation(x, y);
-    slider_fraglimit->setLocation(x + SLIDER_OFFSET, y);
-    label_fraglimit_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
-    
-    y += 30;
-    
-    label_clouds->setLocation(x, y);
-    slider_clouds->setLocation(x + SLIDER_OFFSET, y);
-    label_clouds_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
-    
-    y += 30;
-    
-    label_wind->setLocation(x, y);
-    slider_wind->setLocation(x + SLIDER_OFFSET, y);
-    label_wind_value->setLocation(x + SLIDER_VALUE_OFFSET, y);
+#undef SLIDER_LOCATION
     
 }
 

@@ -17,7 +17,7 @@ public:
     AreaComponent(unsigned width, unsigned height) : Component() { setSize(width, height); }
     
 private:
-    void draw(Surface& dest) {}
+    void draw(Surface& dest) const {}
     void render() {}
 };
 

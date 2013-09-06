@@ -32,8 +32,6 @@ class Component
 protected:
     iRect   rect;
 
-    static int borderSize;
-
     ComponentEvents * events;
 
     void reset() { rect.zero(); }
@@ -66,8 +64,9 @@ public:
     virtual void setLocation(const int x, const int y) { rect.setLocation(x, y); }
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
 
-    virtual void draw(Surface &dest) = 0;
-
+    virtual void draw(Surface &dest) const = 0;
+    virtual void logic() {}
+    
     virtual void actionPerformed(const mMouseEvent &me) {}
     virtual void handleKeyboard() {}
 
@@ -81,15 +80,8 @@ public:
     virtual void onFocusStop() {}
     virtual void handleInput( GameInput::InputState * input ) { (void)input; }
     
-    virtual void onPointerMove(int x, int y) {}
-
-    virtual void onMousePress(int button) {}
-    virtual void onMouseRelease(int button) {}
-    virtual void onMouseClick(int button) {} // @todo do we want this event?
-
-    virtual void onMouseMove(int x, int y) {}
-    virtual void onMouseDrag(int x, int y, int button) {}
-
+    virtual void onPointerMove(int rel_x, int rel_y) {}
+    
 private:
     Component(const Component&);
     void operator=(const Component&);

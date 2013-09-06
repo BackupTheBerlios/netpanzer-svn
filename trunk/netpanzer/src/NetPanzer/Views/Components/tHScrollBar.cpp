@@ -63,13 +63,13 @@ tHScrollBar::tHScrollBar(iXY pos, int Width, StateChangedCallback* newcallback)
     dirty = true;
 }
 
-void tHScrollBar::draw(Surface& dest)
+void tHScrollBar::draw(Surface& dest) const
 {
-    if ( dirty )
-    {
-        render();
-        dirty = false;
-    }
+//    if ( dirty )
+//    {
+//        render();
+//        dirty = false;
+//    }
     
     surface.bltTrans(dest, rect.getLocationX(), rect.getLocationY());
 }

@@ -54,8 +54,10 @@ public:
     inline static unsigned line_height() { return font_line_height; }
 
     static void renderString(const UString& str, Surface& dest);
+    static void renderMultilineString(const UString& str, Surface& dest, const int firstLineOffset = 0);
     
     static void getRenderedStringArea(const UString& str, iXY& area);
+    static int getMultilineStringHeight(const UString& str, const int width, const int firstLineOffset = 0);
     
     static FT_Face* getFaces();
     static unsigned getNumFaces();

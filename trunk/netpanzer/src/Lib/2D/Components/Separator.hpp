@@ -43,7 +43,7 @@ public:
         xend = endx - x;
     }
     
-    void draw(Surface &dest)
+    void draw(Surface &dest) const
     {
         int m = text_render.getHeight() / 2;
         dest.drawHLine(rect.getLocationX(), rect.getLocationY()+m, 19, color);
@@ -51,12 +51,7 @@ public:
         int lentxt = 30+text_render.getWidth();
         dest.drawHLine(rect.getLocationX()+lentxt,   rect.getLocationY()+m, xend - lentxt, color);
     }
-    
-    virtual void render()
-    {
-        // nothing
-    }
-    
+
 private:
     TextRenderer text_render;
     int xend;

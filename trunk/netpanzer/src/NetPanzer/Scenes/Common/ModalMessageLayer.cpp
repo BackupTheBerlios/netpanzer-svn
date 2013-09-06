@@ -41,13 +41,11 @@ struct Events
 class DarkGrayPanel : public Component
 {
 public:
-    void draw(Surface& dest)
+    void draw(Surface& dest) const
     {
         dest.BltRoundRect(rect, 10, Palette::filterDarkGray());
         dest.RoundRect(rect, 10, Color::gray);
     }
-
-    void render(){};
 };
 
 ModalMessageLayer::ModalMessageLayer(const char* message, ComponentEvents * parent_events, int event)

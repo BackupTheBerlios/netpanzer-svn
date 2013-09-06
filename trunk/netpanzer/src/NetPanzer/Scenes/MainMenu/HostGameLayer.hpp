@@ -61,33 +61,20 @@ private:
     Label  * label_mapsize;
     Label  * label_mapobjectives;
     
-    Label  * label_maxplayers;
-    Slider * slider_maxplayers;
-    Label  * label_maxplayers_value;
+#define DEFINE_SLIDER(name) \
+    Label  * label_##name; \
+    Slider * slider_##name; \
+    Label  * label_##name##_value
     
-    Label  * label_maxunits;
-    Slider * slider_maxunits;
-    Label  * label_maxunits_value;
+    DEFINE_SLIDER(maxplayers);
+    DEFINE_SLIDER(maxunits);
+    DEFINE_SLIDER(occupation);
+    DEFINE_SLIDER(timelimit);
+    DEFINE_SLIDER(fraglimit);
+    DEFINE_SLIDER(clouds);
+    DEFINE_SLIDER(wind);
     
-    Label  * label_occupation;
-    Slider * slider_occupation;
-    Label  * label_occupation_value;
-    
-    Label  * label_timelimit;
-    Slider * slider_timelimit;
-    Label  * label_timelimit_value;
-    
-    Label  * label_fraglimit;
-    Slider * slider_fraglimit;
-    Label  * label_fraglimit_value;
-    
-    Label  * label_clouds;
-    Slider * slider_clouds;
-    Label  * label_clouds_value;
-            
-    Label  * label_wind;
-    Slider * slider_wind;
-    Label  * label_wind_value;
+#undef DEFINE_SLIDER
     
     Label  * label_gametype;
     Choice * choice_gametype;

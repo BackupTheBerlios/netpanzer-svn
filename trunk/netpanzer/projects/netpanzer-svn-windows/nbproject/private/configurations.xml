@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="89">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df root="../.." name="netpanzer-svn">
+    <df root="../.." name="0">
       <df name="build">
         <df name="debug">
           <df name="libs">
@@ -283,6 +283,8 @@
               <in>InputField.hpp</in>
               <in>Label.cpp</in>
               <in>Label.hpp</in>
+              <in>ScrollableList.cpp</in>
+              <in>ScrollableList.hpp</in>
               <in>Separator.hpp</in>
               <in>Slider.cpp</in>
               <in>Slider.hpp</in>
@@ -1459,6 +1461,8 @@
               <in>HostGameLayer.hpp</in>
               <in>IntroLayer.cpp</in>
               <in>IntroLayer.hpp</in>
+              <in>JoinGameLayer.cpp</in>
+              <in>JoinGameLayer.hpp</in>
             </df>
             <in>InitialScene.cpp</in>
             <in>InitialScene.hpp</in>
@@ -1512,19 +1516,15 @@
           <df name="Views">
             <df name="Components">
               <in>BoxedLabel.hpp</in>
-              <in>Component.cpp</in>
               <in>Component.hpp</in>
               <in>InfoBar.cpp</in>
               <in>InfoBar.hpp</in>
               <in>InputEvent.hpp</in>
-              <in>ListBox.cpp</in>
-              <in>ListBox.hpp</in>
               <in>MiniMap.cpp</in>
               <in>MiniMap.hpp</in>
               <in>MouseEvent.hpp</in>
               <in>StateChangedCallback.hpp</in>
               <in>View.hpp</in>
-              <in>ViewGlobals.cpp</in>
               <in>ViewGlobals.hpp</in>
               <in>tChatBox.cpp</in>
               <in>tChatBox.hpp</in>
@@ -1582,8 +1582,6 @@
                 <in>ServerListView.cpp</in>
                 <in>ServerListView.hpp</in>
               </df>
-              <in>MainMenuView.cpp</in>
-              <in>MainMenuView.hpp</in>
             </df>
             <in>GameViewGlobals.cpp</in>
             <in>GameViewGlobals.hpp</in>

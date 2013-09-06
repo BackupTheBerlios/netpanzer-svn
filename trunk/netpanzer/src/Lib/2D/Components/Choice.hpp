@@ -77,7 +77,8 @@ public:
     void   select(size_t index);
     void   setMinWidth(int minWidth);
 
-    virtual void draw(Surface &dest);
+    virtual void draw(Surface &dest) const;
+    void logic();
     virtual void render()
     {
     }

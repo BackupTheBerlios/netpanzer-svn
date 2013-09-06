@@ -65,7 +65,8 @@ private:
     void checkRepeatKey();
     void fixStringDisplayStart();
 
-    virtual void draw(Surface &dest);
+    void draw(Surface &dest) const;
+    void logic();
     void render() {}
     
     void onFocusStart();

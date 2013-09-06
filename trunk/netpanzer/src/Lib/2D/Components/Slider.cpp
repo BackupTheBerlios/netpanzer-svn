@@ -68,7 +68,7 @@ void Slider::setSize(const int x, const int y)
     update_selector_position();
 }
 
-void Slider::draw(Surface &dest)
+void Slider::draw(Surface &dest) const
 {
     iRect r(rect);
     

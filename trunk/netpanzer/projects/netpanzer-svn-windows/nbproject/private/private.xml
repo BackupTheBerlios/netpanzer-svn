@@ -8,6 +8,12 @@
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/ScrollableList.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/ScrollableList.cpp</file>
+        </group>
+    </open-files>
     <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
         <module name="org-netbeans-modules-cnd-discovery">
             <property name="rootFolder" value="C:\prog\netpanzer-svn"/>

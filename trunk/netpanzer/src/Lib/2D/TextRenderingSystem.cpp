@@ -175,6 +175,8 @@ void TextRenderingSystem::finalize()
 
 void TextRenderingSystem::renderString(const UString& str, Surface& dest)
 {
+    dest.fill(0);
+    
     const int count = str.length();
     if ( ! count )
     {
@@ -183,8 +185,6 @@ void TextRenderingSystem::renderString(const UString& str, Surface& dest)
 
     int x_pos = 0;
     FT_GlyphSlot slot;
-
-    dest.fill(0);
 
     for (int index = 0; index < count; index++)
     {
@@ -236,6 +236,84 @@ void TextRenderingSystem::renderString(const UString& str, Surface& dest)
     }
 }
 
+void TextRenderingSystem::renderMultilineString(const UString& str, Surface& dest, const int firstLineOffset)
+{
+    dest.fill(0);
+    
+    const int count = str.length();
+    if ( ! count )
+    {
+        return;
+    }
+
+    int x_pos = firstLineOffset;
+    int y_pos = 0;
+    const int width = dest.getWidth();
+    FT_GlyphSlot slot;
+
+    for (int index = 0; index < count; index++)
+    {
+        const uint16_t uchar = str[index];
+        FT_Face face = faces[font_data->face_index[uchar]];
+        if ( FT_Load_Glyph( face, font_data->char_to_index[uchar], FT_LOAD_RENDER ) )
+        {
+            continue; // skip this char
+        }
+        
+        slot = face->glyph;
+        
+        if ( ! slot->bitmap.width  || ! slot->bitmap.rows )
+        {
+            x_pos += font_data->normal_advance[uchar];
+            if ( x_pos >= width )
+            {
+                x_pos = 0;
+                y_pos += line_height();
+            }
+            
+            continue;
+        }
+
+        // XXX tricky, in theory the width will be enough for the first char, if not, probably will die.
+        if ( x_pos + font_data->normal_advance[uchar] > width )
+        {
+            x_pos = 0;
+            y_pos += line_height();
+        }
+        
+        int dest_x = x_pos + slot->bitmap_left;
+        if ( dest_x < 0 )
+        {
+            dest_x = 0;
+        }
+        
+        const int new_base = baseline - slot->bitmap_top;
+
+        // @todo if new_base < 0; line should start in -new_base, so it won't crash.
+        for ( int line = 0; line < slot->bitmap.rows; line++ )
+        {
+            const int dest_y = y_pos + new_base + line;
+            unsigned char * m = dest.pixPtr(dest_x, dest_y);
+            unsigned char * buf = &slot->bitmap.buffer[slot->bitmap.pitch * line];
+
+            for ( int col = 0; col < slot->bitmap.width; col++ )
+            {
+                m[col] = buf[col] >> 4;
+            }
+        }
+
+        if ( dest_x )
+        {
+            x_pos += font_data->normal_advance[uchar];
+        }
+        else
+        {
+            x_pos += font_data->first_advance[uchar];
+        }
+        
+    }
+}
+
 void TextRenderingSystem::getRenderedStringArea(const UString& str, iXY& area)
 {
     int w = 0;
@@ -251,6 +329,31 @@ void TextRenderingSystem::getRenderedStringArea(const UString& str, iXY& area)
     
     area.x = w;
     area.y = line_height();
+}
+
+int TextRenderingSystem::getMultilineStringHeight(const UString& str, const int width, const int firstLineOffset)
+{
+    int w = firstLineOffset;
+    int lines = 1;
+    
+    if ( str.length() )
+    {
+        for ( unsigned n = 0; n < str.length(); n++ )
+        {
+            if ( ! w )
+                w = font_data->first_advance[str[n]];
+            else
+                w += font_data->normal_advance[str[n]];
+            
+            if ( w > width )
+            {
+                lines++;
+                w = font_data->first_advance[str[n]];
+            }
+        }
+    }
+    
+    return lines * line_height();
 }
 
 FT_Face* TextRenderingSystem::getFaces()

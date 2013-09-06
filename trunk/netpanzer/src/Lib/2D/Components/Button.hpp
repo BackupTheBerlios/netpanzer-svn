@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ArrayUtil/PtrArray.hpp"
 #include "Core/CoreTypes.hpp"
 #include "Types/iXY.hpp"
+#include "Util/NTimer.hpp"
 
 //--------------------------------------------------------------------------
 class Button : public Component
@@ -47,6 +48,10 @@ private:
     TextRenderer label_render;
     bool selecting;
     Surface surface;
+    
+    NTimer repeat_timer;
+    int repeat_initial;
+    int repeat_other;
     
 protected:
     void onSelectStart();
@@ -78,9 +83,12 @@ public:
 
     virtual ~Button();
 
+    void setAutoRepeat(const int initial, const int other) { repeat_initial = initial; repeat_other = other; }
+    
     void setClickEvent(int event) { clickEvent = event; }
     
-    virtual void draw(Surface& dest);
+    virtual void draw(Surface& dest) const;
+    virtual void logic();
 
     static Button * createTextButton(   const NPString& label,
                                         const iXY& loc,

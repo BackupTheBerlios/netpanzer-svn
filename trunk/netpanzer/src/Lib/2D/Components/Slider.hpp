@@ -37,7 +37,7 @@ public:
 
     virtual void setSize(const int x, const int y);
 
-    virtual void draw(Surface &dest);
+    void draw(Surface &dest) const;
 
     void setChangeEvent(int event) { changeEvent = event; }
 
@@ -51,8 +51,6 @@ private:
     void onHoverStart();
     void onHoverStop();
     void handleInput( GameInput::InputState * input );
-    
-    void render() {}
     
     int min_value;
     int max_value;

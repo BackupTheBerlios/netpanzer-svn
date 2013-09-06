@@ -32,8 +32,9 @@ public:
     Layer(const int z_index) : z_index(z_index) {}
     virtual ~Layer() {}
     
-    virtual void draw() = 0; // XXX could this be const in the future?
-
+    virtual void draw() const = 0;
+    virtual void logic() {}
+    
 protected:
     virtual void onAddedToScene() {}
     virtual void onRemovedFromScene() {}
