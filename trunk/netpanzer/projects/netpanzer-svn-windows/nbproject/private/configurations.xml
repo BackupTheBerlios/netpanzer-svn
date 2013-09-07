@@ -288,6 +288,8 @@
               <in>Separator.hpp</in>
               <in>Slider.cpp</in>
               <in>Slider.hpp</in>
+              <in>VScrollBar.cpp</in>
+              <in>VScrollBar.hpp</in>
             </df>
             <in>Color.cpp</in>
             <in>Color.hpp</in>
@@ -1206,7 +1208,6 @@
             <in>ActionManager.hpp</in>
             <in>ActionManagerGUIActions.cpp</in>
             <in>ActionManagerSystemActions.cpp</in>
-            <in>ChangeIntVarAction.hpp</in>
             <in>ChatPageDownAction.hpp</in>
             <in>ChatPageUpAction.hpp</in>
             <in>DisconnectAction.hpp</in>
@@ -1646,7 +1647,56 @@
   </logicalFolder>
   <projectmakefile>../../Makefile</projectmakefile>
   <confs>
-    <conf name="Default" type="0">
+    <conf name="Debug" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>3</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+            <option name="debug_dir" value="C:\prog\netpanzer-svn\"/>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"\netpanzer-debug.exe</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>netpanzer-debug.exe -g</runcommand>
+        <rundir>C:\prog\netpanzer-svn\</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Release" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <platform>3</platform>

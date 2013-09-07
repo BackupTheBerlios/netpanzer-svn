@@ -27,8 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include <list>
 
-class Button;
-class ScrollSlider;
+class VScrollBar;
 class TextRenderer;
 
 class ScrollableList : public Component
@@ -97,13 +96,10 @@ private:
     /** shall redraw the text lines? */
     bool dirty;
 
-    Button       * upButton;
-    Button       * downButton;
-    ScrollSlider * scrollSlider;
-    
-    Component * hoveringComponent;
-    Component * selectingComponent;
-    
+    VScrollBar * scrollbar;
+    bool hoveringScrollbar;
+    bool selectingScrollbar;
+            
     ComponentEvents myEvents;
 };
 
