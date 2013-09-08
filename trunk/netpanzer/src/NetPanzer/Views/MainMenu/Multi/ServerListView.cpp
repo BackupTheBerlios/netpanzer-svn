@@ -523,7 +523,7 @@ ServerListView::endQuery()
 void
 ServerListView::doDraw( Surface& dest )
 {
-    dest.drawWindowsBorder();
+//    dest.drawWindowsBorder();
     
     if(queryThread && queryThread->isRunning())
     {

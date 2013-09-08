@@ -101,9 +101,9 @@ void RankView::doDraw( Surface& dest )
     
     bltViewBackground(dest);
 
-    dest.drawButtonBorder(
-            iRect(0, TABLE_BORDER_START, dest.getWidth()-1, dest.getHeight()-1),
-            Color::gray64, Color::white);
+//    dest.drawButtonBorder(
+//            iRect(0, TABLE_BORDER_START, dest.getWidth()-1, dest.getHeight()-1),
+//            Color::gray64, Color::white);
 
     dest.bltStringShadowed(0, 16, table_header, Color::red, Color::gray64);
     drawPlayerStats(dest, flagHeight);

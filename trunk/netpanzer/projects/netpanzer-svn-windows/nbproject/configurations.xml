@@ -22,6 +22,8 @@
               <in>Separator.hpp</in>
               <in>Slider.cpp</in>
               <in>Slider.hpp</in>
+              <in>Table.cpp</in>
+              <in>Table.hpp</in>
               <in>VScrollBar.cpp</in>
               <in>VScrollBar.hpp</in>
             </df>
@@ -925,6 +927,16 @@
             flavor2="0">
       </item>
       <item path="../../src/Lib/2D/Components/Slider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/Lib/2D/Components/Table.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/Lib/2D/Components/Table.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -7456,6 +7468,16 @@
             flavor2="0">
       </item>
       <item path="../../src/Lib/2D/Components/Slider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/Lib/2D/Components/Table.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/Lib/2D/Components/Table.hpp"
             ex="false"
             tool="3"
             flavor2="0">

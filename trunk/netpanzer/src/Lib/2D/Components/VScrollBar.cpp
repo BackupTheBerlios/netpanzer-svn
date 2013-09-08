@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameInput/InputManager.hpp"
 #include <algorithm>
 
+#include "Util/Log.hpp"
+
 #define BSIZE (15)
 #define REPEAT_INITIAL (500)
 #define REPEAT_TIME (50)
@@ -56,6 +58,9 @@ VScrollBar::VScrollBar()
     repeat_initial = 0;
     repeat_other = 0;
     
+    scrollArea.setWidth(BSIZE);
+    movableBar.setWidth(BSIZE);
+    
     Surface pics;
     pics.loadBMP("pics/buttons/scrollbutton.bmp");
     
@@ -82,6 +87,8 @@ VScrollBar::VScrollBar()
     downButton->setStateOffset(Button::BPRESSED, 1, 1);
     downButton->setComponentEvents(&myEvents);
     downButton->setClickEvent(Events::GoDown);
+    
+    rect.setWidth(BSIZE);
 }
 
 VScrollBar::~VScrollBar()
@@ -117,7 +124,7 @@ void VScrollBar::setValue(const int v)
     if ( movableBar.getHeight() )
     {
         const int starth = (movableAreaHeight * value) / virtualTotalHeight;
-        movableBar.setLocationY( scrollArea.getLocationY() + std::min( movableAreaHeight-1, starth) );
+        movableBar.setLocationY( scrollArea.getLocationY() + std::min( movableAreaHeight, starth) );
     }
 }
 
@@ -136,7 +143,10 @@ void VScrollBar::setVisibleHeight( const int h )
 {
     if ( h != visibleHeight )
     {
+        Component::setSize(BSIZE, h);
         visibleHeight = h;
+        scrollArea.setHeight(h - (BSIZE * 2) );
+        downButton->setLocation(downButton->getLocationX(), scrollArea.getEndY() + 1);
         virtualTotalHeight = std::max(0, totalHeight - h);
         updateMovableBarSize();
         setValue(value);
@@ -157,12 +167,8 @@ void VScrollBar::setLocation(const int x, const int y)
 
 void VScrollBar::setSize(const int x, const int y)
 {
-    Component::setSize(x, y);
-    scrollArea.setWidth(x);
-    downButton->setLocation(downButton->getLocationX(), scrollArea.getEndY() + 1);
-    movableBar.setWidth(x);
-    updateMovableBarSize();
-    setValue(value);
+//    Component::setSize(BSIZE, y);
+    setVisibleHeight(y);
 }
 
 void VScrollBar::updateMovableBarSize()
@@ -227,9 +233,9 @@ void VScrollBar::setAutoRepeat(const int initial, const int other)
 
 void VScrollBar::onHoverStart()
 {
-    const int mx = GameInput::InputManager::getMouseX();
-    const int my = GameInput::InputManager::getMouseY();
-    overScrollable = movableBar.contains(mx, my);
+//    const int mx = GameInput::InputManager::getMouseX();
+//    const int my = GameInput::InputManager::getMouseY();
+//    overScrollable = movableBar.contains(mx, my);
 }
 
 void VScrollBar::onHoverStop()
@@ -295,6 +301,8 @@ void VScrollBar::onPointerMove(int rel_x, int rel_y)
 
     if ( ! selectingComponent )
     {
+        overScrollable = mouseScrolling || movableBar.contains(mx, my);
+        
         Component * c = 0;
 
         if ( upButton->contains(mx, my) )
@@ -319,8 +327,6 @@ void VScrollBar::onPointerMove(int rel_x, int rel_y)
         }
         else
         {
-            overScrollable = mouseScrolling || movableBar.contains(mx, my);
-            
             if ( mouseScrolling )
             {
                 const int between = movableAreaHeight / virtualTotalHeight;

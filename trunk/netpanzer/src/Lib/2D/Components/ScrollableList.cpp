@@ -49,7 +49,6 @@ ScrollableList::ScrollableList(const int width, const int height)
 {
     firstVisibleLineIterator = lines.end();
     totalLinesHeight = 0;
-    totalDisplayStart = 0;
     rendedTotalDisplayStart = 0; // or -1?
     maxLines = 1000;
     visibleWidth = 0;
@@ -122,16 +121,17 @@ void ScrollableList::addLine(const UString& str, const int firstLineOffset, cons
 void ScrollableList::setLocation(const int x, const int y)
 {
     Component::setLocation(x, y);
-    const int x_start = (rect.getEndX() - BSIZE) + 1;
-    scrollbar->setLocation(x_start, y);
+    const int x_start = rect.getEndX() - scrollbar->getWidth();
+    scrollbar->setLocation(x_start+1, y);
 }
 
 void ScrollableList::setSize(const int x, const int y)
 {
     Component::setSize(x, y);
-    scrollbar->setSize(BSIZE, y);
-//    scrollbar->setVisibleHeight(y); // @todo shall remove this or keep?
-    visibleWidth = x - BSIZE;
+    scrollbar->setVisibleHeight(y);
+    visibleWidth = x - scrollbar->getWidth();
+    const int x_start = rect.getEndX() - scrollbar->getWidth();
+    scrollbar->setLocation(x_start+1, scrollbar->getLocationY());
 }
 
 void ScrollableList::draw(Surface& s) const
@@ -170,7 +170,6 @@ void ScrollableList::logic()
     {
         case Events::ScrollChange:
 //            LOGGER.warning("Scroll pos changed: %d", scrollSlider->getValue());
-            totalDisplayStart = scrollbar->getValue();
             dirty = true;
             break;
     }
@@ -180,32 +179,35 @@ void ScrollableList::logic()
     // @todo optimize the rendering, it is possible that doesn't need to re-render all
     if ( dirty )
     {
+        dirty = false;
+
         visibleRenders.deleteAll();
         if ( lines.size() )
         {
-            if ( rendedTotalDisplayStart < totalDisplayStart )
+            const int scrollpos = scrollbar->getValue();
+            if ( rendedTotalDisplayStart < scrollpos )
             {
                 // note: in theory all data is correct and iterator++ cannot fail.
-                while ( (rendedTotalDisplayStart + firstVisibleLineIterator->height - 1) < totalDisplayStart )
+                while ( (rendedTotalDisplayStart + firstVisibleLineIterator->height - 1) < scrollpos )
                 {
                     rendedTotalDisplayStart += firstVisibleLineIterator->height;
                     firstVisibleLineIterator++;
                 }
             }
-            else if ( rendedTotalDisplayStart > totalDisplayStart )
+            else if ( rendedTotalDisplayStart > scrollpos )
             {
                 // note: in theory all data is correct and iterator++ cannot fail.
                 do
                 {
                     firstVisibleLineIterator--;
                     rendedTotalDisplayStart -= firstVisibleLineIterator->height;
-                } while ( rendedTotalDisplayStart > totalDisplayStart );
+                } while ( rendedTotalDisplayStart > scrollpos );
             }
             
             TextRenderer * tr;
             std::list<ListElement>::iterator i = firstVisibleLineIterator;
             int cur_h = rendedTotalDisplayStart;
-            const int end_h = totalDisplayStart + getHeight();
+            const int end_h = scrollpos + getHeight();
             
             do
             {
@@ -215,11 +217,9 @@ void ScrollableList::logic()
                 i++;
             } while ( i != lines.end() && (cur_h < end_h) );
             
-            drawRenderOffset = totalDisplayStart - rendedTotalDisplayStart;
+            drawRenderOffset = scrollpos - rendedTotalDisplayStart;
             
-            dirty = false;
         }
-        
     }
 }
 
@@ -265,19 +265,20 @@ void ScrollableList::onPointerMove(int rel_x, int rel_y)
     {
         if ( scrollbar->contains(mx, my) )
         {
-            if ( hoveringScrollbar )
+            if ( ! hoveringScrollbar )
             {
                 hoveringScrollbar = true;
                 scrollbar->onHoverStart();
-                scrollbar->onPointerMove(rel_x, rel_y);
             }
+            
+            scrollbar->onPointerMove(rel_x, rel_y);
         }
         else
         {
             if ( hoveringScrollbar )
             {
                 hoveringScrollbar = false;
-                scrollbar->onHoverStart();
+                scrollbar->onHoverStop();
             }
         }
     }

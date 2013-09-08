@@ -288,6 +288,8 @@
               <in>Separator.hpp</in>
               <in>Slider.cpp</in>
               <in>Slider.hpp</in>
+              <in>Table.cpp</in>
+              <in>Table.hpp</in>
               <in>VScrollBar.cpp</in>
               <in>VScrollBar.hpp</in>
             </df>

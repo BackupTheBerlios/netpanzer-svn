@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Actions/Action.hpp"
 #include "2D/ComponentEvents.hpp"
 #include "Util/NTimer.hpp"
+#include "2D/TextRenderingSystem.hpp"
 
 Button::Button()
 {
@@ -168,7 +169,7 @@ void Button::setSize(const int x, const int y)
 
 void Button::setTextButtonSize(int xsize)
 {
-    Component::setSize(xsize+(extraBorder*2), Surface::getFontHeight() + 4 + (extraBorder*2));
+    Component::setSize(xsize+(extraBorder*2), TextRenderingSystem::line_height() + 4 + (extraBorder*2));
     painted_bstate = BMAX_STATE;
 }
 

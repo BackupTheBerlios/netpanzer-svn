@@ -23,14 +23,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/ComponentLayer.hpp"
 
+#define TEST_TABLE
+#define TEST_INPUTFIELD
+
 class Component;
 class CheckBox;
 class Choice;
 class Slider;
 class Label;
 class Slider;
-class InputField;
 class ScrollableList;
+
+#ifdef TEST_TABLE
+class Table;
+class Button;
+#endif
+
+#ifdef TEST_INPUTFIELD
+class InputField;
+#endif
 
 class IntroLayer : public ComponentLayer
 {
@@ -43,10 +54,20 @@ private:
     void handleComponentEvents();
     
     Component   * area;
-    ScrollableList * intro_text;
     
+#ifndef TEST_TABLE
+    ScrollableList * intro_text;
+#endif
+    
+#ifdef TEST_TABLE
+    Table       * table;
+    Button      * tableButton;
+#endif
+    
+#ifdef TEST_INPUTFIELD
     Label       * label;
     InputField  * input_field;
+#endif
     
 };
 

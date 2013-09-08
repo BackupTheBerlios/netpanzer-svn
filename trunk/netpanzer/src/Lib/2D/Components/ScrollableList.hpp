@@ -36,8 +36,18 @@ public:
     ScrollableList(const int width, const int height);
     ~ScrollableList();
     
+    /**
+     * Sets the maximum number of lines that the ScrollableList may contain.
+     * @param n The maximum number of lines
+     */
     void setMaxLines(const unsigned n);
-    
+
+    /**
+     * Adds a line of text to the list
+     * @param str The text
+     * @param firstLineOffset The x offset of the first character, defaults to 0
+     * @param color The drawing color of the text
+     */
     void addLine(const UString& str, const int firstLineOffset = 0, const uint8_t color = Color::gray224);
     
     void setLocation(const int x, const int y);
@@ -55,6 +65,7 @@ private:
     
     void onPointerMove(int rel_x, int rel_y);
     
+    /** Holds one element of the list, a line of text and its related data */
     struct ListElement
     {
         ListElement( const UString& str, const int height, const int firstLineOffset, uint8_t color)
@@ -75,11 +86,8 @@ private:
     /** sum of all the rendered lines heigh, one line might be broken in several */
     int totalLinesHeight;
     
-    /** Offset where the line list should start */
-    int totalDisplayStart;
-    
     /** Offset of the first TextRenderer */
-    int rendedTotalDisplayStart;
+    int rendedTotalDisplayStart; // @todo find a better name for this variable
     
     /** max number of lines in the list */
     unsigned maxLines;
@@ -96,10 +104,16 @@ private:
     /** shall redraw the text lines? */
     bool dirty;
 
+    /** The scroll bar */
     VScrollBar * scrollbar;
+    
+    /** flag if the mouse is over the scrollbar */
     bool hoveringScrollbar;
+    
+    /** flag if the mouse is pressing the scrollbar */
     bool selectingScrollbar;
-            
+    
+    /** Scrollbar will send the change event here */
     ComponentEvents myEvents;
 };
 

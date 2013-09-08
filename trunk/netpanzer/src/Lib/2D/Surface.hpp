@@ -105,13 +105,68 @@ private:
 
 
 public:
+    /**
+     * Blits this whole surface onto the destination surface performing clipping
+     * on it.
+     * @param dest Destination surface
+     * @param x Destination x
+     * @param y Destination y
+     */
     void blt(Surface &dest, int x, int y) const;
+    
+    /**
+     * Blits this whole surface onto the destination surface ignoring transparent
+     * pixels (value = 0), performs clipping.
+     * @param dest Destination surface
+     * @param x Destination x
+     * @param y Destination y
+     */
     void bltTrans(Surface &dest, int x, int y) const;
+    
+    /**
+     * Blits this whole surface onto the destination surface setting the
+     * transparent pixels (value = 0) to the passed color, performs clipping.
+     * @param dest Destination surface
+     * @param x Destination x
+     * @param y Destination y
+     * @param color New color to use for the transparent pixels
+     */
     void bltTransColor(Surface &dest, int x, int y, const PIX color) const;
+    
+    /**
+     * <p><b>Note: parameter is source not destination as the other blits</b></p>
+     * <p>Blits the whole passed surface onto this surface on the position and
+     * size passed (may perform scaling). Performs clipping.</p>
+     * @param source 
+     * @param destRect
+     */
     void bltScale(const Surface &source, const iRect &destRect);
+    
+    /**
+     * For each pixel in the surface, replaces it value with the mapped value of
+     * the passed table.
+     * @param destRect Area to perform the lookup
+     * @param table Lookup table
+     */
     void bltLookup(const iRect &destRect, const PIX table[]);
 
+    /**
+     * 
+     * @param dest Destination surface
+     * @param x Destination x
+     * @param y Destination y
+     * @param color
+     */
     void bltAlphaColor(Surface &dest, int x, int y, const PIX color) const;
+    
+    /**
+     * 
+     * @param dest
+     * @param x
+     * @param y
+     * @param rect
+     * @param color
+     */
     void bltRectAlphaColor(Surface &dest, int x, int y, const iRect& rect, const PIX color) const;
 
 
@@ -124,15 +179,6 @@ public:
     {
         drawLine(a.x, a.y, b.x, b.y, color);
     }
-    
-    // Surface Effects.
-    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
-    void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor)
-    {
-        drawButtonBorder(iRect(0, 0, getWidth(), getHeight()), topLeftColor, bottomRightColor);
-    }
-
-    void drawWindowsBorder();
     
     void fill(const PIX color);
     void flipVertical();
@@ -147,11 +193,6 @@ public:
 
     // Blit a shadowed string of text.
     void bltStringShadowed(int x, int y, const char *str, const PIX textColor, const PIX shadowColor);
-
-    // Blits a string of text and centers it horizontally and vertically on the screen.
-    void bltStringCenter(const char *string, PIX color);
-
-    void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color);
 
     void loadBMP(const char *fileName, bool needAlloc = true);

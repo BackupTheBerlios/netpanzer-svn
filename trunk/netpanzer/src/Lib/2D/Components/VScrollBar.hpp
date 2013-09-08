@@ -34,6 +34,7 @@ public:
     
     void setLocation(const int x, const int y);
     void setSize(const int x, const int y);
+    void setVisibleHeight( const int h );
     
     int getValue() const { return value; }
     void setValue(const int v);
@@ -62,9 +63,7 @@ public:
     void onPointerMove(int rel_x, int rel_y);
     
 private:
-    void setVisibleHeight( const int h );
     void updateMovableBarSize();
-    
     
     Button       * upButton;
     Button       * downButton;

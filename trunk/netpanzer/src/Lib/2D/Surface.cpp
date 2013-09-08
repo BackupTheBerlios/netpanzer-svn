@@ -1088,32 +1088,6 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const PIX textCol
 
 } // end Surface::bltStringShadowed
 
-// bltStringCenter
-//---------------------------------------------------------------------------
-// Purpose: Blits a string of text and centers it horizontally and vertically
-//          on the screen. Does not handle wrapping.
-//---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *string, PIX color)
-{
-    bltString(  (getWidth() - (strlen(string) * FONT_WIDTH)) / 2,
-                (getHeight() - getFontHeight()) / 2,
-                string, color);
-
-} // end Surface::bltStringCenter
-
-// bltStringShadowedCenter
-//---------------------------------------------------------------------------
-// Purpose: Blits a string of text and centers it horizontally and vertically
-//          on the screen. Does not handle wrapping.
-//---------------------------------------------------------------------------
-void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
-{
-    bltStringShadowed((getWidth() - (strlen(string) * FONT_WIDTH)) / 2,
-                      (getHeight() - getFontHeight()) / 2,
-                      string, foreground, background);
-
-} // end Surface::bltStringShadowedCenter
-
 // bltStringCenteredInRect
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered inside the specified rectangle.
@@ -1218,29 +1192,6 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
         throw Exception("Cannot open bmp file '%s'", fileName);
     }
 }
-
-// drawButtonBorder
-//---------------------------------------------------------------------------
-void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-//    drawHLine(bounds.min.x,bounds.min.y,bounds.max.x-1,topLeftColor);
-//    drawVLine(bounds.min.x,bounds.min.y,bounds.max.y-1,topLeftColor);
-//    drawHLine(bounds.min.x,bounds.max.y-1,bounds.max.x-1,bottomRightColor);
-//    drawVLine(bounds.max.x-1,bounds.min.y,bounds.max.y-1,bottomRightColor);
-    RoundRect(bounds,3, topLeftColor);
-
-} // end Surface::drawButtonBorder
-
-// drawWindowsBorder
-//--------------------------------------------------------------------------
-void Surface::drawWindowsBorder()
-{
-    //drawRect(iRect(0,0,getWidth(),getHeight()), Color::darkGray);
-    RoundRect(iRect(0,0,getWidth(),getHeight()),8, Color::lightGray);
-} // end Surface::drawWindowsBorder
 
 // drawBoxCorners
 //--------------------------------------------------------------------------
