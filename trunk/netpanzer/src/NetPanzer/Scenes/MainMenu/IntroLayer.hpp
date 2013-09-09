@@ -62,6 +62,7 @@ private:
 #ifdef TEST_TABLE
     Table       * table;
     Button      * tableButton;
+    Button      * clearTableButton;
 #endif
     
 #ifdef TEST_INPUTFIELD

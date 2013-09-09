@@ -76,10 +76,12 @@ Table::Table(const unsigned numColumns, const int intercolumnWidth)
     scrollbar = new VScrollBar();
     hoveringScrollbar = false;
     selectingScrollbar = false;
+    firstRowIndex = 0;
     firstRowTotalPosition = 0;
     firstRowOffset = 0;
     firstRowHeight = 0;
     lastRowHeight = 0;
+    selectedRow = -1;
 
     scrollbar->setComponentEvents(&myEvents);
     scrollbar->setChangeEvent(Events::ScrollChange);
@@ -136,7 +138,14 @@ void Table::draw(Surface& dest) const
         
         int x = getLocationX();
         
+        const int relativeSelectedRow = selectedRow - firstRowIndex;
+        
         const RowPainter *p = painters[0];
+        
+        if ( relativeSelectedRow == 0 )
+        {
+            dest.fillRect(iRect(x, y, getWidth() - scrollbar->getWidth(), firstRowHeight), Color::gray);
+        }
         
         // draw first row, maybe cell are half drawn due to scrolling
         for ( int c = 0, ce = columnDef.size(); c < ce; c++ )
@@ -154,6 +163,11 @@ void Table::draw(Surface& dest) const
         for ( int n = 1, ne = painters.size()-1; n < ne; n++ )
         {
             x = getLocationX();
+            if ( relativeSelectedRow == n )
+            {
+                dest.fillRect(iRect(x, y, getWidth() - scrollbar->getWidth(), rowHeight), Color::gray);
+            }
+
             p = painters[n];
             for ( int c = 0, ce = columnDef.size(); c < ce; c++ )
             {
@@ -170,6 +184,11 @@ void Table::draw(Surface& dest) const
         if ( painters.size() >  1 )
         {
             x = getLocationX();
+            if ( relativeSelectedRow == (painters.size()-1) )
+            {
+                dest.fillRect(iRect(x, y, getWidth() - scrollbar->getWidth(), lastRowHeight), Color::gray);
+            }
+
             cellArea.setHeight(lastRowHeight);
             p = painters.back();
             for ( int c = 0, ce = columnDef.size(); c < ce; c++ )
@@ -186,6 +205,18 @@ void Table::draw(Surface& dest) const
 void Table::logic()
 {
     scrollbar->logic();
+    
+    int event;
+    while ( (event = myEvents.nextEvent()) ) switch ( event )
+    {
+        case Events::ScrollChange:
+//            LOGGER.warning("Scroll pos changed: %d", scrollSlider->getValue());
+            dirty = true;
+            break;
+    }
+    
+    myEvents.reset();
+    
     if ( dirty )
     {
         const int rowcount = ds->getRowCount();
@@ -193,17 +224,19 @@ void Table::logic()
         if ( rowcount )
         {
             const int scrollpos = scrollbar->getValue();
-            const int firstRow = scrollpos / rowHeight;
-            const int froffset = scrollpos % rowHeight;
+            firstRowIndex = scrollpos / rowHeight;
+            firstRowOffset = scrollpos % rowHeight;
+            firstRowTotalPosition = firstRowIndex * rowHeight;
+            firstRowHeight = rowHeight - firstRowOffset;
             
             // @todo save the header height somewhere, or the visible height
             const int endy = scrollpos + (getHeight() - TextRenderingSystem::line_height());
             
-            int y = scrollpos - froffset;
+            int y = scrollpos - firstRowOffset;
             
             // @todo optimize this, don't delete all
             painters.deleteAll();
-            for ( int n = firstRow, ne = rowcount; n < ne; n++ )
+            for ( int n = firstRowIndex, ne = rowcount; n < ne; n++ )
             {
                 RowPainter * p = ds->newRowPainter();
                 ds->configureRowPainter(p, n);
@@ -218,9 +251,6 @@ void Table::logic()
             {
                 lastRowHeight -= y - endy;
             }
-            
-            firstRowHeight = rowHeight - froffset;
-            firstRowOffset = froffset;
 
         }
         else
@@ -282,6 +312,25 @@ void Table::onSelectStart()
     {
         scrollbar->onSelectStart();
         selectingScrollbar = true;
+    }
+    else // as is not hovering the scrollbar, it must be either on header or over rows
+    {
+        const int my = GameInput::InputManager::getMouseY();
+        const int tdatay = my - (getLocationY() + TextRenderingSystem::line_height());
+        if ( (tdatay >= 0) && tdatay < (rect.getHeight() - TextRenderingSystem::line_height()) )
+        {
+            const int total = firstRowTotalPosition + firstRowOffset + tdatay;
+            const int selrow = total / rowHeight;
+            if ( selrow < ds->getRowCount() )
+            {
+                if ( changeEvent )
+                {
+                    events->push(changeEvent);
+                }
+                
+                selectedRow = selrow;
+            }
+        }
     }
 }
 

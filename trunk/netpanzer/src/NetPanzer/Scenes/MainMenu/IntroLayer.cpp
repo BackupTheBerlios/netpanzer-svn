@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Components/Table.hpp"
 #include "2D/Components/Button.hpp"
 #include "2D/TextRenderingSystem.hpp"
+#include "Util/Log.hpp"
 #endif
 
 #define MENU_WIDTH  (640)
@@ -48,22 +49,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef TEST_TABLE
 
 #include <vector>
+#include <string>
 
 struct Events
 {
     enum
     {
-        AddToTable = 1
+        AddToTable = 1,
+        TableSelectionChanged,
+        ClearSelection
     };
 };
 
 class TestData
 {
 public:
-    TestData(const UString& s1, const UString& s2, const UString &s3)
+    TestData(const std::string& s1, const std::string& s2, const std::string &s3)
         : s1(s1), s2(s2), s3(s3)
         {}
-    UString s1, s2, s3;
+    std::string s1, s2, s3;
 };
 
 class TestRowPainter : public Table::RowPainter
@@ -81,9 +85,9 @@ public:
     
     void setData(const TestData& data)
     {
-        c1.setText(data.s1);
-        c2.setText(data.s2);
-        c3.setText(data.s3);
+        c1.setText(data.s1.c_str());
+        c2.setText(data.s2.c_str());
+        c3.setText(data.s3.c_str());
     }
     
     void paintCell(Surface& dest, const int x, const int y, const iRect& rect, const unsigned column) const
@@ -107,23 +111,23 @@ public:
     std::vector<TestData> testrows;
     TestDataSource() : Table::DataSource()
     {
-        testrows.push_back(TestData(UString("0,0"),UString("0,1"),UString("0,2")));
-        testrows.push_back(TestData(UString("1,0"),UString("1,1"),UString("1,2")));
-        testrows.push_back(TestData(UString("2,0"),UString("2,1"),UString("2,2")));
-        testrows.push_back(TestData(UString("3,0"),UString("3,1"),UString("3,2")));
-        testrows.push_back(TestData(UString("4,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("5,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("6,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("7,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("8,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("9,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("10,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("11,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("12,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("13,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("14,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("15,0"),UString("4,1"),UString("4,2")));
-        testrows.push_back(TestData(UString("16,0"),UString("4,1"),UString("4,2")));
+        testrows.push_back(TestData("0,0","0,1","0,2"));
+        testrows.push_back(TestData("1,0","1,1","1,2"));
+        testrows.push_back(TestData("2,0","2,1","2,2"));
+        testrows.push_back(TestData("3,0","3,1","3,2"));
+        testrows.push_back(TestData("4,0","4,1","4,2"));
+        testrows.push_back(TestData("5,0","4,1","4,2"));
+        testrows.push_back(TestData("6,0","4,1","4,2"));
+        testrows.push_back(TestData("7,0","4,1","4,2"));
+        testrows.push_back(TestData("8,0","4,1","4,2"));
+        testrows.push_back(TestData("9,0","4,1","4,2"));
+        testrows.push_back(TestData("10,0","4,1","4,2"));
+        testrows.push_back(TestData("11,0","4,1","4,2"));
+        testrows.push_back(TestData("12,0","4,1","4,2"));
+        testrows.push_back(TestData("13,0","4,1","4,2"));
+        testrows.push_back(TestData("14,0","4,1","4,2"));
+        testrows.push_back(TestData("15,0","4,1","4,2"));
+        testrows.push_back(TestData("16,0","4,1","4,2"));
     }
     
     ~TestDataSource()
@@ -131,12 +135,16 @@ public:
         
     }
     
-    void addRow(const UString& s1, const UString& s2, const UString& s3)
+    void addRow(const std::string& s1, const std::string& s2, const std::string& s3)
     {
         testrows.push_back(TestData(s1,s2,s3));
         notifyDataChanged();
     }
     
+    const TestData& getRowData(const unsigned n)
+    {
+        return testrows[n];
+    }
     
     unsigned getRowCount() const
     {
@@ -201,11 +209,15 @@ IntroLayer::IntroLayer() : ComponentLayer(0)
     table->addColumn(UString("Second Column"), 175);
     table->addColumn(UString("Thirth Column"), 80);
     
+    table->setChangeEvent(Events::TableSelectionChanged);
+    
     tds.setTable(table);
     
     tableButton = Button::createNewSpecialButton("Add", iXY(0,0), 100);
-//    tableButton = Button::createTextButton("Add", iXY(0,0), 100);
     tableButton->setClickEvent(Events::AddToTable);
+    
+    clearTableButton = Button::createNewSpecialButton("Clear selection", iXY(0,0), 150);
+    clearTableButton->setClickEvent(Events::ClearSelection);
     
 #endif
     
@@ -215,6 +227,7 @@ IntroLayer::IntroLayer() : ComponentLayer(0)
 #else
     addComponent(table);
     addComponent(tableButton);
+    addComponent(clearTableButton);
 #endif
 //    addComponent(label);
 //    addComponent(input_field);
@@ -241,6 +254,7 @@ void IntroLayer::recalculateComponentLocations()
     table->setLocation(x, y);
     y += table->getHeight();
     tableButton->setLocation(x+250, y+50);
+    clearTableButton->setLocation(x+350, y+50);
 #endif
     
 #ifdef TEST_INPUTFIELD
@@ -256,7 +270,22 @@ void IntroLayer::handleComponentEvents()
     while ( (event = component_events.nextEvent()) ) switch ( event )
     {
         case Events::AddToTable:
-            tds.addRow(UString("Added col 1"),UString("Added col 2"),UString("Even more"));
+            tds.addRow("Added col 1","Added col 2","Even more");
+            break;
+            
+        case Events::TableSelectionChanged:
+        {
+            int sindex = table->getSelectedIndex();
+            const TestData& td = tds.getRowData(sindex);
+            LOGGER.warning("Row selected %d: '%s' '%s' '%s'", sindex, td.s1.c_str(), td.s2.c_str(), td.s3.c_str());
+        }
+            break;
+            
+        case Events::ClearSelection:
+        {
+            table->clearSelection();
+            LOGGER.warning("Unselected");
+        }
             break;
             
     }

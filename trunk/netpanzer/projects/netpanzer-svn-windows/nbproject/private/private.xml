@@ -16,7 +16,10 @@
             <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/VScrollBar.hpp</file>
             <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/VScrollBar.cpp</file>
             <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Table.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/ComponentLayer.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Button.cpp</file>
             <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Scenes/MainMenu/IntroLayer.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Button.hpp</file>
             <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/ScrollableList.cpp</file>
         </group>
     </open-files>

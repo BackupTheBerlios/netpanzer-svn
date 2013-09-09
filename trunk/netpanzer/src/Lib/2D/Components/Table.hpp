@@ -128,6 +128,11 @@ public:
      */
     void addColumn(const UString& text, const unsigned width);
     
+    void setChangeEvent(const int e) { changeEvent = e; }
+    
+    int getSelectedIndex() const { return selectedRow; }
+    void clearSelection() { selectedRow = -1; } // XXX might need dirty in the future
+    
     void setSize(const int x, const int y);
     void setLocation(const int x, const int y);
     
@@ -170,6 +175,9 @@ private:
     /** Separation space in pixels between columns */
     int intercolumnWidth;
     
+    /** The index of the first visible row */
+    int firstRowIndex;
+    
     /** Location of the first row on the whole scrollable view */
     int firstRowTotalPosition; // @todo find a better name for this
     
@@ -184,6 +192,9 @@ private:
     
     /** Height of one row, updated from the DataSource */
     int rowHeight;
+    
+    /** Selected row */
+    int selectedRow;
     
     /** Flag to notify the logic() code it needs to do some recalculation */
     bool dirty;
@@ -208,6 +219,9 @@ private:
     
     /** Scrollbar will send the change event here */
     ComponentEvents myEvents;
+    
+    /** Selectiong change event code */
+    int changeEvent;
 };
 
 #endif	/* TABLE_HPP */
