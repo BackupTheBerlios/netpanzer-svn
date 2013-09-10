@@ -145,11 +145,6 @@ public:
         iRect r(0,0, rect.getWidth()-2, rect.getHeight()-2);
         mapimage.bltScale(from, r);
     }
-    
-    void actionPerformed(const mMouseEvent &me)
-    {
-        // nothing
-    }
 };
 
 class GameTypeChoice : public Choice

@@ -249,7 +249,7 @@ void LibView::drawEnvironmentInfo(Surface &dest, iXY pos)
 
 // actionPerformed
 //---------------------------------------------------------------------------
-void LibView::actionPerformed(mMouseEvent me)
+void LibView::actionPerformed()
 {
 //    if (me.getSource()==checkBoxAllowParticleGeneration) {
 //        Particle2D::setCreateParticles(checkBoxAllowParticleGeneration->getState());

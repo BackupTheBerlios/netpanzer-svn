@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 #include "Component.hpp"
-#include "MouseEvent.hpp"
 
 #include <algorithm>
 #include "ArrayUtil/PtrArray.hpp"
@@ -66,7 +65,6 @@ public:
 protected:
     void add(Component *Component){}
     
-    virtual void     actionPerformed(mMouseEvent ) {}
     virtual void     onDesktopResized( const iXY& oldResolution, const iXY& newResolution){}
     virtual void     onShow() {}
     virtual void     onHide() {}

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ComponentLayer.hpp"
 #include "Views/Components/Component.hpp"
-#include "Views/Components/MouseEvent.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "SceneManager.hpp"
 #include "GameInput/InputManager.hpp"

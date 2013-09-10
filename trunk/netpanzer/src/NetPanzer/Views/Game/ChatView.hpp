@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 
 class Button;
-class tVScrollBar;
 class tChatBox;
 class InputField;
 
@@ -33,7 +32,6 @@ class ChatView : public GameTemplateView
 private:
 
     tChatBox * ChatList;
-    tVScrollBar * vsbChat;
     Button * bHideWindow;
     Button * bShowWindow;
     Button * switchModeButton;

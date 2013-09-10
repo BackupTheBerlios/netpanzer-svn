@@ -38,10 +38,6 @@ public:
         // nothing
     }
     
-    void actionPerformed(const mMouseEvent &me)
-    {
-        // nothing
-    }
 };
 
 

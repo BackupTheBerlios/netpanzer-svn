@@ -39,12 +39,6 @@ HelpScrollView::HelpScrollView() : View()
     resize(bodyTextRect.getSize());
     iRect r(0, 0, bodyTextRect.getWidth()-20, bodyTextRect.getHeight()-33);
     HelpBox = new tStringListBox(r);
-    VscrollBar = new tVScrollBar();
-    add(VscrollBar);
-    HscrollBar = new tHScrollBar();
-    add(HscrollBar);
-    HelpBox->setVscrollBar(VscrollBar);
-    HelpBox->setHscrollBar(HscrollBar);
     add(HelpBox);
 
     HelpBox->Add(_("Key"));

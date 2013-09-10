@@ -23,11 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include "2D/Surface.hpp"
 #include "Component.hpp"
-#include "MouseEvent.hpp"
-#include "Views/Components/StateChangedCallback.hpp"
-
-class tVScrollBar;
-class tHScrollBar;
 
 class DataItem
 {
@@ -37,7 +32,7 @@ public:
     void * Data;
 };
 
-class tStringListBox : public Component, public StateChangedCallback
+class tStringListBox : public Component
 {
 protected:
     std::list<DataItem> List;
@@ -48,9 +43,6 @@ private:
     enum { ItemHeight = 14 };
     
     Surface surface;
-    
-    tVScrollBar *VScrollBar;
-    tHScrollBar *HScrollBar;
     
     std::list<DataItem>::iterator StartItem;
     int StartSubLine;
@@ -72,7 +64,6 @@ private:
     
     void draw(Surface& dest) const;
     virtual void render();
-    virtual void actionPerformed(const mMouseEvent &me);
 public:
 
     tStringListBox(iRect rect);
@@ -82,11 +73,7 @@ public:
     void setBordered( bool b ) { Bordered = b; dirty = true; }
     
     virtual void setColor(PIX newColor);
-    virtual void setVscrollBar(tVScrollBar *newVScrollBar);
-    tVScrollBar * getVscrollBar() { return VScrollBar; }
     
-    virtual void setHscrollBar(tHScrollBar *newHScrollBar);
-    virtual void stateChanged(Component* source);
     virtual int getMaxItemWidth(const DataItem& data);
     virtual std::string getTextItem();
     

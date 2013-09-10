@@ -99,33 +99,33 @@ public:
         setUnitSelectionBorder();
     }
     
-    void actionPerformed( const mMouseEvent &e )
-    {        
-        if ( e.getID() == mMouseEvent::MOUSE_EVENT_PRESSED )
-        {
-            resetState();
-            if (vsvSelectedUnit == unitType && vsvUnitGenOn) {
-//                Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-                return;
-            }
-            
-            vsvSelectedUnit = unitType;
-            changeMade      = true;
-            bSetPowerOn();
-            bOK();
-        }
-        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_ENTERED )
-        {
-            Button::actionPerformed(e);
-            p->highlightedUnitType = unitType;
-        }
-        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_EXITED )
-        {
-            Button::actionPerformed(e);
-            if ( p->highlightedUnitType == unitType )
-                p->highlightedUnitType = -1;
-        }
-    }
+//    void actionPerformed( const mMouseEvent &e )
+//    {        
+//        if ( e.getID() == mMouseEvent::MOUSE_EVENT_PRESSED )
+//        {
+//            resetState();
+//            if (vsvSelectedUnit == unitType && vsvUnitGenOn) {
+////                Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//                return;
+//            }
+//            
+//            vsvSelectedUnit = unitType;
+//            changeMade      = true;
+//            bSetPowerOn();
+//            bOK();
+//        }
+//        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_ENTERED )
+//        {
+//            Button::actionPerformed(e);
+//            p->highlightedUnitType = unitType;
+//        }
+//        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_EXITED )
+//        {
+//            Button::actionPerformed(e);
+//            if ( p->highlightedUnitType == unitType )
+//                p->highlightedUnitType = -1;
+//        }
+//    }
 };
 
 Button * VehicleSelectionView::buttonStaticDisplay = 0;
@@ -720,38 +720,38 @@ void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, fl
 
 // actionPerformed
 //---------------------------------------------------------------------------
-void VehicleSelectionView::actionPerformed(mMouseEvent me)
-{
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource()==buttonStaticDisplay) {
-            if (buttonStaticDisplay->getLabel() == _("On")) {
-                buttonStaticDisplay->setLabel(_("Off"));
-            } else {
-                buttonStaticDisplay->setLabel(_("On"));
-            }
-
-            VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
-        }
-
-        if (me.getSource()==buttonPower) {
-            if (buttonPower->getLabel() == _("On")) {
-                buttonPower->setLabel(_("Off"));
-            } else {
-                buttonPower->setLabel(_("On"));
-            }
-
-            vsvUnitGenOn = !vsvUnitGenOn;
-            changeMade   = true;
-            sendOutpostStatus();
-        }
-
-        if (me.getSource()==buttonOk) {
-//            Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-            sendOutpostStatus();
-            changeMade = false;
-        }
-    }
-} // end VehicleSelectionView::actionPerformed
+//void VehicleSelectionView::actionPerformed(mMouseEvent me)
+//{
+//    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
+//        if (me.getSource()==buttonStaticDisplay) {
+//            if (buttonStaticDisplay->getLabel() == _("On")) {
+//                buttonStaticDisplay->setLabel(_("Off"));
+//            } else {
+//                buttonStaticDisplay->setLabel(_("On"));
+//            }
+//
+//            VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
+//        }
+//
+//        if (me.getSource()==buttonPower) {
+//            if (buttonPower->getLabel() == _("On")) {
+//                buttonPower->setLabel(_("Off"));
+//            } else {
+//                buttonPower->setLabel(_("On"));
+//            }
+//
+//            vsvUnitGenOn = !vsvUnitGenOn;
+//            changeMade   = true;
+//            sendOutpostStatus();
+//        }
+//
+//        if (me.getSource()==buttonOk) {
+////            Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+//            sendOutpostStatus();
+//            changeMade = false;
+//        }
+//    }
+//} // end VehicleSelectionView::actionPerformed
 
 // setPowerOn
 //---------------------------------------------------------------------------

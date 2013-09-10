@@ -57,7 +57,7 @@ public:
     virtual void doDraw( Surface& dest );
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void doActivate();
-    virtual void actionPerformed(mMouseEvent me);
+    virtual void actionPerformed();
 
     static int displayMode;
 }; // end LibView

@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "Views/Components/tStringListBox.hpp"
-#include "Views/Components/tVScrollBar.hpp"
-#include "Views/Components/tHScrollBar.hpp"
 #include "Views/Components/View.hpp"
 #include "Views/Theme.hpp"
 
@@ -31,8 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 tStringListBox::tStringListBox(iRect rrect)
 {
-    VScrollBar = 0;
-    HScrollBar = 0;
     setLocation(rrect.getLocation());
     setSize(rrect.getSize());
     background_color = ctWindowsbackground;
@@ -73,52 +69,6 @@ void tStringListBox::Clear()
     TotalPosition = 0;
     MaxItemWidth = rect.getWidth();
 
-    if (VScrollBar)
-    {
-        VScrollBar->setPosition(0);
-        VScrollBar->setMax(0);
-    }
-
-    if (HScrollBar)
-    {
-        HScrollBar->setPosition(0);
-        HScrollBar->setMax(MaxItemWidth);
-    }
-}
-
-void tStringListBox::actionPerformed(const mMouseEvent &me)
-{
-    if ( ! Selectable )
-    {
-        return;
-    }
-    
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
-        (me.getModifiers() & InputEvent::BUTTON1_MASK)) 
-    {
-        int contents_start = rect.getLocationY() + 4;
-        if ( hasHeader )
-        {
-            contents_start += ItemHeight;
-        }
-        
-        int SelectedLine = (me.getY()-(contents_start))/ItemHeight;
-        
-        SelectedItem = StartItem;
-        int TmpSubLine = StartSubLine;
-        
-        SelectedItem = StartItem;
-        
-        while ( SelectedLine-- && SelectedItem != List.end() )
-        {
-            if ( ++TmpSubLine >= (*SelectedItem).num_lines )
-            {
-                SelectedItem++;
-                TmpSubLine = 0;
-            }
-        }
-        dirty = true;
-    }
 }
 
 std::string tStringListBox::getTextItem()
@@ -196,21 +146,9 @@ void tStringListBox::AddData(const std::string& S, void * D)
         MaxItemWidth = HSize;
     }
     
-    if (VScrollBar)
+    if (AutoScroll) 
     {
-        VScrollBar->setMax(TotalLines-getNumVisibleLines());
-    }
-    
-    if (HScrollBar)
-    {
-        HScrollBar->setMax(MaxItemWidth-rect.getWidth());
-    }
-    
-    if (AutoScroll && VScrollBar) 
-    {
-        VScrollBar->setPosition(VScrollBar->getMax());
-        
-        int new_pos = VScrollBar->getPosition();
+        int new_pos = 0;
         
         if ( new_pos < TotalPosition )
         {
@@ -310,82 +248,9 @@ void tStringListBox::setColor(PIX newColor)
     dirty = true;
 }
 
-void tStringListBox::setVscrollBar(tVScrollBar *newVScrollBar)
-{
-    VScrollBar = newVScrollBar;
-    if (VScrollBar)
-    {
-        VScrollBar->setLocation(rect.getLocationX()+rect.getWidth(), rect.getLocationY());
-        VScrollBar->setHeight(rect.getHeight());
-        VScrollBar->setStateChangedCallback(this);
-        VScrollBar->setMax(List.size()-getNumVisibleLines());
-    }
-}
-
-void tStringListBox::setHscrollBar(tHScrollBar *newHScrollBar)
-{
-    HScrollBar = newHScrollBar;
-    if (HScrollBar)
-    {
-        HScrollBar->setLocation(rect.getLocationX(), rect.getLocationY()+rect.getHeight());
-        HScrollBar->setWidth(rect.getWidth());
-        HScrollBar->setStateChangedCallback(this);
-        HScrollBar->setSmallChange(3);
-        HScrollBar->setMax(MaxItemWidth-rect.getWidth());
-    }
-}
-
-void tStringListBox::stateChanged(Component* source)
-{
-    if (source == VScrollBar)
-    {
-        int new_pos = VScrollBar->getPosition();
-        
-        if ( new_pos < TotalPosition )
-        {
-            while ( TotalPosition > new_pos )
-            {
-                if ( (--StartSubLine) < 0 )
-                {
-                    StartItem--;
-                    StartSubLine = (*StartItem).num_lines - 1;
-                }
-                TotalPosition -= 1;
-            }
-        }
-        else if ( new_pos > TotalPosition )
-        {
-            while ( TotalPosition < new_pos )
-            {
-                if ( (++StartSubLine) >= (*StartItem).num_lines )
-                {
-                    StartItem++;
-                    StartSubLine = 0;
-                }
-                TotalPosition += 1;
-            }
-        }
-
-        dirty = true;
-    }
-    if (source == HScrollBar)
-    {
-        StartWidth = HScrollBar->getPosition();
-        dirty = true;
-    }
-}
-
 void tStringListBox::setLocation(int x, int y)
 {
     Component::setLocation(x, y);
-    if (VScrollBar)
-    {
-        VScrollBar->setLocation(rect.getEndX() + 1, rect.getLocationY());
-    }
-    if (HScrollBar)
-    {
-        HScrollBar->setLocation(rect.getLocationX(), rect.getEndY() + 1);
-    }
 }
 
 void tStringListBox::setAutoWrap(bool autowrap)

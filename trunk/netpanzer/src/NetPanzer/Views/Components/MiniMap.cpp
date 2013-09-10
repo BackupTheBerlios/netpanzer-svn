@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "MiniMap.hpp"
-#include "MouseEvent.hpp"
 
 #include "Core/CoreTypes.hpp"
 #include "2D/Surface.hpp"
@@ -67,52 +66,21 @@ MiniMap::draw(Surface &dest) const
 }
 
 void
-MiniMap::actionPerformed(const mMouseEvent &me)
+MiniMap::actionPerformed()
 {
-    switch (me.getID())
-    {
-        case mMouseEvent::MOUSE_EVENT_ENTERED:
-            mousepos = me.getPoint();
-            mouseinside = true;
-            break;
-        case mMouseEvent::MOUSE_EVENT_DRAGGED:
-        case mMouseEvent::MOUSE_EVENT_PRESSED:
-            if ( me.getModifiers() & InputEvent::BUTTON1_MASK)
-            {
-                iXY pos = mousepos+rect.getLocation();
-                pos.x = int(float(pos.x) * xratio)*32;
-                pos.y = int(float(pos.y) * yratio)*32;
-
-                WorldViewInterface::setCameraPosition( pos );
-
-            }
-//            if ( me.getModifiers() & InputEvent::BUTTON2_MASK )
-//            {
-//                moving = true;
-//            }
-            break;
-            
-        case mMouseEvent::MOUSE_EVENT_CLICKED:
-        case mMouseEvent::MOUSE_EVENT_RELEASED:
-//            if ( me.getModifiers() & InputEvent::BUTTON2_MASK )
-//            {
-//                moving = false;
-//            }
-            break;
-        case mMouseEvent::MOUSE_EVENT_EXITED:
-            mouseinside = false;
-//            moving = false;
-            break;
-        case mMouseEvent::MOUSE_EVENT_MOVED:
-//            if ( moving )
-//            {
-//                iXY diff = me.getPoint() - mousepos;
-//                setLocation(position-diff);
-//            }
-            mousepos = me.getPoint();
-            break;
-    }
-    
+/*
+ * If mouse enter: mousepos = pos, mouseinside=true
+ * if drag or pressed:
+iXY pos = mousepos+rect.getLocation();
+pos.x = int(float(pos.x) * xratio)*32;
+pos.y = int(float(pos.y) * yratio)*32;
+WorldViewInterface::setCameraPosition( pos );
+ * 
+ * if exit: mouseinside =false
+ * if move: mousepos = me.getPoint();
+ * 
+ * 
+ */
 }
 
 void

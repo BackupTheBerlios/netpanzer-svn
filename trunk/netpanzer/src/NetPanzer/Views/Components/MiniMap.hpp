@@ -44,7 +44,7 @@ public:
         // nothing
     }
     
-    void actionPerformed(const mMouseEvent &me);
+    void actionPerformed();
     
 protected:
     void onMapLoadedEvent()

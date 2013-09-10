@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "GameTemplateView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tPlayerStateBox.hpp"
 
 class Button;
@@ -41,9 +40,7 @@ private:
     Surface menuImage, vsImage;
     Button * changebutton;
     Button * readybutton;
-    tVScrollBar * scTeam1;
     tPlayerStateBox * StateTeam1;
-    tVScrollBar * scTeam2;
     tPlayerStateBox * StateTeam2;
     
     void onDesktopResized( const iXY& oldResolution, const iXY& newResolution);

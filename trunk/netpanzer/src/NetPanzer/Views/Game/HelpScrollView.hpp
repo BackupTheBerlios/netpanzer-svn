@@ -26,15 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "2D/Components/Button.hpp"
 #include "Views/Components/tStringListBox.hpp"
-#include "Views/Components/tVScrollBar.hpp"
-#include "Views/Components/tHScrollBar.hpp"
 
 //---------------------------------------------------------------------------
 class HelpScrollView : public View
 {
 protected:
-    tVScrollBar *VscrollBar;
-    tHScrollBar *HscrollBar;
     tStringListBox *HelpBox;
     void addhelpcmd(NPString cmd, NPString help);
 

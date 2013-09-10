@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Theme.hpp"
 #include "Views/Components/View.hpp"
 #include "2D/Components/Button.hpp"
-#include "Views/Components/tVScrollBar.hpp"
 #include "Views/Components/tChatBox.hpp"
 #include "2D/Components/InputField.hpp"
 #include "2D/Palette.hpp"
@@ -141,10 +140,6 @@ ChatView::ChatView() : GameTemplateView()
 
     iRect r(0, 15, getWidth()-15, getHeight()-17);
     ChatList = new tChatBox(r);
-    vsbChat = new tVScrollBar();
-    add(vsbChat);
-    vsbChat->setLargeChange(ChatList->getNumVisibleLines() -1);
-    ChatList->setVscrollBar(vsbChat);
     ChatList->setColor(0);
     ChatList->setAutoScroll(true);
     add(ChatList);

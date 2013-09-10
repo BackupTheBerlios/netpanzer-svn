@@ -1210,8 +1210,6 @@
             <in>ActionManager.hpp</in>
             <in>ActionManagerGUIActions.cpp</in>
             <in>ActionManagerSystemActions.cpp</in>
-            <in>ChatPageDownAction.hpp</in>
-            <in>ChatPageUpAction.hpp</in>
             <in>DisconnectAction.hpp</in>
             <in>QuitAction.hpp</in>
             <in>StartSurrenderVoteAction.hpp</in>
@@ -1522,23 +1520,16 @@
               <in>Component.hpp</in>
               <in>InfoBar.cpp</in>
               <in>InfoBar.hpp</in>
-              <in>InputEvent.hpp</in>
               <in>MiniMap.cpp</in>
               <in>MiniMap.hpp</in>
-              <in>MouseEvent.hpp</in>
-              <in>StateChangedCallback.hpp</in>
               <in>View.hpp</in>
               <in>ViewGlobals.hpp</in>
               <in>tChatBox.cpp</in>
               <in>tChatBox.hpp</in>
-              <in>tHScrollBar.cpp</in>
-              <in>tHScrollBar.hpp</in>
               <in>tPlayerStateBox.cpp</in>
               <in>tPlayerStateBox.hpp</in>
               <in>tStringListBox.cpp</in>
               <in>tStringListBox.hpp</in>
-              <in>tVScrollBar.cpp</in>
-              <in>tVScrollBar.hpp</in>
             </df>
             <df name="Game">
               <in>ChatView.cpp</in>
@@ -1582,8 +1573,6 @@
                   <in>ServerQueryThread.cpp</in>
                   <in>ServerQueryThread.hpp</in>
                 </df>
-                <in>ServerListView.cpp</in>
-                <in>ServerListView.hpp</in>
               </df>
             </df>
             <in>GameViewGlobals.cpp</in>

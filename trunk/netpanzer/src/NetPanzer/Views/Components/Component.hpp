@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "2D/ComponentEvents.hpp"
 
-class mMouseEvent;
 namespace GameInput { class InputState; }
 
 //--------------------------------------------------------------------------
@@ -67,7 +66,6 @@ public:
     virtual void draw(Surface &dest) const = 0;
     virtual void logic() {}
     
-    virtual void actionPerformed(const mMouseEvent &me) {}
     virtual void handleKeyboard() {}
 
     virtual void onSelectStart() {}

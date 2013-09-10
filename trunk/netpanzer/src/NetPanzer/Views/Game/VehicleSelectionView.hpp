@@ -117,8 +117,6 @@ public:
     virtual void        doDeactivate();
 
     static iRect   miniProductionRect;
-
-    virtual void actionPerformed(mMouseEvent me);
 }; // end VehicleSelectionView
 
 #endif // end __VehicleSelectionView_hpp__

@@ -51,29 +51,29 @@ public:
         borders[2] = Color::green;
     }
 
-    void actionPerformed( const mMouseEvent &e)
-    {
-        if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
-        {
-            background_images[0]->frameToBuffer(GameConfig::player_flag_data,
-                                                sizeof(GameConfig::player_flag_data));
-
-            ChangeFlagRequest req;
-            memcpy(req.player_flag,
-                   GameConfig::player_flag_data,
-                   sizeof(GameConfig::player_flag_data));
-
-            CLIENT->sendMessage(&req, sizeof(req));
-
-//            Desktop::setVisibility("GFlagSelectionView", false);
-            COMMAND_PROCESSOR.Flagtimer.reset();
-//            PlayerInterface::getLocalPlayer()->setStateActive();
-        }
-        else
-        {
-            Button::actionPerformed(e);
-        }
-    }
+//    void actionPerformed( const mMouseEvent &e)
+//    {
+//        if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
+//        {
+//            background_images[0]->frameToBuffer(GameConfig::player_flag_data,
+//                                                sizeof(GameConfig::player_flag_data));
+//
+//            ChangeFlagRequest req;
+//            memcpy(req.player_flag,
+//                   GameConfig::player_flag_data,
+//                   sizeof(GameConfig::player_flag_data));
+//
+//            CLIENT->sendMessage(&req, sizeof(req));
+//
+////            Desktop::setVisibility("GFlagSelectionView", false);
+//            COMMAND_PROCESSOR.Flagtimer.reset();
+////            PlayerInterface::getLocalPlayer()->setStateActive();
+//        }
+//        else
+//        {
+//            Button::actionPerformed(e);
+//        }
+//    }
 };
 
 GFlagSelectionView::GFlagSelectionView() : View()
