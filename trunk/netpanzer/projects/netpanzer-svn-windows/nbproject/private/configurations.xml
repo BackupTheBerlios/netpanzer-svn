@@ -1269,7 +1269,6 @@
               <in>UnitNetMessage.hpp</in>
             </df>
             <in>GameServerInfo.hpp</in>
-            <in>GameServerList.hpp</in>
             <in>MapFile.hpp</in>
             <in>OpcodeDebugger.cpp</in>
             <in>OpcodeDebugger.hpp</in>
@@ -1285,6 +1284,8 @@
             <in>SelectionBoxSprite.hpp</in>
             <in>SelectionList.cpp</in>
             <in>SelectionList.hpp</in>
+            <in>ServerListDataSource.cpp</in>
+            <in>ServerListDataSource.hpp</in>
             <in>SpawnList.cpp</in>
             <in>SpawnList.hpp</in>
             <in>Sprite.cpp</in>
@@ -1378,14 +1379,19 @@
             </df>
             <in>ClientSocket.cpp</in>
             <in>ClientSocket.hpp</in>
+            <in>GameserverQuerier.cpp</in>
+            <in>GameserverQuerier.hpp</in>
             <in>HTTPClientSocket.cpp</in>
             <in>HTTPClientSocket.hpp</in>
             <in>HTTPServerSocket.cpp</in>
             <in>HTTPServerSocket.hpp</in>
+            <in>MasterserverQuerier.cpp</in>
+            <in>MasterserverQuerier.hpp</in>
             <in>NewsGetter.cpp</in>
             <in>NewsGetter.hpp</in>
             <in>ProxyServer.cpp</in>
             <in>ProxyServer.hpp</in>
+            <in>ServerAddress.hpp</in>
             <in>WebSocketUtil.cpp</in>
             <in>WebSocketUtil.hpp</in>
           </df>
@@ -1464,6 +1470,8 @@
               <in>IntroLayer.hpp</in>
               <in>JoinGameLayer.cpp</in>
               <in>JoinGameLayer.hpp</in>
+              <in>MapThumbnailComponent.cpp</in>
+              <in>MapThumbnailComponent.hpp</in>
             </df>
             <in>InitialScene.cpp</in>
             <in>InitialScene.hpp</in>

@@ -25,6 +25,7 @@
 #include "Scenes/Common/OptionsLayer.hpp"
 #include "Scenes/MainMenu/IntroLayer.hpp"
 #include "Scenes/MainMenu/HostGameLayer.hpp"
+#include "Scenes/MainMenu/JoinGameLayer.hpp"
 
 #include "2D/Components/Slider.hpp"
 
@@ -130,6 +131,7 @@ private:
     IntroLayer    * intro_layer;
     OptionsLayer  * options_layer;
     HostGameLayer * hostgame_layer;
+    JoinGameLayer * joingame_layer;
 
     struct Events {
         enum
@@ -149,6 +151,7 @@ public:
     {
         options_layer = 0;
         hostgame_layer = 0;
+        joingame_layer = 0;
 
         panel_darkgray = new DarkGrayPanel();
         panel_darkgray->setSize(MENU_WIDTH, MENU_HEIGHT-26-26);
@@ -188,6 +191,11 @@ public:
         {
             delete hostgame_layer;
         }
+        
+        if ( joingame_layer )
+        {
+            delete joingame_layer;
+        }
     }
     
 private:
@@ -197,11 +205,16 @@ private:
         while ( (event = component_events.nextEvent()) ) switch ( event )
         {
             case Events::ShowMain:
-                LOGGER.warning("Clicked on Main!!!");
                 setSubLayer(intro_layer);
                 break;
+                
             case Events::ShowJoin:
-                LOGGER.warning("Clicked on Join!!!");
+                if ( joingame_layer == 0 )
+                {
+                    joingame_layer = new JoinGameLayer();
+                }
+                
+                setSubLayer(joingame_layer);
                 break;
 
             case Events::ShowHost:

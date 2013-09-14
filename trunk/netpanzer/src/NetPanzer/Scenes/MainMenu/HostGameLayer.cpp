@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Components/Choice.hpp"
 #include "2D/TextRenderingSystem.hpp"
 
+#include "MapThumbnailComponent.hpp"
+
 
 #define MENU_WIDTH  (640)
 #define MENU_HEIGHT (480-26-26)
@@ -119,33 +121,6 @@ static int windIndexToConfig(const int v)
     
     return int(typhoonWindSpeed);
 }
-
-
-class MapThumbnailComponent : public Component
-{
-private:
-    Surface mapimage;
-    
-public:
-    MapThumbnailComponent(int w, int h)
-    {
-//        setLocation(x, y);
-        setSize(w, h);
-        mapimage.create(w - 2, h - 2);
-    }
-    
-    void draw(Surface &dest) const
-    {
-        dest.drawRect(rect, Color::lightGray);
-        mapimage.blt(dest, rect.getLocationX()+1, rect.getLocationY()+1); // full blit
-    }
-    
-    void setImage(const Surface& from)
-    {
-        iRect r(0,0, rect.getWidth()-2, rect.getHeight()-2);
-        mapimage.bltScale(from, r);
-    }
-};
 
 class GameTypeChoice : public Choice
 {
@@ -390,7 +365,8 @@ void HostGameLayer::handleComponentEvents()
 
 void HostGameLayer::refreshMaps()
 {
-    ResourceManager::refreshMapList();
+    // @todo when do we refresh the map list?
+//    ResourceManager::refreshMapList();
     mapList.clear();
 
     if ( ResourceManager::listMaps(mapList) == 0 )

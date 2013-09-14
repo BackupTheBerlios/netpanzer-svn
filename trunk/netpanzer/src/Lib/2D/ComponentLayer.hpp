@@ -39,16 +39,16 @@ protected:
     ComponentEvents component_events;
 
     void addComponent(Component * c);
-    void setSubLayer(ComponentLayer * sublayer) { this->sublayer = sublayer; }
+    void setSubLayer(ComponentLayer * sublayer);
 
     virtual void recalculateComponentLocations() { }
     virtual void handleComponentEvents() {}
 
     void setModal(bool modal) { this->modal = modal; }
+    virtual void logic();
     
 private:
     void draw() const;
-    virtual void logic();
     Component * reverseSearchComponentAt( const int x, const int y);
 
     bool handleInput( GameInput::InputState * input );

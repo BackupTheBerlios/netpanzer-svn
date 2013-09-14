@@ -302,6 +302,8 @@ int netpanzer_main(int argc, char** argv)
         {
             while ( SceneManager::run() )
                 ;
+            
+            SceneManager::deinit();
         }
 
 //        manager->shutdown();

@@ -23,12 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	GAMESERVERINFO_HPP
 
 #include "Core/CoreTypes.hpp"
+#include "Network/Address.hpp"
 
 class GameServerInfo
 {
 public:
     GameServerInfo(const NPString& ip, const uint16_t port)
-        : query_state(NOT_STARTED), ip(ip), port(port)
+        : query_state(NOT_STARTED), ip(ip), port(port), retryNum(0)
     {
         // nothing
     }
@@ -41,9 +42,11 @@ public:
         TIMEOUT
     } query_state;
 
+    network::Address address;
     NPString ip;
     uint16_t port;
 
+    NPString server_name;
     NPString current_map;
     NPString map_cycle;
     bool needs_password;
@@ -57,6 +60,12 @@ public:
     unsigned time_limit;
     unsigned frag_limit;
     unsigned objective_limit;
+    
+    NPString game_version;
+    unsigned protocol;
+    unsigned queryTimestamp;
+    unsigned ping;
+    unsigned retryNum;
 };
 
 #endif	/* GAMESERVERINFO_HPP */

@@ -421,6 +421,8 @@
             <in>SelectionBoxSprite.hpp</in>
             <in>SelectionList.cpp</in>
             <in>SelectionList.hpp</in>
+            <in>ServerListDataSource.cpp</in>
+            <in>ServerListDataSource.hpp</in>
             <in>SpawnList.cpp</in>
             <in>SpawnList.hpp</in>
             <in>Sprite.cpp</in>
@@ -513,14 +515,19 @@
             </df>
             <in>ClientSocket.cpp</in>
             <in>ClientSocket.hpp</in>
+            <in>GameserverQuerier.cpp</in>
+            <in>GameserverQuerier.hpp</in>
             <in>HTTPClientSocket.cpp</in>
             <in>HTTPClientSocket.hpp</in>
             <in>HTTPServerSocket.cpp</in>
             <in>HTTPServerSocket.hpp</in>
+            <in>MasterserverQuerier.cpp</in>
+            <in>MasterserverQuerier.hpp</in>
             <in>NewsGetter.cpp</in>
             <in>NewsGetter.hpp</in>
             <in>ProxyServer.cpp</in>
             <in>ProxyServer.hpp</in>
+            <in>ServerAddress.hpp</in>
             <in>WebSocketUtil.cpp</in>
             <in>WebSocketUtil.hpp</in>
           </df>
@@ -599,6 +606,8 @@
               <in>IntroLayer.hpp</in>
               <in>JoinGameLayer.cpp</in>
               <in>JoinGameLayer.hpp</in>
+              <in>MapThumbnailComponent.cpp</in>
+              <in>MapThumbnailComponent.hpp</in>
             </df>
             <in>InitialScene.cpp</in>
             <in>InitialScene.hpp</in>
@@ -772,6 +781,7 @@
               <Elem>PHYSFS_NO_CDROM_SUPPORT=1</Elem>
               <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
               <Elem>Z_PREFIX=1</Elem>
+              <Elem>_WIN32_WINNT=0x0501</Elem>
               <Elem>__WIN32__</Elem>
             </preprocessorList>
           </cTool>
@@ -3463,6 +3473,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Classes/ServerListDataSource.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Classes/ServerListDataSource.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Classes/SpawnList.cpp"
             ex="false"
             tool="1"
@@ -4518,6 +4538,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Network/GameserverQuerier.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/GameserverQuerier.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Network/HTTPClientSocket.cpp"
             ex="false"
             tool="1"
@@ -4572,6 +4602,16 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Network/HTTPServerSocket.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/MasterserverQuerier.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/MasterserverQuerier.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -4699,6 +4739,11 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Network/ProxyServer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/ServerAddress.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -5511,6 +5556,16 @@
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Scenes/MainMenu/JoinGameLayer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Scenes/MainMenu/MapThumbnailComponent.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Scenes/MainMenu/MapThumbnailComponent.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -7200,6 +7255,7 @@
               <Elem>PHYSFS_NO_CDROM_SUPPORT=1</Elem>
               <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
               <Elem>Z_PREFIX=1</Elem>
+              <Elem>_WIN32_WINNT=0x0501</Elem>
               <Elem>__WIN32__</Elem>
             </preprocessorList>
           </cTool>
@@ -9891,6 +9947,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Classes/ServerListDataSource.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Classes/ServerListDataSource.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Classes/SpawnList.cpp"
             ex="false"
             tool="1"
@@ -10946,6 +11012,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Network/GameserverQuerier.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/GameserverQuerier.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Network/HTTPClientSocket.cpp"
             ex="false"
             tool="1"
@@ -11000,6 +11076,16 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Network/HTTPServerSocket.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/MasterserverQuerier.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/MasterserverQuerier.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -11127,6 +11213,11 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Network/ProxyServer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Network/ServerAddress.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -11939,6 +12030,16 @@
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Scenes/MainMenu/JoinGameLayer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Scenes/MainMenu/MapThumbnailComponent.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Scenes/MainMenu/MapThumbnailComponent.hpp"
             ex="false"
             tool="3"
             flavor2="0">

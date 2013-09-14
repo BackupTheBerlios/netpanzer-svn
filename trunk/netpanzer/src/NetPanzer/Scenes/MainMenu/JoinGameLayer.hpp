@@ -22,6 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	JOINGAMELAYER_HPP
 
 #include "2D/ComponentLayer.hpp"
+#include "Network/MasterserverQuerier.hpp"
+#include "Network/ServerAddress.hpp"
+
+class Button;
+class Table;
+class ServerListDataSource;
+class GameServerInfo;
+class GameserverQuerier;
+class MapThumbnailComponent;
 
 class JoinGameLayer : public ComponentLayer
 {
@@ -33,8 +42,22 @@ private:
     void recalculateComponentLocations();
     void handleComponentEvents();
     
-    Component * area;
+    void logic();
     
+    Component * area;
+    Button * getNewListButton;
+    Button * refreshListButton;
+    Table  * serverListTable;
+    
+    MapThumbnailComponent * mapThumbnail;
+    
+    ServerListDataSource * serverListDS;
+    GameServerInfo * selectedServer;
+    
+    MasterserverQuerier * masterserverQuerier;
+    PtrArray<ServerAddress> servers;
+    
+    GameserverQuerier *  gameserverQuerier;
 };
 
 #endif	/* JOINGAMELAYER_HPP */

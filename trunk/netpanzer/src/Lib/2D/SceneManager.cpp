@@ -46,6 +46,7 @@ static void loopSleep()
 #include "2D/Palette.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "System/SDLVideo.hpp"
+#include "Network/NetworkManager.hpp"
 
 static Scene * current_scene = 0;
 static bool shall_run = false;
@@ -90,6 +91,8 @@ bool SceneManager::init(Scene* first_scene)
 {
     current_scene = first_scene;
 
+    network::NetworkManager::initialize();
+    
     GameInput::InputManager::initialize();
     dih = new DefaultInputHandler();
     GameInput::InputManager::pushInputHandler(dih);
@@ -98,8 +101,16 @@ bool SceneManager::init(Scene* first_scene)
     return shall_run;
 }
 
+void SceneManager::deinit()
+{
+    // @todo network may not close properly sockets, do it.
+    network::NetworkManager::cleanUp();
+}
+
 bool SceneManager::run()
 {
+    network::NetworkManager::run();
+    
     GameInput::InputManager::logic();
     
     current_scene->doLogic();

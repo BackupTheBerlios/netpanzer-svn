@@ -28,6 +28,7 @@ class SceneManager
 {
 public:
     static bool init( Scene * first_scene );
+    static void deinit();
     
     static bool run();
     

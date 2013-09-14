@@ -13,49 +13,34 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  *
- * Created on March 4, 2013, 12:53 AM
+ * Created on September 14, 2013, 5:29 PM
  */
 
-#ifndef INTROLAYER_HPP
-#define	INTROLAYER_HPP
+#ifndef MAPTHUMBNAILCOMPONENT_HPP
+#define	MAPTHUMBNAILCOMPONENT_HPP
 
-#include "2D/ComponentLayer.hpp"
+#include "2D/Surface.hpp"
+#include "Views/Components/Component.hpp"
 
-#define TEST_INPUTFIELD
-
-class Component;
-class CheckBox;
-class Choice;
-class Slider;
-class Label;
-class Slider;
-class ScrollableList;
-
-#ifdef TEST_INPUTFIELD
-class InputField;
-#endif
-
-class IntroLayer : public ComponentLayer
+class MapThumbnailComponent : public Component
 {
 public:
-    IntroLayer();
-    ~IntroLayer();
+    MapThumbnailComponent(int w, int h);
+    ~MapThumbnailComponent();
+    
+    void draw(Surface &dest) const;
+    
+    void setImage(const Surface& from);
+    
+    void setEmpty();
     
 private:
-    void recalculateComponentLocations();
-    void handleComponentEvents();
-    
-    Component   * area;
-    ScrollableList * intro_text;
-    
-#ifdef TEST_INPUTFIELD
-    Label       * label;
-    InputField  * input_field;
-#endif
-    
+    MapThumbnailComponent(const MapThumbnailComponent& );
+
+    Surface mapimage;
 };
 
-#endif	/* INTROLAYER_HPP */
+#endif	/* MAPTHUMBNAILCOMPONENT_HPP */
 

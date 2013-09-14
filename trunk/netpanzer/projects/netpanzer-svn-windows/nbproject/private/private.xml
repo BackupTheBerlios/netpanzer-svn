@@ -10,12 +10,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Scenes/MainMenu/IntroLayer.cpp</file>
-            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Table.hpp</file>
-            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp</file>
-            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/ServerListView.cpp</file>
-            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Table.cpp</file>
-            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Scenes/MainMenu/IntroLayer.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Layer.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Network/MasterserverQuerier.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Classes/GameServerInfo.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/ArrayUtil/PtrArray.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Network/MasterserverQuerier.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Scenes/MainMenu/JoinGameLayer.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Scenes/MainMenu/JoinGameLayer.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/ComponentLayer.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/Network/Address.hpp</file>
         </group>
     </open-files>
     <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">

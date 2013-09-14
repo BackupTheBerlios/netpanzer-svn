@@ -46,6 +46,12 @@ void ComponentLayer::addComponent(Component* c)
     visible_components.push_back(c);
 }
 
+void ComponentLayer::setSubLayer(ComponentLayer* sublayer)
+{
+     this->sublayer = sublayer;
+     sublayer->recalculateComponentLocations();
+}
+
 void ComponentLayer::draw() const
 {
     for ( size_t n = 0; n < visible_components.size(); n++ )
@@ -223,6 +229,7 @@ bool ComponentLayer::handleInput( GameInput::InputState * input )
 void ComponentLayer::onSceneActivated()
 {
     GameInput::InputManager::pushInputHandler(this);
+    recalculateComponentLocations();
 }
 
 void ComponentLayer::onSceneDeactivated()

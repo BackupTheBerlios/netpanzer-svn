@@ -10,6 +10,7 @@
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/StrManager.hpp"
 #include "MainMenuScene.hpp"
+#include "Resources/ResourceManager.hpp"
 
 //#define TEST_TEXT
 
@@ -60,6 +61,9 @@ InitialScene::~InitialScene()
 void InitialScene::logic()
 {
 #ifndef TEST_TEXT
+    
+    ResourceManager::refreshMapList();
+    
     MainMenuScene * mms = new MainMenuScene();
     SceneManager::setNextScene(mms);
 #endif
