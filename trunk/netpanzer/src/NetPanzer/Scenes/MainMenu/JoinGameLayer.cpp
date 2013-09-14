@@ -64,6 +64,93 @@ struct Events
  * 
  */
 
+class PlayerRowPainter : public Table::RowPainter
+{
+public:
+    PlayerRowPainter() {}
+    ~PlayerRowPainter() {}
+    
+    void setPlayerInfo(const GameServerInfo::PlayerInfo& pi)
+    {
+        name.setText(pi.name.c_str());
+        kills.setText(pi.kills.c_str());
+        deaths.setText(pi.deaths.c_str());
+        objectives.setText(pi.objectives.c_str());
+        points.setText(pi.points.c_str());
+    }
+    
+    void paintCell(Surface& dest, const int x, const int y, const iRect& rect, const unsigned column) const
+    {
+        switch ( column )
+        {
+            case 0: name.drawPart(dest, x, y, rect); break;
+            case 1: kills.drawPart(dest, x, y, rect); break;
+            case 2: deaths.drawPart(dest, x, y, rect); break;
+            case 3: objectives.drawPart(dest, x, y, rect); break;
+            case 4: points.drawPart(dest, x, y, rect); break;
+        }
+    }
+    
+    TextRenderer name;
+    TextRenderer kills;
+    TextRenderer deaths;
+    TextRenderer objectives;
+    TextRenderer points;
+};
+
+class PlayersDataSource : public Table::DataSource
+{
+public:
+    PlayersDataSource() : serverInfo(0) {}
+    ~PlayersDataSource() {}
+    
+    unsigned getRowCount() const
+    {
+        if ( serverInfo )
+        {
+            return serverInfo->players.size();
+        }
+        return 0;
+    }
+
+    unsigned getRowHeight() const
+    {
+        return TextRenderingSystem::line_height();
+    }
+
+    Table::RowPainter * newRowPainter() const
+    {
+        return new PlayerRowPainter();
+    }
+
+    void configureRowPainter(Table::RowPainter * painter, const unsigned row) const
+    {
+        if ( serverInfo && row < (serverInfo->players.size()) )
+        {
+            PlayerRowPainter * p = static_cast<PlayerRowPainter*>(painter);
+            p->setPlayerInfo(serverInfo->players[row]);
+        }
+    }
+    
+    void setGameServerInfo(const GameServerInfo * si)
+    {
+        serverInfo = si;
+        notifyDataChanged();
+    }
+    
+    void clear()
+    {
+        serverInfo = 0;
+        notifyDataChanged();
+    }
+    
+private:
+    PlayersDataSource(const PlayersDataSource& );
+    
+    const GameServerInfo * serverInfo;
+
+};
+
 JoinGameLayer::JoinGameLayer() : ComponentLayer(0)
 {
     area = new AreaComponent( MENU_WIDTH, MENU_HEIGHT );
@@ -89,6 +176,17 @@ JoinGameLayer::JoinGameLayer() : ComponentLayer(0)
     serverListDS = new ServerListDataSource();
     serverListDS->setTable(serverListTable);
     
+    playersTable = new Table(5, 1);
+    playersTable->addColumn(UString("Name"), 220);
+    playersTable->addColumn(UString("Kills"), 70);
+    playersTable->addColumn(UString("Deaths"), 70);
+    playersTable->addColumn(UString("Objs"), 70);
+    playersTable->addColumn(UString("Points"), 70);
+    playersTable->setSize(520, 100);
+    
+    playersDS = new PlayersDataSource();
+    playersDS->setTable(playersTable);
+    
     getNewListButton = Button::createNewSpecialButton("Get new list", iXY(0,0), 100);
     getNewListButton->setClickEvent(Events::RefreshGameList);
     
@@ -99,6 +197,7 @@ JoinGameLayer::JoinGameLayer() : ComponentLayer(0)
     
     addComponent(area);
     addComponent(mapThumbnail);
+    addComponent(playersTable);
     addComponent(serverListTable);
     addComponent(getNewListButton);
     addComponent(refreshListButton);
@@ -127,6 +226,7 @@ void JoinGameLayer::recalculateComponentLocations()
     // @todo move the components
     
     mapThumbnail->setLocation(x, y);
+    playersTable->setLocation(x + mapThumbnail->getWidth(), y);
     
     y += 150; // server data
     
@@ -158,6 +258,8 @@ void JoinGameLayer::handleComponentEvents()
             {
                 servers.deleteAll();
                 serverListTable->clearSelection();
+                playersTable->clearSelection();
+                playersDS->clear();
                 mapThumbnail->setEmpty();
                 masterserverQuerier->beginQuery(&servers);
             }
@@ -180,6 +282,8 @@ void JoinGameLayer::handleComponentEvents()
             {
                 serverListDS->clear();
                 serverListTable->clearSelection();
+                playersTable->clearSelection();
+                playersDS->clear();
                 mapThumbnail->setEmpty();
                 gameserverQuerier->beginQuery(servers);
             }
@@ -191,6 +295,7 @@ void JoinGameLayer::handleComponentEvents()
             const GameServerInfo * info = serverListDS->getServerInfo(index);
             if ( info )
             {
+                playersDS->setGameServerInfo(info);
                 const MapFile * mf = ResourceManager::getMap(info->current_map, ResourceManager::MAP_THUMBNAIL);
                 if ( mf )
                 {

@@ -173,6 +173,67 @@ void GameserverQuerier::parseServerData(GameServerInfo* info, NPString& data)
         } else if(token == "objectivelimit") {
             std::stringstream str(tokenizer.getNextToken());
             str >> info->objective_limit;
+        } else if(token == "player_0" ) {
+            int player_n = 0;
+            bool firstTime = true;
+            std::string player;
+            std::string kills;
+            std::string deaths;
+            std::string objectives;
+            std::string points;
+            
+            do
+            {
+                if ( firstTime )
+                {
+                    player = tokenizer.getNextToken();
+                    firstTime = false;
+                }
+                
+                token = tokenizer.getNextToken();
+                if ( token.substr(0, 7) == "player_" ) {
+                    info->players.push_back( GameServerInfo::PlayerInfo(
+                                player, kills, deaths, objectives, points) );
+                    
+                    player = tokenizer.getNextToken();
+                    kills  = "";
+                    deaths = "";
+                    objectives = "";
+                    points = "";
+                    player_n++;
+                    
+                } else if ( token.substr(0, 6) == "kills_" ) {
+                    kills = tokenizer.getNextToken();
+                } else if ( token.substr(0, 7) == "deaths_" ) {
+                    deaths = tokenizer.getNextToken();
+                } else if ( token.substr(0, 6) == "score_" ) {
+                    objectives = tokenizer.getNextToken();
+                } else if ( token.substr(0, 7) == "points_" ) {
+                    points = tokenizer.getNextToken();
+                } else if ( token.substr(0, 5) == "flag_" ) {
+                    tokenizer.getNextToken();
+                    // ignore
+                } else if ( token.substr(0, 6) == "flagu_" ) {
+                    tokenizer.getNextToken();
+                    // ignore
+                } else {
+                    // finish it!
+                    player_n = info->current_players;
+                }
+                
+                if ( player_n >= info->current_players )
+                {
+                    info->players.push_back( GameServerInfo::PlayerInfo(
+                                        player, kills, deaths, objectives, points) );
+
+                    player = tokenizer.getNextToken();
+                    kills  = "";
+                    deaths = "";
+                    objectives = "";
+                    points = "";
+                }
+                
+            } while ( player_n < info->current_players );
         } else {
             // handle more tokens...
         }

@@ -31,6 +31,7 @@ class ServerListDataSource;
 class GameServerInfo;
 class GameserverQuerier;
 class MapThumbnailComponent;
+class PlayersDataSource;
 
 class JoinGameLayer : public ComponentLayer
 {
@@ -48,10 +49,13 @@ private:
     Button * getNewListButton;
     Button * refreshListButton;
     Table  * serverListTable;
+    Table  * playersTable;
     
     MapThumbnailComponent * mapThumbnail;
     
     ServerListDataSource * serverListDS;
+    PlayersDataSource    * playersDS;
+    
     GameServerInfo * selectedServer;
     
     MasterserverQuerier * masterserverQuerier;

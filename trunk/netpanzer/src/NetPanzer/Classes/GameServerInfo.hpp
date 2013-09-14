@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "Network/Address.hpp"
+#include <vector>
 
 class GameServerInfo
 {
@@ -33,6 +34,23 @@ public:
     {
         // nothing
     }
+        
+    struct PlayerInfo
+    {
+        PlayerInfo( const NPString& name,
+                    const NPString& kills,
+                    const NPString& deaths,
+                    const NPString& objectives,
+                    const NPString& points)
+            : name(name), kills(kills), deaths(deaths), objectives(objectives), points(points)
+        {}
+        
+        NPString name;
+        NPString kills;
+        NPString deaths;
+        NPString objectives;
+        NPString points;
+    };
 
     enum
     {
@@ -66,6 +84,8 @@ public:
     unsigned queryTimestamp;
     unsigned ping;
     unsigned retryNum;
+    
+    std::vector<PlayerInfo> players;
 };
 
 #endif	/* GAMESERVERINFO_HPP */
