@@ -28,13 +28,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class CheckBox : public Component
 {
 public:
-    CheckBox(const NPString& label, bool* state, const int changeEvent);
+    CheckBox(const NPString& label, bool state, const int changeEvent);
 
     const NPString& getLabel() const { return label; }
     
     void setLabel(const NPString& label);
 
     void setChangeEvent(int event) { changeEvent = event; }
+    
+    void setState(const bool s) { state = s; }
+    bool getState() const { return state; }
 
 protected:
     virtual void onStateChanged() {}
@@ -50,7 +53,7 @@ private:
 
     TextRenderer label_render;
     NPString label;
-    bool*   state;
+    bool   state;
 
     PIX textColor;
     

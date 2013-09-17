@@ -78,7 +78,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Bot/Bot.hpp"
 
-#include "Scripts/ScriptManager.hpp"
 #include "Actions/ActionManager.hpp"
 #include "2D/TextRenderingSystem.hpp"
 
@@ -115,7 +114,7 @@ void PlayerGameManager::initializeSoundSubSystem()
 
     LOGGER.info("Initializing sound system.");
     try {
-        if ( GameConfig::sound_enable )
+        if ( gameconfig->sound.useSound() )
             sound = new SDLSound();
     } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
@@ -124,13 +123,13 @@ void PlayerGameManager::initializeSoundSubSystem()
     if(sound == 0)
         sound = new DummySound();
 
-    sound->setSoundVolume(GameConfig::sound_effectsvol);
+    sound->setSoundVolume(gameconfig->sound.getEffectsVol());
 
     // start some music
-    if ( GameConfig::sound_music )
+    if ( gameconfig->sound.useMusic() )
     {
         sound->playMusic("sound/music/");
-        sound->setMusicVolume(GameConfig::sound_musicvol);
+        sound->setMusicVolume(gameconfig->sound.getMusicVol());
     }
 }
 //-----------------------------------------------------------------
@@ -201,9 +200,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     // refresh the view in each append
     LoadingView::append( _("Launching Server...") );
 
-    ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
-    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
-
     try
     {
     	if (CLIENT)
@@ -215,7 +211,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         
         SERVER->hostSession();
 
-        if ( GameConfig::server_public
+        if ( gameconfig->host.isPublic()
              && GameConfig::server_masterservers->size() != 0 )
         {
             try
@@ -225,7 +221,7 @@ void PlayerGameManager::hostMultiPlayerGame()
                     delete infosocket;
                     infosocket = 0;
                 }
-                infosocket = new InfoSocket(GameConfig::server_port);
+                infosocket = new InfoSocket(gameconfig->host.getPort());
                 
                 if ( heartbeat )
                 {
@@ -386,7 +382,6 @@ void PlayerGameManager::joinMultiPlayerGame()
 //        sound->playTankIdle();
 //    }
 
-    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
 }
 
 bool PlayerGameManager::mainLoop()
@@ -449,7 +444,7 @@ void PlayerGameManager::processSystemKeys()
         {
             if (KeyboardInterface::getKeyPressed(SDLK_RETURN))
             {
-                GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
+                gameconfig->video.setFullScreen(!gameconfig->video.useFullScreen());
                 GameManager::setVideoMode();
             }
         }

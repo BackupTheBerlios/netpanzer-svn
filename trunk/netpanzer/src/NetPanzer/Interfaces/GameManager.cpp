@@ -107,27 +107,27 @@ void GameManager::setVideoMode()
     // construct flags
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
-    Uint32 flags = GameConfig::video_fullscreen ? SDL_FULLSCREEN : 0;
+    Uint32 flags = gameconfig->video.useFullScreen() ? SDL_FULLSCREEN : 0;
 //    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
 //    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
 
-    if ( ! GameConfig::video_fullscreen )
+    if ( ! gameconfig->video.useFullScreen() )
     {
         flags |= SDL_RESIZABLE;
     }
 
-    if ( GameConfig::video_width < 800 )
+    if ( gameconfig->video.getWidth() < 800 )
     {
-        GameConfig::video_width = 800;
+        gameconfig->video.setWidth(800);
     }
 
-    if ( GameConfig::video_height < 480 )
+    if ( gameconfig->video.getHeight() < 480 )
     {
-        GameConfig::video_height = 480;
+        gameconfig->video.setHeight(480);
     }
 
-    mode_res.x = GameConfig::video_width;
-    mode_res.y = GameConfig::video_height;
+    mode_res.x = gameconfig->video.getWidth();
+    mode_res.y = gameconfig->video.getHeight();
 
     Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
 

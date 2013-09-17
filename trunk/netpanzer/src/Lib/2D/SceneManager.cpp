@@ -63,7 +63,7 @@ private:
         
         if ( input->hasAction(GameInput::Action_BecomeActive) )
         {
-            if ( GameConfig::video_fullscreen )
+            if ( gameconfig->video.useFullScreen() )
             {
                 Screen->setPalette((SDL_Color*)Palette::color);
             }
@@ -71,8 +71,8 @@ private:
         
         if ( input->hasAction(GameInput::Action_ResizeWindow) )
         {
-            GameConfig::video_width = GameInput::InputManager::getResizeWidth();
-            GameConfig::video_height= GameInput::InputManager::getResizeHeight();
+            gameconfig->video.setWidth( GameInput::InputManager::getResizeWidth() );
+            gameconfig->video.setHeight( GameInput::InputManager::getResizeHeight() );
             GameManager::setVideoMode();
         }
         

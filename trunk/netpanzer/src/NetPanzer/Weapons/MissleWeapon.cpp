@@ -143,7 +143,8 @@ void MissleWeapon::updateStatus( void )
 
     groundLight.setWorldPos(location.x + thrustOffset.x, location.y + thrustOffset.y + heightFromGround);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->video.useShadows())
+    {
         shellShadow.setWorldPos(location.x - 20, location.y);
     }
 }
@@ -154,7 +155,8 @@ void MissleWeapon::offloadGraphics(SpriteSorter &sorter)
     sorter.addSprite(&thrust);
     //sorter.addSprite(&groundLight);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->video.useShadows())
+    {
         sorter.addSprite(&shellShadow);
     }
 }

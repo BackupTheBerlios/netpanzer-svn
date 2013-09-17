@@ -110,9 +110,9 @@ static void sendConnectionAlert(ClientSocket * client)
 
     player_state->resetAutokick();
 
-    if ( GameConfig::server_motd->length() > 0 )
+    if ( ! gameconfig->host.getMOTD().empty() )
     {
-        ChatInterface::serversayTo(client->getPlayerIndex(), GameConfig::server_motd->c_str());
+        ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->host.getMOTD().c_str());
     }
 
     SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));

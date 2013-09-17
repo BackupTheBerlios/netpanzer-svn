@@ -53,7 +53,7 @@ Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
     }
     
     stringstream msg;
-    msg << "\\heartbeat\\gamename\\netpanzer\\port\\" << GameConfig::server_port
+    msg << "\\heartbeat\\gamename\\netpanzer\\port\\" << gameconfig->host.getPort()
         << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
         << "\\final\\";
     

@@ -49,7 +49,7 @@ SDLVideo::SDLVideo()
     : frontBuffer(0)
 {
 #ifdef _WIN32
-    if ( GameConfig::video_usedirectx )
+    if ( gameconfig->video.useDirectX() )
     {
         putenv("SDL_VIDEODRIVER=directx");
     }

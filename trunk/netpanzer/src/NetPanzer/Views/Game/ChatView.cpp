@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Actions/Action.hpp"
 
-#include "Scripts/ScriptManager.hpp"
-
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -195,7 +193,9 @@ void ChatView::processEvents()
                 // @todo fix this
                 const NPString& msg = ""; //input->getText();
 
-                if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
+                // @todo removed commands
+//                if ( msg[0] != '/' || ! ScriptManager::runUserCommand( msg.substr(1) ) )
+                if ( msg[0] != '/' )
                 {
                     if ( isAllMode )
                     {

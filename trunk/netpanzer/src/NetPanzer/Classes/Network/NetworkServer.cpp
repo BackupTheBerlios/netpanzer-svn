@@ -112,8 +112,8 @@ NetworkServer::hostSession()
     
     try
     {
-        Address addr = Address::resolve(*GameConfig::server_bindaddress,
-                                        GameConfig::server_port,
+        Address addr = Address::resolve(gameconfig->host.getBindAddress(),
+                                        gameconfig->host.getPort(),
                                         true, true ); // tcp for binding
         
         socket = new TCPListenSocket(addr, this);

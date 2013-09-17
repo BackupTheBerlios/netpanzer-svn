@@ -438,6 +438,17 @@
             <in>WorldMap.cpp</in>
             <in>WorldMap.hpp</in>
           </df>
+          <df name="Config">
+            <in>ConfigGetter.hpp</in>
+            <in>HostConfig.cpp</in>
+            <in>HostConfig.hpp</in>
+            <in>InterfaceConfig.cpp</in>
+            <in>InterfaceConfig.hpp</in>
+            <in>SoundConfig.cpp</in>
+            <in>SoundConfig.hpp</in>
+            <in>VideoConfig.cpp</in>
+            <in>VideoConfig.hpp</in>
+          </df>
           <df name="Core">
             <in>CoreTypes.hpp</in>
             <in>NetworkGlobals.cpp</in>
@@ -3683,6 +3694,51 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Classes/WorldMap.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/ConfigGetter.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/HostConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/HostConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/InterfaceConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/InterfaceConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/SoundConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/SoundConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/VideoConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/VideoConfig.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -10157,6 +10213,51 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Classes/WorldMap.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/ConfigGetter.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/HostConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/HostConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/InterfaceConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/InterfaceConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/SoundConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/SoundConfig.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/VideoConfig.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Config/VideoConfig.hpp"
             ex="false"
             tool="3"
             flavor2="0">

@@ -34,6 +34,8 @@ struct Events
     enum
     {
         ChangeFullScreen = 1,
+        ChangeShadows,
+        ChangeBlendSmoke,
         ChangeScrollRate,
         ChangeSound,
         ChangeSoundVolume,
@@ -93,16 +95,16 @@ public:
 
         if ( mode )
         {
-            GameConfig::video_width = mode->w;
-            GameConfig::video_height = mode->h;
+            gameconfig->video.setWidth(mode->w);
+            gameconfig->video.setHeight(mode->h);
         }
 
-        if ( sel_index == 0 && ! GameConfig::video_fullscreen )
+        if ( sel_index == 0 && ! gameconfig->video.useFullScreen() )
         {
             // on Mac crash if we are in window and we select the biggest
             // resolution (the first one in theory), we make it smaller so it
             // wont crash, it is a SDL error.
-            GameConfig::video_height -= 50;
+            gameconfig->video.setHeight(gameconfig->video.getHeight() - 50);
         }
 
         GameManager::setVideoMode();
@@ -118,7 +120,7 @@ public:
         addItem(_("Large"));
         setMinWidth(w);
         
-        if ( gameconfig->radar_unitsize == _mini_map_unit_size_large )
+        if ( gameconfig->gameinterface.minimap.useBigUnitSize() )
         {
             select(1);
         }
@@ -130,11 +132,7 @@ public:
     
     void onSelectionChanged()
     {
-        switch ( getSelectedIndex() )
-        {
-            case 0: gameconfig->radar_unitsize = _mini_map_unit_size_small; break;
-            case 1: gameconfig->radar_unitsize = _mini_map_unit_size_large; break;
-        }
+        gameconfig->gameinterface.minimap.setBigUnitSize(getSelectedIndex() == 1);
     }
 };
 
@@ -149,9 +147,10 @@ OptionsLayer::OptionsLayer() : ComponentLayer(0)
     separator_visual       = new Separator( _("VISUAL"),     area->getWidth() - 20, componentActiveTextColor);
     label_screenres        = new Label( UString(_("Resolution")),         Color::white);
     label_minimapunitsize  = new Label( UString(_("Mini Map Unit Size")), Color::white);
-    checkbox_fullscreen    = new CheckBox( _("Full screen"),      &GameConfig::video_fullscreen, Events::ChangeFullScreen);
-    checkbox_showshadows   = new CheckBox( _("Draw All Shadows"), &GameConfig::video_shadows   , 0);
-    checkbox_blendsmoke    = new CheckBox( _("Blend Smoke"),      &GameConfig::video_blendsmoke, 0);
+    // @todo redo the checks
+    checkbox_fullscreen    = new CheckBox( _("Full screen"),      gameconfig->video.useFullScreen(), Events::ChangeFullScreen);
+    checkbox_showshadows   = new CheckBox( _("Draw All Shadows"), gameconfig->video.useShadows()   , Events::ChangeShadows);
+    checkbox_blendsmoke    = new CheckBox( _("Blend Smoke"),      gameconfig->video.useBlendSmoke(), Events::ChangeBlendSmoke);
     choice_screenres       = new ScreenResolutionChoice( 200 );
     choice_minimapunitsize = new MiniMapUnitSizeChoice ( 200 );
     
@@ -168,9 +167,9 @@ OptionsLayer::OptionsLayer() : ComponentLayer(0)
     
     separator_interface = new Separator( _("INTERFACE"), area->getWidth() - 20, componentActiveTextColor);
     label_scrollrate    = new Label( UString(_("Scroll Rate:")), Color::white );
-    slider_scrollrate   = new Slider( 500, 1000, GameConfig::interface_scrollrate, 200, Events::ChangeScrollRate);
+    slider_scrollrate   = new Slider( 500, 1000, gameconfig->gameinterface.getScrollRate(), 200, Events::ChangeScrollRate);
     
-    snprintf(number, sizeof(number), "%d", GameConfig::interface_scrollrate);
+    snprintf(number, sizeof(number), "%d", gameconfig->gameinterface.getScrollRate());
     label_scrollrate_value = new Label( UString(number), Color::white);
     
     addComponent(separator_interface);
@@ -181,15 +180,15 @@ OptionsLayer::OptionsLayer() : ComponentLayer(0)
     
     separator_sound    = new Separator( _("SOUND"),      area->getWidth() - 20, componentActiveTextColor);
     label_sound        = new Label( UString(_("Sound")), Color::white);
-    checkbox_sound     = new CheckBox( GameConfig::sound_enable ? _("On") : _("Off"), &GameConfig::sound_enable, Events::ChangeSound);
-    slider_soundvolume = new Slider( 0, 100, GameConfig::sound_effectsvol, 200, Events::ChangeSoundVolume);
+    checkbox_sound     = new CheckBox( gameconfig->sound.useSound() ? _("On") : _("Off"), gameconfig->sound.useSound(), Events::ChangeSound);
+    slider_soundvolume = new Slider( 0, 100, gameconfig->sound.getEffectsVol(), 200, Events::ChangeSoundVolume);
     label_music        = new Label( UString(_("Music")), Color::white);
-    checkbox_music     = new CheckBox( GameConfig::sound_music ? _("On") : _("Off"), &GameConfig::sound_music, Events::ChangeMusic);
-    slider_musicvolume = new Slider( 0, 100, GameConfig::sound_musicvol, 200, Events::ChangeMusicVolume);
+    checkbox_music     = new CheckBox( gameconfig->sound.useMusic() ? _("On") : _("Off"), gameconfig->sound.useMusic(), Events::ChangeMusic);
+    slider_musicvolume = new Slider( 0, 100, gameconfig->sound.getMusicVol(), 200, Events::ChangeMusicVolume);
     
-    snprintf(number, sizeof(number), "%d", GameConfig::sound_effectsvol);
+    snprintf(number, sizeof(number), "%d", gameconfig->sound.getEffectsVol());
     label_soundvolume_value = new Label( UString(number), Color::white);
-    snprintf(number, sizeof(number), "%d", GameConfig::sound_musicvol);
+    snprintf(number, sizeof(number), "%d", gameconfig->sound.getMusicVol());
     label_musicvolume_value = new Label( UString(number), Color::white);
     
     addComponent(separator_sound);
@@ -203,7 +202,8 @@ OptionsLayer::OptionsLayer() : ComponentLayer(0)
     addComponent(label_musicvolume_value);
 
 #ifdef _WIN32
-    checkbox_usedirectx = new CheckBox( _("Use DirectX"), &GameConfig::video_usedirectx, Events::UseDirectX);
+    // @todo redo the check
+    checkbox_usedirectx = new CheckBox( _("Use DirectX"), gameconfig->video.useDirectX(), Events::UseDirectX);
     addComponent(checkbox_usedirectx);
 #endif
     
@@ -292,14 +292,23 @@ void OptionsLayer::handleComponentEvents()
     while ( (event = component_events.nextEvent()) ) switch ( event )
     {
         case Events::ChangeFullScreen:
+            gameconfig->video.setFullScreen(checkbox_fullscreen->getState());
             GameManager::setVideoMode();
+            break;
+            
+        case Events::ChangeShadows:
+            gameconfig->video.setShadows(checkbox_showshadows->getState());
+            break;
+            
+        case Events::ChangeBlendSmoke:
+            gameconfig->video.setBlendSmoke(checkbox_blendsmoke->getState());
             break;
             
         case Events::ChangeScrollRate:
         {
             char number[50];
             const int sr = slider_scrollrate->getValue();
-            GameConfig::interface_scrollrate = sr;
+            gameconfig->gameinterface.setScrollRate(sr);
             snprintf(number, sizeof(number), "%d", sr);
             label_scrollrate_value->setText(number);
         }
@@ -308,7 +317,8 @@ void OptionsLayer::handleComponentEvents()
         case Events::ChangeSound:
             delete sound;
 
-            if ( GameConfig::sound_enable )
+            gameconfig->sound.setSound(checkbox_sound->getState());
+            if ( gameconfig->sound.useSound() )
             {
                 sound = new SDLSound();
                 checkbox_sound->setLabel(_("On"));
@@ -318,7 +328,7 @@ void OptionsLayer::handleComponentEvents()
                     sound->playTankIdle();
                 }
 
-                if ( GameConfig::sound_music )
+                if ( gameconfig->sound.useMusic() )
                 {
                     sound->playMusic("sound/music/");
                 }
@@ -334,7 +344,7 @@ void OptionsLayer::handleComponentEvents()
         {
             char number[50];
             const int sv = slider_soundvolume->getValue();
-            GameConfig::sound_effectsvol = sv;
+            gameconfig->sound.setEffectsVol(sv);
             sound->setSoundVolume(sv);
             snprintf(number, sizeof(number), "%d", sv);
             label_soundvolume_value->setText(number);
@@ -342,7 +352,8 @@ void OptionsLayer::handleComponentEvents()
             break;
             
         case Events::ChangeMusic:
-            if ( GameConfig::sound_music )
+            gameconfig->sound.setMusic(checkbox_music->getState());
+            if ( gameconfig->sound.useMusic() )
             {
                 sound->playMusic("sound/music/");
                 checkbox_music->setLabel(_("On"));
@@ -358,7 +369,7 @@ void OptionsLayer::handleComponentEvents()
         {
             char number[50];
             const int mv = slider_musicvolume->getValue();
-            GameConfig::sound_musicvol = mv;
+            gameconfig->sound.setMusicVol(mv);
             sound->setMusicVolume(mv);
             snprintf(number, sizeof(number), "%d", mv);
             label_musicvolume_value->setText(number);
@@ -371,6 +382,7 @@ void OptionsLayer::handleComponentEvents()
             
         case Events::UseDirectX:
         {
+            gameconfig->video.setDirectX(checkbox_usedirectx->getState());
             if ( ! message_layer )
             {
                 message_layer = new ModalMessageLayer(_("You need to restart NetPanzer for this change to work"),

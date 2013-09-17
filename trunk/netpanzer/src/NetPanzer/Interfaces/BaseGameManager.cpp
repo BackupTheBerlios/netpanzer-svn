@@ -58,8 +58,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Network/NetworkManager.hpp"
 
-#include "Scripts/ScriptManager.hpp"
-
 BaseGameManager* gamemanager = 0;
 
 //------------------------------------------------------------------
@@ -245,9 +243,6 @@ void BaseGameManager::simLoop()
 
     ParticleSystem2D::simAll();
     Particle2D::simAll();
-
-    ScriptManager::setDoubleValue("game.frametime", TimerInterface::getTimeSlice());
-    ScriptManager::runFunction("scriptLoop");
 
     GameControlRulesDaemon::updateGameControlFlow();
     if ( SERVER )

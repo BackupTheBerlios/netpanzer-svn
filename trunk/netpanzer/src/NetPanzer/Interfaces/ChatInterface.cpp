@@ -28,8 +28,6 @@
 #include "Util/Log.hpp"
 #include "Views/Game/ChatView.hpp"
 
-#include "Scripts/ScriptManager.hpp"
-
 #include "Network/PlayerRequests/ChatRequest.hpp"
 #include "Network/PlayerRequests/TeamChatRequest.hpp"
 
@@ -184,42 +182,45 @@ void ChatInterface::serversayTo(const PlayerID player, const NPString& message)
     }
 }
 
-static bool filterPlayerChat(const PlayerID player_id, const NPString& text, NPString& out)
-{
-    ScriptManager::prepareFunction("Filters.chatFilter");
-    ScriptManager::pushParameterInt(player_id);
-    ScriptManager::pushParameterString(text);
-    if ( ScriptManager::callFunction(1) )
-    {
-        if ( ScriptManager::isNullResult(-1) || ! ScriptManager::getStringResult(-1, out) )
-        {
-            out.clear();
-        }
-    }
-    else
-    {
-        NPString s;
-        ScriptManager::getStringResult(-1, s);
-        LOGGER.warning("Error in chatFilter: '%s'", s.c_str());
-        out.assign(text);
-    }
-    
-    ScriptManager::endFunction();
-    
-    return out.size() == 0;
-}
+// @todo filter disabled
+//static bool filterPlayerChat(const PlayerID player_id, const NPString& text, NPString& out)
+//{
+//    ScriptManager::prepareFunction("Filters.chatFilter");
+//    ScriptManager::pushParameterInt(player_id);
+//    ScriptManager::pushParameterString(text);
+//    if ( ScriptManager::callFunction(1) )
+//    {
+//        if ( ScriptManager::isNullResult(-1) || ! ScriptManager::getStringResult(-1, out) )
+//        {
+//            out.clear();
+//        }
+//    }
+//    else
+//    {
+//        NPString s;
+//        ScriptManager::getStringResult(-1, s);
+//        LOGGER.warning("Error in chatFilter: '%s'", s.c_str());
+//        out.assign(text);
+//    }
+//    
+//    ScriptManager::endFunction();
+//    
+//    return out.size() == 0;
+//}
 
 void ChatInterface::playerRequest_chat(const PlayerID player_id, const NPString& message)
 {
     NPString text;
-    
-    if ( filterPlayerChat(player_id, message, text) )
-    {
-        LOGGER.warning("Message from [%d] filtered", player_id);
-        return;
-    }
 
-    if ( text[0] != '/' || ! ScriptManager::runServerCommand(text.substr(1), player_id) )
+// @todo filter disabled    
+//    if ( filterPlayerChat(player_id, message, text) )
+//    {
+//        LOGGER.warning("Message from [%d] filtered", player_id);
+//        return;
+//    }
+
+//    if ( text[0] != '/' || ! ScriptManager::runServerCommand(text.substr(1), player_id) )
+    if ( text[0] != '/' )
     {
         AllChatMessage msg;
         msg.player_id = player_id;

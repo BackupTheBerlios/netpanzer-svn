@@ -119,7 +119,8 @@ void ChunkTrajectoryParticle2D::draw(const Surface& , SpriteSorter &sorter)
     packedSurface.setAttrib(iXY((int) pos.x, (int) (pos.z - arcYPix)), layer);
     sorter.addSprite(&packedSurface);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->video.useShadows())
+    {
         packedSurfaceShadow.setAttrib(iXY((int) (pos.x - arcYPix), (int) pos.z), shadowLayer);
         sorter.addSprite(&packedSurfaceShadow);
     }

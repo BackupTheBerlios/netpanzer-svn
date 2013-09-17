@@ -83,24 +83,16 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     
     if ( box_state == true )
     {
-        PIX selectionBoxColor = gameconfig->getVehicleSelectionBoxColor();
+        PIX selectionBoxColor = gameconfig->gameinterface.getVehicleSelectionColor();
 
         assert(max_hit_points > 0);
 
-        // Draw the selection box.
-        if (GameConfig::interface_unitselectionmode == _unit_selection_box_draw_mode_rect)
-        {
-            surface->drawRect(screen_rect, selectionBoxColor);
-        }
-        else
-        {
-            surface->drawBoxCorners(screen_rect, 7, selectionBoxColor);
-        }
+        surface->drawBoxCorners(screen_rect, 7, selectionBoxColor);
 
     } // ** box_state == true
 
     // Draw the unit hitpoints.
-    if ( GameConfig::interface_show_health || (box_state == true) )
+    if ( gameconfig->gameinterface.showHealth() || (box_state == true) )
     {
         // Draw a color coded hit bar.
         Uint8 hitBarColor;
@@ -131,12 +123,12 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         surface->fillRect(screen_rect, hitBarColor);
     }
 
-    if ( GameConfig::interface_show_flags == true  && unit_flag )
+    if ( gameconfig->gameinterface.showFlags() == true  && unit_flag )
     {
         unit_flag->blt( *surface, min_abs.x, min_abs.y - FLAG_HEIGHT - 1 ); // full blit
     }
 
-    if ( GameConfig::interface_show_names && (playerName.length() > 0) )
+    if ( gameconfig->gameinterface.showNames() && (playerName.length() > 0) )
     {
         if (GameConfig::game_teammode == true)
         {

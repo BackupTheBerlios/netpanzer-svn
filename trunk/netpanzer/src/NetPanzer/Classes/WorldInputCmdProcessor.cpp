@@ -56,7 +56,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/Vehicle.hpp"
 
-#include "Scripts/ScriptManager.hpp"
 #include "Views/Game/ChatView.hpp"
 #include "Actions/ActionManager.hpp"
 
@@ -133,7 +132,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
     float scroll_rate;
 
     time_slice = TimerInterface::getTimeSlice();
-    scroll_rate = GameConfig::interface_scrollrate;
+    scroll_rate = gameconfig->gameinterface.getScrollRate();
 
     scroll_increment = (long) (scroll_rate * time_slice);
 
@@ -164,7 +163,8 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         return;
     }
 
-    if ( GameConfig::video_fullscreen != true ) {
+    if ( ! gameconfig->video.useFullScreen() )
+    {
         // don't do border scrolling on windowed mode because
         //  the window isn't always on the edge of the screen.
         return;
@@ -351,7 +351,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_f) )
     {
-        GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
+        gameconfig->gameinterface.setShowFlags(!gameconfig->gameinterface.showFlags());
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_v) )
@@ -361,23 +361,23 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( KeyboardInterface::getKeyPressed(SDLK_n) )
     {
-        GameConfig::interface_show_names = !GameConfig::interface_show_names;
+        gameconfig->gameinterface.setShowNames(!gameconfig->gameinterface.showNames());
     }
 
     if ( KeyboardInterface::getKeyPressed(SDLK_d) )
     {
-        GameConfig::interface_show_health = !GameConfig::interface_show_health;
+        gameconfig->gameinterface.setShowHealth(!gameconfig->gameinterface.showHealth());
     }
 
-    if ( KeyboardInterface::getKeyPressed(SDLK_c) )
-    {
-        static NTimer spamtimer(5000);
-        if (spamtimer.isTimeOut())
-        {
-            ScriptManager::runUserCommand("countdown 5 Prepare to fight...");
-            spamtimer.reset();
-        }
-    }
+    // @todo countdown disabled for now
+//    if ( KeyboardInterface::getKeyPressed(SDLK_c) )
+//    {
+//        static NTimer spamtimer(5000);
+//        if (spamtimer.isTimeOut())
+//        {
+//            spamtimer.reset();
+//        }
+//    }
 
 //    if ( KeyboardInterface::getKeyPressed(SDLK_F1)
 //       && ! Desktop::getVisible("GFlagSelectionView") ) {

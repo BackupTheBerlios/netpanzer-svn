@@ -38,7 +38,7 @@ RankTeam::RankTeam() : GameTemplateView()
     setSearchName("RankTeam");
 //    setTitle(_("Round stats"));
 
-    moveTo(GameConfig::interface_rankposition_x, GameConfig::interface_rankposition_y);
+    moveTo(gameconfig->gameinterface.getRankPositionX(), gameconfig->gameinterface.getRankPositionY());
     resize(iXY(400, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
@@ -231,8 +231,8 @@ void RankTeam::mouseMove(const iXY & prevPos, const iXY &newPos)
 
 void RankTeam::notifyMoveTo()
 {
-    GameConfig::interface_rankposition_x = getLocationX();
-    GameConfig::interface_rankposition_y = getLocationY();
+    gameconfig->gameinterface.setRankPositionX(getLocationX());
+    gameconfig->gameinterface.setRankPositionY(getLocationY());
 }
 
 void RankTeam::doActivate()

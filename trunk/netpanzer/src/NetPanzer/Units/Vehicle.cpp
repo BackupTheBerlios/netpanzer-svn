@@ -1756,7 +1756,7 @@ bool Vehicle::weaponHit(const UnitID from_unit, const Uint16 damage_factor)
     unit_state.hit_points -= damage_factor;
     unit_state.threat_level = _threat_level_under_attack;
     threat_level_under_attack_timer.changePeriod(
-            GameConfig::interface_attacknotificationtime);
+            gameconfig->gameinterface.getAttackNotificationTime());
 
     UpdateStateUnitOpcode update_state_opcode;
 
@@ -2053,7 +2053,7 @@ void Vehicle::offloadGraphics( SpriteSorter &sorter )
 
         //Added layer selection to the selection box info.
         select_info_box.setAttrib( unit_state.location,
-                GameConfig::interface_unitinfodrawlayer );
+                gameconfig->gameinterface.getUnitInfoLayer() );
         select_info_box.setHitPoints( unit_state.hit_points );
 
         sorter.forceAddSprite( &body_anim_shadow );

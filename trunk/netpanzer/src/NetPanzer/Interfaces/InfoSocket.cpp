@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 InfoSocket::InfoSocket(int p) : socket(0)
 {
-    Address addr = Address::resolve( *GameConfig::server_bindaddress, p, false, true);
+    Address addr = Address::resolve( gameconfig->host.getBindAddress(), p, false, true);
     socket = new network::UDPSocket(addr,this);
     
     // This parameters are fixed always

@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
-#include "Scripts/ScriptManager.hpp"
 #include <ctype.h>
 #include <memory>
 #include <string.h>
@@ -197,30 +196,31 @@ bool read_vehicle_profile(const NPString& unitName, UnitProfile *profile)
 
     profile->unitname = unitName;
 
-    bool isok = ScriptManager::loadSimpleConfig(file_path);
+    // @todo redo the vehicle profiles in game config
+    bool isok = false; //ScriptManager::loadSimpleConfig(file_path);
     if ( isok )
     {
         // loaded file in top
-        profile->hit_points       = ScriptManager::getIntField("hitpoints",    100);
-        profile->attack_factor    = ScriptManager::getIntField("attack",       100);
-        profile->reload_time      = ScriptManager::getIntField("reload",       100);
-        profile->cfg_attack_range = ScriptManager::getIntField("range",         10);
-        profile->cfg_defend_range = ScriptManager::getIntField("defend_range",  10);
-        profile->regen_time       = ScriptManager::getIntField("regen",         60);
-        profile->speed_rate       = ScriptManager::getIntField("speed_rate",    16);
-        profile->speed_factor     = ScriptManager::getIntField("speed_factor",   2);
-        profile->boundBox         = ScriptManager::getIntField("boundbox",      40);
-
-        profile->imagefile         = ScriptManager::getStringField("image",        "");
-        profile->bodySprite_name   = ScriptManager::getStringField("bodysprite",   "");
-        profile->bodyShadow_name   = ScriptManager::getStringField("bodyshadow",   "");
-        profile->turretSprite_name = ScriptManager::getStringField("turretsprite", "");
-        profile->turretShadow_name = ScriptManager::getStringField("turretshadow", "");
-        profile->soundSelected     = ScriptManager::getStringField("soundselected","");
-        profile->fireSound         = ScriptManager::getStringField("soundfire",    "");
-        profile->weaponType        = ScriptManager::getStringField("weapon",       "");
-
-        ScriptManager::popElements(1);
+//        profile->hit_points       = ScriptManager::getIntField("hitpoints",    100);
+//        profile->attack_factor    = ScriptManager::getIntField("attack",       100);
+//        profile->reload_time      = ScriptManager::getIntField("reload",       100);
+//        profile->cfg_attack_range = ScriptManager::getIntField("range",         10);
+//        profile->cfg_defend_range = ScriptManager::getIntField("defend_range",  10);
+//        profile->regen_time       = ScriptManager::getIntField("regen",         60);
+//        profile->speed_rate       = ScriptManager::getIntField("speed_rate",    16);
+//        profile->speed_factor     = ScriptManager::getIntField("speed_factor",   2);
+//        profile->boundBox         = ScriptManager::getIntField("boundbox",      40);
+//
+//        profile->imagefile         = ScriptManager::getStringField("image",        "");
+//        profile->bodySprite_name   = ScriptManager::getStringField("bodysprite",   "");
+//        profile->bodyShadow_name   = ScriptManager::getStringField("bodyshadow",   "");
+//        profile->turretSprite_name = ScriptManager::getStringField("turretsprite", "");
+//        profile->turretShadow_name = ScriptManager::getStringField("turretshadow", "");
+//        profile->soundSelected     = ScriptManager::getStringField("soundselected","");
+//        profile->fireSound         = ScriptManager::getStringField("soundfire",    "");
+//        profile->weaponType        = ScriptManager::getStringField("weapon",       "");
+//
+//        ScriptManager::popElements(1);
 
         temp_int = profile->cfg_attack_range << 5;
         profile->attack_range = temp_int * temp_int;

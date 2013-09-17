@@ -48,7 +48,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 
-#include "Scripts/ScriptManager.hpp"
 #include "Actions/ActionManager.hpp"
 #include "Resources/ResourceManager.hpp"
 
@@ -124,9 +123,9 @@ void DedicatedGameManager::inputLoop()
             {
                 //*Console::server
                 std::cout
-                    << "Server " << *GameConfig::server_name
+                    << "Server " << gameconfig->host.getName()
                     << " version " << PACKAGE_VERSION << " port "
-                    << GameConfig::server_port << "\n"
+                    << gameconfig->host.getPort() << "\n"
                     << "Map: " << *GameConfig::game_map << "\n"
                     << std::setw(3) << "ID" << " "
                     << std::setw(30) << "Name" << " "
@@ -235,9 +234,6 @@ bool DedicatedGameManager::launchNetPanzerGame()
 {
     *Console::server << "starting dedicated netPanzer server\n";
 
-    ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
-    ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
-
     GameConfig::game_map->assign(GameManager::getNextMapName(""));
     
     ResourceManager::refreshMapList();
@@ -262,14 +258,14 @@ bool DedicatedGameManager::launchNetPanzerGame()
     Particle2D::setCreateParticles(false);
 
     *Console::server << "contacting masterserver." << std::endl;
-    if( GameConfig::server_public
+    if( gameconfig->host.isPublic()
         && *GameConfig::server_masterservers != "") {
         try {
             if ( infosocket ) {
                 delete infosocket;
                 infosocket = 0;
             }
-            infosocket = new InfoSocket(GameConfig::server_port);
+            infosocket = new InfoSocket(gameconfig->host.getPort());
             if ( heartbeat ) {
                 delete heartbeat;
                 heartbeat = 0;

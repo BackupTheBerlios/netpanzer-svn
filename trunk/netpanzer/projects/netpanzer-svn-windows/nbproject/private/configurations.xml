@@ -16,6 +16,12 @@
               </df>
               <df name="GameInput">
               </df>
+              <df name="libjson">
+                <df name="_internal">
+                  <df name="Source">
+                  </df>
+                </df>
+              </df>
               <df name="Network">
               </df>
               <df name="optionmm">
@@ -43,6 +49,8 @@
                 </df>
                 <df name="Network">
                 </df>
+              </df>
+              <df name="Config">
               </df>
               <df name="Core">
               </df>
@@ -100,6 +108,12 @@
               </df>
               <df name="GameInput">
               </df>
+              <df name="libjson">
+                <df name="_internal">
+                  <df name="Source">
+                  </df>
+                </df>
+              </df>
               <df name="Network">
               </df>
               <df name="optionmm">
@@ -127,6 +141,8 @@
                 </df>
                 <df name="Network">
                 </df>
+              </df>
+              <df name="Config">
               </df>
               <df name="Core">
               </df>
@@ -527,14 +543,63 @@
             <in>InputState.hpp</in>
             <in>RawInput.hpp</in>
           </df>
-          <df name="lua">
-            <df name="doc">
+          <df name="libjson">
+            <df name="_internal">
+              <df name="Dependencies">
+                <df name="libbase64++">
+                  <in>libbase64++.h</in>
+                </df>
+                <df name="mempool++">
+                  <in>mempool.h</in>
+                </df>
+              </df>
+              <df name="Source">
+                <df name="JSONDefs">
+                  <in>GNU_C.h</in>
+                  <in>Strings_Defs.h</in>
+                  <in>Unknown_C.h</in>
+                  <in>Visual_C.h</in>
+                </df>
+                <in>JSONAllocator.cpp</in>
+                <in>JSONAllocator.h</in>
+                <in>JSONChildren.cpp</in>
+                <in>JSONChildren.h</in>
+                <in>JSONDebug.cpp</in>
+                <in>JSONDebug.h</in>
+                <in>JSONDefs.h</in>
+                <in>JSONGlobals.h</in>
+                <in>JSONIterators.cpp</in>
+                <in>JSONMemory.cpp</in>
+                <in>JSONMemory.h</in>
+                <in>JSONMemoryPool.h</in>
+                <in>JSONNode.cpp</in>
+                <in>JSONNode.h</in>
+                <in>JSONNode_Mutex.cpp</in>
+                <in>JSONPreparse.cpp</in>
+                <in>JSONPreparse.h</in>
+                <in>JSONSharedString.h</in>
+                <in>JSONSingleton.h</in>
+                <in>JSONStats.h</in>
+                <in>JSONStream.cpp</in>
+                <in>JSONStream.h</in>
+                <in>JSONValidator.cpp</in>
+                <in>JSONValidator.h</in>
+                <in>JSONWorker.cpp</in>
+                <in>JSONWorker.h</in>
+                <in>JSONWriter.cpp</in>
+                <in>JSON_Base64.h</in>
+                <in>NumberToString.h</in>
+                <in>internalJSONNode.cpp</in>
+                <in>internalJSONNode.h</in>
+                <in>libjson.cpp</in>
+              </df>
             </df>
+            <in>JSONOptions.h</in>
+            <in>libjson.h</in>
+          </df>
+          <df name="lua">
             <df name="etc">
-              <in>all.c</in>
               <in>lua.hpp</in>
-              <in>min.c</in>
-              <in>noparser.c</in>
             </df>
             <df name="src">
               <in>lapi.c</in>
@@ -580,9 +645,7 @@
               <in>ltablib.c</in>
               <in>ltm.c</in>
               <in>ltm.h</in>
-              <in>lua.c</in>
               <in>lua.h</in>
-              <in>luac.c</in>
               <in>luaconf.h</in>
               <in>lualib.h</in>
               <in>lundump.c</in>
@@ -591,9 +654,6 @@
               <in>lvm.h</in>
               <in>lzio.c</in>
               <in>lzio.h</in>
-              <in>print.c</in>
-            </df>
-            <df name="test">
             </df>
           </df>
           <df name="Network">
@@ -1300,6 +1360,17 @@
             <in>WorldInputCmdProcessor.hpp</in>
             <in>WorldMap.cpp</in>
             <in>WorldMap.hpp</in>
+          </df>
+          <df name="Config">
+            <in>ConfigGetter.hpp</in>
+            <in>HostConfig.cpp</in>
+            <in>HostConfig.hpp</in>
+            <in>InterfaceConfig.cpp</in>
+            <in>InterfaceConfig.hpp</in>
+            <in>SoundConfig.cpp</in>
+            <in>SoundConfig.hpp</in>
+            <in>VideoConfig.cpp</in>
+            <in>VideoConfig.hpp</in>
           </df>
           <df name="Core">
             <in>CoreTypes.hpp</in>

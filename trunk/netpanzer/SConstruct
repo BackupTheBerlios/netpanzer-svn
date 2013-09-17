@@ -75,7 +75,6 @@ vars.AddVariables(
     ('universal','builds universal app in Max OS X(default false, other value is true)', 'false'),
     ('compilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
     ('version', 'sets the version name to build, use "auto" for using the RELEASE_VERSION file or the default svn code', 'auto'),
-    ('with_lua', 'use internal lua or link with provided parameter, with_lua=lua5.1 will add -llua5.1 in the link stage, default is internal', 'internal'),
     ('with_physfs', 'use internal physfs or link with provided parameter, with_physfs=physfs will add -lphysfs in the link stage, default is internal', 'internal'),
     EnumVariable('with_libgcc', 'Link libgcc static or dynamic', 'static', allowed_values=('static', 'dynamic')),
     EnumVariable('with_libstdcpp', 'Link libstdc++ static or dynamic', 'static', allowed_values=('static', 'dynamic')),
@@ -193,14 +192,14 @@ env.Append(  CXXFLAGS = '-mno-ms-bitfields' )
 
 env.VariantDir(buildpath,'.',duplicate=0)
 
-if env['with_lua'] == 'internal':
-    luaenv = env.Clone()
+
 
 if env['with_physfs'] == 'internal':
     physfsenv = env.Clone()
     
 networkenv = env.Clone()
 freetypeenv = env.Clone()
+jsonenv = env.Clone()
 
 ################################################################
 # Configure Environments
@@ -211,9 +210,6 @@ env.Append( CPPPATH = [ 'src/Lib', 'src/NetPanzer' ] )
 if env['with_physfs'] == 'internal':
     env.Append( CPPPATH = [ 'src/Lib/physfs' ] )
 
-if env['with_lua'] == 'internal':
-    env.Append( CPPPATH = [ 'src/Lib/lua/etc', 'src/Lib/lua/src' ] )
-
 eto = env.Clone();
 
 # for this platform
@@ -223,13 +219,11 @@ if thisplatform == 'darwin':
     networkenv.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers'] )
     if env['universal'] != 'false':
 		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
-		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
 		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
     else:
         env.Append( CCFLAGS = [ '-arch', 'i386' ] )
-        luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
         env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
@@ -262,19 +256,6 @@ fdg = env.Clone();
 networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
 MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 
-# BUILDS LUA if requested
-if env['with_lua'] == 'internal':
-    luaenv.Append(           CPPPATH = [ 'src/Lib/lua/src'] )
-    # _GNU_SOURCE to avoid requiring glibc 2.7 (lua uses fscanf)
-    luaenv.Append(           CFLAGS = [ '-D_GNU_SOURCE=1', '-DLUA_ANSI'] )
-
-    luasources = 'lapi.c,lcode.c,ldebug.c,ldo.c,ldump.c,lfunc.c,lgc.c,llex.c,lmem.c,\
-                  lobject.c,lopcodes.c,lparser.c,lstate.c,lstring.c,ltable.c,ltm.c,\
-                  lundump.c,lvm.c,lzio.c,\
-                  lauxlib.c,lbaselib.c,ldblib.c,liolib.c,lmathlib.c,loslib.c,ltablib.c,\
-                  lstrlib.c,loadlib.c,linit.c'
-    luaenv.StaticLibrary( libpath + 'nplua', PrependPaths('src/Lib/lua/src/',luasources) )
-
 # BUILDS PHYSFS
 if env['with_physfs'] == 'internal':
     physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
@@ -286,6 +267,9 @@ if env['with_physfs'] == 'internal':
 env.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
 env.StaticLibrary( libpath + 'npfreetype', [ 'src/Lib/freetype/ftsystem.c', 'src/Lib/freetype/ftinit.c', 'src/Lib/freetype/ftdebug.c','src/Lib/freetype/ftbase.c','src/Lib/freetype/truetype.c','src/Lib/freetype/raster.c','src/Lib/freetype/smooth.c','src/Lib/freetype/sfnt.c'] )
 
+# BUILDS LIBJSON
+jsonenv.Append( CFLAGS = [ '-DNDEBUG'] )
+MakeStaticLib(jsonenv, 'nplibjson', 'libjson/_internal/Source', '*.cpp')
 
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
@@ -300,7 +284,7 @@ MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm GameInput','*.cpp')
 ################################################################
 
 npdirs = """
-    Actions Bot Classes Classes/AI Classes/Network Core Interfaces Network
+    Actions Bot Classes Classes/AI Classes/Network Config Core Interfaces Network
     Scenes Scenes/Common Scenes/MainMenu
     Objectives Particles PowerUps Resources Scripts System Units Weapons
     Views Views/Components Views/Game Views/MainMenu Views/MainMenu/Multi
@@ -311,13 +295,8 @@ env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
 if env.has_key('WINICON'):
     env.Append( NPSOURCES = env['WINICON'] )
 
-wanted_libs = ['np2d']
+wanted_libs = ['nplibjson', 'np2d']
 
-if env['with_lua'] == 'internal':
-    wanted_libs.append('nplua')
-else:
-    wanted_libs.append(env['with_lua'])
-    
 wanted_libs.append('npnetwork');
 wanted_libs.append('npfreetype');
 wanted_libs.append('nplibs');

@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 
 #include "Core/CoreTypes.hpp"
+#include "Config/VideoConfig.hpp"
+#include "Config/HostConfig.hpp"
+#include "Config/InterfaceConfig.hpp"
+#include "Config/SoundConfig.hpp"
 
 #include "2D/Surface.hpp"
 #include "2D/Color.hpp"
@@ -31,16 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerUnitConfig.hpp"
 
 #define DEFAULT_UNIT_PROFILES "Manta, Panther1, Titan, Stinger, Bobcat, Bear, Archer, Wolf, Drake, Spanzer"
-
-enum { _mini_map_unit_size_small,
-       _mini_map_unit_size_large,
-       _mini_map_unit_size_last
-     };
-
-enum { _unit_selection_box_draw_mode_rect,
-       _unit_selection_box_draw_mode_rect_edges,
-       _unit_selection_box_draw_mode_last
-     };
 
 enum { _game_session_host,
        _game_session_join,
@@ -58,25 +52,6 @@ enum { _game_config_respawn_type_round_robin,
        _game_config_respawn_type_last
      };
 
-enum { _color_aqua,
-       _color_blue,
-       _color_dark_blue,
-       _color_blue_gray,
-       _color_red,
-       _color_dark_red,
-       _color_light_green,
-       _color_green,
-       _color_dark_green,
-       _color_yellow,
-       _color_light_orange,
-       _color_orange,
-       _color_black,
-       _color_white,
-       _color_gray,
-       _color_dark_gray,
-       _color_last
-     };
-
 class GameConfig : public NoCopy
 {
 public:
@@ -86,21 +61,11 @@ public:
     void loadConfig();
     void saveConfig();
 
-    static unsigned int video_width;
-    static unsigned int video_height;
-    static bool         video_fullscreen;
-    static bool         video_hardwaresurface;
-    static bool         video_doublebuffer;
-    static bool         video_shadows;
-    static bool         video_blendsmoke;
-#ifdef _WIN32
-    static bool         video_usedirectx;
-#endif
-
-    static bool      interface_show_health;
-    static bool      interface_show_flags;
-    static bool      interface_show_names;
-
+    // client only config
+    VideoConfig video;
+    InterfaceConfig gameinterface;
+    SoundConfig sound;
+    
     static bool      game_enable_bases;
     static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
     static int       game_base_limit;  // 0=no limit, other number max bases per player
@@ -137,40 +102,10 @@ public:
 
     static NPString* player_name;
 
+    HostConfig host;
 
-    // server settings
-    static int       server_port;
-    static NPString* server_bindaddress;
-    static NPString* server_motd;
-    static bool      server_logging;
-    static bool      server_public;
     static NPString* server_masterservers;
-    static NPString* server_name;
 
-
-    static bool      sound_enable;
-    static bool      sound_music;
-    static int       sound_musicvol;
-    static bool      sound_effects;
-    static int       sound_effectsvol;
-
-    static int       interface_attacknotificationtime;
-    static int       interface_vehicleselectioncolor;
-    static int       interface_unitselectionmode;
-    static int       interface_unitinfodrawlayer;
-    static int       interface_scrollrate;
-    static int       interface_rankposition_x;
-    static int       interface_rankposition_y;
-    static NPString* interface_language;
-
-    // radar settings
-    static int       radar_playerunitcolor;
-    static int       radar_selectedunitcolor;
-    static int       radar_alliedunitcolor;
-    static int       radar_playeroutpostcolor;
-    static int       radar_alliedoutpostcolor;
-    static int       radar_unitsize;
-    
 public:
     const char* getGameTypeString() const
     {
@@ -209,67 +144,10 @@ public:
         return( "Unknown" );
     }
 
-    PIX getPlayerRadarUnitColor() const
-    {
-        return( colorEnumToPix( radar_playerunitcolor ) );
-    }
-
-    PIX getSelectedRadarUnitColor() const
-    {
-        return( colorEnumToPix( radar_selectedunitcolor ) );
-    }
-    
-    PIX getAlliedRadarUnitColor() const
-    {
-        return( colorEnumToPix( radar_alliedunitcolor ) );
-    }
-
-    PIX getPlayerOutpostRadarColor() const
-    {
-        return( colorEnumToPix( radar_playeroutpostcolor ) );
-    }
-
-    PIX getAlliedOutpostRadarColor() const
-    {
-        return( colorEnumToPix( radar_alliedoutpostcolor ) );
-    }
-    
-    PIX getVehicleSelectionBoxColor() const
-    {
-        return( colorEnumToPix( interface_vehicleselectioncolor ) );
-    }
-
 private:
-    friend class ScriptManager;
-    static void registerScript(const NPString& table_name);
-
-    std::string luaconfigfile;
+    NPString configfile;
     bool usePhysFS;
 
-    PIX colorEnumToPix(int color_enum) const
-    {
-        switch( color_enum ) {
-        case _color_aqua         : return( Color::unitAqua );
-        case _color_yellow       : return( Color::unitYellow );
-        case _color_red          : return( Color::unitRed );
-        case _color_blue         : return( Color::unitBlue );
-        case _color_dark_blue    : return( Color::unitDarkBlue );
-        case _color_light_green  : return( Color::unitLightGreen );
-        case _color_green        : return( Color::unitGreen );
-        case _color_blue_gray    : return( Color::unitBlueGray );
-        case _color_dark_red     : return( Color::unitDarkRed );
-        case _color_black        : return( Color::unitBlack );
-        case _color_dark_green   : return( Color::unitDarkGreen );
-        case _color_white        : return( Color::unitWhite );
-        case _color_light_orange : return( Color::unitLightOrange );
-        case _color_orange       : return( Color::unitOrange );
-        case _color_gray         : return( Color::unitGray );
-        case _color_dark_gray    : return( Color::unitDarkGray );
-        } // ** switch
-
-        assert(false);
-        return( Color::white );
-    }
 };
 
 extern GameConfig* gameconfig;

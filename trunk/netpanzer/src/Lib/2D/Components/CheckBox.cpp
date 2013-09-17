@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/TextRenderingSystem.hpp"
 #include "2D/ComponentEvents.hpp"
 
-CheckBox::CheckBox(const NPString& label, bool* state, const int changeEvent)
+CheckBox::CheckBox(const NPString& label, bool state, const int changeEvent)
     : Component(), state(state)
 {
     setLabel(label);
@@ -48,7 +48,7 @@ void CheckBox::draw(Surface& s) const
 
     label_render.draw(s, rect.getLocationX() + rect.getHeight(), rect.getLocationY(), textColor);
 
-    if ( *state )
+    if ( state )
     {
         r.grow(-3, -3);
         s.fillRect( r, textColor);
@@ -65,7 +65,7 @@ void CheckBox::onSelectStop()
 {
     if ( textColor == Color::gray96 )
     {
-        *state = !(*state);
+        state = !state;
         onStateChanged();
         events->push(changeEvent);
         textColor = componentFocusTextColor;

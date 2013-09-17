@@ -150,7 +150,8 @@ void CloudParticle2D::draw(const Surface&, SpriteSorter &sorter)
     packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
     sorter.addSprite(&packedSurface);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->video.useShadows())
+    {
         packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
         sorter.addSprite(&packedSurfaceShadow);
     }

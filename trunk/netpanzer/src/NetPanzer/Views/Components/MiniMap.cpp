@@ -133,13 +133,13 @@ MiniMap::drawObjectives(Surface &dest)
         {
             if ( obj->occupying_player == PlayerInterface::getLocalPlayer() )
             {
-                color = gameconfig->getPlayerOutpostRadarColor();
+                color = gameconfig->gameinterface.minimap.getPlayerOutpostColor();
             }
             // XXX ALLY
             else if ( PlayerInterface::isAllied(obj->occupying_player->getID(),
                                                 PlayerInterface::getLocalPlayerIndex()) )
             {
-                color = gameconfig->getAlliedOutpostRadarColor();
+                color = gameconfig->gameinterface.minimap.getAlliedOutpostColor();
             }
             else
             {
@@ -216,18 +216,18 @@ MiniMap::drawUnits(Surface &dest)
             {
                 if ( unit_state.select )
                 {
-                    color = gameconfig->getSelectedRadarUnitColor();
+                    color = gameconfig->gameinterface.minimap.getSelectedUnitColor();
                 }
                 else
                 {
-                    color = gameconfig->getPlayerRadarUnitColor();
+                    color = gameconfig->gameinterface.minimap.getPlayerUnitColor();
                 }
             }
         }
         // XXX ALLY
         else if (PlayerInterface::isAllied(PlayerInterface::getLocalPlayerIndex(), unit->player_id))
         {
-            color = gameconfig->getAlliedRadarUnitColor();
+            color = gameconfig->gameinterface.minimap.getAlliedUnitColor();
         }
         else if ( EnemyRadarPowerUp::isRadarActive() )
         {
@@ -246,7 +246,7 @@ void
 MiniMap::drawUnit(Surface &dest, const iXY& loc, PIX color, bool forceLarge)
 {
     dest.putPixel( loc.x  , loc.y  , color );
-    if ( gameconfig->radar_unitsize == _mini_map_unit_size_large || forceLarge )
+    if ( gameconfig->gameinterface.minimap.useBigUnitSize() || forceLarge )
     {
         dest.putPixel( loc.x+1, loc.y  , color );
         dest.putPixel( loc.x  , loc.y+1, color );

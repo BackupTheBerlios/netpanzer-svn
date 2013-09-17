@@ -38,12 +38,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Network/NetworkManager.hpp"
 
-#include "Scripts/ScriptManager.hpp"
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Core/NetworkGlobals.hpp"
-#include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
 #include "Actions/ActionManager.hpp"
 
@@ -200,8 +198,6 @@ BaseGameManager *initialise(int argc, char** argv)
     srand48(time(0));
 #endif
     
-    ScriptManager::initialize();
-    
     PlayerGameManager *manager;
     // finally initialize the game objects
     try {
@@ -222,11 +218,9 @@ BaseGameManager *initialise(int argc, char** argv)
         
         manager = new PlayerGameManager();
         manager->initialize();
-        
-        if (GameConfig::interface_language->length() != 0)
-        {
-            loadPOFile(*GameConfig::interface_language);
-        }
+
+        // load language files
+        loadPOFile(gameconfig->gameinterface.getLanguage());
 
         // gameconfig exists now...
         if(connect_option.value() != "")
@@ -269,7 +263,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
         if ( port_option.value() )
         {
-            GameConfig::server_port=port_option.value();
+            gameconfig->host.setPort(port_option.value());
         }
 
         return manager;
@@ -287,8 +281,6 @@ int netpanzer_main(int argc, char** argv)
     
     ActionManager::initialize();
     BaseGameManager *manager = initialise(argc, argv);
-
-    ScriptManager::runFile("unused","scripts/initialize.lua");
 
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
@@ -329,7 +321,6 @@ int netpanzer_main(int argc, char** argv)
     }
 #endif
     
-    ScriptManager::close();
     ActionManager::deinitialize();
     network::NetworkManager::cleanUp();
     return 0;

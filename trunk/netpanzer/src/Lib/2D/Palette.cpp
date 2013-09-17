@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 
-#include "Scripts/ScriptManager.hpp"
 #include "Util/Log.hpp"
 #include "Color.hpp"
 
@@ -81,7 +80,7 @@ void Palette::loadACT(const std::string& newname)
 // Purpose: Walks through the palette and finds the nearest mathcing color
 //          index.
 //---------------------------------------------------------------------------
-Uint8 Palette::findNearestColor(int r, int g, int b, const bool &ignoreIndexZero)
+uint8_t Palette::findNearestColor(int r, int g, int b, const bool &ignoreIndexZero)
 {
     int   bestDist = 10000000;
     int   best     = 0;
