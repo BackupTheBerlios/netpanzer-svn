@@ -32,6 +32,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/StrManager.hpp"
 #include "2D/Color.hpp"
+#include "2D/Palette.hpp"
+
+#include "libpng-1.6.5/png.h"
  
 #ifdef _WIN32
 #include "Interfaces/GameConfig.hpp"
@@ -207,11 +210,35 @@ void SDLVideo::doScreenshoot()
     char buf[256];
     time_t curtime = time(0);
     struct tm* loctime = localtime(&curtime);
-    strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.bmp", loctime);
- 
-    std::string bmpfile = filesystem::getRealWriteName(buf);
-    SDL_SaveBMP(frontBuffer, bmpfile.c_str());
-    LOGGER.info("Screenshoot saved as: %s", buf);
+    strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.png", loctime);
+    std::string realfile = filesystem::getRealWriteName(buf);
+        
+    if ( SDL_MUSTLOCK(frontBuffer) )
+    {
+        SDL_LockSurface(frontBuffer);
+    }
+    
+    png_image pim = {0};
+    pim.version = PNG_IMAGE_VERSION;
+    
+    pim.width = frontBuffer->w;
+    pim.height = frontBuffer->h;
+    pim.format = PNG_FORMAT_FLAG_COLOR | PNG_FORMAT_FLAG_COLORMAP | PNG_FORMAT_FLAG_ALPHA;
+    pim.colormap_entries = 256;
+    
+    const int stride = frontBuffer->pitch - frontBuffer->w;
+
+    // little hack to not copy palette
+    Palette::color[0].nothing = 0xff;
+    png_image_write_to_file(&pim, realfile.c_str(), false, frontBuffer->pixels, stride, &Palette::color);
+    Palette::color[0].nothing = 0;
+    
+    if ( SDL_MUSTLOCK(frontBuffer) )
+    {
+        SDL_UnlockSurface(frontBuffer);
+    }
+    
+    LOGGER.info("Screenshoot saved as: %s", realfile.c_str());
 //    ConsoleInterface::postMessage(Color::cyan, false, 0, _("Screenshoot saved as: %s"), buf);
     timer.reset();
 }

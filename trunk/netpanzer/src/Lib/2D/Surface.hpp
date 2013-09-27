@@ -152,15 +152,6 @@ public:
 
     /**
      * 
-     * @param dest Destination surface
-     * @param x Destination x
-     * @param y Destination y
-     * @param color
-     */
-    void bltAlphaColor(Surface &dest, int x, int y, const PIX color) const;
-    
-    /**
-     * 
      * @param dest
      * @param x
      * @param y
@@ -196,6 +187,8 @@ public:
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color);
 
     void loadBMP(const char *fileName, bool needAlloc = true);
+    void loadPNG(const char *fileName);
+    void savePNG(const char *fileName);
 
     void drawBoxCorners(const iRect &rect, unsigned cornerLength, PIX color);
 

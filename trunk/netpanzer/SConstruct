@@ -196,10 +196,12 @@ env.VariantDir(buildpath,'.',duplicate=0)
 
 if env['with_physfs'] == 'internal':
     physfsenv = env.Clone()
+
+zlibenv = env.Clone()
+libpngenv = env.Clone()
     
 networkenv = env.Clone()
 freetypeenv = env.Clone()
-jsonenv = env.Clone()
 
 ################################################################
 # Configure Environments
@@ -259,17 +261,22 @@ MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 # BUILDS PHYSFS
 if env['with_physfs'] == 'internal':
     physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1', '-DZ_PREFIX=1', '-DPHYSFS_NO_CDROM_SUPPORT=1' ] )
-    physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
-    MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
+    physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/zlib-1.2.8' ] )
+    MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers', '*.c')
+
+#BUILDS ZLIB
+zlibenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
+MakeStaticLib(zlibenv, 'npzlib', 'zlib-1.2.8', '*.c')
+
+#BUILDS LIBPNG
+libpngenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
+libpngenv.Append( CPPPATH = [ 'src/Lib/zlib-1.2.8' ] )
+MakeStaticLib(libpngenv, 'nplibpng', 'libpng-1.6.5', '*.c')
 
 # BUILDS FREETYPE
 
 env.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
 env.StaticLibrary( libpath + 'npfreetype', [ 'src/Lib/freetype/ftsystem.c', 'src/Lib/freetype/ftinit.c', 'src/Lib/freetype/ftdebug.c','src/Lib/freetype/ftbase.c','src/Lib/freetype/truetype.c','src/Lib/freetype/raster.c','src/Lib/freetype/smooth.c','src/Lib/freetype/sfnt.c'] )
-
-# BUILDS LIBJSON
-jsonenv.Append( CFLAGS = [ '-DNDEBUG'] )
-MakeStaticLib(jsonenv, 'nplibjson', 'libjson/_internal/Source', '*.cpp')
 
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
@@ -277,7 +284,7 @@ env.Append( CPPPATH = ['src/Lib/freetype/include'] )
 MakeStaticLib(env, 'np2d', '2D 2D/Components', '*.cpp')
 
 # BUILDS REST OF LIBRARIES
-MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm GameInput','*.cpp')
+MakeStaticLib(env, 'nplibs', 'ArrayUtil Types Util optionmm GameInput json','*.cpp')
 
 ################################################################
 # NetPanzer source dirs
@@ -295,7 +302,7 @@ env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
 if env.has_key('WINICON'):
     env.Append( NPSOURCES = env['WINICON'] )
 
-wanted_libs = ['nplibjson', 'np2d']
+wanted_libs = [ 'np2d']
 
 wanted_libs.append('npnetwork');
 wanted_libs.append('npfreetype');
@@ -306,13 +313,16 @@ if env['with_physfs'] == 'internal':
 else:
     wanted_libs.append(env['with_physfs'])
 
+wanted_libs.append('nplibpng');
+wanted_libs.append('npzlib');
+
 env.Prepend( LIBS = wanted_libs )
 env.Prepend( LIBPATH = libpath )
 
 netpanzer = env.Program( binpath+'netpanzer'+exeappend, env['NPSOURCES'])
 
-pak2bmp = env.Program( binpath+'pak2bmp'+exeappend, 'support/tools/pak2bmp.cpp')
-Alias('pak2bmp',pak2bmp)
+pak2png = env.Program( binpath+'pak2png'+exeappend, 'support/tools/pak2png.cpp')
+Alias('pak2png',pak2png)
 
 bmp2pak = env.Program( binpath+'bmp2pak'+exeappend, 'support/tools/bmp2pak.cpp')
 Alias('bmp2pak',bmp2pak)

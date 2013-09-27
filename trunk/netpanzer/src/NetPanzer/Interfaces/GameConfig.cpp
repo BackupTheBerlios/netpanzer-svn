@@ -28,9 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/MiniMapView.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-bool      GameConfig::game_enable_bases = true;
-int       GameConfig::game_base_capture_mode = 1; // normal capture;
-int       GameConfig::game_base_limit = 0; // no limit
+#include "json/json.h"
+
 int       GameConfig::game_autokicktime = 20; // minutes;
 bool      GameConfig::game_allowmultiip = true;
 NPString* GameConfig::game_unit_profiles = 0;
@@ -54,8 +53,6 @@ int       GameConfig::game_windspeed = 30;
 NPString* GameConfig::game_map = 0;
 NPString* GameConfig::game_mapcycle = 0;
 
-NPString* GameConfig::server_masterservers = 0;
-
 NPString* GameConfig::player_name = 0;
 
 Uint8 GameConfig::player_flag_data[FLAG_WIDTH*FLAG_HEIGHT] = {0};
@@ -68,10 +65,11 @@ GameConfig::GameConfig(const std::string& configfile,bool usePhysFS)
       quickConnect(false),
       needPassword(false),
       serverConnect("")
-
 {
     this->configfile = configfile;
     this->usePhysFS = usePhysFS;
+    masterservers.push_back("masterserver.netpanzer.org");
+    masterservers.push_back("masterserver.netpanzer.info");
 
 //    std::stringstream default_player;
 //    default_player << "Player" << (rand()%1000);
@@ -111,33 +109,17 @@ void GameConfig::loadConfig()
     IFileStream ifile("config/client.json");
     if ( ifile.good() )
     {
-        std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
-        JSONNode root = libjson::parse(str);
-        
+        Json::Value root;
+        Json::Reader reader;
+        if ( ! reader.parse(ifile, root, true) )
         {
-            JSONNode::const_iterator i = root.find("video");
-            if ( i != root.end() )
-            {
-                video.load(*i);
-            }
+            LOGGER.warning("Error loading config file:\n%s", reader.getFormattedErrorMessages().c_str());
+            return;
         }
         
-        {
-            JSONNode::const_iterator i = root.find("sound");
-            if ( i != root.end() )
-            {
-                sound.load(*i);
-            }
-        }
-        
-        {
-            JSONNode::const_iterator i = root.find("interface");
-            if ( i != root.end() )
-            {
-                gameinterface.load(*i);
-            }
-        }
-
+        if ( root.isMember("video") ) video.load(root["video"]);
+        if ( root.isMember("sound") ) sound.load(root["sound"]);
+        if ( root.isMember("interface") ) gameinterface.load(root["interface"]);
     }
     
 
@@ -167,26 +149,24 @@ void GameConfig::loadConfig()
 void GameConfig::saveConfig()
 {
     // @todo use "configfile"
-    JSONNode root;
+    Json::Value root(Json::objectValue);
     
-    JSONNode ovideo;
-    ovideo.set_name("video");
-    video.save(ovideo);
+    Json::Value videoNode(Json::objectValue);
+    video.save(videoNode);
     
-    JSONNode osound;
-    osound.set_name("sound");
-    sound.save(osound);
-    
-    JSONNode ointerface;
-    ointerface.set_name("interface");
-    gameinterface.save(ointerface);
-    
-    root.push_back(ovideo);
-    root.push_back(osound);
-    root.push_back(ointerface);
-    
+    Json::Value soundNode(Json::objectValue);
+    sound.save(soundNode);
+
+    Json::Value interfaceNode(Json::objectValue);
+    gameinterface.save(interfaceNode);
+
+    root["video"] = videoNode;
+    root["sound"] = soundNode;
+    root["interface"] = interfaceNode;
+
     OFileStream jsout("config/client.json");
-    jsout << root.write_formatted();
+    Json::StyledStreamWriter writer;
+    writer.write(jsout, root);
 }
 
 GameConfig* gameconfig = 0;

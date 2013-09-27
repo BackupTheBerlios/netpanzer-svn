@@ -62,7 +62,7 @@ VScrollBar::VScrollBar()
     movableBar.setWidth(BSIZE);
     
     Surface pics;
-    pics.loadBMP("pics/buttons/scrollbutton.bmp");
+    pics.loadPNG("pics/buttons/scrollbutton.png");
     
     PtrArray<Surface> piclist(3);
 

@@ -30,21 +30,6 @@ bool  Palette::loaded = false;
 
 uint8_t Palette::full_alpha16[256*256*16];
 
-uint8_t Palette::blend_darkenalot[256*256];
-uint8_t Palette::blend_darkenalittle[256*256];
-uint8_t Palette::blend_lightdark[256*256];
-uint8_t Palette::blend_brighten[256*256];
-
-uint8_t Palette::blend_2080[256*256];
-uint8_t Palette::blend_4060[256*256];
-uint8_t Palette::blend_6040[256*256];
-uint8_t Palette::blend_8020[256*256];
-
-uint8_t Palette::filter_darkgray[256];
-uint8_t Palette::filter_darkbrown[256];
-uint8_t Palette::filter_brightness[256];
-uint8_t Palette::filter_green[256];
-
 RGBColor   Palette::color[PALETTE_LENGTH];
 
 // loadACT
@@ -67,6 +52,7 @@ void Palette::loadACT(const std::string& newname)
         for (int i = 0; i < 256; i++)
         {
             file.read(&color[i], 3, 1);
+            color[i].nothing = (i > 0) ? 0xff : 0;
         }
     }
     else
@@ -124,20 +110,6 @@ void Palette::init(const std::string& name)
 
         Color::updateColors();
 
-        loadTable("cache/filters/blend_darkenalot.tbl",    blend_darkenalot,    256*256);
-        loadTable("cache/filters/blend_darkenalittle.tbl", blend_darkenalittle, 256*256);
-        loadTable("cache/filters/blend_lightdark.tbl",     blend_lightdark,     256*256);
-        loadTable("cache/filters/blend_brighten.tbl",      blend_brighten,      256*256);
-        loadTable("cache/filters/blend_2080.tbl",          blend_2080,          256*256);
-        loadTable("cache/filters/blend_4060.tbl",          blend_4060,          256*256);
-        loadTable("cache/filters/blend_6040.tbl",          blend_6040,          256*256);
-        loadTable("cache/filters/blend_8020.tbl",          blend_8020,          256*256);
-
-        loadTable("cache/filters/filter_darkgray.fil",     filter_darkgray,     256);
-        loadTable("cache/filters/filter_darkbrown.fil",    filter_darkbrown,    256);
-        loadTable("cache/filters/filter_brightness.fil",   filter_brightness,   256);
-        loadTable("cache/filters/filter_green.fil",        filter_green,        256);
-        
         loadTable("cache/filters/full_alpha16.tbl",        full_alpha16,        256*256*16);
 
         loaded = true;

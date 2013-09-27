@@ -47,6 +47,7 @@ static void loopSleep()
 #include "Interfaces/GameManager.hpp"
 #include "System/SDLVideo.hpp"
 #include "Network/NetworkManager.hpp"
+#include "Resources/ResourceManager.hpp"
 
 static Scene * current_scene = 0;
 static bool shall_run = false;

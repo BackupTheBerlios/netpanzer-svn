@@ -145,7 +145,7 @@ PlayerID Team::getrandomplayer() const
  
 void Team::loadFlag(const char *fileName)
 {
-    Flag.loadBMP(fileName);
+    Flag.loadPNG(fileName);
 }
  
 void Team::drawFlag(Surface &dest, int x, int y) const

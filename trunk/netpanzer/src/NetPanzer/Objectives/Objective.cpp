@@ -138,7 +138,7 @@ Objective::attemptOccupationChange(PlayerState* player)
         return;
     }
 
-    if ( GameConfig::game_base_limit > 0 && player->getObjectivesHeld() >= GameConfig::game_base_limit )
+    if ( gameconfig->gameoptions.outposts.getPlayerLimit() > 0 && player->getObjectivesHeld() >= gameconfig->gameoptions.outposts.getPlayerLimit() )
     {
         return; // cannot capture more bases.
     }
@@ -157,11 +157,11 @@ Objective::checkOccupationStatus()
     {
         iRect bounding_area;
 
-        if ( GameConfig::game_base_capture_mode == 1 )
+        if ( gameconfig->gameoptions.outposts.getCaptureMode() == 1 )
         {
             bounding_area = capture_area.getAbsRect( location + occupation_pad_offset );
         }
-        else if ( GameConfig::game_base_capture_mode == 2 )
+        else if ( gameconfig->gameoptions.outposts.getCaptureMode() == 2 )
         {
             bounding_area = area + location;
         }
@@ -215,7 +215,7 @@ Objective::updateStatus()
 {
     if ( NetworkState::status == _network_state_server )
     {
-        if ( GameConfig::game_base_capture_mode > 0 )
+        if ( gameconfig->gameoptions.outposts.getCaptureMode() > 0 )
         {
             checkOccupationStatus();
         }

@@ -60,7 +60,7 @@ struct Events
  * 
  * if proto != NETPANZER_PROTOCOL_VERSION, show getNetpanzerProtocolMessage(server->protocol)
  * 
- * password protected servers: lock_image.loadBMP("pics/default/lock.bmp");
+ * password protected servers: lock_image.loadPNG("pics/default/lock.png");
  * 
  */
 

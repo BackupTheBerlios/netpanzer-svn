@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/ComponentEvents.hpp"
 #include "Util/NTimer.hpp"
 #include "2D/TextRenderingSystem.hpp"
+#include "Resources/ResourceManager.hpp"
 
 Button::Button()
 {
@@ -307,17 +308,17 @@ Button::createNewSpecialButton(    const NPString& label,
                                    const iXY& loc,
                                    int width )
 {
-    Surface bitmap;
-    bitmap.loadBMP(itButton);
+    ImageResource bitmap = ResourceManager::getImage("newbutton-background");
 
-    Surface bstart;
-    bstart.grab(bitmap, iRect(0, 0, 15, bitmap.getHeight()));
-    Surface bend;
-    bend.grab(bitmap, iRect(bitmap.getWidth()-15, 0, 15, bitmap.getHeight()));
-    Surface bmiddle;
-    bmiddle.grab(bitmap, iRect(15, 0, bitmap.getWidth()-30, bitmap.getHeight()));
+    Surface bstart(15, bitmap.getHeight());
+    Surface bend(15, bitmap.getHeight());
+    Surface bmiddle(bitmap.getWidth()-30, bitmap.getHeight());
+    
+    bitmap.draw(bstart, 0, 0);
+    bitmap.draw(bend, 15 - bitmap.getWidth(), 0);
+    bitmap.draw(bmiddle, -15, 0);
 
-    Surface * spbutton = new Surface(width, bstart.getHeight());
+    Surface * spbutton = new Surface(width, bitmap.getHeight());
 
     bstart.blt(*spbutton,0,0); // full blit
 

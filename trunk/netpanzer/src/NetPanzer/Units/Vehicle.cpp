@@ -97,8 +97,8 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, const iXY&
 
     in_sync_flag = true;
 
-    body_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
-    turret_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
+//    body_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
+//    turret_anim_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 
     ai_fsm_transition_complete = false;
 

@@ -38,7 +38,7 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
     FlashParticle2D::lifetime    = lifetime;
 
     packedSurface.setData(staticPackedFlash);
-    packedSurface.setDrawModeBlend(Palette::blendBrighten());
+//    packedSurface.setDrawModeBlend(Palette::blendBrighten());
 
 } // end FlashParticle2D::FlashParticle2D
 

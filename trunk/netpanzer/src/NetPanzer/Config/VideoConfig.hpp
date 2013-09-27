@@ -21,8 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef VIDEOCONFIG_HPP
 #define	VIDEOCONFIG_HPP
 
-#include "Core/CoreTypes.hpp"
-#include "libjson/libjson.h"
+#include "json/json-forwards.h"
 
 class VideoConfig
 {
@@ -30,8 +29,8 @@ public:
     VideoConfig();
     ~VideoConfig();
     
-    void load(const JSONNode& node);
-    void save(JSONNode& node) const;
+    void load(const Json::Value& node);
+    void save(Json::Value& node) const;
     
     inline unsigned getWidth() const { return width; }
     inline unsigned getHeight() const { return height; }

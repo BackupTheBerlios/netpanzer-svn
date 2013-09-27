@@ -86,20 +86,20 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
         throw Exception("ERROR: Unsupported particleType.");
     }
 
-    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
+//    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
 
     if (gameconfig->video.useBlendSmoke())
     {
         int randColorTable = rand() % 4;
 
         if (randColorTable == 0) {
-            packedSurface.setDrawModeBlend(Palette::blend2080());
+//            packedSurface.setDrawModeBlend(Palette::blend2080());
         } else if(randColorTable == 1) {
-            packedSurface.setDrawModeBlend(Palette::blend4060());
+//            packedSurface.setDrawModeBlend(Palette::blend4060());
         } else if(randColorTable == 2) {
-            packedSurface.setDrawModeBlend(Palette::blend6040());
+//            packedSurface.setDrawModeBlend(Palette::blend6040());
         } else if(randColorTable == 3) {
-            packedSurface.setDrawModeBlend(Palette::blend8020());
+//            packedSurface.setDrawModeBlend(Palette::blend8020());
 
         } else {
             assert(false);

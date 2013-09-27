@@ -21,15 +21,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef SOUNDCONFIG_HPP
 #define	SOUNDCONFIG_HPP
 
-#include "libjson/libjson.h"
+#include "json/json-forwards.h"
 
 class SoundConfig {
 public:
     SoundConfig();
     ~SoundConfig();
     
-    void load(const JSONNode& node);
-    void save(JSONNode& node) const;
+    void load(const Json::Value& node);
+    void save(Json::Value& node) const;
     
     inline bool useSound() const { return sound; }
     inline bool useMusic() const { return music; }

@@ -46,17 +46,20 @@ public:
     inline unsigned getWidth() const  { return surface.getWidth(); }
     inline unsigned getHeight() const { return surface.getHeight(); }
 
+    inline iRect getRect() const { return iRect(0,0, getWidth(), getHeight()); }
+    
     void draw( Surface& dest, const int x, const int y, const PIX c = 0 ) const
     {
-        surface.bltAlphaColor( dest, x, y, c ? c : color);
+        drawPart(dest, x, y, getRect(), c);
     }
 
     void drawCenter( Surface& dest, const PIX c = 0 ) const
     {
-        surface.bltAlphaColor( dest,
-                               (dest.getWidth()  - surface.getWidth())  / 2,
-                               (dest.getHeight() - surface.getHeight()) / 2,
-                               c ? c : color);
+        const iRect r = getRect();
+        drawPart(dest,
+                (dest.getWidth()  - r.getWidth())  / 2,
+                (dest.getHeight() - r.getHeight()) / 2,
+                r, c);
     }
     
     void drawPart( Surface& dest, const int x, const int y, const iRect& r, const PIX c = 0 ) const

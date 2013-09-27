@@ -11,13 +11,14 @@
 
 #include "Interfaces/StrManager.hpp"
 
+#include "Resources/ResourceManager.hpp"
+
 #include "2D/Components/Button.hpp"
 #include "2D/Components/Label.hpp"
 #include "2D/Components/CheckBox.hpp"
 #include "2D/Components/Choice.hpp"
 #include "2D/PackedSurface.hpp"
 #include "Actions/ActionManager.hpp"
-#include "Interfaces/MouseInterface.hpp"
 #include "2D/SceneManager.hpp"
 #include "2D/TextRenderingSystem.hpp"
 #include "Util/Log.hpp"
@@ -29,16 +30,24 @@
 
 #include "2D/Components/Slider.hpp"
 
+//#include "util/FileStream.hpp"
+//#include "Config/ConfigGetter.hpp"
+
 #ifndef PACKAGE_VERSION
 	#define PACKAGE_VERSION "testing"
 #endif
+
 
 static const char npver[] = "NetPanzer " PACKAGE_VERSION;
 
 class BackgroundImageLayer : public Layer
 {
 private:
-    Surface image;
+    ImageResource image;
+    MImageResource tankbody;
+    MImageResource tankturret;
+    MImageResource tankturretshadow;
+    BlendTableResource darkenalot;
     int hw;
     int hh;
 
@@ -47,7 +56,12 @@ private:
 public:
     BackgroundImageLayer() : Layer(-1), version_render(npver)
     {
-        image.loadBMP("pics/backgrounds/defaultMB.bmp");
+        image = ResourceManager::getImage("main-background");
+        tankbody = ResourceManager::getMImage("heavy-tank-2-body");
+        tankturret= ResourceManager::getMImage("heavy-tank-2-turret");
+        tankturretshadow= ResourceManager::getMImage("heavy-tank-2-turret-shadow");
+        darkenalot = ResourceManager::getBlendTable("darkenalot");
+
         hw = image.getWidth()/2;
         hh = image.getHeight()/2;
     }
@@ -58,18 +72,31 @@ public:
         
         int dx = (screen->getWidth()/2) - hw;
         int dy = (screen->getHeight()/2) - hh;
-        image.blt(*screen, dx, dy);
-
+        
+        image.draw(*screen, dx, dy);
+        
+        tankbody.draw(*screen, 0, 40, 75);
+        tankturretshadow.blend(*screen, 0, 40, 75, darkenalot);
+        tankturret.draw(*screen, 0, 40, 75);
+        
         version_render.draw(*screen, 10, screen->getHeight() - TextRenderingSystem::line_height() - 4, Color::yellow);
     }
 };
 
 class DarkGrayPanel : public Component
 {
+private:
+    ImageFilterResource filter;
+    
 public:
+    DarkGrayPanel()
+    {
+        filter = ResourceManager::getImageFilter("darkgray");
+    }
+    
     void draw(Surface& dest) const
     {
-        dest.BltRoundRect(rect, 10, Palette::filterDarkGray());
+        filter.applyRounded(dest, rect, 10);
         dest.RoundRect(rect, 10, Color::gray);
     }
 };
@@ -77,8 +104,12 @@ public:
 static Button* createMainMenuButton(const NPString& label, const unsigned event, const bool inverted = false)
 {
     Button * b = new Button();
-    Surface bitmap;
-    bitmap.loadBMP("pics/buttons/page.bmp");
+    ImageResource image = ResourceManager::getImage("mainmenu-button-background");
+    
+    Surface bitmap(image.getWidth(), image.getHeight());
+//    bitmap.fill(0);
+    image.draw(bitmap, 0, 0);
+    
     if ( inverted )
     {
         bitmap.flipVertical();

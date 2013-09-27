@@ -111,7 +111,7 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadBMP("pics/backgrounds/defaultMB.bmp");
+    backgroundSurface.loadPNG("pics/backgrounds/defaultMB.png");
     surface.create(455, 175);
     dirty=true;
 }

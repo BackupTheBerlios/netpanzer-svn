@@ -258,8 +258,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
     Particle2D::setCreateParticles(false);
 
     *Console::server << "contacting masterserver." << std::endl;
-    if( gameconfig->host.isPublic()
-        && *GameConfig::server_masterservers != "") {
+    if( gameconfig->host.isPublic() && ! gameconfig->masterservers.empty() )
+    {
         try {
             if ( infosocket ) {
                 delete infosocket;

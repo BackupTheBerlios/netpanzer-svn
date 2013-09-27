@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "VideoConfig.hpp"
-#include "ConfigGetter.hpp"
+#include "json/json.h"
 
 VideoConfig::VideoConfig()
  :  width(800),
@@ -41,35 +41,41 @@ VideoConfig::~VideoConfig()
     
 }
 
-void VideoConfig::load(const JSONNode& node)
+void VideoConfig::load(const Json::Value& node)
 {
-    ConfigGetter cg(node);
-    
-    setWidth( cg.getInt("width", 800, 4096, 800) );
-    setHeight( cg.getInt("height", 480, 4096, 600) );
-    setFullScreen( cg.getBool("fullscreen", false) ); // @todo set to true
-    setHardwareSurface( cg.getBool("hwsurface", false) );
-    setDoubleBuffer( cg.getBool("doublebuffer", false) );
-    setShadows( cg.getBool("shadows", true) );
-    setBlendSmoke( cg.getBool("blendsmoke", true) );
+    if ( node.isMember("size") )
+    {
+        const Json::Value& size = node["size"];
+        if ( size.isArray() && size.size() > 1 )
+        {
+            setWidth(size[0].asInt());
+            setHeight(size[1].asInt());
+        }
+    }
+
+    setFullScreen( node.get("fullscreen", false).asBool() ); // @todo set to true
+    setHardwareSurface( node.get("hwsurface", false).asBool() );
+    setDoubleBuffer( node.get("doublebuffer", false).asBool() );
+    setShadows( node.get("shadows", true).asBool() );
+    setBlendSmoke( node.get("blendsmoke", true).asBool() );
 #ifdef _WIN32
-    setDirectX( cg.getBool("directx", false) );
+    setDirectX( node.get("directx", false).asBool() );
 #endif
-    
 }
 
-void VideoConfig::save(JSONNode& node) const
+void VideoConfig::save(Json::Value& node) const
 {
-    node.push_back(JSONNode("width", getWidth()));
-    node.push_back(JSONNode("height", getHeight()));
-    node.push_back(JSONNode("fullscreen", useFullScreen()));
-    node.push_back(JSONNode("hwsurface", useHardwareSurface()));
-    node.push_back(JSONNode("doublebuffer", useDoubleBuffer()));
-    node.push_back(JSONNode("shadows", useShadows()));
-    node.push_back(JSONNode("blendsmoke", useBlendSmoke()));
-    
+    Json::Value size(Json::arrayValue);
+    size[0] = getWidth();
+    size[1] = getHeight();
+    node["size"] = size;
+    node["fullscreen"] = useFullScreen();
+    node["hwsurface"] = useHardwareSurface();
+    node["doublebuffer"] = useDoubleBuffer();
+    node["shadows"] = useShadows();
+    node["blendsmoke"] = useBlendSmoke();
 #ifdef _WIN32
-    node.push_back(JSONNode("directx", useDirectX()));
+    node["directx"] = useDirectX();
 #endif
 }
 

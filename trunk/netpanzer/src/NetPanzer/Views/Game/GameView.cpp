@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameView.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
-#include "Interfaces/MouseInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/WorldViewInterface.hpp"

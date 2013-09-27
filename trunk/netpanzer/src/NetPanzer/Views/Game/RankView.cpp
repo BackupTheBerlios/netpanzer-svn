@@ -69,11 +69,11 @@ RankView::RankView() : GameTemplateView()
     resize(iXY(WINDOW_WIDTH, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
-    allyImage.loadBMP("pics/default/ally.bmp");
-    allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
-    allyOtherImage.loadBMP("pics/default/allyOther.bmp");
-    noAllyImage.loadBMP("pics/default/noAlly.bmp");
-    colorImage.loadBMP("pics/default/playerColor.bmp");
+    allyImage.loadPNG("pics/default/ally.png");
+    allyRequestImage.loadPNG("pics/default/allyRequest.png");
+    allyOtherImage.loadPNG("pics/default/allyOther.png");
+    noAllyImage.loadPNG("pics/default/noAlly.png");
+    colorImage.loadPNG("pics/default/playerColor.png");
 
     selected_line = -1;
     snprintf(table_header, sizeof(table_header), "    %-20s %6s %7s %7s %6s", 

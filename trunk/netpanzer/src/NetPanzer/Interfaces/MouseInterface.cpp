@@ -24,57 +24,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
+#include "Resources/ResourceManager.hpp"
 
-unsigned char MouseInterface::cursor_x_size;
-unsigned char MouseInterface::cursor_y_size;
-
-iXY MouseInterface::mouse_offset;
-
-MouseInterface::cursors_t MouseInterface::cursors;
-Surface * MouseInterface::cursor;
+MouseCursorResource MouseInterface::mouse;
 
 void MouseInterface::initialize()
 {
-    const char* cursorpath = "pics/cursors/";
-    char** cursorfiles = filesystem::enumerateFiles(cursorpath);
-    for(char** i = cursorfiles; *i != 0; i++) {
-        Surface* surface = new Surface;
-        try {
-            std::string filename = cursorpath;
-            filename += *i;
-            if(filesystem::isDirectory(filename.c_str())) {
-                continue;
-            }
-            surface->loadBMP(filename.c_str());
-            cursors.insert(std::pair<std::string,Surface*> (*i, surface));
-        } catch(std::exception& e) {
-            LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));
-        }
-    }
-    filesystem::freeList(cursorfiles);
+//    const char* cursorpath = "pics/cursors/";
+//    char** cursorfiles = filesystem::enumerateFiles(cursorpath);
+//    for(char** i = cursorfiles; *i != 0; i++) {
+//        Surface* surface = new Surface;
+//        try {
+//            std::string filename = cursorpath;
+//            filename += *i;
+//            if(filesystem::isDirectory(filename.c_str())) {
+//                continue;
+//            }
+//            surface->loadPNG(filename.c_str());
+//            cursors.insert(std::pair<std::string,Surface*> (*i, surface));
+//        } catch(std::exception& e) {
+//            LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));
+//        }
+//    }
+//    filesystem::freeList(cursorfiles);
 
-    setCursor("default.bmp");
+    setCursor(ResourceManager::getMouseCursor("default"));
 }
 
 void MouseInterface::shutdown()
 {
-    cursor = 0;
-    cursors_t::iterator i = cursors.begin();
-    for( ; i != cursors.end(); i++) {
-        delete i->second;
-    }
-}
 
-void MouseInterface::setCursor(const char* cursorname)
-{
-    cursors_t::iterator i = cursors.find(cursorname);
-    if(i == cursors.end()) {
-        LOGGER.warning("WARNING: Mouse '%s' not found", cursorname);
-        cursor = 0;
-    } else {
-        cursor = i->second;
-        mouse_offset.x = cursor->getWidth() / 2;
-        mouse_offset.y = cursor->getHeight() / 2;
-
-    }
 }

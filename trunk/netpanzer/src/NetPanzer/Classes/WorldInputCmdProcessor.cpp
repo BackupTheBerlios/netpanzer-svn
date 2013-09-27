@@ -277,34 +277,34 @@ WorldInputCmdProcessor::setMouseCursor(unsigned char world_cursor_status)
     switch(world_cursor_status)
     {
         case _cursor_regular :
-            MouseInterface::setCursor("default.bmp");
+            MouseInterface::setCursor("default.png");
             break;
 
         case _cursor_move :
-            MouseInterface::setCursor("move.bmp");
+            MouseInterface::setCursor("move.png");
             break;
 
         case _cursor_blocked :
-            MouseInterface::setCursor("noentry.bmp");
+            MouseInterface::setCursor("noentry.png");
             break;
 
         case _cursor_player_unit :
-            MouseInterface::setCursor("select.bmp");
+            MouseInterface::setCursor("select.png");
             break;
 
         case _cursor_enemy_unit :
-            MouseInterface::setCursor("target.bmp");
+            MouseInterface::setCursor("target.png");
             break;
 
         case _cursor_make_allie :
-            MouseInterface::setCursor("allie.bmp");
+            MouseInterface::setCursor("allie.png");
             break;
 
         case _cursor_break_allie :
-            MouseInterface::setCursor("breakallie.bmp");
+            MouseInterface::setCursor("breakallie.png");
             break;
         case _cursor_blocked_target :
-            MouseInterface::setCursor("grey-target.bmp");
+            MouseInterface::setCursor("grey-target.png");
             break;
     }
 }

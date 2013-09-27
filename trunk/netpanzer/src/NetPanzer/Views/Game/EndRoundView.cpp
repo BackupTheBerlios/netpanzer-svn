@@ -53,11 +53,11 @@ EndRoundView::EndRoundView() : GameTemplateView()
     resize(iXY(500, 500));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
-    allyImage.loadBMP("pics/default/ally.bmp");
-    allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
-    allyOtherImage.loadBMP("pics/default/allyOther.bmp");
-    noAllyImage.loadBMP("pics/default/noAlly.bmp");
-    colorImage.loadBMP("pics/default/playerColor.bmp");
+    allyImage.loadPNG("pics/default/ally.png");
+    allyRequestImage.loadPNG("pics/default/allyRequest.png");
+    allyOtherImage.loadPNG("pics/default/allyOther.png");
+    noAllyImage.loadPNG("pics/default/noAlly.png");
+    colorImage.loadPNG("pics/default/playerColor.png");
 
     selected_line = -1;
     selected_col = -1;
@@ -75,10 +75,10 @@ EndRoundView::EndRoundView() : GameTemplateView()
 void EndRoundView::doDraw( Surface& dest )
 {
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    dest.BltRoundRect(RectWinner, 14, Palette::filterGreen());
+//    dest.BltRoundRect(RectWinner, 14, Palette::filterGreen());
     dest.RoundRect(RectWinner,14, ctWindowsBorder);
 
-    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
+//    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
     dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
     if (GameConfig::game_teammode) drawTeamStats(dest, flagHeight);

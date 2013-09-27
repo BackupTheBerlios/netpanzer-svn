@@ -61,7 +61,7 @@ void RankTeam::doDraw( Surface& dest )
         RectStates = getClientRect();
         return; // this frame draws nothing
     }
-    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
+//    dest.BltRoundRect(RectStates, 14, Palette::filterDarkBrown());
     dest.RoundRect(RectStates, 14, ctWindowsBorder);
 
     drawTeamStats(dest);

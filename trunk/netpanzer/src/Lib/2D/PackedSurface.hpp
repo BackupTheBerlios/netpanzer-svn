@@ -43,6 +43,9 @@ public:
     void pack(const PtrArray<Surface>& src);
 
     void blt(Surface &dest, int x, int y) const;
+    void bltFrame(Surface &dest, const unsigned frame, const int x, const int y) const;
+    void bltBlendFrame(Surface &dest, const unsigned frame, const int x, const int y, const uint8_t * blendTable) const;
+    
     void blt(Surface &dest, iXY pos) const
     {
         blt(dest, pos.x, pos.y);

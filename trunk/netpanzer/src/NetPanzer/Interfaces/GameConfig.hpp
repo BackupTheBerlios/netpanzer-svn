@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Config/HostConfig.hpp"
 #include "Config/InterfaceConfig.hpp"
 #include "Config/SoundConfig.hpp"
+#include "Config/GameOptions.hpp"
 
 #include "2D/Surface.hpp"
 #include "2D/Color.hpp"
@@ -66,9 +67,8 @@ public:
     InterfaceConfig gameinterface;
     SoundConfig sound;
     
-    static bool      game_enable_bases;
-    static int       game_base_capture_mode; // 0=no capture, 1=normal, 2=...
-    static int       game_base_limit;  // 0=no limit, other number max bases per player
+    GameOptions gameoptions;
+    
     static int       game_autokicktime; // in minutes
     static bool      game_allowmultiip; // allow multi connect from same ip
     static NPString* game_unit_profiles; // "," or space separated list of profiles to load
@@ -104,7 +104,7 @@ public:
 
     HostConfig host;
 
-    static NPString* server_masterservers;
+    std::vector<NPString> masterservers;
 
 public:
     const char* getGameTypeString() const

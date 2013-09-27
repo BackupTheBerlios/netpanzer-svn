@@ -88,7 +88,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
     staticPackedGroundChunks.setFrame(index);
 
     packedSurfaceShadow.setData(staticPackedGroundChunks);
-    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
+//    packedSurfaceShadow.setDrawModeBlend(Palette::blendDarkenALittle());
 
     if (ParticleInterface::gParticlesCanHaveSmoke && canHaveSmoke) {
         hasSmoke = rand() % 3;

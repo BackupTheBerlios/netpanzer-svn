@@ -91,7 +91,7 @@ void TeamManager::initialize(const Uint8 _max_teams)
     {
         Teams_lists[ team_id ].initialize(team_id);
         if (team_id < (TeamID) plist.size()) Teams_lists[ team_id ].setName(plist[team_id]);
-        snprintf(txtBuf, sizeof(txtBuf), "pics/default/team-%d.bmp", team_id+1);
+        snprintf(txtBuf, sizeof(txtBuf), "pics/default/team-%d.png", team_id+1);
         Teams_lists[ team_id ].loadFlag(txtBuf);
         Teams_lists[ team_id ].setColor(colorsteam[team_id]);
     }

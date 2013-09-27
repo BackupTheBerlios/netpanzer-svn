@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Types/iXY.hpp"
 
+#include "Resources/ResourceManager.hpp"
+
 #include "Classes/ScreenSurface.hpp"
 
 #include "2D/Components/AreaComponent.hpp"
@@ -40,10 +42,18 @@ struct Events
 
 class DarkGrayPanel : public Component
 {
+private:
+    ImageFilterResource filter;
+    
 public:
+    DarkGrayPanel()
+    {
+        filter = ResourceManager::getImageFilter("darkgray");
+    }
+    
     void draw(Surface& dest) const
     {
-        dest.BltRoundRect(rect, 10, Palette::filterDarkGray());
+        filter.applyRounded(dest, rect, 10);
         dest.RoundRect(rect, 10, Color::gray);
     }
 };

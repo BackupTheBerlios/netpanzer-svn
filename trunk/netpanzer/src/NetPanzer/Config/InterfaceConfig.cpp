@@ -19,8 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "InterfaceConfig.hpp"
-#include "ConfigGetter.hpp"
 #include "2D/Color.hpp"
+
+#include "json/json.h"
      
 struct StringColor
 {
@@ -96,27 +97,25 @@ InterfaceConfig::MiniMap::~MiniMap()
     
 }
 
-void InterfaceConfig::MiniMap::load(const JSONNode& node)
+void InterfaceConfig::MiniMap::load(const Json::Value& node)
 {
-    ConfigGetter cg(node);
-    
-    setPlayerUnitColor(    stringToColor(cg.getString("playerunitcolor", "aqua")) );
-    setSelectedUnitColor(  stringToColor(cg.getString("selectedunitcolor", "white")) );
-    setAlliedUnitColor(    stringToColor(cg.getString("alliedunitcolor", "orange")) );
-    setPlayerOutpostColor( stringToColor(cg.getString("playeroutpostcolor", "blue")) );
-    setAlliedOutpostColor( stringToColor(cg.getString("alliedoutpostcolor", "orange")) );
-    setBigUnitSize( cg.getBool("bigunitsize", false) );
+    setPlayerUnitColor(    stringToColor(node.get("playerunitcolor", "aqua").asString()) );
+    setSelectedUnitColor(  stringToColor(node.get("selectedunitcolor", "white").asString()) );
+    setAlliedUnitColor(    stringToColor(node.get("alliedunitcolor", "orange").asString()) );
+    setPlayerOutpostColor( stringToColor(node.get("playeroutpostcolor", "blue").asString()) );
+    setAlliedOutpostColor( stringToColor(node.get("alliedoutpostcolor", "orange").asString()) );
+    setBigUnitSize( node.get("bigunitsize", false).asBool() );
 }
 
-void InterfaceConfig::MiniMap::save(JSONNode& node) const
+void InterfaceConfig::MiniMap::save(Json::Value& node) const
 {
     
-    node.push_back(JSONNode("playerunitcolor",    colorToString(getPlayerUnitColor())));
-    node.push_back(JSONNode("selectedunitcolor",  colorToString(getSelectedUnitColor())));
-    node.push_back(JSONNode("alliedunitcolor",    colorToString(getAlliedUnitColor())));
-    node.push_back(JSONNode("playeroutpostcolor", colorToString(getPlayerOutpostColor())));
-    node.push_back(JSONNode("alliedoutpostcolor", colorToString(getAlliedOutpostColor())));
-    node.push_back(JSONNode("bigunitsize", useBigUnitSize()));
+    node["playerunitcolor"]    = colorToString(getPlayerUnitColor());
+    node["selectedunitcolor"]  = colorToString(getSelectedUnitColor());
+    node["alliedunitcolor"]    = colorToString(getAlliedUnitColor());
+    node["playeroutpostcolor"] = colorToString(getPlayerOutpostColor());
+    node["alliedoutpostcolor"] = colorToString(getAlliedOutpostColor());
+    node["bigunitsize"]        = useBigUnitSize();
     
 }
 
@@ -140,49 +139,46 @@ InterfaceConfig::~InterfaceConfig()
     
 }
 
-void InterfaceConfig::load(const JSONNode& node)
+void InterfaceConfig::load(const Json::Value& node)
 {
-    ConfigGetter cg(node);
+    setShowHealth( node.get("showhealth", true).asBool() );
+    setShowFlags( node.get("showflags", true).asBool() );
+    setShowNames( node.get("shownames", true).asBool() );
     
-    setShowHealth( cg.getBool("showhealth", true) );
-    setShowFlags( cg.getBool("showflags", true) );
-    setShowNames( cg.getBool("shownames", true) );
-    
-    setAttackNotificationTime( cg.getInt("attacknotificationtime", 1, 20, 5) );
+    setAttackNotificationTime( node.get("attacknotificationtime", 5).asInt() );
 
-    setVehicleSelectionColor( stringToColor(cg.getString("vehicleselectioncolor", "blue")));
+    setVehicleSelectionColor( stringToColor(node.get("vehicleselectioncolor", "blue").asString()));
     
-    setUnitInfoLayer( cg.getInt("unitinfolayer", 0, 7, 0) );
-    setScrollRate( cg.getInt("scrollrate", 1, 1000, 1000) );
-    setRankPositionX( cg.getInt("rankposition_x", 0, 4096, 100) );
-    setRankPositionY( cg.getInt("rankposition_y", 0, 4096, 100) );
-    setLanguage( cg.getString("language", "en.po") );
-    
-    JSONNode::const_iterator i = node.find("minimap");
-    if ( i != node.end() )
+    setUnitInfoLayer( node.get("unitinfolayer", 0).asInt() );
+    setScrollRate( node.get("scrollrate", 1000).asInt() );
+    setRankPositionX( node.get("rankposition_x", 100).asInt() );
+    setRankPositionY( node.get("rankposition_y", 100).asInt() );
+    setLanguage( node.get("language", "en.po").asString() );
+
+    if ( node.isMember("minimap") )
     {
-        minimap.load(*i);
+        minimap.load(node["minimap"]);
     }
 }
 
-void InterfaceConfig::save(JSONNode& node) const
+void InterfaceConfig::save(Json::Value& node) const
 {
-    node.push_back(JSONNode("showhealth",   showHealth()));
-    node.push_back(JSONNode("showflags",    showFlags()));
-    node.push_back(JSONNode("shownames",    showNames()));
+    node["showhealth"] = showHealth();
+    node["showflags"] = showFlags();
+    node["shownames"] = showNames();
     
-    node.push_back(JSONNode("attacknotificationtime",   getAttackNotificationTime()));
-    node.push_back(JSONNode("vehicleselectioncolor",    colorToString(getVehicleSelectionColor())));
-    node.push_back(JSONNode("unitinfolayer",            getUnitInfoLayer()));
-    node.push_back(JSONNode("scrollrate",               getScrollRate()));
-    node.push_back(JSONNode("rankposition_x",           getRankPositionX()));
-    node.push_back(JSONNode("rankposition_y",           getRankPositionY()));
-    node.push_back(JSONNode("language",                 getLanguage()));
+    node["attacknotificationtime"] = getAttackNotificationTime();
+    node["vehicleselectioncolor"] = colorToString(getVehicleSelectionColor());
+    node["unitinfolayer"] = getUnitInfoLayer();
+    node["scrollrate"] = getScrollRate();
+    node["rankposition_x"] = getRankPositionX();
+    node["rankposition_y"] = getRankPositionY();
+    node["language"] = getLanguage();
     
-    JSONNode mm;
-    mm.set_name("minimap");
+    Json::Value mm(Json::objectValue);
     minimap.save(mm);
     
-    node.push_back(mm);
+    node["minimap"] = mm;
+    
 }
 

@@ -130,7 +130,7 @@ void GFlagSelectionView::init()
 
 void GFlagSelectionView::doDraw( Surface& dest )
 {
-    dest.BltRoundRect(rect, 14, Palette::filterDarkGray());
+//    dest.BltRoundRect(rect, 14, Palette::filterDarkGray());
     dest.RoundRect(rect,14, Color::gray);
 
     ResourceManager::getFlag(PlayerInterface::getLocalPlayerIndex())->blt(dest, loc_player_flag.x, loc_player_flag.y); // full blit

@@ -16,11 +16,15 @@
               </df>
               <df name="GameInput">
               </df>
+              <df name="json">
+              </df>
               <df name="libjson">
                 <df name="_internal">
                   <df name="Source">
                   </df>
                 </df>
+              </df>
+              <df name="libpng-1.6.5">
               </df>
               <df name="Network">
               </df>
@@ -37,6 +41,8 @@
               <df name="Types">
               </df>
               <df name="Util">
+              </df>
+              <df name="zlib-1.2.8">
               </df>
             </df>
             <df name="NetPanzer">
@@ -114,6 +120,8 @@
                   </df>
                 </df>
               </df>
+              <df name="libpng-1.6.5">
+              </df>
               <df name="Network">
               </df>
               <df name="optionmm">
@@ -129,6 +137,8 @@
               <df name="Types">
               </df>
               <df name="Util">
+              </df>
+              <df name="zlib-1.2.8">
               </df>
             </df>
             <df name="NetPanzer">
@@ -217,62 +227,12 @@
         </df>
         <df name="flags">
         </df>
-        <df name="menus">
-          <df name="vehicleSelectionView">
-          </df>
-        </df>
         <df name="particles">
-          <df name="chunks">
-            <df name="pak">
-            </df>
-          </df>
-          <df name="clouds">
-            <df name="pak">
-            </df>
-          </df>
-          <df name="craters">
-            <df name="pak">
-            </df>
-          </df>
-          <df name="explosion">
-            <df name="explosion0">
-              <df name="pak">
-              </df>
-            </df>
-            <df name="explosion1">
-              <df name="pak">
-              </df>
-            </df>
-          </df>
-          <df name="lights">
-            <df name="pak">
-            </df>
-          </df>
-          <df name="missles">
-            <df name="pak">
-            </df>
-          </df>
-          <df name="puff">
-            <df name="dirt">
-              <df name="pak">
-              </df>
-            </df>
-            <df name="smokeDark">
-              <df name="pak">
-              </df>
-            </df>
-            <df name="smokeLight">
-              <df name="pak">
-              </df>
-            </df>
-          </df>
-          <df name="shells">
-            <df name="pak">
-            </df>
-          </df>
         </df>
-      </df>
-      <df name="powerups">
+        <df name="powerups">
+        </df>
+        <df name="units">
+        </df>
       </df>
       <df name="projects">
         <df name="netpanzer-svn-linux">
@@ -543,118 +503,34 @@
             <in>InputState.hpp</in>
             <in>RawInput.hpp</in>
           </df>
-          <df name="libjson">
-            <df name="_internal">
-              <df name="Dependencies">
-                <df name="libbase64++">
-                  <in>libbase64++.h</in>
-                </df>
-                <df name="mempool++">
-                  <in>mempool.h</in>
-                </df>
-              </df>
-              <df name="Source">
-                <df name="JSONDefs">
-                  <in>GNU_C.h</in>
-                  <in>Strings_Defs.h</in>
-                  <in>Unknown_C.h</in>
-                  <in>Visual_C.h</in>
-                </df>
-                <in>JSONAllocator.cpp</in>
-                <in>JSONAllocator.h</in>
-                <in>JSONChildren.cpp</in>
-                <in>JSONChildren.h</in>
-                <in>JSONDebug.cpp</in>
-                <in>JSONDebug.h</in>
-                <in>JSONDefs.h</in>
-                <in>JSONGlobals.h</in>
-                <in>JSONIterators.cpp</in>
-                <in>JSONMemory.cpp</in>
-                <in>JSONMemory.h</in>
-                <in>JSONMemoryPool.h</in>
-                <in>JSONNode.cpp</in>
-                <in>JSONNode.h</in>
-                <in>JSONNode_Mutex.cpp</in>
-                <in>JSONPreparse.cpp</in>
-                <in>JSONPreparse.h</in>
-                <in>JSONSharedString.h</in>
-                <in>JSONSingleton.h</in>
-                <in>JSONStats.h</in>
-                <in>JSONStream.cpp</in>
-                <in>JSONStream.h</in>
-                <in>JSONValidator.cpp</in>
-                <in>JSONValidator.h</in>
-                <in>JSONWorker.cpp</in>
-                <in>JSONWorker.h</in>
-                <in>JSONWriter.cpp</in>
-                <in>JSON_Base64.h</in>
-                <in>NumberToString.h</in>
-                <in>internalJSONNode.cpp</in>
-                <in>internalJSONNode.h</in>
-                <in>libjson.cpp</in>
-              </df>
-            </df>
-            <in>JSONOptions.h</in>
-            <in>libjson.h</in>
+          <df name="json">
+            <in>json-forwards.h</in>
+            <in>json.h</in>
+            <in>jsoncpp.cpp</in>
           </df>
-          <df name="lua">
-            <df name="etc">
-              <in>lua.hpp</in>
-            </df>
-            <df name="src">
-              <in>lapi.c</in>
-              <in>lapi.h</in>
-              <in>lauxlib.c</in>
-              <in>lauxlib.h</in>
-              <in>lbaselib.c</in>
-              <in>lcode.c</in>
-              <in>lcode.h</in>
-              <in>ldblib.c</in>
-              <in>ldebug.c</in>
-              <in>ldebug.h</in>
-              <in>ldo.c</in>
-              <in>ldo.h</in>
-              <in>ldump.c</in>
-              <in>lfunc.c</in>
-              <in>lfunc.h</in>
-              <in>lgc.c</in>
-              <in>lgc.h</in>
-              <in>linit.c</in>
-              <in>liolib.c</in>
-              <in>llex.c</in>
-              <in>llex.h</in>
-              <in>llimits.h</in>
-              <in>lmathlib.c</in>
-              <in>lmem.c</in>
-              <in>lmem.h</in>
-              <in>loadlib.c</in>
-              <in>lobject.c</in>
-              <in>lobject.h</in>
-              <in>lopcodes.c</in>
-              <in>lopcodes.h</in>
-              <in>loslib.c</in>
-              <in>lparser.c</in>
-              <in>lparser.h</in>
-              <in>lstate.c</in>
-              <in>lstate.h</in>
-              <in>lstring.c</in>
-              <in>lstring.h</in>
-              <in>lstrlib.c</in>
-              <in>ltable.c</in>
-              <in>ltable.h</in>
-              <in>ltablib.c</in>
-              <in>ltm.c</in>
-              <in>ltm.h</in>
-              <in>lua.h</in>
-              <in>luaconf.h</in>
-              <in>lualib.h</in>
-              <in>lundump.c</in>
-              <in>lundump.h</in>
-              <in>lvm.c</in>
-              <in>lvm.h</in>
-              <in>lzio.c</in>
-              <in>lzio.h</in>
-            </df>
+          <df name="libpng-1.6.5">
+            <in>png.c</in>
+            <in>png.h</in>
+            <in>pngconf.h</in>
+            <in>pngdebug.h</in>
+            <in>pngerror.c</in>
+            <in>pngget.c</in>
+            <in>pnginfo.h</in>
+            <in>pnglibconf.h</in>
+            <in>pngmem.c</in>
+            <in>pngpread.c</in>
+            <in>pngpriv.h</in>
+            <in>pngread.c</in>
+            <in>pngrio.c</in>
+            <in>pngrtran.c</in>
+            <in>pngrutil.c</in>
+            <in>pngset.c</in>
+            <in>pngstruct.h</in>
+            <in>pngtrans.c</in>
+            <in>pngwio.c</in>
+            <in>pngwrite.c</in>
+            <in>pngwtran.c</in>
+            <in>pngwutil.c</in>
           </df>
           <df name="Network">
             <in>Address.cpp</in>
@@ -693,24 +569,6 @@
               <in>zip.c</in>
             </df>
             <df name="extras">
-              <df name="PhysFS.NET">
-                <df name="TestApp">
-                </df>
-              </df>
-              <df name="physfs_rb">
-                <df name="physfs">
-                  <df name="test">
-                  </df>
-                  <in>physfsrwops.c</in>
-                  <in>physfsrwops.h</in>
-                  <in>rb_physfs.c</in>
-                  <in>rb_physfs.h</in>
-                  <in>rb_physfs_file.c</in>
-                  <in>rb_physfs_file.h</in>
-                  <in>rb_sdl_rwops.c</in>
-                  <in>rb_sdl_rwops.h</in>
-                </df>
-              </df>
               <in>abs-file.h</in>
               <in>globbing.c</in>
               <in>globbing.h</in>
@@ -722,461 +580,6 @@
               <in>physfsunpack.c</in>
               <in>selfextract.c</in>
             </df>
-            <df name="lzma">
-              <df name="C">
-                <df name="Archive">
-                  <df name="7z">
-                    <in>7zAlloc.c</in>
-                    <in>7zAlloc.h</in>
-                    <in>7zBuffer.c</in>
-                    <in>7zBuffer.h</in>
-                    <in>7zDecode.c</in>
-                    <in>7zDecode.h</in>
-                    <in>7zExtract.c</in>
-                    <in>7zExtract.h</in>
-                    <in>7zHeader.c</in>
-                    <in>7zHeader.h</in>
-                    <in>7zIn.c</in>
-                    <in>7zIn.h</in>
-                    <in>7zItem.c</in>
-                    <in>7zItem.h</in>
-                    <in>7zMain.c</in>
-                    <in>7zMethodID.c</in>
-                    <in>7zMethodID.h</in>
-                  </df>
-                </df>
-                <df name="Compress">
-                  <df name="Branch">
-                    <in>BranchARM.c</in>
-                    <in>BranchARM.h</in>
-                    <in>BranchARMThumb.c</in>
-                    <in>BranchARMThumb.h</in>
-                    <in>BranchIA64.c</in>
-                    <in>BranchIA64.h</in>
-                    <in>BranchPPC.c</in>
-                    <in>BranchPPC.h</in>
-                    <in>BranchSPARC.c</in>
-                    <in>BranchSPARC.h</in>
-                    <in>BranchTypes.h</in>
-                    <in>BranchX86.c</in>
-                    <in>BranchX86.h</in>
-                    <in>BranchX86_2.c</in>
-                    <in>BranchX86_2.h</in>
-                  </df>
-                  <df name="Huffman">
-                    <in>HuffmanEncode.c</in>
-                    <in>HuffmanEncode.h</in>
-                  </df>
-                  <df name="Lz">
-                    <in>LzHash.h</in>
-                    <in>MatchFinder.c</in>
-                    <in>MatchFinder.h</in>
-                    <in>MatchFinderMt.c</in>
-                    <in>MatchFinderMt.h</in>
-                  </df>
-                  <df name="Lzma">
-                    <in>LzmaDecode.c</in>
-                    <in>LzmaDecode.h</in>
-                    <in>LzmaDecodeSize.c</in>
-                    <in>LzmaStateDecode.c</in>
-                    <in>LzmaStateDecode.h</in>
-                    <in>LzmaStateTest.c</in>
-                    <in>LzmaTest.c</in>
-                    <in>LzmaTypes.h</in>
-                  </df>
-                </df>
-                <in>7zCrc.c</in>
-                <in>7zCrc.h</in>
-                <in>7zCrcT8.c</in>
-                <in>Alloc.c</in>
-                <in>Alloc.h</in>
-                <in>CpuArch.h</in>
-                <in>IStream.h</in>
-                <in>Sort.c</in>
-                <in>Sort.h</in>
-                <in>Threads.c</in>
-                <in>Threads.h</in>
-                <in>Types.h</in>
-              </df>
-              <df name="CPP">
-                <df name="7zip">
-                  <df name="Archive">
-                    <df name="7z">
-                      <in>7zCompressionMode.cpp</in>
-                      <in>7zCompressionMode.h</in>
-                      <in>7zDecode.cpp</in>
-                      <in>7zDecode.h</in>
-                      <in>7zEncode.cpp</in>
-                      <in>7zEncode.h</in>
-                      <in>7zExtract.cpp</in>
-                      <in>7zFolderInStream.cpp</in>
-                      <in>7zFolderInStream.h</in>
-                      <in>7zFolderOutStream.cpp</in>
-                      <in>7zFolderOutStream.h</in>
-                      <in>7zHandler.cpp</in>
-                      <in>7zHandler.h</in>
-                      <in>7zHandlerOut.cpp</in>
-                      <in>7zHeader.cpp</in>
-                      <in>7zHeader.h</in>
-                      <in>7zIn.cpp</in>
-                      <in>7zIn.h</in>
-                      <in>7zItem.h</in>
-                      <in>7zOut.cpp</in>
-                      <in>7zOut.h</in>
-                      <in>7zProperties.cpp</in>
-                      <in>7zProperties.h</in>
-                      <in>7zRegister.cpp</in>
-                      <in>7zSpecStream.cpp</in>
-                      <in>7zSpecStream.h</in>
-                      <in>7zUpdate.cpp</in>
-                      <in>7zUpdate.h</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="Common">
-                      <in>CoderMixer2.cpp</in>
-                      <in>CoderMixer2.h</in>
-                      <in>CoderMixer2MT.cpp</in>
-                      <in>CoderMixer2MT.h</in>
-                      <in>CrossThreadProgress.cpp</in>
-                      <in>CrossThreadProgress.h</in>
-                      <in>DummyOutStream.cpp</in>
-                      <in>DummyOutStream.h</in>
-                      <in>HandlerOut.cpp</in>
-                      <in>HandlerOut.h</in>
-                      <in>InStreamWithCRC.cpp</in>
-                      <in>InStreamWithCRC.h</in>
-                      <in>ItemNameUtils.cpp</in>
-                      <in>ItemNameUtils.h</in>
-                      <in>MultiStream.cpp</in>
-                      <in>MultiStream.h</in>
-                      <in>OutStreamWithCRC.cpp</in>
-                      <in>OutStreamWithCRC.h</in>
-                      <in>ParseProperties.cpp</in>
-                      <in>ParseProperties.h</in>
-                    </df>
-                    <in>ArchiveExports.cpp</in>
-                    <in>DllExports2.cpp</in>
-                    <in>IArchive.h</in>
-                  </df>
-                  <df name="Bundles">
-                    <df name="Alone7z">
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="Format7zExtractR">
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="Format7zR">
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                  </df>
-                  <df name="Common">
-                    <in>CreateCoder.cpp</in>
-                    <in>CreateCoder.h</in>
-                    <in>FilePathAutoRename.cpp</in>
-                    <in>FilePathAutoRename.h</in>
-                    <in>FileStreams.cpp</in>
-                    <in>FileStreams.h</in>
-                    <in>FilterCoder.cpp</in>
-                    <in>FilterCoder.h</in>
-                    <in>InBuffer.cpp</in>
-                    <in>InBuffer.h</in>
-                    <in>InOutTempBuffer.cpp</in>
-                    <in>InOutTempBuffer.h</in>
-                    <in>LimitedStreams.cpp</in>
-                    <in>LimitedStreams.h</in>
-                    <in>LockedStream.cpp</in>
-                    <in>LockedStream.h</in>
-                    <in>MethodId.cpp</in>
-                    <in>MethodId.h</in>
-                    <in>MethodProps.cpp</in>
-                    <in>MethodProps.h</in>
-                    <in>OffsetStream.cpp</in>
-                    <in>OffsetStream.h</in>
-                    <in>OutBuffer.cpp</in>
-                    <in>OutBuffer.h</in>
-                    <in>ProgressUtils.cpp</in>
-                    <in>ProgressUtils.h</in>
-                    <in>RegisterArc.h</in>
-                    <in>RegisterCodec.h</in>
-                    <in>StdAfx.h</in>
-                    <in>StreamBinder.cpp</in>
-                    <in>StreamBinder.h</in>
-                    <in>StreamObjects.cpp</in>
-                    <in>StreamObjects.h</in>
-                    <in>StreamUtils.cpp</in>
-                    <in>StreamUtils.h</in>
-                    <in>VirtThread.cpp</in>
-                    <in>VirtThread.h</in>
-                  </df>
-                  <df name="Compress">
-                    <df name="Branch">
-                      <in>ARM.cpp</in>
-                      <in>ARM.h</in>
-                      <in>ARMThumb.cpp</in>
-                      <in>ARMThumb.h</in>
-                      <in>BCJ2Register.cpp</in>
-                      <in>BCJRegister.cpp</in>
-                      <in>BranchCoder.cpp</in>
-                      <in>BranchCoder.h</in>
-                      <in>BranchRegister.cpp</in>
-                      <in>IA64.cpp</in>
-                      <in>IA64.h</in>
-                      <in>PPC.cpp</in>
-                      <in>PPC.h</in>
-                      <in>SPARC.cpp</in>
-                      <in>SPARC.h</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                      <in>x86.cpp</in>
-                      <in>x86.h</in>
-                      <in>x86_2.cpp</in>
-                      <in>x86_2.h</in>
-                    </df>
-                    <df name="ByteSwap">
-                      <in>ByteSwap.cpp</in>
-                      <in>ByteSwap.h</in>
-                      <in>ByteSwapRegister.cpp</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="Copy">
-                      <in>CopyCoder.cpp</in>
-                      <in>CopyCoder.h</in>
-                      <in>CopyRegister.cpp</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="LZ">
-                      <in>LZOutWindow.cpp</in>
-                      <in>LZOutWindow.h</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="LZMA">
-                      <in>LZMA.h</in>
-                      <in>LZMADecoder.cpp</in>
-                      <in>LZMADecoder.h</in>
-                      <in>LZMAEncoder.cpp</in>
-                      <in>LZMAEncoder.h</in>
-                      <in>LZMARegister.cpp</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="LZMA_Alone">
-                      <in>LzmaAlone.cpp</in>
-                      <in>LzmaBench.cpp</in>
-                      <in>LzmaBench.h</in>
-                      <in>LzmaBenchCon.cpp</in>
-                      <in>LzmaBenchCon.h</in>
-                      <in>LzmaRam.cpp</in>
-                      <in>LzmaRam.h</in>
-                      <in>LzmaRamDecode.c</in>
-                      <in>LzmaRamDecode.h</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="RangeCoder">
-                      <in>RangeCoder.h</in>
-                      <in>RangeCoderBit.cpp</in>
-                      <in>RangeCoderBit.h</in>
-                      <in>RangeCoderBitTree.h</in>
-                      <in>RangeCoderOpt.h</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <in>CodecExports.cpp</in>
-                  </df>
-                  <df name="UI">
-                    <df name="Client7z">
-                      <in>Client7z.cpp</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                    </df>
-                    <df name="Common">
-                      <in>ArchiveCommandLine.cpp</in>
-                      <in>ArchiveCommandLine.h</in>
-                      <in>ArchiveExtractCallback.cpp</in>
-                      <in>ArchiveExtractCallback.h</in>
-                      <in>ArchiveName.cpp</in>
-                      <in>ArchiveName.h</in>
-                      <in>ArchiveOpenCallback.cpp</in>
-                      <in>ArchiveOpenCallback.h</in>
-                      <in>DefaultName.cpp</in>
-                      <in>DefaultName.h</in>
-                      <in>DirItem.h</in>
-                      <in>EnumDirItems.cpp</in>
-                      <in>EnumDirItems.h</in>
-                      <in>ExitCode.h</in>
-                      <in>Extract.cpp</in>
-                      <in>Extract.h</in>
-                      <in>ExtractMode.h</in>
-                      <in>ExtractingFilePath.cpp</in>
-                      <in>ExtractingFilePath.h</in>
-                      <in>IFileExtractCallback.h</in>
-                      <in>LoadCodecs.cpp</in>
-                      <in>LoadCodecs.h</in>
-                      <in>OpenArchive.cpp</in>
-                      <in>OpenArchive.h</in>
-                      <in>PropIDUtils.cpp</in>
-                      <in>PropIDUtils.h</in>
-                      <in>Property.h</in>
-                      <in>SetProperties.cpp</in>
-                      <in>SetProperties.h</in>
-                      <in>SortUtils.cpp</in>
-                      <in>SortUtils.h</in>
-                      <in>TempFiles.cpp</in>
-                      <in>TempFiles.h</in>
-                      <in>Update.cpp</in>
-                      <in>Update.h</in>
-                      <in>UpdateAction.cpp</in>
-                      <in>UpdateAction.h</in>
-                      <in>UpdateCallback.cpp</in>
-                      <in>UpdateCallback.h</in>
-                      <in>UpdatePair.cpp</in>
-                      <in>UpdatePair.h</in>
-                      <in>UpdateProduce.cpp</in>
-                      <in>UpdateProduce.h</in>
-                      <in>WorkDir.cpp</in>
-                      <in>WorkDir.h</in>
-                      <in>ZipRegistry.h</in>
-                    </df>
-                    <df name="Console">
-                      <in>ConsoleClose.cpp</in>
-                      <in>ConsoleClose.h</in>
-                      <in>ExtractCallbackConsole.cpp</in>
-                      <in>ExtractCallbackConsole.h</in>
-                      <in>List.cpp</in>
-                      <in>List.h</in>
-                      <in>Main.cpp</in>
-                      <in>MainAr.cpp</in>
-                      <in>OpenCallbackConsole.cpp</in>
-                      <in>OpenCallbackConsole.h</in>
-                      <in>PercentPrinter.cpp</in>
-                      <in>PercentPrinter.h</in>
-                      <in>StdAfx.cpp</in>
-                      <in>StdAfx.h</in>
-                      <in>UpdateCallbackConsole.cpp</in>
-                      <in>UpdateCallbackConsole.h</in>
-                      <in>UserInputUtils.cpp</in>
-                      <in>UserInputUtils.h</in>
-                      <in>afxres.h</in>
-                    </df>
-                  </df>
-                  <in>ICoder.h</in>
-                  <in>IDecl.h</in>
-                  <in>IPassword.h</in>
-                  <in>IProgress.h</in>
-                  <in>IStream.h</in>
-                  <in>MyVersion.h</in>
-                  <in>PropID.h</in>
-                </df>
-                <df name="Common">
-                  <in>AutoPtr.h</in>
-                  <in>Buffer.h</in>
-                  <in>CRC.cpp</in>
-                  <in>C_FileIO.cpp</in>
-                  <in>C_FileIO.h</in>
-                  <in>ComTry.h</in>
-                  <in>CommandLineParser.cpp</in>
-                  <in>CommandLineParser.h</in>
-                  <in>Defs.h</in>
-                  <in>DynamicBuffer.h</in>
-                  <in>IntToString.cpp</in>
-                  <in>IntToString.h</in>
-                  <in>ListFileUtils.cpp</in>
-                  <in>ListFileUtils.h</in>
-                  <in>MyCom.h</in>
-                  <in>MyException.h</in>
-                  <in>MyGuidDef.h</in>
-                  <in>MyInitGuid.h</in>
-                  <in>MyString.cpp</in>
-                  <in>MyString.h</in>
-                  <in>MyUnknown.h</in>
-                  <in>MyVector.cpp</in>
-                  <in>MyVector.h</in>
-                  <in>MyWindows.h</in>
-                  <in>NewHandler.cpp</in>
-                  <in>NewHandler.h</in>
-                  <in>StdAfx.h</in>
-                  <in>StdInStream.cpp</in>
-                  <in>StdInStream.h</in>
-                  <in>StdOutStream.cpp</in>
-                  <in>StdOutStream.h</in>
-                  <in>StringConvert.cpp</in>
-                  <in>StringConvert.h</in>
-                  <in>StringToInt.cpp</in>
-                  <in>StringToInt.h</in>
-                  <in>Types.h</in>
-                  <in>UTFConvert.cpp</in>
-                  <in>UTFConvert.h</in>
-                  <in>Wildcard.cpp</in>
-                  <in>Wildcard.h</in>
-                </df>
-                <df name="Windows">
-                  <in>DLL.cpp</in>
-                  <in>DLL.h</in>
-                  <in>Defs.h</in>
-                  <in>Error.cpp</in>
-                  <in>Error.h</in>
-                  <in>FileDir.cpp</in>
-                  <in>FileDir.h</in>
-                  <in>FileFind.cpp</in>
-                  <in>FileFind.h</in>
-                  <in>FileIO.cpp</in>
-                  <in>FileIO.h</in>
-                  <in>FileMapping.cpp</in>
-                  <in>FileMapping.h</in>
-                  <in>FileName.cpp</in>
-                  <in>FileName.h</in>
-                  <in>Handle.h</in>
-                  <in>MemoryLock.cpp</in>
-                  <in>MemoryLock.h</in>
-                  <in>PropVariant.cpp</in>
-                  <in>PropVariant.h</in>
-                  <in>PropVariantConversions.cpp</in>
-                  <in>PropVariantConversions.h</in>
-                  <in>StdAfx.h</in>
-                  <in>Synchronization.cpp</in>
-                  <in>Synchronization.h</in>
-                  <in>System.cpp</in>
-                  <in>System.h</in>
-                  <in>Thread.h</in>
-                  <in>Time.h</in>
-                </df>
-              </df>
-              <df name="CS">
-                <df name="7zip">
-                  <df name="Common">
-                  </df>
-                  <df name="Compress">
-                    <df name="LZ">
-                    </df>
-                    <df name="LZMA">
-                    </df>
-                    <df name="LzmaAlone">
-                      <df name="Properties">
-                      </df>
-                    </df>
-                    <df name="RangeCoder">
-                    </df>
-                  </df>
-                </df>
-              </df>
-              <df name="Java">
-                <df name="SevenZip">
-                  <df name="Compression">
-                    <df name="LZ">
-                    </df>
-                    <df name="LZMA">
-                    </df>
-                    <df name="RangeCoder">
-                    </df>
-                  </df>
-                </df>
-              </df>
-            </df>
             <df name="platform">
               <in>beos.cpp</in>
               <in>macosx.c</in>
@@ -1185,10 +588,6 @@
               <in>posix.c</in>
               <in>unix.c</in>
               <in>windows.c</in>
-            </df>
-            <df name="test">
-              <in>test_physfs.c</in>
-              <in>wxtest_physfs.cpp</in>
             </df>
             <df name="zlib123">
               <in>adler32.c</in>
@@ -1261,6 +660,34 @@
             <in>Timer.hpp</in>
             <in>TimerInterface.cpp</in>
             <in>TimerInterface.hpp</in>
+          </df>
+          <df name="zlib-1.2.8">
+            <in>adler32.c</in>
+            <in>compress.c</in>
+            <in>crc32.c</in>
+            <in>crc32.h</in>
+            <in>deflate.c</in>
+            <in>deflate.h</in>
+            <in>gzclose.c</in>
+            <in>gzguts.h</in>
+            <in>gzlib.c</in>
+            <in>gzread.c</in>
+            <in>gzwrite.c</in>
+            <in>infback.c</in>
+            <in>inffast.c</in>
+            <in>inffast.h</in>
+            <in>inffixed.h</in>
+            <in>inflate.c</in>
+            <in>inflate.h</in>
+            <in>inftrees.c</in>
+            <in>inftrees.h</in>
+            <in>trees.c</in>
+            <in>trees.h</in>
+            <in>uncompr.c</in>
+            <in>zconf.h</in>
+            <in>zlib.h</in>
+            <in>zutil.c</in>
+            <in>zutil.h</in>
           </df>
         </df>
         <df name="NetPanzer">
@@ -1362,7 +789,8 @@
             <in>WorldMap.hpp</in>
           </df>
           <df name="Config">
-            <in>ConfigGetter.hpp</in>
+            <in>GameOptions.cpp</in>
+            <in>GameOptions.hpp</in>
             <in>HostConfig.cpp</in>
             <in>HostConfig.hpp</in>
             <in>InterfaceConfig.cpp</in>
@@ -1524,6 +952,12 @@
             <in>UnitPowerUp.hpp</in>
           </df>
           <df name="Resources">
+            <in>BlendTable.hpp</in>
+            <in>Image.hpp</in>
+            <in>ImageFilter.cpp</in>
+            <in>ImageFilter.hpp</in>
+            <in>MImage.hpp</in>
+            <in>MouseCursor.hpp</in>
             <in>ResourceManager.cpp</in>
             <in>ResourceManager.hpp</in>
           </df>
@@ -1548,13 +982,6 @@
             <in>InitialScene.hpp</in>
             <in>MainMenuScene.cpp</in>
             <in>MainMenuScene.hpp</in>
-          </df>
-          <df name="Scripts">
-            <in>NetPanzerModule.cpp</in>
-            <in>ScriptHelper.cpp</in>
-            <in>ScriptHelper.hpp</in>
-            <in>ScriptManager.cpp</in>
-            <in>ScriptManager.hpp</in>
           </df>
           <df name="Structs">
             <in>TileSetStruct.hpp</in>
@@ -1696,16 +1123,12 @@
           <in>bmp2pak.cpp</in>
           <in>colorgen.cpp</in>
           <in>fontdatagen.cpp</in>
-          <in>pak2bmp.cpp</in>
+          <in>pak2png.cpp</in>
         </df>
         <df name="win32">
         </df>
       </df>
       <df name="units">
-        <df name="pics">
-          <df name="pak">
-          </df>
-        </df>
         <df name="profiles">
         </df>
       </df>
@@ -1755,6 +1178,11 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"\netpanzer-debug.exe</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp </runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb 9</runcommandpicklistitem>
           <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>netpanzer-debug.exe -g</runcommand>
@@ -1807,6 +1235,61 @@
           <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>netpanzer-debug.exe -g</runcommand>
+        <rundir>C:\prog\netpanzer-svn\</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="pak2png" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>3</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+            <option name="debug_dir" value="C:\prog\netpanzer-svn\"/>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp </runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb 9</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan 9 0 0</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan 9 0 0</runcommand>
         <rundir>C:\prog\netpanzer-svn\</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

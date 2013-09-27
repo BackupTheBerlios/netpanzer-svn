@@ -65,8 +65,8 @@ PrepareTeam::PrepareTeam() : GameTemplateView()
 //    setTitle(_("Prepare Team"));
 
     setAllowMove(false);
-    menuImage.loadBMP("pics/backgrounds/canon.bmp");
-    vsImage.loadBMP("pics/backgrounds/vs.bmp");
+    menuImage.loadPNG("pics/backgrounds/canon.png");
+    vsImage.loadPNG("pics/backgrounds/vs.png");
 
     moveTo((screen->getWidth()/2) - (menuImage.getWidth()/2),
            (screen->getHeight()/2) - ( menuImage.getHeight()/1.5));

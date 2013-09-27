@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/TeamManager.hpp"
-#include "Resources/ResourceManager.hpp"
 #include <sstream>
 
 PlayerID NetworkPlayerState::getPlayerIndex() const

@@ -45,7 +45,7 @@ void
 InfoBar::draw(Surface &dest) const
 {
     iRect r(rect.getLocationX(), rect.getLocationY(), dest.getWidth(), rect.getLocationY()+12);
-    dest.bltLookup(r, Palette::filterDarkGray());
+//    dest.bltLookup(r, Palette::filterDarkGray());
 
     char buf[512];
     char titles[512];

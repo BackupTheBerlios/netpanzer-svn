@@ -52,15 +52,15 @@ MissleWeapon::MissleWeapon(UnitID owner, unsigned short owner_type_id, unsigned 
     shell.setFrame(getGoalAngle(start, end));
     shell.setAttrib(location, weaponLayer);
 
-    shellShadow.setDrawModeBlend(Palette::blendDarkenALittle());
+//    shellShadow.setDrawModeBlend(Palette::blendDarkenALittle());
     shellShadow.setFrame(getGoalAngle(start, end));
     shellShadow.setAttrib(location, weaponShadowLayer);
 
-    thrust.setDrawModeBlend(Palette::blendBrighten());
+//    thrust.setDrawModeBlend(Palette::blendBrighten());
     thrust.setData(gMissleThrustPackedSurface);
     thrust.setAttrib(location, weaponPuffLayer);
 
-    groundLight.setDrawModeBlend(Palette::blendBrighten());
+//    groundLight.setDrawModeBlend(Palette::blendBrighten());
     groundLight.setData(gMissleGroundLightPackedSurface);
     groundLight.setAttrib(location, weaponPuffLayer);
 }

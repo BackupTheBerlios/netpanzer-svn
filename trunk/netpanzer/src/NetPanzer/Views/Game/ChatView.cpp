@@ -69,7 +69,7 @@ static Button* createTitlebarButton(int x, int y, const Surface& button_images, 
 
     Surface *bimage = new Surface(15,15);
     button_images.blt(*bimage, 0, 0);
-    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
+//    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
     bg.push_back(bimage);
 
     bimage = new Surface(15,15);
@@ -82,7 +82,7 @@ static Button* createTitlebarButton(int x, int y, const Surface& button_images, 
 
     bimage = new Surface(15,15);
     button_images.blt(*bimage, 0, 0);
-    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
+//    bimage->bltLookup(bimage->getRect(), Palette::filterDarkGray());
     bg.push_back(bimage);
 
     Button *b = new Button();
@@ -123,7 +123,7 @@ ChatView::ChatView() : GameTemplateView()
     moveTo(screen->getWidth()-getWidth(), screen->getHeight()-getHeight());
 
     Surface button_images;
-    button_images.loadBMP(itScroll);
+    button_images.loadPNG(itScroll);
     
     bHideWindow = createTitlebarButton( 0, 0, button_images, new MinimizeChatAction(this));
     add(bHideWindow);
@@ -176,7 +176,7 @@ ChatView::ChatView() : GameTemplateView()
 
 void ChatView::doDraw( Surface& dest )
 {
-    dest.bltLookup(dest.getRect(), Palette::filterBrightness());
+//    dest.bltLookup(dest.getRect(), Palette::filterBrightness());
     dest.bltString(35, 4, "Chat View", ctTexteNormal);
     View::doDraw( dest );
 }

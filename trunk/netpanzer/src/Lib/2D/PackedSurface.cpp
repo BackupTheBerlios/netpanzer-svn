@@ -319,6 +319,8 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
     }
     if (destY < 0) {
         srcMin.y = -destY;
+//        destY -= 1; // this two lines adjust for correct start, was off by 1
+//        srcMin.y += 1;
         if (srcMin.y >= pix.y) return; // off right
     } else {
         srcMin.y = 0;
@@ -419,6 +421,262 @@ nextRow:
 
 }
 
+void PackedSurface::bltFrame(Surface &dest, const unsigned frame, const int destX, const int destY) const
+{
+    // @todo check frame is in bounds
+    totalDrawCount++;
+
+    // Clip and trivial reject
+
+    int needClipX = 0;
+
+    iXY srcMax;
+    srcMax.x = dest.getWidth() - destX;
+    if (srcMax.x <= 0) return; // off right
+    srcMax.y = dest.getHeight() - destY;
+    if (srcMax.y <= 0) return; // off bottom
+
+    iXY srcMin;
+    if (destX < 0) {
+        srcMin.x = -destX;
+        if (srcMin.x >= pix.x) return; // off left
+        needClipX = 1;
+    } else {
+        srcMin.x = 0;
+    }
+    if (destY < 0) {
+        srcMin.y = -destY;
+//        destY -= 1; // this two lines adjust for correct start, was off by 1
+//        srcMin.y += 1;
+        if (srcMin.y >= pix.y) return; // off right
+    } else {
+        srcMin.y = 0;
+    }
+
+    if (srcMax.x > pix.x) {
+        srcMax.x = pix.x;
+    } else {
+        needClipX = 1;
+    }
+    if (srcMax.y > pix.y) {
+        srcMax.y = pix.y;
+    }
+
+    const int *table = &rowOffsetTable[frame*pix.y];
+
+    if (needClipX) {
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
+
+            // Search for first span which is not completely off to the left
+
+            int x1, x2;
+            SpanHead *span;
+            const PIX *data;
+            for (;;) {
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = ltoh16(span->x1);
+                x2 = x1 + ltoh16(span->len);
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                if (x2 > srcMin.x) break;
+            }
+
+            // Clip against left edge
+
+            data = (const PIX *)(span + 1);
+            if (x1 < srcMin.x) {
+                data += srcMin.x - x1;
+                x1 = srcMin.x;
+            }
+
+            // Output spans to the screen until we hit the first
+            // span which is partially or completely out to the
+            // right
+
+            for (;;) {
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+
+                // Clip current span against right edge
+                if (x2 > srcMax.x) {
+                    memcpy(destRowPtr + x1, data, (srcMax.x-x1) * sizeof(PIX));
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+
+                memcpy(destRowPtr + x1, data, (x2-x1) * sizeof(PIX));
+
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = ltoh16(span->x1);
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+                x2 = x1 + ltoh16(span->len);
+                data = (const PIX *)(span + 1);
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+            }
+
+nextRow:
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getPitch();
+        }
+    } else {
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0,destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
+
+            while (rowData < rowEnd) {
+                SpanHead *span = (SpanHead *)rowData;
+                memcpy(destRowPtr + ltoh16(span->x1), span + 1,
+                    ltoh16(span->len) * sizeof(PIX));
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+            }
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getPitch();
+        }
+    }
+
+}
+
+void PackedSurface::bltBlendFrame(Surface &dest, const unsigned frame, const int destX, const int destY, const uint8_t * blendTable) const
+{
+    totalDrawCount++;
+
+    // Clip and trivial reject
+
+    int needClipX = 0;
+
+    iXY srcMax;
+    srcMax.x = dest.getWidth() - destX;
+    if (srcMax.x <= 0) return; // off right
+    srcMax.y = dest.getHeight() - destY;
+    if (srcMax.y <= 0) return; // off bottom
+
+    iXY srcMin;
+    if (destX < 0) {
+        srcMin.x = -destX;
+        if (srcMin.x >= pix.x) return; // off left
+        needClipX = 1;
+    } else {
+        srcMin.x = 0;
+    }
+    if (destY < 0) {
+        srcMin.y = -destY;
+//        destY -= 1; // this two lines adjust for correct start, was off by 1
+//        srcMin.y += 1;
+        if (srcMin.y >= pix.y) return; // off right
+    } else {
+        srcMin.y = 0;
+    }
+
+    if (srcMax.x > pix.x) {
+        srcMax.x = pix.x;
+    } else {
+        needClipX = 1;
+    }
+    if (srcMax.y > pix.y) {
+        srcMax.y = pix.y;
+    }
+
+    const int  *table  = &rowOffsetTable[frame*pix.y];
+
+    if (needClipX) {
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
+
+            // Search for first span which is not completely off to the left
+
+            int x1, x2;
+            SpanHead *span;
+            const PIX *data;
+            for (;;) {
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = ltoh16(span->x1);
+                x2 = x1 + ltoh16(span->len);
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                if (x2 > srcMin.x) break;
+            }
+
+            // Clip against left edge
+
+            data = (const PIX *)(span + 1);
+            if (x1 < srcMin.x) {
+                data += srcMin.x - x1;
+                x1 = srcMin.x;
+            }
+
+            // Output spans to the screen until we hit the first
+            // span which is partially or completely out to the
+            // right
+
+            for (;;) {
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+
+                // Clip current span against right edge
+                if (x2 > srcMax.x) {
+                    bltBlendSpan(destRowPtr + x1, data, srcMax.x - x1, blendTable);
+
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+
+                bltBlendSpan(destRowPtr + x1, data, x2 - x1, blendTable);
+
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = ltoh16(span->x1);
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+                x2 = x1 + ltoh16(span->len);
+                data = (const PIX *)(span + 1);
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+            }
+
+nextRow:
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getPitch();
+        }
+    } else {
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
+
+            while (rowData < rowEnd) {
+                SpanHead *span = (SpanHead *)rowData;
+
+                bltBlendSpan(destRowPtr + ltoh16(span->x1),
+                    (const PIX *)(span + 1), ltoh16(span->len), blendTable);
+
+                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+            }
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getPitch();
+        }
+    }
+
+}
+
 // setTo
 //---------------------------------------------------------------------------
 // Purpose: Maps the calling PackedSurface to some specified coordinates of
@@ -488,6 +746,8 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, const uint8_t 
     }
     if (destY < 0) {
         srcMin.y = -destY;
+//        destY -= 1; // this two lines adjust for correct start, was off by 1
+//        srcMin.y += 1;
         if (srcMin.y >= pix.y) return; // off right
     } else {
         srcMin.y = 0;

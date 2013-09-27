@@ -18,46 +18,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MOUSEINTERFACE_HPP
 #define _MOUSEINTERFACE_HPP
 
-#include <string>
-#include <map>
-#include <deque>
-
-#include "SDL.h"
-#include "2D/Surface.hpp"
 #include "GameInput/InputManager.hpp"
+#include "Resources/MouseCursor.hpp"
 
 class MouseInterface
 {
-private:
-    static Surface * cursor;
-    static unsigned char cursor_x_size;
-    static unsigned char cursor_y_size;
-
-    typedef std::map<std::string,Surface*> cursors_t;
-    static cursors_t cursors;
-
-protected:
-    static iXY mouse_offset;
-    
 public:
-
-    enum CursorType {
-        defaultcursor, noentry, move, select, target, allie, break_allie, CURSOR_TYPE_MAX
-    };
+//    enum CursorType {
+//        defaultcursor, noentry, move, select, target, allie, break_allie, CURSOR_TYPE_MAX
+//    };
 
     static void initialize();
     static void shutdown();
     
     static void draw(Surface &dest)
     {
-        if (cursor)
-        {
-            cursor->bltTrans(dest, GameInput::InputManager::getMouseX() - mouse_offset.x,
-                                   GameInput::InputManager::getMouseY() - mouse_offset.y);
-        }
+        mouse.draw(dest, GameInput::InputManager::getMouseX(),
+                         GameInput::InputManager::getMouseY());
     }
+    
+    static void setCursor(const MouseCursorResource& mcr) { mouse = mcr; }
 
-    static void setCursor(const char* cursorname);
+    static void setCursor(const char* cursorname) {}
+
+private:
+    static MouseCursorResource mouse;
+
 };
 
 #endif // ** _MOUSEINTERFACE_HPP

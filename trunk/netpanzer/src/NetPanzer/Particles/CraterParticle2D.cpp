@@ -115,13 +115,13 @@ void CraterParticle2D::sim()
             craterCache[cacheIndex].pos.zero();
         }
     } else if (age > lifetime * 0.9f) {
-        packedSurface.setDrawModeBlend(Palette::blend8020());
+//        packedSurface.setDrawModeBlend(Palette::blend8020());
     } else if (age > lifetime * 0.8f) {
-        packedSurface.setDrawModeBlend(Palette::blend6040());
+//        packedSurface.setDrawModeBlend(Palette::blend6040());
     } else if (age > lifetime * 0.7f) {
-        packedSurface.setDrawModeBlend(Palette::blend4060());
+//        packedSurface.setDrawModeBlend(Palette::blend4060());
     } else if (age > lifetime * 0.6f) {
-        packedSurface.setDrawModeBlend(Palette::blend2080());
+//        packedSurface.setDrawModeBlend(Palette::blend2080());
     }
 
     Particle2D::sim();

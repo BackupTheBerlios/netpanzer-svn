@@ -116,7 +116,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         screen_rect.translate(1, screen_rect.getHeight()-6);
         screen_rect.setSize(screen_rect.getWidth()-2, 5);
-        surface->bltLookup(screen_rect, Palette::filterDarkGray());
+//        surface->bltLookup(screen_rect, Palette::filterDarkGray());
 
         screen_rect.grow(-1,-1);
         screen_rect.setWidth(hit_bar_size);

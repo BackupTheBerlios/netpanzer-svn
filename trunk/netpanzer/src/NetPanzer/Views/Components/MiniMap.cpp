@@ -263,7 +263,7 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
     world_win.scale(1/(xratio*32), 1/(yratio*32));
     world_win.translate(rect.getLocation());
     
-    dest.bltLookup(world_win, Palette::filterDarkGray());
+//    dest.bltLookup(world_win, Palette::filterDarkGray());
     dest.drawBoxCorners(world_win, 5, Color::white);
     
     if ( mouseinside )

@@ -253,11 +253,11 @@ BaseGameManager *initialise(int argc, char** argv)
         {
             if (master_server_option.value() == "none")
             {
-                *GameConfig::server_masterservers = "";
+                gameconfig->masterservers.clear();
             }
             else
             {
-                *GameConfig::server_masterservers = master_server_option.value();
+                gameconfig->masterservers.push_back(master_server_option.value());
             }
         }
 

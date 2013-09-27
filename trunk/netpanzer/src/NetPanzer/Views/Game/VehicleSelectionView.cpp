@@ -244,7 +244,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
         uprofile = UnitProfileInterface::getUnitProfile(ut);
 
         Surface * s = new Surface();
-        s->loadBMP(uprofile->imagefile.c_str());
+        s->loadPNG(uprofile->imagefile.c_str());
         unitImages.push_back(s);
 
         usb = new UnitSelectionButton(this, ut, pos.x, pos.y, *s);
@@ -562,7 +562,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
             if ( ! obj->unit_generation_on_flag )
             {
                 // Objective is off.
-                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
+//                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.y += 16;
                 dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
@@ -581,7 +581,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                         ((int)tleft) / 60,
                         ((int)tleft) % 60);
                 checkMiniProductionRect(timeLeftBuf);
-                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
+//                dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
 
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);
                 pos.x += unitImages[0]->getWidth();
@@ -599,7 +599,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
         }
         else
         {
-            dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
+//            dest.bltLookup(miniProductionRect, Palette::filterDarkGray());
             if ( obj->occupying_player) 
             {
                 dest.bltString(pos.x, pos.y, outpostUserNameBuf, Color::cyan);

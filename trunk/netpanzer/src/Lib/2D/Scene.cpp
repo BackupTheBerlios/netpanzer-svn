@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Scene.hpp"
 #include "Layer.hpp"
-#include "Interfaces/MouseInterface.hpp"
 
 bool Scene::isAlreadyAdded(const Layer* layer)
 {

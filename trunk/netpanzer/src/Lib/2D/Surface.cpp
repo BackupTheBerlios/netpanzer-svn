@@ -36,6 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Color.hpp"
 
+#include "libpng-1.6.5/png.h"
+
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
@@ -167,7 +169,10 @@ void Surface::free()
         assert(totalByteCount >= 0);
     }
 
-    mem        = 0;
+    mem     = 0;
+    twidth  = 0;
+    theight = 0;
+    tpitch  = 0;
 }
 
 // reset
@@ -903,66 +908,6 @@ PIX Surface::getAverageColor()
     return Palette::findNearestColor(avgR, avgG, avgB);
 } // end Surface::getAverageColor
 
-void Surface::bltAlphaColor(Surface &dest, int x, int y, const PIX color) const
-{
-    int source_lines = getHeight();
-    int source_cols = getWidth();
-    int source_start_x = 0;
-    int source_start_y = 0;
-
-    if ( (y >= (int)dest.getHeight()) || (x >= (int)dest.getWidth()) )
-    {
-        return;
-    }
-
-    if ( y < 0 )
-    {
-        if ( -y >= source_lines )
-        {
-            return;
-        }
-
-        source_lines += y;
-        source_start_y -= y;
-        y = 0;
-    }
-
-    if ( x < 0 )
-    {
-        if ( -x >= source_cols )
-        {
-            return;
-        }
-        source_cols += x;
-        source_start_x -= x;
-        x = 0;
-    }
-
-    unsigned dest_lines = std::min(dest.getHeight() - y, (unsigned)source_lines);
-    unsigned dest_cols = std::min(dest.getWidth() - x, (unsigned)source_cols);
-
-    int srcAdjustment  = getPitch()      - dest_cols;
-    int destAdjustment = dest.getPitch() - dest_cols;
-
-    PIX	*sPtr = pixPtr( source_start_x, source_start_y);  // Pointer to source Surface start of memory.
-    PIX	*dPtr = dest.pixPtr( x, y); // Pointer to destination Surface start of memory.
-    
-    uint8_t * cbase = &Palette::fullAlphaTable()[color*(16*256)];
-
-    for (unsigned row = 0; row < dest_lines; row++)
-    {
-        for (unsigned col = 0; col < dest_cols; col++)
-        {
-            *dPtr = cbase[(*sPtr * 256) + *dPtr];
-            sPtr++;
-            dPtr++;
-        }
-
-        sPtr += srcAdjustment;
-        dPtr += destAdjustment;
-    }
-}
-
 void Surface::bltRectAlphaColor(Surface& dest, int x, int y, const iRect& rect, const PIX color) const
 {
     int source_lines = std::min<int>(rect.getHeight(), getHeight()-rect.getLocationY());
@@ -1191,6 +1136,60 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
     {
         throw Exception("Cannot open bmp file '%s'", fileName);
     }
+}
+
+// @todo check for returned errors!!!
+void Surface::loadPNG(const char* fileName)
+{
+    filesystem::ReadFile file(fileName);
+    if ( file.isOpen() )
+    {
+        const int flen = file.fileLength();
+        if ( flen )
+        {
+            uint8_t buf[flen];
+            memset(buf, 0, flen);
+            
+            file.read(buf, flen, 1);
+            
+            png_image pim = {0};
+            pim.version = PNG_IMAGE_VERSION;
+            png_image_begin_read_from_memory(&pim, buf, flen);
+            
+            create(pim.width, pim.height);
+            if ( mem )
+            {
+                pim.format |= PNG_FORMAT_FLAG_COLORMAP;
+                
+                RGBColor p[256];
+                memcpy(&p, &Palette::color, sizeof(Palette::color));
+                
+                // libpng modifies the palette, so make a copy
+                png_image_finish_read(&pim, 0, mem, 0, &p);
+//                png_image_finish_read(&pim, 0, mem, 0, &Palette::color);
+            }
+        }
+    }
+}
+
+void Surface::savePNG(const char* fileName)
+{
+    std::string fn = filesystem::getRealWriteName(fileName);
+    
+    png_image pim = {0};
+    pim.version = PNG_IMAGE_VERSION;
+    
+    pim.width = getWidth();
+    pim.height = getHeight();
+    pim.format = PNG_FORMAT_FLAG_COLOR | PNG_FORMAT_FLAG_COLORMAP | PNG_FORMAT_FLAG_ALPHA;
+    pim.colormap_entries = 256;
+    
+    png_image_write_to_file(&pim, fn.c_str(), false, mem, 0, &Palette::color);
+    if ( pim.warning_or_error )
+    {
+        LOGGER.warning("msg from libpng: '%s'", pim.message);
+    }
+    
 }
 
 // drawBoxCorners

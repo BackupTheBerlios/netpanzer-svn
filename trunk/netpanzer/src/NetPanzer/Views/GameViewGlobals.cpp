@@ -62,5 +62,5 @@ bool gDrawGameHelp          = false;
 //--------------------------------------------------------------------------
 void bltViewBackground(Surface &dest)
 {
-    dest.BltRoundRect(dest.getRect(), 10, Palette::filterDarkGray());
+//    dest.BltRoundRect(dest.getRect(), 10, Palette::filterDarkGray());
 }

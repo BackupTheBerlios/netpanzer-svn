@@ -90,12 +90,10 @@ void MasterserverQuerier::beginQuery(PtrArray<ServerAddress>* dest)
     masterservers.deleteAll();
     masterservers.clear();
 
-    NPString server;
-    StringTokenizer tokenizer(*GameConfig::server_masterservers, ',');
-    while( (server = tokenizer.getNextToken()) != "")
+    for ( int n = 0; n < gameconfig->masterservers.size(); n++ )
     {
-        LOGGER.debug("Begin connect to masterserver: '%s'", StringUtil::trim(server).c_str() );
-        Data * d = new Data(StringUtil::trim(server));
+        LOGGER.debug("Begin connect to masterserver: '%s'", gameconfig->masterservers[n].c_str() );
+        Data * d = new Data(gameconfig->masterservers[n]);
         d->connect(this);
         masterservers.push_back( d );
     }

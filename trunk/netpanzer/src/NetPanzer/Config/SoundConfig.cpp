@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "SoundConfig.hpp"
-#include "ConfigGetter.hpp"
+#include "json/json.h"
 
 SoundConfig::SoundConfig()
  :  sound(true),
@@ -36,22 +36,20 @@ SoundConfig::~SoundConfig()
     
 }
 
-void SoundConfig::load(const JSONNode& node)
+void SoundConfig::load(const Json::Value& node)
 {
-    ConfigGetter cg(node);
-    
-    setSound(cg.getBool("enabled", true));
-    setMusic(cg.getBool("music", true));
-    setMusicVol(cg.getInt("musicvolume", 0, 100, 100));
-    setEffects(cg.getBool("effects", true));
-    setEffectsVol(cg.getInt("effectsvolume", 0, 100, 100));
+    setSound(node.get("enabled", true).asBool());
+    setMusic(node.get("music", true).asBool());
+    setMusicVol(node.get("musicvolume", 100).asInt());
+    setEffects(node.get("effects", true).asBool());
+    setEffectsVol(node.get("effectsvolume", 100).asInt());
 }
 
-void SoundConfig::save(JSONNode& node) const
+void SoundConfig::save(Json::Value& node) const
 {
-    node.push_back(JSONNode("enable", useSound()));
-    node.push_back(JSONNode("music", useMusic()));
-    node.push_back(JSONNode("musicvolume", getMusicVol()));
-    node.push_back(JSONNode("effects", useEffects()));
-    node.push_back(JSONNode("effectsvolume", getEffectsVol()));
+    node["enable"] = useSound();
+    node["music"] = useMusic();
+    node["musicvolume"] = getMusicVol();
+    node["effecs"] = useEffects();
+    node["effectsvolume"] = getEffectsVol();
 }

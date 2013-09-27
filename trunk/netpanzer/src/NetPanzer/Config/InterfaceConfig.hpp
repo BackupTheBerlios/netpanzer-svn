@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 
-#include "libjson/libjson.h"
+#include "json/json-forwards.h"
 
 class InterfaceConfig
 {
@@ -58,8 +58,8 @@ public:
             MiniMap();
             ~MiniMap();
             
-            void load(const JSONNode& node);
-            void save(JSONNode& node) const;
+            void load(const Json::Value& node);
+            void save(Json::Value& node) const;
             
             inline int getPlayerUnitColor() const { return playerunitcolor; }
             inline int getSelectedUnitColor() const { return selectedunitcolor; }
@@ -73,7 +73,7 @@ public:
             inline void setAlliedUnitColor(const int v) { alliedunitcolor = v; }
             inline void setPlayerOutpostColor(const int v) { playeroutpostcolor = v; }
             inline void setAlliedOutpostColor(const int v) { alliedoutpostcolor = v; }
-            inline void setBigUnitSize(const int v) { bigunitsize = v; }
+            inline void setBigUnitSize(const bool v) { bigunitsize = v; }
             
         private:
             int playerunitcolor;
@@ -81,15 +81,15 @@ public:
             int alliedunitcolor;
             int playeroutpostcolor;
             int alliedoutpostcolor;
-            int bigunitsize;
+            bool bigunitsize;
      };
 
     
     InterfaceConfig();
     ~InterfaceConfig();
     
-    void load(const JSONNode& node);
-    void save(JSONNode& node) const;
+    void load(const Json::Value& node);
+    void save(Json::Value& node) const;
 
     inline bool            showHealth() const { return show_health; }
     inline bool            showFlags() const { return show_flags; }

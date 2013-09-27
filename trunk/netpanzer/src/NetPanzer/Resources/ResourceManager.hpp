@@ -23,6 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 #include "ArrayUtil/PtrArray.hpp"
+#include "MouseCursor.hpp"
+#include "Image.hpp"
+#include "MImage.hpp"
+#include "BlendTable.hpp"
+#include "ImageFilter.hpp"
 #include <vector>
 
 // forward declarations
@@ -56,6 +61,14 @@ public:
     static int listMaps(std::vector<NPString>& dest);
     static bool mapExists(const NPString& name);
     static const MapFile* getMap(const NPString& name, const int flags);
+    
+    static bool loadResourceDescriptions(const NPString& filename);
+    
+    static MouseCursorResource getMouseCursor(const NPString& name);
+    static ImageResource getImage(const NPString& name);
+    static MImageResource getMImage(const NPString& name);
+    static BlendTableResource getBlendTable(const NPString& name);
+    static ImageFilterResource getImageFilter(const NPString& name);
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

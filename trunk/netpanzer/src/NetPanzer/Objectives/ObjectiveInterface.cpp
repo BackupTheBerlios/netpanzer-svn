@@ -147,7 +147,7 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
 void
 ObjectiveInterface::loadObjectiveList(const char *file_path)
 {
-    if ( ! GameConfig::game_enable_bases )
+    if ( ! gameconfig->gameoptions.outposts.enabled() )
     {
         return;
     }

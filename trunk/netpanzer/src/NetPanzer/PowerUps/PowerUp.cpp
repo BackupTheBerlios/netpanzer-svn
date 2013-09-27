@@ -47,7 +47,7 @@ PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
+//    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 }
 
 PowerUp::PowerUp(iXY map_loc, int type)
@@ -65,7 +65,7 @@ PowerUp::PowerUp(iXY map_loc, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
+//    sprite_shadow.setDrawModeBlend(Palette::blendDarkenALot());
 }
 
 bool PowerUp::isPowerUpHit(UnitID *unit_id)

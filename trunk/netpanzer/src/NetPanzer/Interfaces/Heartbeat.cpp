@@ -45,11 +45,9 @@ public:
 
 Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
-    StringTokenizer mstokenizer(*GameConfig::server_masterservers, ',');
-    string servname;
-    while( (servname = StringUtil::trim(mstokenizer.getNextToken())) != "")
+    for (int n = 0; n < gameconfig->masterservers.size(); n++ )
     {
-        mslist.push_back( new NPString(servname) );
+        mslist.push_back( new NPString(gameconfig->masterservers[n]) );
     }
     
     stringstream msg;

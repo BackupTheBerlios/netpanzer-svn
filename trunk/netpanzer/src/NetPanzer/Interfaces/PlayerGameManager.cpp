@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/Console.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Interfaces/MouseInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/MapInterface.hpp"
@@ -211,8 +210,7 @@ void PlayerGameManager::hostMultiPlayerGame()
         
         SERVER->hostSession();
 
-        if ( gameconfig->host.isPublic()
-             && GameConfig::server_masterservers->size() != 0 )
+        if ( gameconfig->host.isPublic() && ! gameconfig->masterservers.empty() )
         {
             try
             {
