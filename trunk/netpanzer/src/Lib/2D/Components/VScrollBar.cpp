@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 
 #include "Util/Log.hpp"
+#include "Resources/MImage.hpp"
+#include "Resources/ResourceManager.hpp"
 
 #define BSIZE (15)
 #define REPEAT_INITIAL (500)
@@ -61,30 +63,44 @@ VScrollBar::VScrollBar()
     scrollArea.setWidth(BSIZE);
     movableBar.setWidth(BSIZE);
     
-    Surface pics;
-    pics.loadPNG("pics/buttons/scrollbutton.png");
+//    MImageResource sbuttons = ResourceManager::getMImage("scroll-buttons");
+    MImageResource sbuttons = ResourceManager::getResource<MImageResource>("new-scroll-buttons");
     
     PtrArray<Surface> piclist(3);
+    
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
 
-    piclist.fillNew();
-    piclist[0]->grab(pics, iRect(BSIZE*3, 0, BSIZE, BSIZE));
-    piclist[1]->grab(pics, iRect(BSIZE*2, 0, BSIZE, BSIZE));
-    piclist[2]->grab(pics, iRect(BSIZE*2, 0, BSIZE, BSIZE));
+    piclist[0]->fill(0);
+    piclist[1]->fill(0);
+    piclist[2]->fill(0);
+    
+    sbuttons.draw(*piclist[0], 0, 0, 0); // 3,2,2
+    sbuttons.draw(*piclist[1], 1, 0, 0);
+    sbuttons.draw(*piclist[2], 2, 0, 0);
     
     upButton = new Button();
     upButton->setImage(piclist);
-    upButton->setStateOffset(Button::BPRESSED, 1, 1);
+//    upButton->setStateOffset(Button::BPRESSED, 1, 1);
     upButton->setComponentEvents(&myEvents);
     upButton->setClickEvent(Events::GoUp);
 
-    piclist.fillNew();
-    piclist[0]->grab(pics, iRect(BSIZE, 0, BSIZE, BSIZE));
-    piclist[1]->grab(pics, iRect(    0, 0, BSIZE, BSIZE));
-    piclist[2]->grab(pics, iRect(    0, 0, BSIZE, BSIZE));
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
+    piclist.push_back(new Surface(sbuttons.getWidth(), sbuttons.getHeight()));
+
+    piclist[0]->fill(0);
+    piclist[1]->fill(0);
+    piclist[2]->fill(0);
     
+    sbuttons.draw(*piclist[0], 4, 0, 0); // 1, 0, 0
+    sbuttons.draw(*piclist[1], 5, 0, 0);
+    sbuttons.draw(*piclist[2], 6, 0, 0);
+
     downButton = new Button();
     downButton->setImage(piclist);
-    downButton->setStateOffset(Button::BPRESSED, 1, 1);
+//    downButton->setStateOffset(Button::BPRESSED, 1, 1);
     downButton->setComponentEvents(&myEvents);
     downButton->setClickEvent(Events::GoDown);
     

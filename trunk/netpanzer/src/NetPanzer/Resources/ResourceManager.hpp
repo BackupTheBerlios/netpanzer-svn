@@ -29,6 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BlendTable.hpp"
 #include "ImageFilter.hpp"
 #include <vector>
+#include <map>
+
+#include "json/json-forwards.h"
 
 // forward declarations
 class Surface;
@@ -64,11 +67,11 @@ public:
     
     static bool loadResourceDescriptions(const NPString& filename);
     
-    static MouseCursorResource getMouseCursor(const NPString& name);
-    static ImageResource getImage(const NPString& name);
-    static MImageResource getMImage(const NPString& name);
-    static BlendTableResource getBlendTable(const NPString& name);
-    static ImageFilterResource getImageFilter(const NPString& name);
+    template<typename T> static T getResource(const NPString& name);
+
+private:
+    template<typename T> static T* resourceFromJSon(const Json::Value& node);
+    template<typename T> static void loadJSonResourceArray(const Json::Value& v, std::map<NPString, T*>& m, const char * rname );
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

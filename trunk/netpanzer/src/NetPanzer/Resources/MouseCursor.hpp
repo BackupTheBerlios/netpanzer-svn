@@ -29,6 +29,8 @@ class MouseCursor
 public:
     inline bool isLoaded() const { return loaded; }
 
+    bool load();
+
     inline void unload()
     {
         image.free();

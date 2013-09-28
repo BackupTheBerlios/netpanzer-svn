@@ -275,8 +275,8 @@ MakeStaticLib(libpngenv, 'nplibpng', 'libpng-1.6.5', '*.c')
 
 # BUILDS FREETYPE
 
-env.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
-env.StaticLibrary( libpath + 'npfreetype', [ 'src/Lib/freetype/ftsystem.c', 'src/Lib/freetype/ftinit.c', 'src/Lib/freetype/ftdebug.c','src/Lib/freetype/ftbase.c','src/Lib/freetype/truetype.c','src/Lib/freetype/raster.c','src/Lib/freetype/smooth.c','src/Lib/freetype/sfnt.c'] )
+freetypeenv.Append( CFLAGS = [ '-Isrc/Lib/freetype/include', '-DFT2_BUILD_LIBRARY'] )
+freetypeenv.StaticLibrary( libpath + 'npfreetype', [ 'src/Lib/freetype/ftsystem.c', 'src/Lib/freetype/ftinit.c', 'src/Lib/freetype/ftdebug.c','src/Lib/freetype/ftbase.c','src/Lib/freetype/truetype.c','src/Lib/freetype/raster.c','src/Lib/freetype/smooth.c','src/Lib/freetype/sfnt.c'] )
 
 # BUILDS 2D
 env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )

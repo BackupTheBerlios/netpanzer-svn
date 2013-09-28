@@ -308,7 +308,7 @@ Button::createNewSpecialButton(    const NPString& label,
                                    const iXY& loc,
                                    int width )
 {
-    ImageResource bitmap = ResourceManager::getImage("newbutton-background");
+    ImageResource bitmap = ResourceManager::getResource<ImageResource>("newbutton-background");
 
     Surface bstart(15, bitmap.getHeight());
     Surface bend(15, bitmap.getHeight());

@@ -33,6 +33,7 @@
     
     "mimages": [
         { "name": "scroll-buttons", "file": "pics/buttons/scrollbutton.png", "size": [ 15, 15 ], "offset": [ 0, 0 ], "frames": 10, "fps": 0 },
+        { "name": "new-scroll-buttons", "file": "pics/buttons/newscroll.png", "size": [ 15, 15 ], "offset": [ 0, 0 ], "frames": 8, "fps": 0 },
 
         { "name": "burn-ground-chunks", "file": "pics/particles/burnGroundChunks.png", "size": [2, 2], "offset": [0, 0], "frames": 26, "fps": 0 },
         { "name": "chunks",             "file": "pics/particles/chunks.png",           "size": [2, 2], "offset": [0, 0], "frames": 256, "fps": 0 },

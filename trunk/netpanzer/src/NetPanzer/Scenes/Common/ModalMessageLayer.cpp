@@ -48,7 +48,7 @@ private:
 public:
     DarkGrayPanel()
     {
-        filter = ResourceManager::getImageFilter("darkgray");
+        filter = ResourceManager::getResource<ImageFilterResource>("darkgray");
     }
     
     void draw(Surface& dest) const

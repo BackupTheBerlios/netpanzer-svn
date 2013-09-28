@@ -377,125 +377,35 @@ const MapFile* ResourceManager::getMap(const NPString& name, const int flags)
     return mapfile;
 }
 
-static bool loadMouseCursor(const Json::Value& node, MouseCursor * mc)
+template<typename T> void ResourceManager::loadJSonResourceArray(const Json::Value& v, std::map<NPString, T*>& m, const char * rname )
 {
-    if ( node.isMember("name")
-      && node.isMember("file")
-      && node.isMember("offset") )
+    if ( v.isArray() && v.size() > 0 )
     {
-        const Json::Value& off = node["offset"];
-        if ( off.isArray() && off.size() >= 2 )
+        for ( int n = 0, e = v.size(); n < e; n++ )
         {
-            mc->name = node["name"].asString();
-            mc->file = node["file"].asString();
-            mc->offset_x = off[0].asInt();
-            mc->offset_y = off[1].asInt();
-            return true;
+            T * c = resourceFromJSon<T>(v[n]);
+            if ( c )
+            {
+                typename std::map<NPString, T*>::iterator i = m.find(c->name);
+                if ( i == m.end() )
+                {
+                    LOGGER.warning("Adding %s: '%s'", rname, c->name.c_str());
+                    m.insert(std::make_pair(c->name, c));
+                }
+                else
+                {
+                    // @todo do something with the already existing resource
+                }
+            }
         }
     }
-    
-    return false;
-}
-
-static bool loadImage(const Json::Value& node, Image * i)
-{
-    if ( node.isMember("name")
-      && node.isMember("file")
-      && node.isMember("size") )
-    {
-        const Json::Value& siz = node["size"];
-        if ( siz.isArray() && siz.size() >= 2 )
-        {
-            i->name   = node["name"].asString();
-            i->file   = node["file"].asString();
-            i->width  = siz[0].asInt();
-            i->height = siz[1].asInt();
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-static bool loadMImage(const Json::Value& node, MImage * i)
-{
-    // offset and fps are optional
-    if ( node.isMember("name")
-      && node.isMember("file")
-      && node.isMember("size")
-      && node.isMember("frames") )
-    {
-        const Json::Value& siz = node["size"];
-        if ( siz.isArray() && siz.size() >= 2 )
-        {
-            i->name   = node["name"].asString();
-            i->file   = node["file"].asString();
-            i->width  = siz[0].asInt();
-            i->height = siz[1].asInt();
-            i->frames = node["frames"].asInt();
-            
-            const Json::Value& off = node["offset"];
-            if ( off.isArray() && off.size() >= 2 )
-            {
-                i->offset_x = off[0].asInt();
-                i->offset_y = off[1].asInt();
-            }
-            else
-            {
-                i->offset_x = 0;
-                i->offset_y = 0;
-            }
-            
-            const Json::Value& fps = node["fps"];
-            if ( fps.isInt() )
-            {
-                i->fps = fps.asInt();
-            }
-            else
-            {
-                i->fps = 0;
-            }
-            
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-static bool loadBlendTable(const Json::Value& node, BlendTable * b)
-{
-    if ( node.isMember("name")
-      && node.isMember("file") )
-    {
-        b->name   = node["name"].asString();
-        b->file   = node["file"].asString();
-        return true;
-    }
-    
-    return false;
-}
-
-static bool loadImageFilter(const Json::Value& node, ImageFilter * b)
-{
-    if ( node.isMember("name")
-      && node.isMember("file") )
-    {
-        b->name   = node["name"].asString();
-        b->file   = node["file"].asString();
-        return true;
-    }
-    
-    return false;
 }
 
 bool ResourceManager::loadResourceDescriptions(const NPString& filename)
 {
-    bool wasGood = false;
     IFileStream ifile(filename);
     if ( ifile.good() )
     {
-        wasGood = true;
         Json::Value root;
         Json::Reader reader;
         if ( ! reader.parse(ifile, root, true) )
@@ -504,279 +414,57 @@ bool ResourceManager::loadResourceDescriptions(const NPString& filename)
             return false;
         }
         
-        {
-            const Json::Value& v = root["mcursors"];
-            if ( v.isArray() && v.size() > 0 )
-            {
-                for ( int n = 0, e = v.size(); n < e; n++ )
-                {
-                    MouseCursor * c = new MouseCursor();
-                    if ( loadMouseCursor(v[n], c) )
-                    {
-                        MouseCursors::iterator i = RMan->mcursors.find(c->name);
-                        if ( i == RMan->mcursors.end() )
-                        {
-                            LOGGER.warning("Adding cursor: '%s'", c->name.c_str());
-                            RMan->mcursors.insert(std::make_pair(c->name, c));
-                        }
-                        else
-                        {
-                            // @todo replace cursor with new one or do something
-                        }
-                    }
-                    else
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
-        
-        {
-            const Json::Value& v = root["images"];
-            if ( v.isArray() && v.size() > 0 )
-            {
-                for ( int n = 0, e = v.size(); n < e; n++ )
-                {
-                    Image * c = new Image();
-                    if ( loadImage(v[n], c) )
-                    {
-                        Images::iterator i = RMan->images.find(c->name);
-                        if ( i == RMan->images.end() )
-                        {
-                            LOGGER.warning("Adding image: '%s'", c->name.c_str());
-                            RMan->images.insert(std::make_pair(c->name, c));
-                        }
-                        else
-                        {
-                            // @todo replace cursor with new one or do something
-                        }
-                    }
-                    else
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
-        
-        {
-            const Json::Value& v = root["mimages"];
-            if ( v.isArray() && v.size() > 0 )
-            {
-                for ( int n = 0, e = v.size(); n < e; n++ )
-                {
-                    MImage * c = new MImage();
-                    if ( loadMImage(v[n], c) )
-                    {
-                        MImages::iterator i = RMan->mimages.find(c->name);
-                        if ( i == RMan->mimages.end() )
-                        {
-                            LOGGER.warning("Adding mimage: '%s'", c->name.c_str());
-                            RMan->mimages.insert(std::make_pair(c->name, c));
-                        }
-                        else
-                        {
-                            // @todo replace cursor with new one or do something
-                        }
-                    }
-                    else
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
-        
-        {
-            const Json::Value& v = root["blendtables"];
-            if ( v.isArray() && v.size() > 0 )
-            {
-                for ( int n = 0, e = v.size(); n < e; n++ )
-                {
-                    BlendTable * c = new BlendTable();
-                    if ( loadBlendTable(v[n], c) )
-                    {
-                        BlendTables::iterator i = RMan->blendtables.find(c->name);
-                        if ( i == RMan->blendtables.end() )
-                        {
-                            LOGGER.warning("Adding blendtable: '%s'", c->name.c_str());
-                            RMan->blendtables.insert(std::make_pair(c->name, c));
-                        }
-                        else
-                        {
-                            // @todo replace cursor with new one or do something
-                        }
-                    }
-                    else
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
-        
-        {
-            const Json::Value& v = root["imagefilters"];
-            if ( v.isArray() && v.size() > 0 )
-            {
-                for ( int n = 0, e = v.size(); n < e; n++ )
-                {
-                    ImageFilter * c = new ImageFilter();
-                    if ( loadImageFilter(v[n], c) )
-                    {
-                        ImageFilters::iterator i = RMan->imagefilters.find(c->name);
-                        if ( i == RMan->imagefilters.end() )
-                        {
-                            LOGGER.warning("Adding imagefilter: '%s'", c->name.c_str());
-                            RMan->imagefilters.insert(std::make_pair(c->name, c));
-                        }
-                        else
-                        {
-                            // @todo replace cursor with new one or do something
-                        }
-                    }
-                    else
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
+        loadJSonResourceArray(root["mcursors"],     RMan->mcursors,     "cursor");
+        loadJSonResourceArray(root["images"],       RMan->images,       "image");
+        loadJSonResourceArray(root["mimages"],      RMan->mimages,      "mimage");
+        loadJSonResourceArray(root["blendtables"],  RMan->blendtables,  "blendtable");
+        loadJSonResourceArray(root["imagefilters"], RMan->imagefilters, "imagefilter");
+
+        return true;
     }
-    return wasGood;
+    
+    return false;
 }
 
-MouseCursorResource ResourceManager::getMouseCursor(const NPString& name)
+template<typename T, typename R> R resourceOrDefault(std::map<NPString, T*>& m, const NPString& name, const char * rt)
 {
-    MouseCursors::iterator i = RMan->mcursors.find(name);
-    if ( i == RMan->mcursors.end())
+    typename std::map<NPString, T*>::iterator i = m.find(name);
+    if ( i == m.end())
     {
         // @todo return default thing
-        LOGGER.warning("Resource not found (cursor): '%s'", name.c_str());
-        return MouseCursorResource(0); // will die!!!!
+        LOGGER.warning("Resource (%s)not found: '%s'", rt, name.c_str());
+        return R(0); // will die!!!!
     }
     
     if ( ! i->second->isLoaded() )
     {
-        i->second->image.loadPNG(i->second->file.c_str());
-        i->second->loaded = true;
+        i->second->load();
     }
     
-    return MouseCursorResource(i->second);
+    return R(i->second);
 }
 
-ImageResource ResourceManager::getImage(const NPString& name)
+template<> MouseCursorResource ResourceManager::getResource<MouseCursorResource>(const NPString& name)
 {
-    Images::iterator i = RMan->images.find(name);
-    if ( i == RMan->images.end())
-    {
-        // @todo return default thing
-        LOGGER.warning("Resource not found (image): '%s'", name.c_str());
-        return ImageResource(0); // will die!!!!
-    }
-    
-    if ( ! i->second->isLoaded() )
-    {
-        i->second->image.loadPNG(i->second->file.c_str());
-        i->second->loaded = true;
-    }
-    
-    return ImageResource(i->second);
+    return resourceOrDefault<MouseCursor, MouseCursorResource>(RMan->mcursors, name, "cursor");
 }
 
-MImageResource ResourceManager::getMImage(const NPString& name)
+template<> ImageResource ResourceManager::getResource<ImageResource>(const NPString& name)
 {
-    MImages::iterator i = RMan->mimages.find(name);
-    if ( i == RMan->mimages.end())
-    {
-        // @todo return default thing
-        LOGGER.warning("Resource not found (mimage): '%s'", name.c_str());
-        return MImageResource(0); // will die!!!!
-    }
-    
-    if ( ! i->second->isLoaded() )
-    {
-        MImage * mimage = i->second;
-        
-        Surface surf;
-        surf.loadPNG(mimage->file.c_str());
-
-        iRect bounds(0, 0, mimage->width, mimage->height);
-            
-        PtrArray<Surface> ps(mimage->frames);
-        for ( int n = 0; n < mimage->frames; n++ )
-        {
-            // @todo replace grab with create and blit
-            Surface * s = new Surface();
-            s->grab(surf, bounds);
-            ps.push_back(s);
-
-            bounds.translate(mimage->width, 0);
-            if ( bounds.getLocationX() >= surf.getWidth() )
-            {
-                bounds.setLocationX(0);
-                bounds.translate(0, mimage->height);
-            }
-        }
-        
-        mimage->image.pack(ps);
-        ps.deleteAll();
-        
-        mimage->loaded = true;
-    }
-    
-    return MImageResource(i->second);
+    return resourceOrDefault<Image, ImageResource>(RMan->images, name, "image");
 }
 
-BlendTableResource ResourceManager::getBlendTable(const NPString& name)
+template<> MImageResource ResourceManager::getResource<MImageResource>(const NPString& name)
 {
-    BlendTables::iterator i = RMan->blendtables.find(name);
-    if ( i == RMan->blendtables.end())
-    {
-        // @todo return default thing
-        LOGGER.warning("Resource not found (blendtable): '%s'", name.c_str());
-        return BlendTableResource(0); // will die!!!!
-    }
-    
-    if ( ! i->second->isLoaded() )
-    {
-        filesystem::ReadFile f(i->second->file);
-        if ( f.isOpen() )
-        {
-            const unsigned blendtablesize = 256*256;
-            uint8_t * buffer = new uint8_t[blendtablesize];
-            f.read(buffer, blendtablesize, 1);
-            i->second->data = buffer;
-            i->second->loaded = true;
-        }
-    }
-    
-    return BlendTableResource(i->second);
+    return resourceOrDefault<MImage, MImageResource>(RMan->mimages, name, "mimage");
 }
 
-ImageFilterResource ResourceManager::getImageFilter(const NPString& name)
+template<> BlendTableResource ResourceManager::getResource<BlendTableResource>(const NPString& name)
 {
-    ImageFilters::iterator i = RMan->imagefilters.find(name);
-    if ( i == RMan->imagefilters.end())
-    {
-        // @todo return default thing
-        LOGGER.warning("Resource not found (imagefilter): '%s'", name.c_str());
-        return ImageFilterResource(0); // will die!!!!
-    }
-    
-    if ( ! i->second->isLoaded() )
-    {
-        filesystem::ReadFile f(i->second->file);
-        if ( f.isOpen() )
-        {
-            const unsigned imagefiltersize = 256;
-            uint8_t * buffer = new uint8_t[imagefiltersize];
-            f.read(buffer, imagefiltersize, 1);
-            i->second->data = buffer;
-            i->second->loaded = true;
-        }
-    }
-    
-    return ImageFilterResource(i->second);
+    return resourceOrDefault<BlendTable, BlendTableResource>(RMan->blendtables, name, "blendtable");
+}
+
+template<> ImageFilterResource ResourceManager::getResource<ImageFilterResource>(const NPString& name)
+{
+    return resourceOrDefault<ImageFilter, ImageFilterResource>(RMan->imagefilters, name, "imagefilter");
 }

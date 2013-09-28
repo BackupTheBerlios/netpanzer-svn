@@ -56,11 +56,11 @@ private:
 public:
     BackgroundImageLayer() : Layer(-1), version_render(npver)
     {
-        image = ResourceManager::getImage("main-background");
-        tankbody = ResourceManager::getMImage("heavy-tank-2-body");
-        tankturret= ResourceManager::getMImage("heavy-tank-2-turret");
-        tankturretshadow= ResourceManager::getMImage("heavy-tank-2-turret-shadow");
-        darkenalot = ResourceManager::getBlendTable("darkenalot");
+        image = ResourceManager::getResource<ImageResource>("main-background");
+        tankbody = ResourceManager::getResource<MImageResource>("heavy-tank-2-body");
+        tankturret= ResourceManager::getResource<MImageResource>("heavy-tank-2-turret");
+        tankturretshadow= ResourceManager::getResource<MImageResource>("heavy-tank-2-turret-shadow");
+        darkenalot = ResourceManager::getResource<BlendTableResource>("darkenalot");
 
         hw = image.getWidth()/2;
         hh = image.getHeight()/2;
@@ -91,7 +91,7 @@ private:
 public:
     DarkGrayPanel()
     {
-        filter = ResourceManager::getImageFilter("darkgray");
+        filter = ResourceManager::getResource<ImageFilterResource>("darkgray");
     }
     
     void draw(Surface& dest) const
@@ -104,7 +104,7 @@ public:
 static Button* createMainMenuButton(const NPString& label, const unsigned event, const bool inverted = false)
 {
     Button * b = new Button();
-    ImageResource image = ResourceManager::getImage("mainmenu-button-background");
+    ImageResource image = ResourceManager::getResource<ImageResource>("mainmenu-button-background");
     
     Surface bitmap(image.getWidth(), image.getHeight());
 //    bitmap.fill(0);

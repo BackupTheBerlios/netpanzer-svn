@@ -17,7 +17,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "ImageFilter.hpp"
+#include "json/json.h"
+#include "ResourceManager.hpp"
+#include "Util/FileSystem.hpp"
 
+template<> ImageFilter * ResourceManager::resourceFromJSon<ImageFilter>(const Json::Value& node)
+{
+    if ( node.isMember("name")
+      && node.isMember("file") )
+    {
+        ImageFilter * b = new ImageFilter();
+        b->name   = node["name"].asString();
+        b->file   = node["file"].asString();
+        return b;
+    }
+    
+    return 0;
+}
+
+bool ImageFilter::load()
+{
+    filesystem::ReadFile f(file);
+    if ( f.isOpen() )
+    {
+        const unsigned imagefiltersize = 256;
+        uint8_t * buffer = new uint8_t[imagefiltersize];
+        f.read(buffer, imagefiltersize, 1);
+        data = buffer;
+        loaded = true;
+    }
+    return loaded;
+}
 
 // @todo full check on sizing
 void ImageFilterResource::applyRounded(Surface& dest, const iRect& rect, const int radius) const
@@ -119,6 +149,5 @@ void ImageFilterResource::applyRounded(Surface& dest, const iRect& rect, const i
 
         x++;
     }
-    
-    
+
 }

@@ -28,6 +28,8 @@ class BlendTable
 public:
     inline bool isLoaded() const { return loaded; }
 
+    bool load();
+    
     inline void unload()
     {
         delete[] data;

@@ -48,7 +48,7 @@ void MouseInterface::initialize()
 //    }
 //    filesystem::freeList(cursorfiles);
 
-    setCursor(ResourceManager::getMouseCursor("default"));
+    setCursor(ResourceManager::getResource<MouseCursorResource>("default"));
 }
 
 void MouseInterface::shutdown()

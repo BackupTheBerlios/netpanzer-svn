@@ -9,7 +9,16 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/prog/netpanzer-svn/data/colordef.json</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Color.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Surface.hpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Color.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Components/Button.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/src/Lib/2D/Surface.cpp</file>
+            <file>file:/C:/prog/netpanzer-svn/data/resources.json</file>
+            <file>file:/C:/prog/netpanzer-svn/src/NetPanzer/Resources/ResourceManager.cpp</file>
+        </group>
     </open-files>
     <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
         <module name="org-netbeans-modules-cnd-discovery">

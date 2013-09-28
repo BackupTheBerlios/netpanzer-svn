@@ -2,6 +2,9 @@
 <configurationDescriptor version="89">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="../.." name="0">
+      <df name="data">
+        <in>colordef.json</in>
+      </df>
       <df name="src">
         <df name="Lib">
           <df name="2D">
@@ -547,11 +550,15 @@
             <in>UnitPowerUp.hpp</in>
           </df>
           <df name="Resources">
+            <in>BlendTable.cpp</in>
             <in>BlendTable.hpp</in>
+            <in>Image.cpp</in>
             <in>Image.hpp</in>
             <in>ImageFilter.cpp</in>
             <in>ImageFilter.hpp</in>
+            <in>MImage.cpp</in>
             <in>MImage.hpp</in>
+            <in>MouseCursor.cpp</in>
             <in>MouseCursor.hpp</in>
             <in>ResourceManager.cpp</in>
             <in>ResourceManager.hpp</in>
@@ -747,6 +754,8 @@
           </ccTool>
         </makeTool>
       </makefileType>
+      <item path="../../data/colordef.json" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../src/Lib/2D/Color.cpp" ex="false" tool="1" flavor2="0">
         <ccTool>
           <incDir>
@@ -5181,9 +5190,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/BlendTable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/BlendTable.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/Image.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/Image.hpp"
@@ -5201,9 +5220,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/MImage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/MImage.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/MouseCursor.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/MouseCursor.hpp"
@@ -6762,6 +6791,8 @@
           </ccTool>
         </makeTool>
       </makefileType>
+      <item path="../../data/colordef.json" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../src/Lib/2D/Color.cpp" ex="false" tool="1" flavor2="0">
         <ccTool>
           <incDir>
@@ -11190,9 +11221,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/BlendTable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/BlendTable.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/Image.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/Image.hpp"
@@ -11210,9 +11251,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/MImage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/MImage.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/MouseCursor.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/MouseCursor.hpp"
@@ -12769,6 +12820,8 @@
           </ccTool>
         </makeTool>
       </makefileType>
+      <item path="../../data/colordef.json" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../src/Lib/2D/Color.cpp" ex="false" tool="1" flavor2="9">
         <ccTool>
           <incDir>
@@ -17237,9 +17290,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/BlendTable.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/BlendTable.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/Image.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/Image.hpp"
@@ -17257,9 +17320,19 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../src/NetPanzer/Resources/MImage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="../../src/NetPanzer/Resources/MImage.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../src/NetPanzer/Resources/MouseCursor.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="../../src/NetPanzer/Resources/MouseCursor.hpp"
