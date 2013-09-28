@@ -177,32 +177,12 @@ public:
 
     PIX getAverageColor();
 
-    // Blit a single character of text.
-    void bltChar8x8(int x, int y, unsigned char character, const PIX color);
-    void bltString(int x, int y, const char * str, const PIX color);
-    void bltStringLen(int x, int y, const char * str, int len, const PIX color);
-
-    // Blit a shadowed string of text.
-    void bltStringShadowed(int x, int y, const char *str, const PIX textColor, const PIX shadowColor);
-    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color);
-
     void loadBMP(const char *fileName, bool needAlloc = true);
     void loadPNG(const char *fileName);
     void savePNG(const char *fileName);
 
     void drawBoxCorners(const iRect &rect, unsigned cornerLength, PIX color);
 
-    void drawBoxCorners(int cornerLength, PIX color)
-    {
-        drawBoxCorners(iRect(0, 0, getWidth(), getHeight()), cornerLength, color);
-    }
-
-    static unsigned int getFontHeight();
-    static int getTextLength(const char* text);
-    static int getTextLength(const std::string& text)
-    {
-        return getTextLength(text.c_str());
-    }
 
     void circle(int cx, int cy, int radius, PIX color);
     void FillCircle(int cx, int cy, int radius, PIX color);
@@ -223,6 +203,15 @@ public:
         size_t frame_len = getPitch()*getHeight();
         memcpy(mem, src, std::min(frame_len, src_len));
     }
+
+    // @todo delete below here
+    static unsigned int getFontHeight() { return 21; }
+    static int getTextLength(const char* text) { return 0; }
+    static int getTextLength(const std::string& text) { return 0; }
+    void bltString(int x, int y, const char * str, const PIX color) {}
+    void bltStringLen(int x, int y, const char * str, int len, const PIX color) {}
+    void bltStringShadowed(int x, int y, const char *str, const PIX textColor, const PIX shadowColor){}
+    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX color){}
 
 }; // end Surface
 
