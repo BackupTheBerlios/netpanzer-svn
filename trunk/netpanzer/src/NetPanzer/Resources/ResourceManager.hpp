@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BlendTable.hpp"
 #include "ImageFilter.hpp"
 #include <vector>
-#include <map>
 
 #include "json/json-forwards.h"
 
@@ -65,13 +64,13 @@ public:
     static bool mapExists(const NPString& name);
     static const MapFile* getMap(const NPString& name, const int flags);
     
-    static bool loadResourceDescriptions(const NPString& filename);
-    
     template<typename T> static T getResource(const NPString& name);
 
 private:
+    static bool loadResourceDescriptions(const NPString& filename);
+    
     template<typename T> static T* resourceFromJSon(const Json::Value& node);
-    template<typename T> static void loadJSonResourceArray(const Json::Value& v, std::map<NPString, T*>& m, const char * rname );
+    template<typename T, typename M> static void loadJSonResourceArray(const Json::Value& v, M& m, const char * rname );
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

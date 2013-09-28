@@ -377,7 +377,7 @@ const MapFile* ResourceManager::getMap(const NPString& name, const int flags)
     return mapfile;
 }
 
-template<typename T> void ResourceManager::loadJSonResourceArray(const Json::Value& v, std::map<NPString, T*>& m, const char * rname )
+template<typename T, typename M> void ResourceManager::loadJSonResourceArray(const Json::Value& v, M& m, const char * rname )
 {
     if ( v.isArray() && v.size() > 0 )
     {
@@ -386,7 +386,7 @@ template<typename T> void ResourceManager::loadJSonResourceArray(const Json::Val
             T * c = resourceFromJSon<T>(v[n]);
             if ( c )
             {
-                typename std::map<NPString, T*>::iterator i = m.find(c->name);
+                typename M::iterator i = m.find(c->name);
                 if ( i == m.end() )
                 {
                     LOGGER.warning("Adding %s: '%s'", rname, c->name.c_str());
@@ -414,11 +414,11 @@ bool ResourceManager::loadResourceDescriptions(const NPString& filename)
             return false;
         }
         
-        loadJSonResourceArray(root["mcursors"],     RMan->mcursors,     "cursor");
-        loadJSonResourceArray(root["images"],       RMan->images,       "image");
-        loadJSonResourceArray(root["mimages"],      RMan->mimages,      "mimage");
-        loadJSonResourceArray(root["blendtables"],  RMan->blendtables,  "blendtable");
-        loadJSonResourceArray(root["imagefilters"], RMan->imagefilters, "imagefilter");
+        loadJSonResourceArray<MouseCursor>(root["mcursors"],     RMan->mcursors,     "cursor");
+        loadJSonResourceArray<Image>      (root["images"],       RMan->images,       "image");
+        loadJSonResourceArray<MImage>     (root["mimages"],      RMan->mimages,      "mimage");
+        loadJSonResourceArray<BlendTable> (root["blendtables"],  RMan->blendtables,  "blendtable");
+        loadJSonResourceArray<ImageFilter>(root["imagefilters"], RMan->imagefilters, "imagefilter");
 
         return true;
     }
