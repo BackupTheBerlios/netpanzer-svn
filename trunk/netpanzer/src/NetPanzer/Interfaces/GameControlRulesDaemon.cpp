@@ -36,8 +36,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitProfileInterface.hpp"
 
-#include "Views/Game/LoadingView.hpp"
-
 #include "Util/Log.hpp"
 
 enum { _map_cycle_server_state_idle,
@@ -117,18 +115,18 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
     case _map_cycle_client_start_map_load :
     {
-        LoadingView::show();
+//        LoadingView::show();
 
         GameManager::shutdownParticleSystems();
         ObjectiveInterface::resetLogic();
 
         GameConfig::game_map->assign( map_cycle_fsm_client_map_name );
 
-        char buf[256];
-        snprintf(buf, sizeof(buf), _("Next Map '%s'."),
-                 GameConfig::game_map->c_str());
-        LoadingView::append( buf);
-        LoadingView::append( _("Loading Game Map...") );
+//        char buf[256];
+//        snprintf(buf, sizeof(buf), _("Next Map '%s'."),
+//                 GameConfig::game_map->c_str());
+//        LoadingView::append( buf);
+//        LoadingView::append( _("Loading Game Map...") );
 
         try
         {
@@ -136,8 +134,8 @@ void GameControlRulesDaemon::mapCycleFsmClient()
         }
         catch(std::exception& e)
         {
-            LoadingView::append(_("Error while loading map:"));
-            LoadingView::append(e.what());
+//            LoadingView::append(_("Error while loading map:"));
+//            LoadingView::append(e.what());
             map_cycle_fsm_client_state = _map_cycle_client_idle;
             return;
         }
@@ -152,7 +150,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
     {
         if( map_cycle_fsm_client_respawn_ack_flag == true )
         {
-            LoadingView::loadFinish();
+//            LoadingView::loadFinish();
             map_cycle_fsm_client_respawn_ack_flag = false;
             map_cycle_fsm_client_state = _map_cycle_client_idle;
             if (GameConfig::game_teammode)
@@ -267,9 +265,9 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             }
             else
             {
-                LoadingView::show();
-
-                LoadingView::append( _("Loading Game Map...") );
+//                LoadingView::show();
+//
+//                LoadingView::append( _("Loading Game Map...") );
                 ObjectiveInterface::resetLogic();
 
                 try
@@ -278,8 +276,8 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 }
                 catch(std::exception& e)
                 {
-                    LoadingView::append("Error while loading map:");
-                    LoadingView::append(e.what());
+//                    LoadingView::append("Error while loading map:");
+//                    LoadingView::append(e.what());
                     map_cycle_fsm_server_state = _map_cycle_server_state_idle;
                     return;
                 }
@@ -343,7 +341,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         if ( GameControlRulesDaemon::execution_mode != _execution_mode_dedicated_server )
         {
-            LoadingView::loadFinish();
+//            LoadingView::loadFinish();
         }
         GameControlCycleRespawnAck respawn_ack_mesg;
         SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
@@ -585,16 +583,16 @@ void GameControlRulesDaemon::updateGameControlFlow()
 
 void GameControlRulesDaemon::mapLoadFailureResponse(int result_code, const char *map_name)
 {
-    char str_buf[128];
+//    char str_buf[128];
 
     if( result_code == _mapload_result_no_map_file )
     {
-        sprintf( str_buf, _("MAP %s NOT FOUND!"), map_name );
-        LoadingView::append( str_buf);
+//        sprintf( str_buf, _("MAP %s NOT FOUND!"), map_name );
+//        LoadingView::append( str_buf);
     }
     else if( result_code == _mapload_result_no_wad_file )
     {
-        LoadingView::append( _("MAP TILE SET NOT FOUND!") );
+//        LoadingView::append( _("MAP TILE SET NOT FOUND!") );
     }
 }
 

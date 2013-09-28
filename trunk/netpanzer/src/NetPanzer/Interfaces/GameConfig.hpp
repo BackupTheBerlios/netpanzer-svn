@@ -69,38 +69,43 @@ public:
     
     GameOptions gameoptions;
     
+    // server only
     static int       game_autokicktime; // in minutes
     static bool      game_allowmultiip; // allow multi connect from same ip
-    static NPString* game_unit_profiles; // "," or space separated list of profiles to load
-    static NPString* game_unit_spawnlist; // "," or space separated list with the numbers of each unit to spawn with
     static NPString* game_adminpass;     // the secret password for admins
     static NPString* game_gamepass;      // the secret password for entering game
+    static bool      game_powerups;
+    static int       game_respawntype; // but may tell client
+    static NPString* game_mapcycle; // but may tell client
+    
+    // shared client and server
+    static NPString* game_unit_profiles; // "," or space separated list of profiles to load
+    static NPString* game_unit_spawnlist; // "," or space separated list with the numbers of each unit to spawn with
     static int       game_changeflagtime; // in minutes
     static int       game_gametype;
     static int       game_maxplayers;
     static int       game_maxunits;
     static int       game_timelimit;
     static int       game_fraglimit;
-    static bool      game_powerups;
     static bool      game_teammode;
     static NPString* game_team_names;
     static int       game_occupationpercentage;
     static bool      game_allowallies;
     static int       game_cloudcoverage;
-    static int       game_respawntype;
     static int       game_windspeed;
+    
+    // non-saved
     static NPString* game_map;
-    static NPString* game_mapcycle;
 
     static Uint8 player_flag_data[FLAG_WIDTH*FLAG_HEIGHT];
 
-    // game Settings (there are not saved to disk)
+    // client-only not saved
     int      hostorjoin;         // 1=host, 2=join
     bool     quickConnect;
     bool     needPassword;
     NPString serverConnect;      // server to connect to
-
     static NPString* player_name;
+
 
     HostConfig host;
 

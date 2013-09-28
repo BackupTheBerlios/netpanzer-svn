@@ -177,7 +177,6 @@ public:
 
     PIX getAverageColor();
 
-    void loadBMP(const char *fileName, bool needAlloc = true);
     void loadPNG(const char *fileName);
     void savePNG(const char *fileName);
 

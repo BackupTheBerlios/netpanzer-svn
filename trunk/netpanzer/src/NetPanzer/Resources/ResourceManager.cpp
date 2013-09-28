@@ -117,7 +117,7 @@ ResourceManager::loadAllFlags( PtrArray<Surface>& flags )
     for(char** file = list; *file != 0; file++)
     {
         int flen = strlen(*file) - 4;
-        if ( (flen > 0) && (strcmp((*file) + flen, ".bmp") == 0) )
+        if ( (flen > 0) && (strcmp((*file) + flen, ".png") == 0) )
         {
             fnames.push_back(*file);
         }
@@ -135,7 +135,7 @@ ResourceManager::loadAllFlags( PtrArray<Surface>& flags )
     {
         tmp = new Surface();
         strcpy(fil+len, fnames[i]);
-        tmp->loadBMP(fil);
+        tmp->loadPNG(fil);
         flags.push_back(tmp);
     }
     
@@ -146,7 +146,7 @@ ResourceManager::loadAllFlags( PtrArray<Surface>& flags )
 bool
 ResourceManager::loadFlag(Surface* dest, const NPString& name)
 {
-    dest->loadBMP((DEFAULT_FLAGS_PATH + name).c_str());
+    dest->loadPNG((DEFAULT_FLAGS_PATH + name).c_str());
     return true;
 }
 

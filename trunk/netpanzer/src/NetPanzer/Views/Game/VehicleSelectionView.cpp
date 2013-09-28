@@ -42,7 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ViewGlobals.hpp"
 #include "2D/Components/Label.hpp"
 #include "2D/Palette.hpp"
-#include "Views/Components/BoxedLabel.hpp"
 
 #include "Network/PlayerRequests/ChangeObjectiveGenerationRequest.hpp"
 
@@ -300,8 +299,8 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     
     iRect r = getClientRect();
     
-    statusBar = new BoxedLabel(r.getLocationX()+4, r.getEndY() - 32, r.getWidth() - 8, "XXX", Color::black, Color::gray192);
-    add(statusBar);
+//    statusBar = new BoxedLabel(r.getLocationX()+4, r.getEndY() - 32, r.getWidth() - 8, "XXX", Color::black, Color::gray192);
+//    add(statusBar);
 
 } // end VehicleSelectionView::VehicleSelectionView
 
@@ -482,11 +481,11 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
                  getUnitName(highlightedUnitType),
                  _("Build Time"),
                  rtime / 60, rtime % 60);
-        statusBar->setText(strBuf);
+//        statusBar->setText(strBuf);
     }
     else
     {
-        statusBar->setText(_("Select a unit for production"));
+//        statusBar->setText(_("Select a unit for production"));
     }
 
 } // end VehicleSelectionView::mouseMove

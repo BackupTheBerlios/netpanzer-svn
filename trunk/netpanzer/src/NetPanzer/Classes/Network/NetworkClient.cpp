@@ -32,8 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 
-#include "Views/Game/LoadingView.hpp"
-
 NetworkClient *CLIENT = 0;
 
 NetworkClient::NetworkClient( void )
@@ -86,9 +84,9 @@ bool NetworkClient::joinServer(const NPString& server_name, const NPString& pass
     catch(std::exception& e)
     {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
-        char text[128];
-        snprintf(text, 128, _("connection error: %s"), e.what());
-        LoadingView::append(text);
+//        char text[128];
+//        snprintf(text, 128, _("connection error: %s"), e.what());
+//        LoadingView::append(text);
         return false;
     }
 

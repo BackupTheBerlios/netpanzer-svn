@@ -56,7 +56,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Palette.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Views/Game/LoadingView.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -195,9 +194,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     Timer wait;
 
     GameConfig::game_teammode = false;
-    LoadingView::show();
+//    LoadingView::show();
     // refresh the view in each append
-    LoadingView::append( _("Launching Server...") );
+//    LoadingView::append( _("Launching Server...") );
 
     try
     {
@@ -248,8 +247,8 @@ void PlayerGameManager::hostMultiPlayerGame()
     }
     catch(std::exception& e)
     {
-        LoadingView::append( _("SERVER LAUNCH FAILED") );
-        LoadingView::append(e.what());
+//        LoadingView::append( _("SERVER LAUNCH FAILED") );
+//        LoadingView::append(e.what());
         wait.changePeriod( 4 );
         while( !wait.count() );
 
@@ -258,12 +257,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     }
 
     // refresh views
-    LoadingView::update( NPString(_("Launching Server..."))+"(100%)" );
+//    LoadingView::update( NPString(_("Launching Server..."))+"(100%)" );
     graphicsLoop();
     GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
 
-    LoadingView::append( _("Loading Game Data") );
+//    LoadingView::append( _("Loading Game Data") );
     graphicsLoop();
 
     GameConfig::game_map->assign( GameManager::getNextMapName("") );
@@ -288,8 +287,8 @@ void PlayerGameManager::hostMultiPlayerGame()
     UnitProfileInterface::loadUnitProfiles();
     if ( UnitProfileInterface::getNumUnitTypes() == 0 )
     {
-        LoadingView::append( _("ERROR unit profiles") );
-        LoadingView::append( _("game.unit_profiles")+ *GameConfig::game_unit_profiles );
+//        LoadingView::append( _("ERROR unit profiles") );
+//        LoadingView::append( _("game.unit_profiles")+ *GameConfig::game_unit_profiles );
         graphicsLoop();
         SDL_Delay(5000);
         
@@ -318,26 +317,26 @@ void PlayerGameManager::hostMultiPlayerGame()
         return;
     }
 
-    sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
-    LoadingView::update( strbuf );
+//    sprintf( strbuf, "%s (%d%%)", _("Loading Game Data"), percent_complete);
+//    LoadingView::update( strbuf );
     graphicsLoop();
 
 
-    LoadingView::append( _("Initializing Game Logic") );
+//    LoadingView::append( _("Initializing Game Logic") );
     graphicsLoop();
     GameManager::reinitializeGameLogic();
 
-    LoadingView::update( NPString(_("Initializing Game Logic"))+" (100%)" );
+//    LoadingView::update( NPString(_("Initializing Game Logic"))+" (100%)" );
     graphicsLoop();
 
-    LoadingView::append( _("Spawning Player") );
+//    LoadingView::append( _("Spawning Player") );
     graphicsLoop();
 
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = GameConfig::player_name->c_str();
     player_state->setName(playername);
 
-    LoadingView::update( NPString(_("Spawning Player"))+" (100%)" );
+//    LoadingView::update( NPString(_("Spawning Player"))+" (100%)" );
 
     graphicsLoop();
 
@@ -346,7 +345,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     GameManager::startGameTimer();
 
-    LoadingView::loadFinish();
+//    LoadingView::loadFinish();
 }
 
 void PlayerGameManager::quitGame()
@@ -371,7 +370,7 @@ void PlayerGameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    LoadingView::show();
+//    LoadingView::show();
 //    LoadingView *lv = static_cast<LoadingView*>(Desktop::getView("LoadingView"));
 //    if ( ! lv->doesNeedPassword() )
 //    {
@@ -389,7 +388,7 @@ bool PlayerGameManager::mainLoop()
     if(firstrun) {
         firstrun = false;
         if(gameconfig->quickConnect == true) {
-            LoadingView::show();
+//            LoadingView::show();
             launchMultiPlayerGame();
         }
     }

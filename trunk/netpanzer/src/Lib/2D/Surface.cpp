@@ -43,10 +43,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using std::swap;
 
-#define FONT_HEIGHT 10
-#define FONT_WIDTH 8
-#define FONT_MAXCHAR 191
-
 // orderCoords
 //---------------------------------------------------------------------------
 // Purpose: Orders a pair of (x,y) coordinates
@@ -56,64 +52,6 @@ inline void orderCoords(T &a, T &b)
 {
     if (a > b) swap(a, b);
 } // end orderCoords
-
-class BitmapFileHeader
-{
-public:
-    uint16_t    bfType;
-    uint32_t   bfSize;
-    uint16_t    bfReserved1;
-    uint16_t    bfReserved2;
-    uint32_t   bfOffBits;
-
-    BitmapFileHeader(filesystem::ReadFile& file);
-};
-
-BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile& file)
-{
-    bfType = file.readULE16();
-    bfSize = file.readULE32();
-    bfReserved1 = file.readULE16();
-    bfReserved2 = file.readULE16();
-    bfOffBits = file.readULE32();
-}
-
-#define BI_RGB      0L
-#define BI_RLE8     1L
-#define BI_RLE4     2L
-
-class BitmapInfoHeader
-{
-public:
-    uint32_t  biXY;
-    uint32_t  biWidth;
-    uint32_t  biHeight;
-    uint16_t   biPlanes;
-    uint16_t   biBitCount;
-    uint32_t  biCompression;
-    uint32_t  biXYImage;
-    uint32_t  biXPelsPerMeter;
-    uint32_t  biYPelsPerMeter;
-    uint32_t  biClrUsed;
-    uint32_t  biClrImportant;
-
-    BitmapInfoHeader(filesystem::ReadFile& file);
-};
-
-BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile& file)
-{
-    biXY = file.readULE32();
-    biWidth = file.readULE32();
-    biHeight = file.readULE32();
-    biPlanes = file.readULE16();
-    biBitCount = file.readULE16();
-    biCompression = file.readULE32();
-    biXYImage = file.readULE32();
-    biXPelsPerMeter = file.readULE32();
-    biYPelsPerMeter = file.readULE32();
-    biClrUsed = file.readULE32();
-    biClrImportant = file.readULE32();
-}
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -991,69 +929,6 @@ Surface::create(unsigned int w, unsigned int h)
     theight= h;
     tpitch = w;
 } // end Surface::create
-
-void Surface::loadBMP(const char *fileName, bool needAlloc)
-{
-    assert(this != 0);
-
-    if (needAlloc) free();
-
-    filesystem::ReadFile file(fileName);
-    if ( file.isOpen() )
-    {
-        BitmapFileHeader file_header(file);
-
-        if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
-            throw Exception("%s is not a valid 8-bit BMP file", fileName);
-
-        BitmapInfoHeader info_header(file);
-
-        if ( info_header.biBitCount != 8 )
-            throw Exception("%s is not a 8-bit BMP file", fileName);
-
-        if ( info_header.biCompression != BI_RGB )
-            throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
-
-
-        if (needAlloc)
-        {
-            LOGGER.warning("Loading '%s' size %dx%d", fileName,info_header.biWidth, info_header.biHeight );
-            create(info_header.biWidth, info_header.biHeight);
-
-        } else {
-            LOGGER.warning("Loading '%s' size %dx%d preallocated: %dx%d", fileName,info_header.biWidth, info_header.biHeight, getWidth(), getHeight() );
-            // Check and make sure the picture will fit
-            if (getWidth() < (unsigned long) info_header.biWidth|| getHeight() < (unsigned long) info_header.biHeight )
-                throw Exception("Not enough memory to load BMP image %s", fileName);
-        }
-
-        file.seek(file_header.bfOffBits);
-
-        if ( (info_header.biWidth % 4) == 0 ) {
-            file.read(mem, getWidth() * getHeight(), 1);
-        } else {
-            int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
-
-            PIX buffer[10];
-            int numRows = getHeight();
-
-            PIX *ptr = mem;
-
-            for (int row = 0; row < numRows; row++)
-            {
-                file.read(ptr, getWidth(), 1);
-                file.read(buffer, padding, 1);
-                ptr += getPitch();
-            }
-        }
-
-        flipVertical();
-    }
-    else
-    {
-        throw Exception("Cannot open bmp file '%s'", fileName);
-    }
-}
 
 // @todo check for returned errors!!!
 void Surface::loadPNG(const char* fileName)

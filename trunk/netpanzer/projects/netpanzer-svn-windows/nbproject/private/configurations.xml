@@ -1022,7 +1022,6 @@
           </df>
           <df name="Views">
             <df name="Components">
-              <in>BoxedLabel.hpp</in>
               <in>Component.hpp</in>
               <in>InfoBar.cpp</in>
               <in>InfoBar.hpp</in>
@@ -1052,10 +1051,6 @@
               <in>GameView.hpp</in>
               <in>HelpScrollView.cpp</in>
               <in>HelpScrollView.hpp</in>
-              <in>LibView.cpp</in>
-              <in>LibView.hpp</in>
-              <in>LoadingView.cpp</in>
-              <in>LoadingView.hpp</in>
               <in>MiniMapView.cpp</in>
               <in>MiniMapView.hpp</in>
               <in>PrepareTeam.cpp</in>
@@ -1068,18 +1063,6 @@
               <in>VehicleSelectionView.hpp</in>
               <in>VoteBox.cpp</in>
               <in>VoteBox.hpp</in>
-            </df>
-            <df name="MainMenu">
-              <df name="Multi">
-                <df name="MasterServer">
-                  <in>ServerInfo.cpp</in>
-                  <in>ServerInfo.hpp</in>
-                  <in>ServerList.cpp</in>
-                  <in>ServerList.hpp</in>
-                  <in>ServerQueryThread.cpp</in>
-                  <in>ServerQueryThread.hpp</in>
-                </df>
-              </df>
             </df>
             <in>GameViewGlobals.cpp</in>
             <in>GameViewGlobals.hpp</in>

@@ -60,7 +60,7 @@ extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
 //void activateVehicleSelectionView( ObjectiveID outpost_id ){}
 //void toggleDisplayOutpostNames( void ){}
 
-class BoxedLabel;
+//class BoxedLabel;
 
 //--------------------------------------------------------------------------
 class VehicleSelectionView : public GameTemplateView
@@ -73,7 +73,7 @@ private:
     static Button * buttonPower;
     static Button * buttonOk;
     
-    BoxedLabel * statusBar;
+//    BoxedLabel * statusBar;
 
     int maxHitPoints;
     int maxAttackFactor;

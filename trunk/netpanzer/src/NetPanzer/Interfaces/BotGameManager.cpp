@@ -29,8 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ClientConnectDaemon.hpp"
 
 #include "Util/Exception.hpp"
-//#include "Views/Game/LoadingView.hpp"
-//#include "Views/Game/ConsoleLoadingView.hpp"
 
 //-----------------------------------------------------------------
 BotGameManager::BotGameManager(const std::string &serverHost)

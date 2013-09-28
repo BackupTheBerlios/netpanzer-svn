@@ -617,7 +617,6 @@
           </df>
           <df name="Views">
             <df name="Components">
-              <in>BoxedLabel.hpp</in>
               <in>Component.hpp</in>
               <in>InfoBar.cpp</in>
               <in>InfoBar.hpp</in>
@@ -647,10 +646,6 @@
               <in>GameView.hpp</in>
               <in>HelpScrollView.cpp</in>
               <in>HelpScrollView.hpp</in>
-              <in>LibView.cpp</in>
-              <in>LibView.hpp</in>
-              <in>LoadingView.cpp</in>
-              <in>LoadingView.hpp</in>
               <in>MiniMapView.cpp</in>
               <in>MiniMapView.hpp</in>
               <in>PrepareTeam.cpp</in>
@@ -663,18 +658,6 @@
               <in>VehicleSelectionView.hpp</in>
               <in>VoteBox.cpp</in>
               <in>VoteBox.hpp</in>
-            </df>
-            <df name="MainMenu">
-              <df name="Multi">
-                <df name="MasterServer">
-                  <in>ServerInfo.cpp</in>
-                  <in>ServerInfo.hpp</in>
-                  <in>ServerList.cpp</in>
-                  <in>ServerList.hpp</in>
-                  <in>ServerQueryThread.cpp</in>
-                  <in>ServerQueryThread.hpp</in>
-                </df>
-              </df>
             </df>
             <in>GameViewGlobals.cpp</in>
             <in>GameViewGlobals.hpp</in>
@@ -5763,11 +5746,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Components/BoxedLabel.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Components/Component.hpp"
             ex="false"
             tool="3"
@@ -6184,75 +6162,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Interfaces</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Core</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Units</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Game/MiniMapView.cpp"
             ex="false"
             tool="1"
@@ -6488,87 +6397,6 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Views/GameViewGlobals.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -11927,11 +11755,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Components/BoxedLabel.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Components/Component.hpp"
             ex="false"
             tool="3"
@@ -12348,75 +12171,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Interfaces</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Core</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Units</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Game/MiniMapView.cpp"
             ex="false"
             tool="1"
@@ -12652,87 +12406,6 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Views/GameViewGlobals.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -18143,11 +17816,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Components/BoxedLabel.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Components/Component.hpp"
             ex="false"
             tool="3"
@@ -18564,75 +18232,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="9">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LibView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.cpp"
-            ex="false"
-            tool="1"
-            flavor2="9">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Types</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/2D</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Components</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/Game</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Interfaces</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Actions</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Core</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Units</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Particles</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/Game/LoadingView.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../src/NetPanzer/Views/Game/MiniMapView.cpp"
             ex="false"
             tool="1"
@@ -18868,87 +18467,6 @@
         </ccTool>
       </item>
       <item path="../../src/NetPanzer/Views/GameViewGlobals.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.cpp"
-            ex="false"
-            tool="1"
-            flavor2="9">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.cpp"
-            ex="false"
-            tool="1"
-            flavor2="9">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp"
-            ex="false"
-            tool="1"
-            flavor2="9">
-        <ccTool>
-          <incDir>
-            <pElem>../../../../usr/include/c++/4.5/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Network</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/Util</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Views/MainMenu/Multi/MasterServer</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/Lib/ArrayUtil</pElem>
-            <pElem>../../../../usr/include/c++/4.5/ext</pElem>
-            <pElem>../../../../usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include</pElem>
-            <pElem>../../../../usr/include/c++/4.5/debug</pElem>
-            <pElem>../../../../usr/include</pElem>
-            <pElem>../../../../usr/include/bits</pElem>
-            <pElem>../../../../usr/include/c++/4.5/i686-linux-gnu/bits</pElem>
-            <pElem>../../../../usr/include/SDL</pElem>
-            <pElem>../../../../home/krom/program/netpanzer-svn/src/NetPanzer/Classes</pElem>
-            <pElem>/home/krom/program/netpanzer-svn</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="../../src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.hpp"
             ex="false"
             tool="3"
             flavor2="0">
