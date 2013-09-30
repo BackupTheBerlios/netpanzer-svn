@@ -6,11 +6,9 @@
 
 template<> BlendTable * ResourceManager::resourceFromJSon<BlendTable>(const Json::Value& node)
 {
-    if ( node.isMember("name")
-      && node.isMember("file") )
+    if ( node.isMember("file") )
     {
         BlendTable * b = new BlendTable();
-        b->name   = node["name"].asString();
         b->file   = node["file"].asString();
         return b;
     }

@@ -379,18 +379,19 @@ const MapFile* ResourceManager::getMap(const NPString& name, const int flags)
 
 template<typename T, typename M> void ResourceManager::loadJSonResourceArray(const Json::Value& v, M& m, const char * rname )
 {
-    if ( v.isArray() && v.size() > 0 )
+    if ( v.isObject() && v.size() > 0 )
     {
-        for ( int n = 0, e = v.size(); n < e; n++ )
+        Json::Value::Members members = v.getMemberNames();
+        for ( int n = 0, e = members.size(); n < e; n++ )
         {
-            T * c = resourceFromJSon<T>(v[n]);
+            T * c = resourceFromJSon<T>(v[members[n]]);
             if ( c )
             {
-                typename M::iterator i = m.find(c->name);
+                typename M::iterator i = m.find(members[n]);
                 if ( i == m.end() )
                 {
-                    LOGGER.warning("Adding %s: '%s'", rname, c->name.c_str());
-                    m.insert(std::make_pair(c->name, c));
+                    LOGGER.warning("Adding %s: '%s'", rname, members[n].c_str());
+                    m.insert(std::make_pair(members[n], c));
                 }
                 else
                 {

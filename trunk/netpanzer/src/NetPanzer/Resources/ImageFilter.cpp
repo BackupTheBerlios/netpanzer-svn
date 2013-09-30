@@ -23,11 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 template<> ImageFilter * ResourceManager::resourceFromJSon<ImageFilter>(const Json::Value& node)
 {
-    if ( node.isMember("name")
-      && node.isMember("file") )
+    if ( node.isMember("file") )
     {
         ImageFilter * b = new ImageFilter();
-        b->name   = node["name"].asString();
         b->file   = node["file"].asString();
         return b;
     }

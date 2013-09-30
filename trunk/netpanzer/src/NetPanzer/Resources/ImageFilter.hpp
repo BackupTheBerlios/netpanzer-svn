@@ -38,7 +38,6 @@ public:
         loaded = false;
     }
     
-    NPString name;
     NPString file;
     bool loaded;
 

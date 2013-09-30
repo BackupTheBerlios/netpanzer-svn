@@ -30,25 +30,25 @@ public:
     inline bool isLoaded() const { return loaded; }
 
     bool load();
+    void unload();
     
-    inline void unload()
-    {
-        image.free();
-        loaded = false;
-    }
-    
-    NPString name;
-    NPString file;
     bool loaded;
-
-    Surface image;
-    unsigned width;
-    unsigned height;
+    unsigned size;
+    
+    struct Data
+    {
+        Surface image;
+        NPString file;
+        unsigned width;
+        unsigned height;
+    };
+    
+    Data * data;
     
 private:
     friend class ResourceManager;
-    Image() : loaded(false){}
-    ~Image() {}
+    Image(unsigned size) : loaded(false), size(size), data(new Data[size]) {}
+    ~Image() { unload(); delete[] data; }
     
 };
 
@@ -73,11 +73,16 @@ public:
     
     inline void draw(Surface& dest, const int x, const int y) const
     {
-        ptr->image.blt(dest, x, y); // @todo decide: use blt or bltTrans?
+        ptr->data[0].image.blt(dest, x, y); // @todo decide: use blt or bltTrans?
     }
     
-    inline unsigned getWidth() const { return ptr->width; }
-    inline unsigned getHeight() const { return ptr->height; }
+    inline void draw(const unsigned index, Surface& dest, const int x, const int y) const
+    {
+        ptr->data[index].image.blt(dest, x, y); // @todo decide: use blt or bltTrans?
+    }
+    
+    inline unsigned getWidth() const { return ptr->data[0].width; }
+    inline unsigned getHeight() const { return ptr->data[0].height; }
     
     inline bool isLoaded() const { return ptr->isLoaded(); }
     

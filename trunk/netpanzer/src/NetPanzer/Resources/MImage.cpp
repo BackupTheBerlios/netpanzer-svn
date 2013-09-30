@@ -6,8 +6,7 @@
 template<> MImage * ResourceManager::resourceFromJSon<MImage>(const Json::Value& node)
 {
         // offset and fps are optional
-    if ( node.isMember("name")
-      && node.isMember("file")
+    if ( node.isMember("file")
       && node.isMember("size")
       && node.isMember("frames") )
     {
@@ -15,7 +14,6 @@ template<> MImage * ResourceManager::resourceFromJSon<MImage>(const Json::Value&
         if ( siz.isArray() && siz.size() >= 2 )
         {
             MImage * i = new MImage();
-            i->name   = node["name"].asString();
             i->file   = node["file"].asString();
             i->width  = siz[0].asInt();
             i->height = siz[1].asInt();
