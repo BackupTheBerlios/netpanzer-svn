@@ -30,6 +30,8 @@
 
 #include "2D/Components/Slider.hpp"
 
+#include "Network/WebServer.hpp"
+
 //#include "util/FileStream.hpp"
 //#include "Config/ConfigGetter.hpp"
 
@@ -317,16 +319,19 @@ MainMenuScene::MainMenuScene()
     
     menu_layer = new MainMenuLayer();
     addLayer( menu_layer );
+    
+    webserver = new WebServer();
+    webserver->host();
 }
 
 MainMenuScene::~MainMenuScene()
 {
-    
+    delete webserver;
 }
 
 void MainMenuScene::logic()
 {
-    
+    webserver->logic();
 }
 
 void MainMenuScene::onBecomeActive()

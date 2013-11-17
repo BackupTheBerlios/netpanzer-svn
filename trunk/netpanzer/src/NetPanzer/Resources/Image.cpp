@@ -3,6 +3,20 @@
 #include "json/json.h"
 #include "ResourceManager.hpp"
 
+static bool dataFromJSon(const Json::Value& v, Image::Data & data)
+{
+    const Json::Value& file = v["file"];
+    const Json::Value& size = v["size"];
+    if ( file.isString() && size.isArray() && size.size() > 1 )
+    {
+        data.file   = file.asString();
+        data.width  = size[0].asInt();
+        data.height = size[1].asInt();
+        return true;
+    }
+    return false;
+}
+
 template<> Image * ResourceManager::resourceFromJSon<Image>(const Json::Value& node)
 {
     if ( node.isArray() && node.size() > 0 )
@@ -11,43 +25,15 @@ template<> Image * ResourceManager::resourceFromJSon<Image>(const Json::Value& n
         Image *i = new Image(count);
         for ( int n = 0; n < count; n++ )
         {
-            const Json::Value& v = node[n];
-            if ( v.isMember("file")
-              && v.isMember("size") )
-            {
-                const Json::Value& siz = v["size"];
-                if ( siz.isArray() && siz.size() >= 2 )
-                {
-                    i->data[n].file   = v["file"].asString();
-                    i->data[n].width  = siz[0].asInt();
-                    i->data[n].height = siz[1].asInt();
-                }
-                else
-                {
-                    delete i;
-                    return 0;
-                }
-            }
-            else
-            {
-                delete i;
-                return 0;
-            }
+            dataFromJSon(node[n], i->data[n]);
         }
         return i;
     }
-    else if ( node.isMember("file")
-           && node.isMember("size") )
+    else
     {
-        const Json::Value& siz = node["size"];
-        if ( siz.isArray() && siz.size() >= 2 )
-        {
-            Image * i = new Image(1);
-            i->data[0].file   = node["file"].asString();
-            i->data[0].width  = siz[0].asInt();
-            i->data[0].height = siz[1].asInt();
-            return i;
-        }
+        Image *i = new Image(1);
+        dataFromJSon(node, i->data[0]);
+        return i;
     }
     
     return 0;

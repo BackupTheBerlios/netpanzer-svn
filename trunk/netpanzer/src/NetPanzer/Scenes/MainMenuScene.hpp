@@ -12,6 +12,7 @@
 #include "MainMenu/IntroLayer.hpp"
 
 class MainMenuLayer;
+class WebServer;
 
 class MainMenuScene : public Scene
 {
@@ -24,6 +25,7 @@ public:
 private:
     
     MainMenuLayer * menu_layer;
+    WebServer * webserver;
     
     void onBecomeActive();
 };

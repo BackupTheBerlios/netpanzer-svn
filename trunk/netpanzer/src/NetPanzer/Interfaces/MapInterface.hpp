@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <list>
 
-#include "TileInterface.hpp"
 #include "Classes/MapFile.hpp"
 #include "Classes/SpawnList.hpp"
 
@@ -37,7 +36,7 @@ private:
 };
 
 
-class MapInterface : protected TileInterface
+class MapInterface
 {
 private:
     typedef std::list<MapEventListener *> MapListenerList;
@@ -63,8 +62,11 @@ public:
     
     static void getMapPointSize(iXY *map_size)
     {
-        map_size->x = main_map->getWidth() * tile_set.getTileXsize();
-        map_size->y = main_map->getHeight() * tile_set.getTileYsize();
+        // @todo this might be done in the camera
+//        map_size->x = main_map->getWidth() * tile_set.getTileXsize();
+//        map_size->y = main_map->getHeight() * tile_set.getTileYsize();
+        map_size->x = main_map->getWidth() * 32;
+        map_size->y = main_map->getHeight() * 32;
     }
 
     static iXY getSize()
@@ -159,8 +161,6 @@ public:
     }
 
     static unsigned char getMovementValue( const iXY& map_loc );
-
-    static unsigned char getAverageColorMapXY( const iXY& map_loc );
 
     static iXY getFreeSpawnPoint()
     {

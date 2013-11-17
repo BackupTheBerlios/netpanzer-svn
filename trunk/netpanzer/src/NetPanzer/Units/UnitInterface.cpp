@@ -80,7 +80,9 @@ void UnitInterface::initialize( unsigned long max_units )
     //unit_lists = new UnitList [ max_players ];
     playerUnitLists = new PlayerUnitList[max_players];
 
-    unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
+//    unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
+    // @todo does it really need the tile size?
+    unit_bucket_array.initialize(MapInterface::getSize(), iXY(32,32) );
 
     lastUnitID = 0;
     message_timer.changeRate( 8 );
@@ -111,7 +113,9 @@ UnitInterface::reset()
 
     if ( MapInterface::isMapLoaded() )
     {
-        unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
+//        unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
+        // @todo does it really need the tile size?
+        unit_bucket_array.initialize( MapInterface::getSize(), iXY(32,32) );
     }
     else
     {

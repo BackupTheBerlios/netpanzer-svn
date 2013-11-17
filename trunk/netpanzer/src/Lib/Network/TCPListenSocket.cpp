@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
     
-TCPListenSocket::TCPListenSocket(const Address& newaddr, TCPListenSocketObserver *o)
+TCPListenSocket::TCPListenSocket(const Address& newaddr, TCPListenSocket::Observer *o)
     : SocketBase(newaddr,true), observer(o)
 {
     setReuseAddr();

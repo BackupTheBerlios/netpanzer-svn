@@ -25,23 +25,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
     
-class TCPListenSocket;    
-    
-class TCPListenSocketObserver {
-public:    
-    TCPListenSocketObserver() {};
-    virtual ~TCPListenSocketObserver() {};
-protected:
-    friend class TCPListenSocket;
-    virtual TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr) = 0;
-    virtual void onSocketError(TCPListenSocket *so) = 0;
-};
-    
-
 class TCPListenSocket : public SocketBase
 {
 public:
-    TCPListenSocket(const Address& bindaddr, TCPListenSocketObserver *o);
+    class Observer
+    {
+        public:    
+            Observer() {};
+            virtual ~Observer() {};
+            
+        protected:
+            friend class TCPListenSocket;
+            virtual TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr) = 0;
+            virtual void onSocketError(TCPListenSocket *so) = 0;
+    };
+    
+    TCPListenSocket(const Address& bindaddr, Observer *o);
     void destroy();
     
 protected:
@@ -51,7 +50,7 @@ protected:
     void onSocketError();
 
 private:
-    TCPListenSocketObserver * observer;
+    Observer * observer;
     
 };
 

@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/MapFile.hpp"
 
 #include "MouseCursor.hpp"
+#include "Tileset.hpp"
 
 #include "json/json.h"
 
@@ -44,6 +45,7 @@ typedef std::map<NPString, Image*> Images;
 typedef std::map<NPString, MImage*> MImages;
 typedef std::map<NPString, BlendTable*> BlendTables;
 typedef std::map<NPString, ImageFilter*> ImageFilters;
+typedef std::map<NPString, Tileset*> Tilesets;
 
 class _RMan
 {
@@ -81,6 +83,7 @@ public:
     MImages mimages;
     BlendTables blendtables;
     ImageFilters imagefilters;
+    Tilesets tilesets;
 };
 
 _RMan *RMan = 0;
@@ -420,6 +423,7 @@ bool ResourceManager::loadResourceDescriptions(const NPString& filename)
         loadJSonResourceArray<MImage>     (root["mimages"],      RMan->mimages,      "mimage");
         loadJSonResourceArray<BlendTable> (root["blendtables"],  RMan->blendtables,  "blendtable");
         loadJSonResourceArray<ImageFilter>(root["imagefilters"], RMan->imagefilters, "imagefilter");
+        loadJSonResourceArray<Tileset>    (root["tilesets"],     RMan->tilesets,     "tileset");
 
         return true;
     }
@@ -468,4 +472,9 @@ template<> BlendTableResource ResourceManager::getResource<BlendTableResource>(c
 template<> ImageFilterResource ResourceManager::getResource<ImageFilterResource>(const NPString& name)
 {
     return resourceOrDefault<ImageFilter, ImageFilterResource>(RMan->imagefilters, name, "imagefilter");
+}
+
+template<> TilesetResource ResourceManager::getResource<TilesetResource>(const NPString& name)
+{
+    return resourceOrDefault<Tileset, TilesetResource>(RMan->tilesets, name, "tileset");
 }

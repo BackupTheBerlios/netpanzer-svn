@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
 #include "Util/FileSystem.hpp"
+#include "WebServer.hpp"
 
 static const char websocket_reply_data[] = {
     "HTTP/1.1 101 Switching Protocols\r\n"
@@ -107,7 +108,8 @@ struct State
     };
 };
 
-HTTPServerSocket::HTTPServerSocket()
+HTTPServerSocket::HTTPServerSocket(WebServer * webserver)
+ : webserver(webserver)
 {
     socket = 0;
     state = State::DISCONNECTED;
@@ -119,6 +121,15 @@ HTTPServerSocket::HTTPServerSocket()
 HTTPServerSocket::~HTTPServerSocket()
 {
     close();
+}
+
+const network::Address& HTTPServerSocket::getAddress() const
+{
+    if ( socket )
+    {
+        return socket->getAddress();
+    }
+    return Address::ANY;
 }
 
 void HTTPServerSocket::close()
@@ -138,7 +149,6 @@ void HTTPServerSocket::close()
 
 void HTTPServerSocket::onConnected(network::TCPSocket *so)
 {
-    LOGGER.debug("HTTPServerSocket connected");
     socket = so;
     state = State::JUST_CONNECTED;
     receive_length = 0;
@@ -147,19 +157,14 @@ void HTTPServerSocket::onConnected(network::TCPSocket *so)
 
 void HTTPServerSocket::onDisconected(network::TCPSocket *so)
 {
-    LOGGER.debug("HTTPServerSocket disconnected");
-    socket = 0;
-    state = State::DISCONNECTED;
     // this will delete me
-    SERVER->onHTTPServerSocketDisconnected(this);
+    webserver->onDisconnected(this);
 }
 
 void HTTPServerSocket::onSocketError(network::TCPSocket *so)
 {
     LOGGER.debug("HTTPServerSocket error");
-    socket = 0;
-    state = State::DISCONNECTED;
-    SERVER->onHTTPServerSocketDisconnected(this);
+    webserver->onDisconnected(this);
 }
 
 template<> inline
@@ -234,6 +239,7 @@ void HTTPServerSocket::onReceiveState<State::SENDING>(const char * data, const i
     memcpy(receive_buffer+receive_length, data, len );
     receive_length += len;
 }
+
 template<> inline
 void HTTPServerSocket::onReceiveState<State::SENDING_FILE>(const char * data, const int len)
 {
@@ -255,9 +261,10 @@ void HTTPServerSocket::onDataReceived(network::TCPSocket *so, const char *data, 
                 socket->changeObserver(cs);
                 socket = 0; // so the socket is not closed
                 close();
-                SERVER->onHTTPServerSocketDisconnected(this);
                 
                 cs->onDataReceived(so, data, len);
+                
+                webserver->onDisconnected(this);
                 return;
             }
             
@@ -321,26 +328,23 @@ bool HTTPServerSocket::decode_request()
     char * token_start = reinterpret_cast<char*>(receive_buffer);
     char * buffer_end = token_start + receive_length;
 
-    request_method.clear();
-    request_path.clear();
-    request_version.clear();
-    request_headers.clear();
+    request.reset();
     
     while ( (token_start < buffer_end) && (*token_start != ' ') )
-        request_method.append(1, *(token_start++));
+        request.method.append(1, *(token_start++));
 
     ++token_start;
     while ( (token_start < buffer_end) && (*token_start != ' ') )
-        request_path.append(1, *(token_start++));
+        request.path.append(1, *(token_start++));
     
     ++token_start;
     while ( (token_start < buffer_end) && ( (*token_start != 13) && (*token_start != 10)) )
-        request_version.append(1, *(token_start++));
+        request.version.append(1, *(token_start++));
     
     while ( (token_start < buffer_end) && ( (*token_start == 13) || (*token_start == 10)) )
         ++token_start;
     
-    if ( request_version.compare("HTTP/1.1") )
+    if ( request.version.compare("HTTP/1.1") )
     {
         return false; // bad version
     }
@@ -369,7 +373,7 @@ bool HTTPServerSocket::decode_request()
         
         if ( header_name.size() )
         {
-            request_headers[header_name] = header_value;
+            request.headers[header_name] = header_value;
             LOGGER.debug("Header '%s' = '%s'", header_name.c_str(), header_value.c_str());
         }
     }
@@ -385,43 +389,43 @@ bool HTTPServerSocket::handle_request()
         return false;
     }
     
-    headers::iterator connection = request_headers.find("connection");
-    headers::iterator sec_websocket_key = request_headers.find("sec-websocket-key");
-    headers::iterator upgrade = request_headers.find("upgrade");
-    
-    if ( ( connection != request_headers.end() )
-       &&( sec_websocket_key != request_headers.end() )
-       &&( upgrade != request_headers.end() ) )
-    {
-        if ( ( connection->second.find("Upgrade") != std::string::npos )
-           &&( ! upgrade->second.compare("websocket") )
-           &&( sec_websocket_key->second.size() == 24 ) )
-        {
-            char repply_data[sizeof(websocket_reply_data)];
-            memcpy(repply_data, websocket_reply_data, sizeof(websocket_reply_data));
-            
-            WebSocket_HandShake(sec_websocket_key->second.c_str(), repply_data+97);
-            LOGGER.debug("Repply data:\n%s\n[END]",repply_data);
-            
-            socket->send(repply_data, sizeof(repply_data)-1);
-            state = State::CONNECTED;
-        }
-        
-        return true;
-    }
+//    headers::iterator connection = request_headers.find("connection");
+//    headers::iterator sec_websocket_key = request_headers.find("sec-websocket-key");
+//    headers::iterator upgrade = request_headers.find("upgrade");
+//    
+//    if ( ( connection != request_headers.end() )
+//       &&( sec_websocket_key != request_headers.end() )
+//       &&( upgrade != request_headers.end() ) )
+//    {
+//        if ( ( connection->second.find("Upgrade") != std::string::npos )
+//           &&( ! upgrade->second.compare("websocket") )
+//           &&( sec_websocket_key->second.size() == 24 ) )
+//        {
+//            char repply_data[sizeof(websocket_reply_data)];
+//            memcpy(repply_data, websocket_reply_data, sizeof(websocket_reply_data));
+//            
+//            WebSocket_HandShake(sec_websocket_key->second.c_str(), repply_data+97);
+//            LOGGER.debug("Repply data:\n%s\n[END]",repply_data);
+//            
+//            socket->send(repply_data, sizeof(repply_data)-1);
+//            state = State::CONNECTED;
+//        }
+//        
+//        return true;
+//    }
     
     std::string path("/web");
-    std::string::size_type pos = request_path.find("://");
+    std::string::size_type pos = request.path.find("://");
     
     if ( pos != std::string::npos )
     {
         pos += 3;
-        if ( pos < request_path.size() )
+        if ( pos < request.path.size() )
         {
-            pos = request_path.find('/', pos);
+            pos = request.path.find('/', pos);
             if ( pos != std::string::npos )
             {
-                path = request_path.substr(pos);
+                path = request.path.substr(pos);
             }
             else
             {
@@ -435,7 +439,7 @@ bool HTTPServerSocket::handle_request()
     }
     else
     {
-        path += request_path;
+        path += request.path;
     }
     
     if ( filesystem::isDirectory(path) )

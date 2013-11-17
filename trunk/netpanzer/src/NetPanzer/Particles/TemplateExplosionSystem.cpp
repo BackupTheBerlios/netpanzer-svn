@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "CraterParticle2D.hpp"
-#include "Interfaces/TileInterface.hpp"
 #include "Particles/ParticleInterface.hpp"
 
 
@@ -58,7 +57,9 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
     int halfBoundsY = bounds.getHeight() / 2;
 
     // Add a crater on the ground if it is a logical location.
-    int pixMovementValue = TileInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
+    // @todo this was to see if it was "ground" to add a crater
+//    int pixMovementValue = TileInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
+    int pixMovementValue = 1; // @todo do it right else will always show crater
 
     // Check for water or impassible.
     if (pixMovementValue != 5 &&

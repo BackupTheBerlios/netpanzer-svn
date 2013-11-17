@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PuffParticle2D.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Math.hpp"
-#include "Interfaces/TileInterface.hpp"
 #include "Units/UnitGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
@@ -81,7 +80,8 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
         index = 253;
 
     } else {
-        index = TileInterface::getWorldPixColor((int) pos.x, (int) pos.z);
+        // @todo getWorldPixColor is really needed?
+//        index = TileInterface::getWorldPixColor((int) pos.x, (int) pos.z);
     }
 
     //int randFrame = rand() % staticPackedChunks[randChunk].getFrameCount();

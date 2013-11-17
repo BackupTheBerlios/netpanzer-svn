@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="89">
+<configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="../.." name="0">
       <df name="build">
@@ -209,6 +209,10 @@
         </df>
       </df>
       <df name="data">
+        <df name="netpanzer">
+          <df name="tilesets">
+          </df>
+        </df>
         <in>colordef.json</in>
       </df>
       <df name="docs">
@@ -782,8 +786,6 @@
             <in>Sprite.hpp</in>
             <in>SpriteSorter.cpp</in>
             <in>SpriteSorter.hpp</in>
-            <in>TileSet.cpp</in>
-            <in>TileSet.hpp</in>
             <in>ViewCamera.cpp</in>
             <in>ViewCamera.hpp</in>
             <in>WorldInputCmdProcessor.cpp</in>
@@ -854,14 +856,15 @@
             <in>Team.hpp</in>
             <in>TeamManager.cpp</in>
             <in>TeamManager.hpp</in>
-            <in>TileInterface.cpp</in>
-            <in>TileInterface.hpp</in>
             <in>VoteManager.cpp</in>
             <in>VoteManager.hpp</in>
             <in>WorldViewInterface.cpp</in>
             <in>WorldViewInterface.hpp</in>
           </df>
           <df name="Network">
+            <df name="HTTP">
+              <in>HTTPRequest.hpp</in>
+            </df>
             <df name="PlayerRequests">
               <in>AllianceRequest.hpp</in>
               <in>AttackUnitRequest.hpp</in>
@@ -894,6 +897,8 @@
             <in>ProxyServer.cpp</in>
             <in>ProxyServer.hpp</in>
             <in>ServerAddress.hpp</in>
+            <in>WebServer.cpp</in>
+            <in>WebServer.hpp</in>
             <in>WebSocketUtil.cpp</in>
             <in>WebSocketUtil.hpp</in>
           </df>
@@ -967,6 +972,8 @@
             <in>MouseCursor.hpp</in>
             <in>ResourceManager.cpp</in>
             <in>ResourceManager.hpp</in>
+            <in>Tileset.cpp</in>
+            <in>Tileset.hpp</in>
           </df>
           <df name="Scenes">
             <df name="Common">

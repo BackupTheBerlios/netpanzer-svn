@@ -37,23 +37,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
-#include "Network/TCPSocket.hpp"
 #include "Core/NetworkGlobals.hpp"
-
-#include "Network/HTTPServerSocket.hpp"
 
 NetworkServer* SERVER = 0;
 
 NetworkServer::NetworkServer()
-        : NetworkInterface(), socket(0)
+        : NetworkInterface()
 {
     // nothing
 }
 
 NetworkServer::~NetworkServer()
 {
-    if ( socket )
-        socket->destroy();
+    
 }
 
 void NetworkServer::resetClientList()
@@ -102,39 +98,30 @@ NetworkServer::openSession()
 void
 NetworkServer::hostSession()
 {
-    if ( socket )
-    {
-        socket->destroy();
-        socket = 0;
-    }
-
     resetClientList();
     
-    try
-    {
-        Address addr = Address::resolve(gameconfig->host.getBindAddress(),
-                                        gameconfig->host.getPort(),
-                                        true, true ); // tcp for binding
-        
-        socket = new TCPListenSocket(addr, this);
-        
-    }
-    catch(...)
-    {
-        if (socket)
-            socket->destroy();
-        socket = 0;
-        throw;
-    }
+//    try
+//    {
+//        Address addr = Address::resolve(gameconfig->host.getBindAddress(),
+//                                        gameconfig->host.getPort(),
+//                                        true, true ); // tcp for binding
+//        
+//        socket = new TCPListenSocket(addr, this);
+//        
+//    }
+//    catch(...)
+//    {
+//        if (socket)
+//            socket->destroy();
+//        socket = 0;
+//        throw;
+//    }
 }
 
 void
 NetworkServer::closeSession()
 {
-    if ( socket )
-        socket->destroy();
-    
-    socket = 0;
+    resetClientList();
 }
 
 void
@@ -249,15 +236,6 @@ NetworkServer::sendRemaining()
         (*i)->sendRemaining();
         i++;
     }
-    
-    HTTPList::iterator h = http_list.begin(),
-                       x = http_list.end();
-    
-    while ( h != x )
-    {
-        (*h)->work();
-        h++;
-    }
 }
 
 bool
@@ -300,24 +278,6 @@ NetworkServer::getIP(const PlayerID player_index)
     }
 
     return "Not a client";
-}
-
-void
-NetworkServer::onSocketError(TCPListenSocket *so)
-{
-    (void)so;
-    LOGGER.warning("NetworkServer: Listen Socket error, something bad could happen from now");
-
-}
-
-TCPSocketObserver *
-NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
-{
-    (void)so;
-    (void)fromaddr;
-    HTTPServerSocket * hss = new HTTPServerSocket();
-    http_list.push_back(hss);
-    return hss;
 }
 
 void
@@ -409,10 +369,4 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
             TeamManager::BalancedTeam();
         }
     }
-}
-
-void NetworkServer::onHTTPServerSocketDisconnected(HTTPServerSocket* socket)
-{
-    http_list.remove(socket);
-    delete(socket);
 }

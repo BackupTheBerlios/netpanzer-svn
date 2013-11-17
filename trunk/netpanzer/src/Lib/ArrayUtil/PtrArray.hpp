@@ -136,7 +136,7 @@ public:
             {
                 data[index] = data[prev_last];
             }
-            last = prev_last;
+            last = prev_last; // @todo this is a bug, if index > last will remove the last one
         }
     }
     
@@ -148,7 +148,7 @@ public:
             {
                 memcpy(&data[index], &data[index+1], sizeof(T*) * (last-index) );
             }
-            last -= 1;
+            last -= 1; // @todo this is a bug, if index > last will remove the last one
         }
     }
     

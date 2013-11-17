@@ -201,6 +201,10 @@
         "darkbrown":   { "file": "cache/filters/filter_darkbrown.fil" },
         "brightness":  { "file": "cache/filters/filter_brightness.fil" },
         "green":       { "file": "cache/filters/filter_green.fil" }
+    },
+    
+    "tilesets": {
+        "summer12mb": { "file": "data/netpanzer/tilesets/summer12mb.json" }
     }
     
 }

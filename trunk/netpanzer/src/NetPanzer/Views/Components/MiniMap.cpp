@@ -106,7 +106,9 @@ MiniMap::regenerate()
         {
             iXY pos(mapx,mapy);
             // XXX Beware, no check for limits, could raise assert and quit the game.
-            *curptr = MapInterface::getAverageColorMapXY(pos);
+            // @todo make another minimap way
+//            *curptr = MapInterface::getAverageColorMapXY(pos);
+            *curptr = 0;
             curptr++;
             mapx += xratio;
         }

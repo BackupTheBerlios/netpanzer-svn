@@ -151,10 +151,12 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
     View::mouseMove(prevPos, newPos);
 } // end GameView::mouseMove
 
+// @todo this tile blitting wont be used, do a new one
 void
 blitTile(Surface &dest, unsigned short tile, int x, int y)
 {
-    PIX * tileptr = TileInterface::getTileSet()->getTile(tile);
+//    PIX * tileptr = TileInterface::getTileSet()->getTile(tile);
+    PIX * tileptr = 0;
     
     int lines = 32;
     int columns = 32;
@@ -200,7 +202,8 @@ blitTile(Surface &dest, unsigned short tile, int x, int y)
 void
 GameView::drawMap(Surface &window)
 {
-    TileSet * ts = TileInterface::getTileSet();
+    // @todo make new map drawing
+//    TileSet * ts = TileInterface::getTileSet();
     iXY world;
     iXY map;
     
@@ -208,7 +211,8 @@ GameView::drawMap(Surface &window)
                               &world.x, &world.y);
     MapInterface::pointXYtoMapXY( world, map );
         
-    unsigned short tile_size = ts->getTileXsize();
+//    unsigned short tile_size = ts->getTileXsize();
+    unsigned short tile_size = 32;
     
     long partial_y = world.y % tile_size;
     int y = 0;

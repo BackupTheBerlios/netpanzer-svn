@@ -27,17 +27,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <map>
 
+#include "HTTP/HTTPRequest.hpp"
+
 #define HTTPSERVERSOCKET_RBUFFER_SIZE (16384)
 #define HTTPSERVERSOCKET_SBUFFER_SIZE (16384)
+
+class WebServer;
 
 class HTTPServerSocket : public network::TCPSocketObserver
 {
 public:
-    HTTPServerSocket();
+    HTTPServerSocket(WebServer * webserver);
     virtual ~HTTPServerSocket();
     
     void close();
     void work();
+    
+    const network::Address& getAddress() const;
     
 protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
@@ -46,6 +52,7 @@ protected:
     void onSocketError(network::TCPSocket *so);
 
 private:
+    WebServer * webserver;
     network::TCPSocket * socket;
     
     filesystem::ReadFile * sending_file;
@@ -56,6 +63,8 @@ private:
     
     uint8_t send_buffer[HTTPSERVERSOCKET_SBUFFER_SIZE];
     size_t send_length;
+
+    HTTPRequest request;
     
     int state;
     
@@ -64,13 +73,6 @@ private:
     void try_handle_request();
     bool decode_request();
     bool handle_request();
-    
-    std::string request_method;
-    std::string request_path;
-    std::string request_version;
-    
-    typedef std::map<std::string, std::string> headers;
-    headers request_headers;
     
 };
 

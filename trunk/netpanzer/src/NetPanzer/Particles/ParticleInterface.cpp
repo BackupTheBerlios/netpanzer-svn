@@ -496,8 +496,12 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 
     movePuffWaitGroup += TimerInterface::getTimeSlice();
 
-    if (TileInterface::getWorldPixMovementValue(unitState.location.x, unitState.location.y) == 0) {
-        if (movePuffWaitGroup >= movePuffWaitTotal) {
+    // @todo this only added the puff if move val was 0, to it right
+//    if (TileInterface::getWorldPixMovementValue(unitState.location.x, unitState.location.y) == 0)
+    if ( true )
+    {
+        if (movePuffWaitGroup >= movePuffWaitTotal)
+        {
             iXY size     = unitParticleInfo[unitState.unit_type].minBounds.getSize();
 
             assert(size.x > 0 && size.y > 0);

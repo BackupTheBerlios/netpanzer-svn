@@ -234,8 +234,8 @@ if thisplatform == 'darwin':
 elif thisplatform == 'win32':
     env.Append( CPPPATH = [ 'C:/mingw/include/SDL' ] )
     env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
-    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
-    networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501' ] )
+    env.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501', '-DWIN32_LEAN_AND_MEAN' ] )
+    networkenv.Append( CCFLAGS = [ '-D_WIN32_WINNT=0x0501', '-DWIN32_LEAN_AND_MEAN' ] )
     networkenv.Append( CPPPATH = [ 'C:/mingw/include/SDL' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
     env.Prepend( _LIBFLAGS = [ 'c:/mingw/lib/SDL_mixer.lib' ] )

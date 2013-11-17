@@ -47,12 +47,12 @@ bool MapInterface::loadMap( const char *file_path, bool load_tiles )
     strcpy( tile_set_path, "wads/" );
     strcat( tile_set_path, main_map->tile_set );
 
-    tile_set.loadTileSetInfo( tile_set_path );
-
-    if ( load_tiles == true )
-    {
-        tile_set.loadTileSet(tile_set_path);
-    }
+//    tile_set.loadTileSetInfo( tile_set_path );
+//
+//    if ( load_tiles == true )
+//    {
+//        tile_set.loadTileSet(tile_set_path);
+//    }
     
     finishMapLoad();
 
@@ -76,13 +76,15 @@ void MapInterface::finishMapLoad( void )
     spawn_list.loadSpawnFile( path );
 }
 
-
+// @todo this movement value must be redone
 unsigned char MapInterface::getMovementValue( const iXY& map_loc )
 {
     MapFile::ElementType tile_val = main_map->getValue( map_loc.x, map_loc.y );
     if ( tile_val != MapFile::InvalidElement )
     {
-        switch( tile_set.getTileMovementValue( tile_val ) )
+        // @todo use real movement value
+//        switch( tile_set.getTileMovementValue( tile_val ) )
+        switch( 1 )
         {
             case 0 : return 1;
             case 1 : return 1;
@@ -95,11 +97,4 @@ unsigned char MapInterface::getMovementValue( const iXY& map_loc )
     }
     
     return( 0xff );
-}
-
-unsigned char MapInterface::getAverageColorMapXY( const iXY& map_loc )
-{
-    MapFile::ElementType map_value = main_map->getValue( map_loc.x, map_loc.y );
-    
-    return (map_value != MapFile::InvalidElement) ? tile_set.getAverageTileColor( map_value ) : 0;
 }
