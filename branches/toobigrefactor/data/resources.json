@@ -1,0 +1,210 @@
+{
+    "images": {
+        "missle-unit-1-pic":  { "file": "pics/units/archer.png",    "size": [ 48, 48 ] },
+        "missle-unit-2-pic":  { "file": "pics/units/stinger.png",    "size": [ 48, 48 ] },
+        "light-tank-1-pic":   { "file": "pics/units/spanzer.png",    "size": [ 48, 48 ] },
+        "light-tank-2-pic":   { "file": "pics/units/bobcat.png",    "size": [ 48, 48 ] },
+        "light-tank-3-pic":   { "file": "pics/units/manta.png",    "size": [ 48, 48 ] },
+        "light-tank-4-pic":   { "file": "pics/units/wolf.png",    "size": [ 48, 48 ] },
+        "medium-tank-1-pic":  { "file": "pics/units/bear.png",    "size": [ 48, 48 ] },
+        "medium-tank-2-pic":  { "file": "pics/units/panther.png",    "size": [ 48, 48 ] },
+        "heavy-tank-1-pic":   { "file": "pics/units/titan.png",    "size": [ 48, 48 ] },
+        "heavy-tank-2-pic":   { "file": "pics/units/drake.png",    "size": [ 48, 48 ] },
+        
+        "password-protected-server":  { "file": "pics/default/lock.png",        "size": [ 8, 8 ] },
+        "player-color-mask":          { "file": "pics/default/playerColor.png", "size": [ 14, 14 ] },
+
+        "ally-icons": [
+            { "file": "pics/default/noAlly.png",      "size": [ 20, 14 ] },
+            { "file": "pics/default/allyRequest.png", "size": [ 20, 14 ] },
+            { "file": "pics/default/allyOther.png",   "size": [ 20, 14 ] },
+            { "file": "pics/default/ally.png",        "size": [ 20, 14 ] }
+        ],
+
+        "team-icons": [
+            { "file": "pics/default/team-1.png", "size": [ 14, 14 ] },
+            { "file": "pics/default/team-2.png", "size": [ 14, 14 ] },
+            { "file": "pics/default/team-3.png", "size": [ 14, 14 ] },
+            { "file": "pics/default/team-4.png", "size": [ 14, 14 ] }
+        ],
+
+        "newbutton-background":        { "file": "pics/buttons/b-black.png",       "size": [ 50, 21 ] },
+        "mainmenu-button-background":  { "file": "pics/buttons/page.png",          "size": [ 200, 25 ] },
+        "canon":                       { "file": "pics/backgrounds/canon.png",     "size": [ 650, 173 ] },
+        "main-background":             { "file": "pics/backgrounds/defaultMB.png", "size": [ 800, 600 ] },
+        "text-vs":                     { "file": "pics/backgrounds/vs.png",        "size": [ 64, 34 ] }
+    },
+    
+    "mimages": {
+        "scroll-buttons":  { "file": "pics/buttons/scrollbutton.png", "size": [ 15, 15 ], "offset": [ 0, 0 ], "frames": 10, "fps": 0 },
+        "new-scroll-buttons":  { "file": "pics/buttons/newscroll.png", "size": [ 15, 15 ], "offset": [ 0, 0 ], "frames": 8, "fps": 0 },
+
+        "burn-ground-chunks":  { "file": "pics/particles/burnGroundChunks.png", "size": [2, 2], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "chunks":              { "file": "pics/particles/chunks.png",           "size": [2, 2], "offset": [0, 0], "frames": 256, "fps": 0 },
+        "chunks0":             { "file": "pics/particles/chunks0000.png",       "size": [2, 2], "offset": [0, 0], "frames": 1, "fps": 0 },
+        "gray-unit-chunks":    { "file": "pics/particles/grayUnitChunks.png",   "size": [2, 2], "offset": [0, 0], "frames": 64, "fps": 0 },
+        "green-unit-chunks":   { "file": "pics/particles/greenUnitChunks.png",  "size": [2, 2], "offset": [0, 0], "frames": 64, "fps": 0 },
+        "ground-chunks":       { "file": "pics/particles/groundChunks.png",     "size": [2, 2], "offset": [0, 0], "frames": 256, "fps": 0 },
+
+        "clouds":  { "file": "pics/particles/clouds.png",       "size": [300, 300], "offset": [0, 0], "frames": 10, "fps": 0 },
+
+        "craters":  { "file": "pics/particles/craters.png",      "size": [32, 32], "offset": [0, 0], "frames": 3, "fps": 0 },
+
+        "dirt-puff-04":  { "file": "pics/particles/dirtPuff0004.png",       "size": [4, 4], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-08":  { "file": "pics/particles/dirtPuff0008.png",       "size": [8, 8], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-12":  { "file": "pics/particles/dirtPuff0012.png",       "size": [12, 12], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-16":  { "file": "pics/particles/dirtPuff0016.png",       "size": [16, 16], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-20":  { "file": "pics/particles/dirtPuff0020.png",       "size": [20, 20], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-24":  { "file": "pics/particles/dirtPuff0024.png",       "size": [24, 24], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-28":  { "file": "pics/particles/dirtPuff0028.png",       "size": [28, 28], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-32":  { "file": "pics/particles/dirtPuff0032.png",       "size": [32, 32], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-36":  { "file": "pics/particles/dirtPuff0036.png",       "size": [36, 36], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-40":  { "file": "pics/particles/dirtPuff0040.png",       "size": [40, 40], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-44":  { "file": "pics/particles/dirtPuff0044.png",       "size": [44, 44], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "dirt-puff-48":  { "file": "pics/particles/dirtPuff0048.png",       "size": [48, 48], "offset": [0, 0], "frames": 26, "fps": 0 },
+        
+        "somke-dark-puff-04":  { "file": "pics/particles/smokeDarkPuff0004.png",  "size": [4, 4], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-08":  { "file": "pics/particles/smokeDarkPuff0008.png",  "size": [8, 8], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-12":  { "file": "pics/particles/smokeDarkPuff0012.png",  "size": [12, 12], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-16":  { "file": "pics/particles/smokeDarkPuff0016.png",  "size": [16, 16], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-20":  { "file": "pics/particles/smokeDarkPuff0020.png",  "size": [20, 20], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-24":  { "file": "pics/particles/smokeDarkPuff0024.png",  "size": [24, 24], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-28":  { "file": "pics/particles/smokeDarkPuff0028.png",  "size": [28, 28], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-32":  { "file": "pics/particles/smokeDarkPuff0032.png",  "size": [32, 32], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-36":  { "file": "pics/particles/smokeDarkPuff0036.png",  "size": [36, 36], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-40":  { "file": "pics/particles/smokeDarkPuff0040.png",  "size": [40, 40], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-44":  { "file": "pics/particles/smokeDarkPuff0044.png",  "size": [44, 44], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-dark-puff-48":  { "file": "pics/particles/smokeDarkPuff0048.png",  "size": [48, 48], "offset": [0, 0], "frames": 26, "fps": 0 },
+        
+        "somke-light-puff-04":  { "file": "pics/particles/smokeLightPuff0004.png", "size": [4, 4], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-08":  { "file": "pics/particles/smokeLightPuff0008.png", "size": [8, 8], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-12":  { "file": "pics/particles/smokeLightPuff0012.png", "size": [12, 12], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-16":  { "file": "pics/particles/smokeLightPuff0016.png", "size": [16, 16], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-20":  { "file": "pics/particles/smokeLightPuff0020.png", "size": [20, 20], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-24":  { "file": "pics/particles/smokeLightPuff0024.png", "size": [24, 24], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-28":  { "file": "pics/particles/smokeLightPuff0028.png", "size": [28, 28], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-32":  { "file": "pics/particles/smokeLightPuff0032.png", "size": [32, 32], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-36":  { "file": "pics/particles/smokeLightPuff0036.png", "size": [36, 36], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-40":  { "file": "pics/particles/smokeLightPuff0040.png", "size": [40, 40], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-44":  { "file": "pics/particles/smokeLightPuff0044.png", "size": [44, 44], "offset": [0, 0], "frames": 26, "fps": 0 },
+        "somke-light-puff-48":  { "file": "pics/particles/smokeLightPuff0048.png", "size": [48, 48], "offset": [0, 0], "frames": 26, "fps": 0 },
+
+        "explosion0-1":  { "file": "pics/particles/explosion0-1.png", "size": [13, 18], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-2":  { "file": "pics/particles/explosion0-2.png", "size": [27, 36], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-3":  { "file": "pics/particles/explosion0-3.png", "size": [41, 54], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-4":  { "file": "pics/particles/explosion0-4.png", "size": [54, 73], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-5":  { "file": "pics/particles/explosion0-5.png", "size": [68, 91], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-6":  { "file": "pics/particles/explosion0-6.png", "size": [82, 109], "offset": [0, 0], "frames": 16, "fps": 20 },
+        "explosion0-7":  { "file": "pics/particles/explosion0-7.png", "size": [96, 128], "offset": [0, 0], "frames": 16, "fps": 20 },
+
+        "explosion1-1":  { "file": "pics/particles/explosion1-1.png", "size": [18, 13], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-2":  { "file": "pics/particles/explosion1-2.png", "size": [36, 27], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-3":  { "file": "pics/particles/explosion1-3.png", "size": [54, 41], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-4":  { "file": "pics/particles/explosion1-4.png", "size": [73, 54], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-5":  { "file": "pics/particles/explosion1-5.png", "size": [91, 68], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-6":  { "file": "pics/particles/explosion1-6.png", "size": [109, 82], "offset": [0, 0], "frames": 15, "fps": 20 },
+        "explosion1-7":  { "file": "pics/particles/explosion1-7.png", "size": [128, 96], "offset": [0, 0], "frames": 15, "fps": 20 },
+
+        "flash-mask":           { "file": "pics/particles/flash2.png",       "size": [240, 194], "offset": [0, 0], "frames": 20, "fps": 0 },
+        "missle-ground-light":  { "file": "pics/particles/missleGroundLight.png", "size": [67, 49], "offset": [-33, -24], "frames": 1, "fps": 0 },
+        "missle-thrust":        { "file": "pics/particles/missleThrust.png", "size": [31, 30], "offset": [-15, -15], "frames": 1, "fps": 0 },
+
+        "missles":         { "file": "pics/particles/missles.png", "size": [14, 14], "offset": [0, 0], "frames": 360, "fps": 0 },
+        "missles-medium":  { "file": "pics/particles/misslesMedium.png", "size": [14, 14], "offset": [0, 0], "frames": 360, "fps": 0 },
+        "missless-small":  { "file": "pics/particles/misslesSmall.png", "size": [14, 14], "offset": [0, 0], "frames": 360, "fps": 0 },
+        "shells":          { "file": "pics/particles/shells.png", "size": [14, 14], "offset": [0, 0], "frames": 360, "fps": 0 },
+
+        "powerup":         { "file": "pics/powerups/Bolt.png",  "size": [ 127, 127 ], "offset": [ 0, 0 ], "frames": 36, "fps": 0 },
+        "powerup-shadow":  { "file": "pics/powerups/BoltS.png", "size": [ 127, 127 ], "offset": [ 0, 0 ], "frames": 36, "fps": 0 },
+
+        "missle-unit-1-body":           { "file": "pics/units/archer_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-1-shadow":         { "file": "pics/units/archer_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-1-turret":         { "file": "pics/units/archer_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-1-turret-shadow":  { "file": "pics/units/archer_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "missle-unit-2-body":           { "file": "pics/units/stinger_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-2-shadow":         { "file": "pics/units/stinger_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-2-turret":         { "file": "pics/units/stinger_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "missle-unit-2-turret-shadow":  { "file": "pics/units/stinger_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "light-tank-1-body":           { "file": "pics/units/spanzer_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-1-shadow":         { "file": "pics/units/spanzer_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-1-turret":         { "file": "pics/units/spanzer_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-1-turret-shadow":  { "file": "pics/units/spanzer_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "light-tank-2-body":           { "file": "pics/units/bobcat_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-2-shadow":         { "file": "pics/units/bobcat_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-2-turret":         { "file": "pics/units/bobcat_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-2-turret-shadow":  { "file": "pics/units/bobcat_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "light-tank-3-body":           { "file": "pics/units/manta_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-3-shadow":         { "file": "pics/units/manta_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-3-turret":         { "file": "pics/units/manta_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-3-turret-shadow":  { "file": "pics/units/manta_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "light-tank-4-body":           { "file": "pics/units/wolf_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-4-shadow":         { "file": "pics/units/wolf_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-4-turret":         { "file": "pics/units/wolf_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "light-tank-4-turret-shadow":  { "file": "pics/units/wolf_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "medium-tank-1-body":           { "file": "pics/units/bear_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-1-shadow":         { "file": "pics/units/bear_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-1-turret":         { "file": "pics/units/bear_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-1-turret-shadow":  { "file": "pics/units/bear_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        
+        "medium-tank-2-body":           { "file": "pics/units/panther_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-2-shadow":         { "file": "pics/units/panther_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-2-turret":         { "file": "pics/units/panther_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "medium-tank-2-turret-shadow":  { "file": "pics/units/panther_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "heavy-tank-1-body":           { "file": "pics/units/drake_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-1-shadow":         { "file": "pics/units/drake_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-1-turret":         { "file": "pics/units/drake_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-1-turret-shadow":  { "file": "pics/units/drake_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+        "heavy-tank-2-body":           { "file": "pics/units/titan_b.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-2-shadow":         { "file": "pics/units/titan_s.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-2-turret":         { "file": "pics/units/titan_t.png",  "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "heavy-tank-2-turret-shadow":  { "file": "pics/units/titan_ts.png", "size": [ 127, 127 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+
+
+        "unfinished-tank-body":           { "file": "pics/units/strange_b.png",  "size": [ 64, 56 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "unfinished-tank-shadow":         { "file": "pics/units/strange_s.png",  "size": [ 64, 56 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "unfinished-tank-turret":         { "file": "pics/units/strange_t.png",  "size": [ 64, 56 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 },
+        "unfinished-tank-turret-shadow":  { "file": "pics/units/strange_ts.png", "size": [ 64, 56 ], "offset": [ -63, -63 ], "frames": 36, "fps": 0 }
+    },
+    
+    "mcursors": {
+        "default":      { "file": "pics/cursors/default.png",    "offset": [ -16, -14 ] },
+        "select":       { "file": "pics/cursors/select.png",     "offset": [ -16, -16 ] },
+        "allie":        { "file": "pics/cursors/allie.png",      "offset": [ -16, -16 ] },
+        "breakallie":   { "file": "pics/cursors/breakallie.png", "offset": [ -16, -16 ] },
+        "target":       { "file": "pics/cursors/target.png",     "offset": [ -16, -16 ] },
+        "grey-target":  { "file": "pics/cursors/grey-target.png","offset": [ -16, -16 ] },
+        "move":         { "file": "pics/cursors/move.png",       "offset": [ -16, -16 ] },
+        "nomove":       { "file": "pics/cursors/noentry.png",    "offset": [ -16, -16 ] }
+    },
+    
+    "blendtables": {
+        "darkenalot":      { "file": "cache/filters/blend_darkenalot.tbl" },
+        "darkenalittle":   { "file": "cache/filters/blend_darkenalittle.tbl" },
+        "lightdark":       { "file": "cache/filters/blend_lightdark.tbl" },
+        "brighten":        { "file": "cache/filters/blend_brighten.tbl" },
+        "2080":            { "file": "cache/filters/blend_2080.tbl" },
+        "4060":            { "file": "cache/filters/blend_4060.tbl" },
+        "6040":            { "file": "cache/filters/blend_6040.tbl" },
+        "8020":            { "file": "cache/filters/blend_8020.tbl" }
+    },
+    
+    "imagefilters": {
+        "darkgray":    { "file": "cache/filters/filter_darkgray.fil" },
+        "darkbrown":   { "file": "cache/filters/filter_darkbrown.fil" },
+        "brightness":  { "file": "cache/filters/filter_brightness.fil" },
+        "green":       { "file": "cache/filters/filter_green.fil" }
+    },
+    
+    "tilesets": {
+        "summer12mb": { "file": "data/netpanzer/tilesets/summer12mb.json" }
+    }
+    
+}

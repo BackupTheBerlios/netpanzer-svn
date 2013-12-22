@@ -1,0 +1,1299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="../.." name="0">
+      <df name="build">
+        <df name="debug">
+          <df name="libs">
+          </df>
+          <df name="src">
+            <df name="Lib">
+              <df name="2D">
+                <df name="Components">
+                </df>
+              </df>
+              <df name="ArrayUtil">
+              </df>
+              <df name="GameInput">
+              </df>
+              <df name="json">
+              </df>
+              <df name="libjson">
+                <df name="_internal">
+                  <df name="Source">
+                  </df>
+                </df>
+              </df>
+              <df name="libpng-1.6.5">
+              </df>
+              <df name="Network">
+              </df>
+              <df name="optionmm">
+              </df>
+              <df name="physfs">
+                <df name="archivers">
+                </df>
+                <df name="platform">
+                </df>
+                <df name="zlib123">
+                </df>
+              </df>
+              <df name="Types">
+              </df>
+              <df name="Util">
+              </df>
+              <df name="zlib-1.2.8">
+              </df>
+            </df>
+            <df name="NetPanzer">
+              <df name="Actions">
+              </df>
+              <df name="Bot">
+              </df>
+              <df name="Classes">
+                <df name="AI">
+                </df>
+                <df name="Network">
+                </df>
+              </df>
+              <df name="Config">
+              </df>
+              <df name="Core">
+              </df>
+              <df name="Interfaces">
+              </df>
+              <df name="Network">
+              </df>
+              <df name="Objectives">
+              </df>
+              <df name="Particles">
+              </df>
+              <df name="PowerUps">
+              </df>
+              <df name="Resources">
+              </df>
+              <df name="Scenes">
+                <df name="Common">
+                </df>
+                <df name="MainMenu">
+                </df>
+              </df>
+              <df name="Scripts">
+              </df>
+              <df name="System">
+              </df>
+              <df name="Units">
+              </df>
+              <df name="Views">
+                <df name="Components">
+                </df>
+                <df name="Game">
+                </df>
+                <df name="MainMenu">
+                  <df name="Multi">
+                    <df name="MasterServer">
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="Weapons">
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="release">
+          <df name="libs">
+          </df>
+          <df name="src">
+            <df name="Lib">
+              <df name="2D">
+                <df name="Components">
+                </df>
+              </df>
+              <df name="ArrayUtil">
+              </df>
+              <df name="GameInput">
+              </df>
+              <df name="json">
+              </df>
+              <df name="libjson">
+                <df name="_internal">
+                  <df name="Source">
+                  </df>
+                </df>
+              </df>
+              <df name="libpng-1.6.5">
+              </df>
+              <df name="Network">
+              </df>
+              <df name="optionmm">
+              </df>
+              <df name="physfs">
+                <df name="archivers">
+                </df>
+                <df name="platform">
+                </df>
+                <df name="zlib123">
+                </df>
+              </df>
+              <df name="Types">
+              </df>
+              <df name="Util">
+              </df>
+              <df name="zlib-1.2.8">
+              </df>
+            </df>
+            <df name="NetPanzer">
+              <df name="Actions">
+              </df>
+              <df name="Bot">
+              </df>
+              <df name="Classes">
+                <df name="AI">
+                </df>
+                <df name="Network">
+                </df>
+              </df>
+              <df name="Config">
+              </df>
+              <df name="Core">
+              </df>
+              <df name="Interfaces">
+              </df>
+              <df name="Network">
+              </df>
+              <df name="Objectives">
+              </df>
+              <df name="Particles">
+              </df>
+              <df name="PowerUps">
+              </df>
+              <df name="Resources">
+              </df>
+              <df name="Scenes">
+                <df name="Common">
+                </df>
+                <df name="MainMenu">
+                </df>
+              </df>
+              <df name="Scripts">
+              </df>
+              <df name="System">
+              </df>
+              <df name="Units">
+              </df>
+              <df name="Views">
+                <df name="Components">
+                </df>
+                <df name="Game">
+                </df>
+                <df name="MainMenu">
+                  <df name="Multi">
+                    <df name="MasterServer">
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="Weapons">
+              </df>
+            </df>
+          </df>
+        </df>
+      </df>
+      <df name="cache">
+        <df name="colorfilters">
+          <df name="netp">
+          </df>
+        </df>
+        <df name="filters">
+        </df>
+      </df>
+      <df name="data">
+        <df name="netpanzer">
+          <df name="tilesets">
+          </df>
+        </df>
+        <in>colordef.json</in>
+      </df>
+      <df name="docs">
+        <df name="docbook">
+        </df>
+      </df>
+      <df name="Languages">
+      </df>
+      <df name="maps">
+      </df>
+      <df name="pics">
+        <df name="backgrounds">
+        </df>
+        <df name="buttons">
+        </df>
+        <df name="cursors">
+        </df>
+        <df name="default">
+        </df>
+        <df name="flags">
+        </df>
+        <df name="particles">
+        </df>
+        <df name="powerups">
+        </df>
+        <df name="units">
+        </df>
+      </df>
+      <df name="projects">
+        <df name="netpanzer-svn-linux">
+        </df>
+        <df name="netpanzer-svn-windows">
+        </df>
+      </df>
+      <df name="scripts">
+      </df>
+      <df name="sound">
+      </df>
+      <df name="src">
+        <df name="Lib">
+          <df name="2D">
+            <df name="Components">
+              <in>AreaComponent.hpp</in>
+              <in>Button.cpp</in>
+              <in>Button.hpp</in>
+              <in>CheckBox.cpp</in>
+              <in>CheckBox.hpp</in>
+              <in>Choice.cpp</in>
+              <in>Choice.hpp</in>
+              <in>InputField.cpp</in>
+              <in>InputField.hpp</in>
+              <in>Label.cpp</in>
+              <in>Label.hpp</in>
+              <in>ScrollableList.cpp</in>
+              <in>ScrollableList.hpp</in>
+              <in>Separator.hpp</in>
+              <in>Slider.cpp</in>
+              <in>Slider.hpp</in>
+              <in>Table.cpp</in>
+              <in>Table.hpp</in>
+              <in>VScrollBar.cpp</in>
+              <in>VScrollBar.hpp</in>
+            </df>
+            <in>Color.cpp</in>
+            <in>Color.hpp</in>
+            <in>ComponentEvents.hpp</in>
+            <in>ComponentLayer.cpp</in>
+            <in>ComponentLayer.hpp</in>
+            <in>Layer.hpp</in>
+            <in>PackedSurface.cpp</in>
+            <in>PackedSurface.hpp</in>
+            <in>Palette.cpp</in>
+            <in>Palette.hpp</in>
+            <in>Scene.cpp</in>
+            <in>Scene.hpp</in>
+            <in>SceneManager.cpp</in>
+            <in>SceneManager.hpp</in>
+            <in>Surface.cpp</in>
+            <in>Surface.hpp</in>
+            <in>TextRenderer.cpp</in>
+            <in>TextRenderer.hpp</in>
+            <in>TextRenderingSystem.cpp</in>
+            <in>TextRenderingSystem.hpp</in>
+          </df>
+          <df name="ArrayUtil">
+            <in>ArrayTemplate.hpp</in>
+            <in>BitArray.cpp</in>
+            <in>BitArray.hpp</in>
+            <in>BucketArrayTemplate.hpp</in>
+            <in>LinkListDoubleTemplate.hpp</in>
+            <in>PtrArray.hpp</in>
+            <in>QueueTemplate.hpp</in>
+          </df>
+          <df name="freetype">
+            <df name="include">
+              <df name="freetype">
+                <df name="config">
+                  <in>ftconfig.h</in>
+                  <in>ftheader.h</in>
+                  <in>ftmodule.h</in>
+                  <in>ftoption.h</in>
+                  <in>ftstdlib.h</in>
+                </df>
+                <df name="internal">
+                  <df name="services">
+                    <in>svbdf.h</in>
+                    <in>svcid.h</in>
+                    <in>svgldict.h</in>
+                    <in>svgxval.h</in>
+                    <in>svkern.h</in>
+                    <in>svmm.h</in>
+                    <in>svotval.h</in>
+                    <in>svpfr.h</in>
+                    <in>svpostnm.h</in>
+                    <in>svprop.h</in>
+                    <in>svpscmap.h</in>
+                    <in>svpsinfo.h</in>
+                    <in>svsfnt.h</in>
+                    <in>svttcmap.h</in>
+                    <in>svtteng.h</in>
+                    <in>svttglyf.h</in>
+                    <in>svwinfnt.h</in>
+                    <in>svxf86nm.h</in>
+                  </df>
+                  <in>autohint.h</in>
+                  <in>ftcalc.h</in>
+                  <in>ftdebug.h</in>
+                  <in>ftdriver.h</in>
+                  <in>ftgloadr.h</in>
+                  <in>ftmemory.h</in>
+                  <in>ftobjs.h</in>
+                  <in>ftpic.h</in>
+                  <in>ftrfork.h</in>
+                  <in>ftserv.h</in>
+                  <in>ftstream.h</in>
+                  <in>fttrace.h</in>
+                  <in>ftvalid.h</in>
+                  <in>internal.h</in>
+                  <in>psaux.h</in>
+                  <in>pshints.h</in>
+                  <in>sfnt.h</in>
+                  <in>t1types.h</in>
+                  <in>tttypes.h</in>
+                </df>
+                <in>freetype.h</in>
+                <in>ftadvanc.h</in>
+                <in>ftautoh.h</in>
+                <in>ftbbox.h</in>
+                <in>ftbdf.h</in>
+                <in>ftbitmap.h</in>
+                <in>ftbzip2.h</in>
+                <in>ftcache.h</in>
+                <in>ftchapters.h</in>
+                <in>ftcid.h</in>
+                <in>fterrdef.h</in>
+                <in>fterrors.h</in>
+                <in>ftgasp.h</in>
+                <in>ftglyph.h</in>
+                <in>ftgxval.h</in>
+                <in>ftgzip.h</in>
+                <in>ftimage.h</in>
+                <in>ftincrem.h</in>
+                <in>ftlcdfil.h</in>
+                <in>ftlist.h</in>
+                <in>ftlzw.h</in>
+                <in>ftmac.h</in>
+                <in>ftmm.h</in>
+                <in>ftmodapi.h</in>
+                <in>ftmoderr.h</in>
+                <in>ftotval.h</in>
+                <in>ftoutln.h</in>
+                <in>ftpfr.h</in>
+                <in>ftrender.h</in>
+                <in>ftsizes.h</in>
+                <in>ftsnames.h</in>
+                <in>ftstroke.h</in>
+                <in>ftsynth.h</in>
+                <in>ftsystem.h</in>
+                <in>fttrigon.h</in>
+                <in>fttypes.h</in>
+                <in>ftwinfnt.h</in>
+                <in>ftxf86.h</in>
+                <in>t1tables.h</in>
+                <in>ttnameid.h</in>
+                <in>tttables.h</in>
+                <in>tttags.h</in>
+                <in>ttunpat.h</in>
+              </df>
+              <in>ft2build.h</in>
+            </df>
+            <in>basepic.c</in>
+            <in>basepic.h</in>
+            <in>ftadvanc.c</in>
+            <in>ftapi.c</in>
+            <in>ftbase.c</in>
+            <in>ftbase.h</in>
+            <in>ftbbox.c</in>
+            <in>ftbdf.c</in>
+            <in>ftbitmap.c</in>
+            <in>ftcalc.c</in>
+            <in>ftcid.c</in>
+            <in>ftdbgmem.c</in>
+            <in>ftdebug.c</in>
+            <in>ftfstype.c</in>
+            <in>ftgasp.c</in>
+            <in>ftgloadr.c</in>
+            <in>ftglyph.c</in>
+            <in>ftgrays.c</in>
+            <in>ftgrays.h</in>
+            <in>ftgxval.c</in>
+            <in>ftinit.c</in>
+            <in>ftlcdfil.c</in>
+            <in>ftmac.c</in>
+            <in>ftmisc.h</in>
+            <in>ftmm.c</in>
+            <in>ftobjs.c</in>
+            <in>ftotval.c</in>
+            <in>ftoutln.c</in>
+            <in>ftpatent.c</in>
+            <in>ftpfr.c</in>
+            <in>ftpic.c</in>
+            <in>ftraster.c</in>
+            <in>ftraster.h</in>
+            <in>ftrend1.c</in>
+            <in>ftrend1.h</in>
+            <in>ftrfork.c</in>
+            <in>ftsmerrs.h</in>
+            <in>ftsmooth.c</in>
+            <in>ftsmooth.h</in>
+            <in>ftsnames.c</in>
+            <in>ftspic.c</in>
+            <in>ftspic.h</in>
+            <in>ftstream.c</in>
+            <in>ftstroke.c</in>
+            <in>ftsynth.c</in>
+            <in>ftsystem.c</in>
+            <in>fttrigon.c</in>
+            <in>fttype1.c</in>
+            <in>ftutil.c</in>
+            <in>ftwinfnt.c</in>
+            <in>ftxf86.c</in>
+            <in>raster.c</in>
+            <in>rasterrs.h</in>
+            <in>rastpic.c</in>
+            <in>rastpic.h</in>
+            <in>sfdriver.c</in>
+            <in>sfdriver.h</in>
+            <in>sferrors.h</in>
+            <in>sfnt.c</in>
+            <in>sfntpic.c</in>
+            <in>sfntpic.h</in>
+            <in>sfobjs.c</in>
+            <in>sfobjs.h</in>
+            <in>smooth.c</in>
+            <in>truetype.c</in>
+            <in>ttbdf.c</in>
+            <in>ttbdf.h</in>
+            <in>ttcmap.c</in>
+            <in>ttcmap.h</in>
+            <in>ttcmapc.h</in>
+            <in>ttdriver.c</in>
+            <in>ttdriver.h</in>
+            <in>tterrors.h</in>
+            <in>ttgload.c</in>
+            <in>ttgload.h</in>
+            <in>ttgxvar.c</in>
+            <in>ttgxvar.h</in>
+            <in>ttinterp.c</in>
+            <in>ttinterp.h</in>
+            <in>ttkern.c</in>
+            <in>ttkern.h</in>
+            <in>ttload.c</in>
+            <in>ttload.h</in>
+            <in>ttmtx.c</in>
+            <in>ttmtx.h</in>
+            <in>ttobjs.c</in>
+            <in>ttobjs.h</in>
+            <in>ttpic.c</in>
+            <in>ttpic.h</in>
+            <in>ttpload.c</in>
+            <in>ttpload.h</in>
+            <in>ttpost.c</in>
+            <in>ttpost.h</in>
+            <in>ttsbit.c</in>
+            <in>ttsbit.h</in>
+            <in>ttsbit0.c</in>
+            <in>ttsubpix.c</in>
+            <in>ttsubpix.h</in>
+          </df>
+          <df name="GameInput">
+            <in>InputConstants.hpp</in>
+            <in>InputHandler.hpp</in>
+            <in>InputManager.cpp</in>
+            <in>InputManager.hpp</in>
+            <in>InputState.hpp</in>
+            <in>RawInput.hpp</in>
+          </df>
+          <df name="json">
+            <in>json-forwards.h</in>
+            <in>json.h</in>
+            <in>jsoncpp.cpp</in>
+          </df>
+          <df name="libpng-1.6.5">
+            <in>png.c</in>
+            <in>png.h</in>
+            <in>pngconf.h</in>
+            <in>pngdebug.h</in>
+            <in>pngerror.c</in>
+            <in>pngget.c</in>
+            <in>pnginfo.h</in>
+            <in>pnglibconf.h</in>
+            <in>pngmem.c</in>
+            <in>pngpread.c</in>
+            <in>pngpriv.h</in>
+            <in>pngread.c</in>
+            <in>pngrio.c</in>
+            <in>pngrtran.c</in>
+            <in>pngrutil.c</in>
+            <in>pngset.c</in>
+            <in>pngstruct.h</in>
+            <in>pngtrans.c</in>
+            <in>pngwio.c</in>
+            <in>pngwrite.c</in>
+            <in>pngwtran.c</in>
+            <in>pngwutil.c</in>
+          </df>
+          <df name="Network">
+            <in>Address.cpp</in>
+            <in>Address.hpp</in>
+            <in>NetworkException.hpp</in>
+            <in>NetworkManager.cpp</in>
+            <in>NetworkManager.hpp</in>
+            <in>SocketBase.cpp</in>
+            <in>SocketBase.hpp</in>
+            <in>SocketHeaders.hpp</in>
+            <in>SocketManager.cpp</in>
+            <in>SocketManager.hpp</in>
+            <in>SocketSet.hpp</in>
+            <in>TCPListenSocket.cpp</in>
+            <in>TCPListenSocket.hpp</in>
+            <in>TCPSocket.cpp</in>
+            <in>TCPSocket.hpp</in>
+            <in>UDPSocket.cpp</in>
+            <in>UDPSocket.hpp</in>
+          </df>
+          <df name="optionmm">
+            <in>command_line.cpp</in>
+            <in>command_line.hpp</in>
+            <in>option.cpp</in>
+            <in>option.hpp</in>
+          </df>
+          <df name="physfs">
+            <df name="archivers">
+              <in>dir.c</in>
+              <in>grp.c</in>
+              <in>hog.c</in>
+              <in>lzma.c</in>
+              <in>mvl.c</in>
+              <in>qpak.c</in>
+              <in>wad.c</in>
+              <in>zip.c</in>
+            </df>
+            <df name="extras">
+              <in>abs-file.h</in>
+              <in>globbing.c</in>
+              <in>globbing.h</in>
+              <in>ignorecase.c</in>
+              <in>ignorecase.h</in>
+              <in>physfshttpd.c</in>
+              <in>physfsrwops.c</in>
+              <in>physfsrwops.h</in>
+              <in>physfsunpack.c</in>
+              <in>selfextract.c</in>
+            </df>
+            <df name="platform">
+              <in>beos.cpp</in>
+              <in>macosx.c</in>
+              <in>os2.c</in>
+              <in>pocketpc.c</in>
+              <in>posix.c</in>
+              <in>unix.c</in>
+              <in>windows.c</in>
+            </df>
+            <df name="zlib123">
+              <in>adler32.c</in>
+              <in>compress.c</in>
+              <in>crc32.c</in>
+              <in>crc32.h</in>
+              <in>deflate.c</in>
+              <in>deflate.h</in>
+              <in>gzio.c</in>
+              <in>infback.c</in>
+              <in>inffast.c</in>
+              <in>inffast.h</in>
+              <in>inffixed.h</in>
+              <in>inflate.c</in>
+              <in>inflate.h</in>
+              <in>inftrees.c</in>
+              <in>inftrees.h</in>
+              <in>trees.c</in>
+              <in>trees.h</in>
+              <in>uncompr.c</in>
+              <in>zconf.h</in>
+              <in>zlib.h</in>
+              <in>zutil.c</in>
+              <in>zutil.h</in>
+            </df>
+            <in>physfs.c</in>
+            <in>physfs.h</in>
+            <in>physfs_byteorder.c</in>
+            <in>physfs_casefolding.h</in>
+            <in>physfs_internal.h</in>
+            <in>physfs_platforms.h</in>
+            <in>physfs_unicode.c</in>
+          </df>
+          <df name="Types">
+            <in>Angle.cpp</in>
+            <in>Angle.hpp</in>
+            <in>BoundBox.hpp</in>
+            <in>SimpleEventList.hpp</in>
+            <in>UString.cpp</in>
+            <in>UString.hpp</in>
+            <in>fRect.cpp</in>
+            <in>fRect.hpp</in>
+            <in>fXY.hpp</in>
+            <in>fXYZ.cpp</in>
+            <in>fXYZ.hpp</in>
+            <in>iRect.hpp</in>
+            <in>iXY.hpp</in>
+          </df>
+          <df name="Util">
+            <in>BresenhamLine.cpp</in>
+            <in>BresenhamLine.hpp</in>
+            <in>Endian.hpp</in>
+            <in>Exception.cpp</in>
+            <in>Exception.hpp</in>
+            <in>FileStream.hpp</in>
+            <in>FileSystem.cpp</in>
+            <in>FileSystem.hpp</in>
+            <in>Log.cpp</in>
+            <in>Log.hpp</in>
+            <in>Math.cpp</in>
+            <in>Math.hpp</in>
+            <in>NTimer.hpp</in>
+            <in>NoCopy.hpp</in>
+            <in>StringTokenizer.hpp</in>
+            <in>StringUtil.cpp</in>
+            <in>StringUtil.hpp</in>
+            <in>TimeStamp.cpp</in>
+            <in>TimeStamp.hpp</in>
+            <in>Timer.cpp</in>
+            <in>Timer.hpp</in>
+            <in>TimerInterface.cpp</in>
+            <in>TimerInterface.hpp</in>
+          </df>
+          <df name="zlib-1.2.8">
+            <in>adler32.c</in>
+            <in>compress.c</in>
+            <in>crc32.c</in>
+            <in>crc32.h</in>
+            <in>deflate.c</in>
+            <in>deflate.h</in>
+            <in>gzclose.c</in>
+            <in>gzguts.h</in>
+            <in>gzlib.c</in>
+            <in>gzread.c</in>
+            <in>gzwrite.c</in>
+            <in>infback.c</in>
+            <in>inffast.c</in>
+            <in>inffast.h</in>
+            <in>inffixed.h</in>
+            <in>inflate.c</in>
+            <in>inflate.h</in>
+            <in>inftrees.c</in>
+            <in>inftrees.h</in>
+            <in>trees.c</in>
+            <in>trees.h</in>
+            <in>uncompr.c</in>
+            <in>zconf.h</in>
+            <in>zlib.h</in>
+            <in>zutil.c</in>
+            <in>zutil.h</in>
+          </df>
+        </df>
+        <df name="NetPanzer">
+          <df name="Actions">
+            <in>Action.hpp</in>
+            <in>ActionManager.cpp</in>
+            <in>ActionManager.hpp</in>
+            <in>ActionManagerGUIActions.cpp</in>
+            <in>ActionManagerSystemActions.cpp</in>
+            <in>DisconnectAction.hpp</in>
+            <in>QuitAction.hpp</in>
+            <in>StartSurrenderVoteAction.hpp</in>
+          </df>
+          <df name="Bot">
+            <in>Bot.cpp</in>
+            <in>Bot.hpp</in>
+            <in>BotPlayer.cpp</in>
+            <in>BotPlayer.hpp</in>
+            <in>BotTask.hpp</in>
+            <in>BotTaskList.cpp</in>
+            <in>BotTaskList.hpp</in>
+          </df>
+          <df name="Classes">
+            <df name="AI">
+              <in>Astar.cpp</in>
+              <in>Astar.hpp</in>
+              <in>PathList.cpp</in>
+              <in>PathList.hpp</in>
+              <in>PathingState.cpp</in>
+              <in>PathingState.hpp</in>
+            </df>
+            <df name="Network">
+              <in>ClientConnectDaemon.cpp</in>
+              <in>ClientConnectDaemon.hpp</in>
+              <in>ClientMessageRouter.cpp</in>
+              <in>ClientMessageRouter.hpp</in>
+              <in>ConnectNetMessage.cpp</in>
+              <in>ConnectNetMessage.hpp</in>
+              <in>GameControlNetMessage.hpp</in>
+              <in>NetMessage.hpp</in>
+              <in>NetMessageDecoder.cpp</in>
+              <in>NetMessageDecoder.hpp</in>
+              <in>NetMessageEncoder.cpp</in>
+              <in>NetMessageEncoder.hpp</in>
+              <in>NetPacket.hpp</in>
+              <in>NetPacketDebugger.cpp</in>
+              <in>NetPacketDebugger.hpp</in>
+              <in>NetPacketQueues.cpp</in>
+              <in>NetPacketQueues.hpp</in>
+              <in>NetworkClient.cpp</in>
+              <in>NetworkClient.hpp</in>
+              <in>NetworkInterface.cpp</in>
+              <in>NetworkInterface.hpp</in>
+              <in>NetworkServer.cpp</in>
+              <in>NetworkServer.hpp</in>
+              <in>NetworkState.cpp</in>
+              <in>NetworkState.hpp</in>
+              <in>ObjectiveNetMessage.hpp</in>
+              <in>PlayerNetMessage.hpp</in>
+              <in>PowerUpNetMessage.hpp</in>
+              <in>ServerConnectDaemon.cpp</in>
+              <in>ServerConnectDaemon.hpp</in>
+              <in>ServerMessageRouter.cpp</in>
+              <in>ServerMessageRouter.hpp</in>
+              <in>SystemNetMessage.hpp</in>
+              <in>UnitNetMessage.hpp</in>
+            </df>
+            <in>GameServerInfo.hpp</in>
+            <in>MapFile.hpp</in>
+            <in>OpcodeDebugger.cpp</in>
+            <in>OpcodeDebugger.hpp</in>
+            <in>PlacementMatrix.cpp</in>
+            <in>PlacementMatrix.hpp</in>
+            <in>PlayerState.cpp</in>
+            <in>PlayerState.hpp</in>
+            <in>PlayerUnitConfig.cpp</in>
+            <in>PlayerUnitConfig.hpp</in>
+            <in>ScreenSurface.cpp</in>
+            <in>ScreenSurface.hpp</in>
+            <in>SelectionBoxSprite.cpp</in>
+            <in>SelectionBoxSprite.hpp</in>
+            <in>SelectionList.cpp</in>
+            <in>SelectionList.hpp</in>
+            <in>ServerListDataSource.cpp</in>
+            <in>ServerListDataSource.hpp</in>
+            <in>SpawnList.cpp</in>
+            <in>SpawnList.hpp</in>
+            <in>Sprite.cpp</in>
+            <in>Sprite.hpp</in>
+            <in>SpriteSorter.cpp</in>
+            <in>SpriteSorter.hpp</in>
+            <in>ViewCamera.cpp</in>
+            <in>ViewCamera.hpp</in>
+            <in>WorldInputCmdProcessor.cpp</in>
+            <in>WorldInputCmdProcessor.hpp</in>
+            <in>WorldMap.cpp</in>
+            <in>WorldMap.hpp</in>
+          </df>
+          <df name="Config">
+            <in>GameOptions.cpp</in>
+            <in>GameOptions.hpp</in>
+            <in>HostConfig.cpp</in>
+            <in>HostConfig.hpp</in>
+            <in>InterfaceConfig.cpp</in>
+            <in>InterfaceConfig.hpp</in>
+            <in>SoundConfig.cpp</in>
+            <in>SoundConfig.hpp</in>
+            <in>VideoConfig.cpp</in>
+            <in>VideoConfig.hpp</in>
+          </df>
+          <df name="Core">
+            <in>CoreTypes.hpp</in>
+            <in>NetworkGlobals.cpp</in>
+            <in>NetworkGlobals.hpp</in>
+            <in>main.cpp</in>
+            <in>main_ded.cpp</in>
+          </df>
+          <df name="Interfaces">
+            <in>BaseGameManager.cpp</in>
+            <in>BaseGameManager.hpp</in>
+            <in>BotGameManager.cpp</in>
+            <in>BotGameManager.hpp</in>
+            <in>ChatInterface.cpp</in>
+            <in>ChatInterface.hpp</in>
+            <in>Console.cpp</in>
+            <in>Console.hpp</in>
+            <in>ConsoleInterface.cpp</in>
+            <in>ConsoleInterface.hpp</in>
+            <in>DedicatedGameManager.cpp</in>
+            <in>DedicatedGameManager.hpp</in>
+            <in>GameConfig.cpp</in>
+            <in>GameConfig.hpp</in>
+            <in>GameControlRulesDaemon.cpp</in>
+            <in>GameControlRulesDaemon.hpp</in>
+            <in>GameManager.cpp</in>
+            <in>GameManager.hpp</in>
+            <in>Heartbeat.cpp</in>
+            <in>Heartbeat.hpp</in>
+            <in>InfoSocket.cpp</in>
+            <in>InfoSocket.hpp</in>
+            <in>KeyboardInterface.cpp</in>
+            <in>KeyboardInterface.hpp</in>
+            <in>MapInterface.cpp</in>
+            <in>MapInterface.hpp</in>
+            <in>MouseInterface.cpp</in>
+            <in>MouseInterface.hpp</in>
+            <in>PathScheduler.cpp</in>
+            <in>PathScheduler.hpp</in>
+            <in>PlayerGameManager.cpp</in>
+            <in>PlayerGameManager.hpp</in>
+            <in>PlayerInterface.cpp</in>
+            <in>PlayerInterface.hpp</in>
+            <in>ServerCommand.hpp</in>
+            <in>ServerConsole.cpp</in>
+            <in>ServerConsole.hpp</in>
+            <in>StrManager.cpp</in>
+            <in>StrManager.hpp</in>
+            <in>Team.cpp</in>
+            <in>Team.hpp</in>
+            <in>TeamManager.cpp</in>
+            <in>TeamManager.hpp</in>
+            <in>VoteManager.cpp</in>
+            <in>VoteManager.hpp</in>
+            <in>WorldViewInterface.cpp</in>
+            <in>WorldViewInterface.hpp</in>
+          </df>
+          <df name="Network">
+            <df name="HTTP">
+              <in>HTTPRequest.hpp</in>
+            </df>
+            <df name="PlayerRequests">
+              <in>AllianceRequest.hpp</in>
+              <in>AttackUnitRequest.hpp</in>
+              <in>BreakAllianceRequest.hpp</in>
+              <in>ChangeFlagRequest.hpp</in>
+              <in>ChangeObjectiveGenerationRequest.hpp</in>
+              <in>ChangeObjectiveOutLocationRequest.hpp</in>
+              <in>ChangeTeamRequest.hpp</in>
+              <in>ChatRequest.hpp</in>
+              <in>ManualFireRequest.hpp</in>
+              <in>MoveUnitRequest.hpp</in>
+              <in>PlayerReadyRequest.hpp</in>
+              <in>PlayerRequests.hpp</in>
+              <in>StartSurrenderVoteRequest.hpp</in>
+              <in>TeamChatRequest.hpp</in>
+              <in>VoteSelectedRequest.hpp</in>
+            </df>
+            <in>ClientSocket.cpp</in>
+            <in>ClientSocket.hpp</in>
+            <in>GameserverQuerier.cpp</in>
+            <in>GameserverQuerier.hpp</in>
+            <in>HTTPClientSocket.cpp</in>
+            <in>HTTPClientSocket.hpp</in>
+            <in>HTTPServerSocket.cpp</in>
+            <in>HTTPServerSocket.hpp</in>
+            <in>MasterserverQuerier.cpp</in>
+            <in>MasterserverQuerier.hpp</in>
+            <in>NewsGetter.cpp</in>
+            <in>NewsGetter.hpp</in>
+            <in>ProxyServer.cpp</in>
+            <in>ProxyServer.hpp</in>
+            <in>ServerAddress.hpp</in>
+            <in>WebServer.cpp</in>
+            <in>WebServer.hpp</in>
+            <in>WebSocketUtil.cpp</in>
+            <in>WebSocketUtil.hpp</in>
+          </df>
+          <df name="Objectives">
+            <in>Objective.cpp</in>
+            <in>Objective.hpp</in>
+            <in>ObjectiveInterface.cpp</in>
+            <in>ObjectiveInterface.hpp</in>
+          </df>
+          <df name="Particles">
+            <in>ChunkTrajectoryParticle2D.cpp</in>
+            <in>ChunkTrajectoryParticle2D.hpp</in>
+            <in>CloudParticle2D.cpp</in>
+            <in>CloudParticle2D.hpp</in>
+            <in>CraterParticle2D.cpp</in>
+            <in>CraterParticle2D.hpp</in>
+            <in>FlameParticle2D.cpp</in>
+            <in>FlameParticle2D.hpp</in>
+            <in>FlashParticle2D.cpp</in>
+            <in>FlashParticle2D.hpp</in>
+            <in>Particle2D.cpp</in>
+            <in>Particle2D.hpp</in>
+            <in>ParticleInterface.cpp</in>
+            <in>ParticleInterface.hpp</in>
+            <in>ParticleSystem2D.cpp</in>
+            <in>ParticleSystem2D.hpp</in>
+            <in>ParticleSystemGlobals.cpp</in>
+            <in>ParticleSystemGlobals.hpp</in>
+            <in>ParticleTweakView.cpp</in>
+            <in>ParticleTweakView.hpp</in>
+            <in>Physics.cpp</in>
+            <in>Physics.hpp</in>
+            <in>PuffParticle2D.cpp</in>
+            <in>PuffParticle2D.hpp</in>
+            <in>TemplateExplosionSystem.cpp</in>
+            <in>TemplateExplosionSystem.hpp</in>
+            <in>TemplateMuzzleSystem.cpp</in>
+            <in>TemplateMuzzleSystem.hpp</in>
+            <in>TrajectoryParticle2D.cpp</in>
+            <in>TrajectoryParticle2D.hpp</in>
+            <in>VectorPuffParticle2D.cpp</in>
+            <in>VectorPuffParticle2D.hpp</in>
+            <in>WindParticle2D.cpp</in>
+            <in>WindParticle2D.hpp</in>
+          </df>
+          <df name="Port">
+            <in>MapData.hpp</in>
+          </df>
+          <df name="PowerUps">
+            <in>BonusUnitPowerUp.cpp</in>
+            <in>BonusUnitPowerUp.hpp</in>
+            <in>EnemyRadarPowerUp.cpp</in>
+            <in>EnemyRadarPowerUp.hpp</in>
+            <in>PowerUp.cpp</in>
+            <in>PowerUp.hpp</in>
+            <in>PowerUpInterface.cpp</in>
+            <in>PowerUpInterface.hpp</in>
+            <in>UnitPowerUp.cpp</in>
+            <in>UnitPowerUp.hpp</in>
+          </df>
+          <df name="Resources">
+            <in>BlendTable.cpp</in>
+            <in>BlendTable.hpp</in>
+            <in>Image.cpp</in>
+            <in>Image.hpp</in>
+            <in>ImageFilter.cpp</in>
+            <in>ImageFilter.hpp</in>
+            <in>MImage.cpp</in>
+            <in>MImage.hpp</in>
+            <in>MouseCursor.cpp</in>
+            <in>MouseCursor.hpp</in>
+            <in>ResourceManager.cpp</in>
+            <in>ResourceManager.hpp</in>
+            <in>Tileset.cpp</in>
+            <in>Tileset.hpp</in>
+          </df>
+          <df name="Scenes">
+            <df name="Common">
+              <in>ModalMessageLayer.cpp</in>
+              <in>ModalMessageLayer.hpp</in>
+              <in>OptionsLayer.cpp</in>
+              <in>OptionsLayer.hpp</in>
+            </df>
+            <df name="MainMenu">
+              <in>HostGameLayer.cpp</in>
+              <in>HostGameLayer.hpp</in>
+              <in>IntroLayer.cpp</in>
+              <in>IntroLayer.hpp</in>
+              <in>JoinGameLayer.cpp</in>
+              <in>JoinGameLayer.hpp</in>
+              <in>MapThumbnailComponent.cpp</in>
+              <in>MapThumbnailComponent.hpp</in>
+            </df>
+            <in>InitialScene.cpp</in>
+            <in>InitialScene.hpp</in>
+            <in>MainMenuScene.cpp</in>
+            <in>MainMenuScene.hpp</in>
+          </df>
+          <df name="Structs">
+            <in>TileSetStruct.hpp</in>
+          </df>
+          <df name="System">
+            <in>DummySound.cpp</in>
+            <in>DummySound.hpp</in>
+            <in>SDLEvents.cpp</in>
+            <in>SDLSound.cpp</in>
+            <in>SDLSound.hpp</in>
+            <in>SDLVideo.cpp</in>
+            <in>SDLVideo.hpp</in>
+            <in>Sound.cpp</in>
+            <in>Sound.hpp</in>
+          </df>
+          <df name="Units">
+            <in>UnitBase.hpp</in>
+            <in>UnitBlackBoard.cpp</in>
+            <in>UnitBlackBoard.hpp</in>
+            <in>UnitBucketArray.cpp</in>
+            <in>UnitBucketArray.hpp</in>
+            <in>UnitGlobals.cpp</in>
+            <in>UnitGlobals.hpp</in>
+            <in>UnitInterface.cpp</in>
+            <in>UnitInterface.hpp</in>
+            <in>UnitLifecycles.hpp</in>
+            <in>UnitOpcodeDecoder.cpp</in>
+            <in>UnitOpcodeDecoder.hpp</in>
+            <in>UnitOpcodeEncoder.cpp</in>
+            <in>UnitOpcodeEncoder.hpp</in>
+            <in>UnitOpcodes.hpp</in>
+            <in>UnitProfileInterface.cpp</in>
+            <in>UnitProfileInterface.hpp</in>
+            <in>UnitState.cpp</in>
+            <in>UnitState.hpp</in>
+            <in>Vehicle.cpp</in>
+            <in>Vehicle.hpp</in>
+          </df>
+          <df name="Views">
+            <df name="Components">
+              <in>Component.hpp</in>
+              <in>InfoBar.cpp</in>
+              <in>InfoBar.hpp</in>
+              <in>MiniMap.cpp</in>
+              <in>MiniMap.hpp</in>
+              <in>View.hpp</in>
+              <in>ViewGlobals.hpp</in>
+              <in>tChatBox.cpp</in>
+              <in>tChatBox.hpp</in>
+              <in>tPlayerStateBox.cpp</in>
+              <in>tPlayerStateBox.hpp</in>
+              <in>tStringListBox.cpp</in>
+              <in>tStringListBox.hpp</in>
+            </df>
+            <df name="Game">
+              <in>ChatView.cpp</in>
+              <in>ChatView.hpp</in>
+              <in>CodeStatsView.cpp</in>
+              <in>CodeStatsView.hpp</in>
+              <in>EndRoundView.cpp</in>
+              <in>EndRoundView.hpp</in>
+              <in>GFlagSelectionView.cpp</in>
+              <in>GFlagSelectionView.hpp</in>
+              <in>GameTemplateView.cpp</in>
+              <in>GameTemplateView.hpp</in>
+              <in>GameView.cpp</in>
+              <in>GameView.hpp</in>
+              <in>HelpScrollView.cpp</in>
+              <in>HelpScrollView.hpp</in>
+              <in>MiniMapView.cpp</in>
+              <in>MiniMapView.hpp</in>
+              <in>PrepareTeam.cpp</in>
+              <in>PrepareTeam.hpp</in>
+              <in>RankTeam.cpp</in>
+              <in>RankTeam.hpp</in>
+              <in>RankView.cpp</in>
+              <in>RankView.hpp</in>
+              <in>VehicleSelectionView.cpp</in>
+              <in>VehicleSelectionView.hpp</in>
+              <in>VoteBox.cpp</in>
+              <in>VoteBox.hpp</in>
+            </df>
+            <in>GameViewGlobals.cpp</in>
+            <in>GameViewGlobals.hpp</in>
+            <in>Theme.cpp</in>
+            <in>Theme.hpp</in>
+          </df>
+          <df name="Weapons">
+            <in>BulletWeapon.cpp</in>
+            <in>BulletWeapon.hpp</in>
+            <in>MissleWeapon.cpp</in>
+            <in>MissleWeapon.hpp</in>
+            <in>Projectile.cpp</in>
+            <in>Projectile.hpp</in>
+            <in>ProjectileInterface.cpp</in>
+            <in>ProjectileInterface.hpp</in>
+            <in>ShellWeapon.cpp</in>
+            <in>ShellWeapon.hpp</in>
+            <in>Weapon.cpp</in>
+            <in>Weapon.hpp</in>
+            <in>WeaponGlobals.cpp</in>
+            <in>WeaponGlobals.hpp</in>
+          </df>
+        </df>
+      </df>
+      <df name="support">
+        <df name="autopackage">
+        </df>
+        <df name="icon">
+        </df>
+        <df name="loki">
+        </df>
+        <df name="macosx">
+          <in>SDLMain.h</in>
+          <in>SDLMain.m</in>
+        </df>
+        <df name="scripts">
+        </df>
+        <df name="static">
+        </df>
+        <df name="tools">
+          <in>bmp2pak.cpp</in>
+          <in>colorgen.cpp</in>
+          <in>fontdatagen.cpp</in>
+          <in>pak2png.cpp</in>
+        </df>
+        <df name="win32">
+        </df>
+      </df>
+      <df name="units">
+        <df name="profiles">
+        </df>
+      </df>
+      <df name="wads">
+      </df>
+      <df name="web">
+      </df>
+    </df>
+  </logicalFolder>
+  <projectmakefile>../../Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>3</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+            <option name="debug_dir" value="C:\prog\netpanzer-svn\"/>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"\netpanzer-debug.exe</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp </runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb 9</runcommandpicklistitem>
+          <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>netpanzer-debug.exe -g</runcommand>
+        <rundir>C:\prog\netpanzer-svn\</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Release" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>3</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+            <option name="debug_dir" value="C:\prog\netpanzer-svn\"/>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"\netpanzer-debug.exe</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>netpanzer-debug.exe -g</runcommand>
+        <rundir>C:\prog\netpanzer-svn\</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="pak2png" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>3</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+            <option name="debug_dir" value="C:\prog\netpanzer-svn\"/>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp </runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>netpanzer-debug.exe -g</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb 9</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2bmp-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak tb</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan</runcommandpicklistitem>
+          <runcommandpicklistitem>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan 9 0 0</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>pak2png-debug.exe units/pics/pak/TitaHNSD.pak titan 9 0 0</runcommand>
+        <rundir>C:\prog\netpanzer-svn\</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>
